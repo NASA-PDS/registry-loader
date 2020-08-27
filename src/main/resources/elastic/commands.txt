@@ -1,0 +1,5 @@
+# Create
+curl -X PUT "localhost:9200/registry?pretty" -H "Content-Type: application/json" --data-binary @registry.json
+
+# Delete 
+curl -X DELETE "localhost:9200/registry?pretty"

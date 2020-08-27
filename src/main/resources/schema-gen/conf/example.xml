@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schemaGen>
+
+  <dataDictionary baseDir="/tmp/schema">
+    <file>PDS4_PDS_JSON_1D00.JSON</file>
+  </dataDictionary>
+
+  <dataTypes baseDir="/tmp/schema">
+    <file>data-types.cfg</file>
+  </dataTypes>
+
+  <classFilters>
+    <include>pds.Collection</include>
+    <include>pds.Primary_Result_Summary</include>
+    <include>pds.Science_Facets</include>
+    <include>pds.Observing_System_Component</include>
+  </classFilters>
+
+  <customGenerators baseDir="/tmp/schema">
+    <class name="pds.Observing_System_Component" file="Observing_System_Component.cfg" />
+  </customGenerators>
+
+</schemaGen>
