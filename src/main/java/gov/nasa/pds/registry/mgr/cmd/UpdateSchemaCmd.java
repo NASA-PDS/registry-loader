@@ -13,7 +13,6 @@ import gov.nasa.pds.registry.mgr.schema.cfg.Configuration;
 import gov.nasa.pds.registry.mgr.schema.dd.DataDictionary;
 import gov.nasa.pds.registry.mgr.schema.dd.JsonDDParser;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.es.EsClientBuilder;
 import gov.nasa.pds.registry.mgr.util.es.EsUtils;
 
 
@@ -47,13 +46,14 @@ public class UpdateSchemaCmd implements CliCommand
         
         String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        String authPath = cmdLine.getOptionValue("auth");
         
         RestClient client = null;
         
         try
         {
             // Create Elasticsearch client
-            client = EsClientBuilder.createClient(esUrl);
+            client = EsUtils.createClient(esUrl, authPath);
 
             // Update Elasticsearch schema
             updateSchema(cfg, client, indexName);
@@ -80,6 +80,7 @@ public class UpdateSchemaCmd implements CliCommand
         System.out.println("Required parameters:");
         System.out.println("  -config <path>   Configuration file.");
         System.out.println("Optional parameters:");
+        System.out.println("  -auth <file>     Authentication config file");
         System.out.println("  -es <url>        Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>    Elasticsearch index name. Default is 'registry'");
         System.out.println();

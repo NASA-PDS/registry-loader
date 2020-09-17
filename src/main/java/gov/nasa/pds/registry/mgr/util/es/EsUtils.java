@@ -3,15 +3,34 @@ package gov.nasa.pds.registry.mgr.util.es;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
+import org.elasticsearch.client.RestClient;
 
 import com.google.gson.Gson;
+
+import gov.nasa.pds.registry.mgr.util.PropUtils;
 
 
 public class EsUtils
 {
+    public static RestClient createClient(String esUrl, String authPath) throws Exception
+    {
+        EsClientBuilder bld = new EsClientBuilder(esUrl);
+        
+        if(authPath != null)
+        {
+            Properties props = PropUtils.loadProps(authPath);
+            bld.configureAuth(props);
+        }
+        
+        return bld.build();
+    }
+
+    
+    
     public static String extractErrorMessage(ResponseException ex)
     {
         String msg = ex.getMessage();

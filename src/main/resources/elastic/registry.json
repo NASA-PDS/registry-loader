@@ -5,6 +5,7 @@
   },
 
   "mappings": {
+    "dynamic": false,
     "dynamic_templates": [
       {
         "strings": {

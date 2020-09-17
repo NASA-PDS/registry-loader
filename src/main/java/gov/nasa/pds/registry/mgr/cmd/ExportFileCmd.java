@@ -11,7 +11,6 @@ import org.elasticsearch.client.RestClient;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.util.EmbeddedBlobExporter;
-import gov.nasa.pds.registry.mgr.util.es.EsClientBuilder;
 import gov.nasa.pds.registry.mgr.util.es.EsRequestBuilder;
 import gov.nasa.pds.registry.mgr.util.es.EsUtils;
 import gov.nasa.pds.registry.mgr.util.es.SearchResponseParser;
@@ -76,6 +75,7 @@ public class ExportFileCmd implements CliCommand
         
         String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        String authPath = cmdLine.getOptionValue("auth");
         
         // Lidvid
         String lidvid = cmdLine.getOptionValue("lidvid");
@@ -102,7 +102,7 @@ public class ExportFileCmd implements CliCommand
         try
         {
             // Create Elasticsearch client
-            client = EsClientBuilder.createClient(esUrl);
+            client = EsUtils.createClient(esUrl, authPath);
 
             // Create request
             Request req = new Request("GET", "/" + indexName + "/_search");
@@ -145,6 +145,7 @@ public class ExportFileCmd implements CliCommand
         System.out.println("  -lidvid <id>    Lidvid of a file to export from blob storage");
         System.out.println("  -file <path>    Output file path");
         System.out.println("Optional parameters:");
+        System.out.println("  -auth <file>    Authentication config file");
         System.out.println("  -es <url>       Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>   Elasticsearch index name. Default is 'registry'");
         System.out.println();

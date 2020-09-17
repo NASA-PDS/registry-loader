@@ -1,48 +1,58 @@
 package gov.nasa.pds.registry.mgr.util.es;
 
+import java.util.Properties;
+
 import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+
+import gov.nasa.pds.registry.mgr.Constants;
+import gov.nasa.pds.registry.mgr.util.PropUtils;
 
 
 public class EsClientBuilder
 {
-    private static class ConfigCB implements RestClientBuilder.RequestConfigCallback
+    private RestClientBuilder bld;
+    private ClientConfigCB clientCB;
+    private RequestConfigCB reqCB;
+    
+    
+    public EsClientBuilder(String url) throws Exception
     {
-        private int connectTimeoutSec = 5;
-        private int socketTimeoutSec = 10;
+        HttpHost host = parseUrl(url);
+        bld = RestClient.builder(host);
         
-        
-        public ConfigCB()
-        {
-        }
-
-        
-        public ConfigCB(int connectTimeoutSec, int socketTimeoutSec)
-        {
-            this.connectTimeoutSec = connectTimeoutSec;
-            this.socketTimeoutSec = socketTimeoutSec;
-        }
-
-        
-        @Override
-        public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder bld)
-        {
-            bld.setConnectTimeout(connectTimeoutSec * 1000);
-            bld.setSocketTimeout(socketTimeoutSec * 1000);
-            return bld;
-        }
+        clientCB = new ClientConfigCB();
+        reqCB = new RequestConfigCB();
     }
     
     
-    public static RestClient createClient(String url) throws Exception
+    public RestClient build() 
     {
-        HttpHost host = parseUrl(url);
-        RestClientBuilder bld = RestClient.builder(host);
-        // Set timeouts
-        bld.setRequestConfigCallback(new ConfigCB());
+        bld.setHttpClientConfigCallback(clientCB);
+        bld.setRequestConfigCallback(reqCB);
+        
         return bld.build();
+    }
+    
+    
+    public void configureAuth(Properties props) throws Exception
+    {
+        if(props == null) return;
+
+        // Trust self-signed certificates
+        if(Boolean.TRUE.equals(PropUtils.getBoolean(props, Constants.AUTH_TRUST_SELF_SIGNED)))
+        {
+            clientCB.setTrustSelfSignedCert(true);
+        }
+        
+        // Basic authentication
+        String user = props.getProperty("user");
+        String pass = props.getProperty("password");
+        if(user != null && pass != null)
+        {
+            clientCB.setUserPass(user, pass);
+        }
     }
     
     

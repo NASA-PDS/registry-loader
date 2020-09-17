@@ -14,7 +14,7 @@ public class TestDataLoader
     {
         HttpURLConnection.setFollowRedirects(true);
         
-        DataLoader dl = new DataLoader("localhost", "t1");
+        DataLoader dl = new DataLoader("localhost", "t1", null);
         //dl.setBatchSize(10);
         
         try

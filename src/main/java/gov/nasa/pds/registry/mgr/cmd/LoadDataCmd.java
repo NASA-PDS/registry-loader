@@ -28,8 +28,9 @@ public class LoadDataCmd implements CliCommand
             return;
         }
 
-        String esUrl = cmdLine.getOptionValue("url", "http://localhost:9200");
+        String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        String authPath = cmdLine.getOptionValue("auth");
 
         // Get list of files to load
         String filePath = cmdLine.getOptionValue("file");
@@ -46,7 +47,7 @@ public class LoadDataCmd implements CliCommand
         System.out.println("            Index: " + indexName);
         System.out.println();
 
-        DataLoader loader = new DataLoader(esUrl, indexName);
+        DataLoader loader = new DataLoader(esUrl, indexName, authPath);
         
         for(File file: files)
         {
@@ -112,7 +113,8 @@ public class LoadDataCmd implements CliCommand
         System.out.println("Required parameters:");
         System.out.println("  -file <path>    A JSON file or a directory to load."); 
         System.out.println("Optional parameters:");
-        System.out.println("  -url <url>      Elasticsearch URL. Default is http://localhost:9200");
+        System.out.println("  -auth <file>    Authentication config file");
+        System.out.println("  -es <url>       Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>   Elasticsearch index name. Default is 'registry'");
         System.out.println();
     }

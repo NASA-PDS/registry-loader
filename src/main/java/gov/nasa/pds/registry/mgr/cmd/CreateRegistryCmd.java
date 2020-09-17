@@ -10,7 +10,6 @@ import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.es.EsClientBuilder;
 import gov.nasa.pds.registry.mgr.util.es.EsRequestBuilder;
 import gov.nasa.pds.registry.mgr.util.es.EsUtils;
 
@@ -32,9 +31,10 @@ public class CreateRegistryCmd implements CliCommand
         }
 
         String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
-        File schemaFile = getSchemaFile(cmdLine.getOptionValue("schema"));
-        
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        String authPath = cmdLine.getOptionValue("auth");
+        
+        File schemaFile = getSchemaFile(cmdLine.getOptionValue("schema"));
         int shards = parseShards(cmdLine.getOptionValue("shards", "1"));
         int replicas = parseReplicas(cmdLine.getOptionValue("replicas", "0"));
         
@@ -52,7 +52,7 @@ public class CreateRegistryCmd implements CliCommand
             System.out.println("Creating index...");
 
             // Create Elasticsearch client
-            client = EsClientBuilder.createClient(esUrl);
+            client = EsUtils.createClient(esUrl, authPath);
             
             // Create request
             Request req = new Request("PUT", "/" + indexName);
@@ -143,6 +143,7 @@ public class CreateRegistryCmd implements CliCommand
         System.out.println("Create registry index");
         System.out.println();
         System.out.println("Optional parameters:");
+        System.out.println("  -auth <file>         Authentication config file");
         System.out.println("  -es <url>            Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>        Elasticsearch index name. Default is 'registry'");
         System.out.println("  -schema <path>       Elasticsearch index schema (JSON file)"); 

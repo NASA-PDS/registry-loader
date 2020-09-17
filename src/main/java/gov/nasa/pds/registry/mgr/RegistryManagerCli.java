@@ -175,13 +175,13 @@ public class RegistryManagerCli
         bld = Option.builder("help");
         options.addOption(bld.build());
         
-        bld = Option.builder("es").hasArg().argName("es");
+        bld = Option.builder("es").hasArg().argName("url");
+        options.addOption(bld.build());
+
+        bld = Option.builder("auth").hasArg().argName("file");
         options.addOption(bld.build());
 
         bld = Option.builder("file").hasArg().argName("path");
-        options.addOption(bld.build());
-
-        bld = Option.builder("configDir").hasArg().argName("dir");
         options.addOption(bld.build());
 
         bld = Option.builder("config").hasArg().argName("path");

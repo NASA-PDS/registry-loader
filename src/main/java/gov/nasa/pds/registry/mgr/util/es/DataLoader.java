@@ -8,38 +8,56 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Properties;
 
-import org.apache.http.HttpHost;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 
+import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
+import gov.nasa.pds.registry.mgr.util.HttpConnectionFactory;
+import gov.nasa.pds.registry.mgr.util.PropUtils;
+import gov.nasa.pds.registry.mgr.util.ssl.SSLUtils;
 
 
 public class DataLoader
 {
-    private int timeout = 5000;
     private int batchSize = 100;
-    
-    private HttpHost host;
-    private URL bulkApiUrl;
-    
+    private HttpConnectionFactory conFactory; 
     private int totalRecords;
 
     
-    public DataLoader(String esUrl, String indexName) throws Exception
+    public DataLoader(String esUrl, String indexName, String authConfigFile) throws Exception
     {
-        this.host = EsClientBuilder.parseUrl(esUrl);
-        this.bulkApiUrl = new URL(host.toURI() + "/" + indexName + "/_bulk");
+        conFactory = new HttpConnectionFactory(esUrl, indexName, "_bulk");
+        initAuth(authConfigFile);
     }
     
     
-    public void setTimeoutSec(int timeoutSec)
+    private void initAuth(String authConfigFile) throws Exception
     {
-        if(timeoutSec <= 0) throw new IllegalArgumentException("Timeout should be > 0");
-        this.timeout = timeoutSec * 1000;
+        if(authConfigFile == null) return;
+        
+        Properties props = PropUtils.loadProps(authConfigFile);
+        if(props == null) return;
+        
+        // Trust self-signed certificates
+        if(Boolean.TRUE.equals(PropUtils.getBoolean(props, Constants.AUTH_TRUST_SELF_SIGNED)))
+        {
+            SSLContext sslCtx = SSLUtils.createTrustAllContext();
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslCtx.getSocketFactory());
+        }
+        
+        // Basic authentication
+        String user = props.getProperty("user");
+        String pass = props.getProperty("password");
+        if(user != null && pass != null)
+        {
+            conFactory.setBasicAuthentication(user, pass);
+        }
     }
-
+    
     
     public void setBatchSize(int size)
     {
@@ -81,10 +99,7 @@ public class DataLoader
         
         try
         {
-            con = (HttpURLConnection)bulkApiUrl.openConnection();
-            con.setConnectTimeout(timeout);
-            con.setReadTimeout(timeout);
-            con.setAllowUserInteraction(false);
+            con = conFactory.createConnection();
             con.setDoInput(true);
             con.setDoOutput(true);
             con.setRequestMethod("POST");
@@ -138,7 +153,7 @@ public class DataLoader
         }
         catch(UnknownHostException ex)
         {
-            throw new Exception("Unknown host " + host.getHostName());
+            throw new Exception("Unknown host " + conFactory.getHostName());
         }
         catch(IOException ex)
         {
