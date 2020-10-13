@@ -3,32 +3,76 @@ package gov.nasa.pds.registry.mgr.util.es;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
+import org.apache.http.HttpHost;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
 
 import com.google.gson.Gson;
-
-import gov.nasa.pds.registry.mgr.util.PropUtils;
 
 
 public class EsUtils
 {
-    public static RestClient createClient(String esUrl, String authPath) throws Exception
+    public static HttpHost parseEsUrl(String url) throws Exception
     {
-        EsClientBuilder bld = new EsClientBuilder(esUrl);
+        if(url == null) throw new Exception("URL is null");
         
-        if(authPath != null)
+        String tmpUrl = url.trim();
+
+        String proto = "http";
+        String host = null;
+        int port = 9200;
+        
+        // Protocol
+        int idx = tmpUrl.indexOf("://");
+        if(idx > 0)
         {
-            Properties props = PropUtils.loadProps(authPath);
-            bld.configureAuth(props);
+            proto = tmpUrl.substring(0, idx).toLowerCase();
+            if(!proto.equals("http") && !proto.equals("https")) 
+            {
+                throw new Exception("Invalid protocol '" + proto + "'. Expected 'http' or 'https'.");
+            }
+            
+            tmpUrl = tmpUrl.substring(idx + 3);
         }
         
-        return bld.build();
+        // Host & port
+        idx = tmpUrl.indexOf(":");
+        if(idx > 0)
+        {
+            host = tmpUrl.substring(0, idx);
+            
+            // Port
+            String strPort = tmpUrl.substring(idx + 1);
+            idx = strPort.indexOf("/");
+            if(idx > 0)
+            {
+                strPort = strPort.substring(0, idx);
+            }
+            
+            try
+            {
+                port = Integer.parseInt(strPort);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Invalid port " + strPort);
+            }
+        }
+        // Host only
+        else
+        {
+            host = tmpUrl;
+            idx = host.indexOf("/");
+            if(idx > 0)
+            {
+                host = host.substring(0, idx);
+            }
+        }
+        
+        HttpHost httpHost = new HttpHost(host, port, proto);
+        return httpHost;
     }
-
     
     
     public static String extractErrorMessage(ResponseException ex)

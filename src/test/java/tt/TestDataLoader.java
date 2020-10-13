@@ -4,7 +4,7 @@ package tt;
 import java.io.File;
 import java.net.HttpURLConnection;
 
-import gov.nasa.pds.registry.mgr.util.es.DataLoader;
+import gov.nasa.pds.registry.mgr.dao.DataLoader;
 
 
 public class TestDataLoader

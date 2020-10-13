@@ -43,7 +43,7 @@ public class EsRequestBuilder
 
     
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public String createCreateRegistryRequest(File schemaFile, int shards, int replicas) throws Exception
+    public String createCreateIndexRequest(File schemaFile, int shards, int replicas) throws Exception
     {
         // Read schema template
         FileReader rd = new FileReader(schemaFile);
@@ -87,7 +87,8 @@ public class EsRequestBuilder
     }
 
 
-    public String createExportDataRequest(String field, String value, int size, String searchAfter) throws IOException
+    public String createExportDataRequest(String filterField, String filterValue, 
+            String sortField, int size, String searchAfter) throws IOException
     {
         StringWriter out = new StringWriter();
         JsonWriter writer = createJsonWriter(out);
@@ -98,7 +99,7 @@ public class EsRequestBuilder
         writer.name("size").value(size);
 
         // Filter query
-        EsQueryUtils.appendFilterQuery(writer, field, value);
+        EsQueryUtils.appendFilterQuery(writer, filterField, filterValue);
 
         // "search_after" parameter is used for pagination
         if (searchAfter != null)
@@ -109,7 +110,7 @@ public class EsRequestBuilder
         // Sort is required by pagination
         writer.name("sort");
         writer.beginObject();
-        writer.name("lidvid").value("asc");
+        writer.name(sortField).value("asc");
         writer.endObject();
 
         writer.endObject();
@@ -119,7 +120,7 @@ public class EsRequestBuilder
     }
 
     
-    public String createExportAllDataRequest(int size, String searchAfter) throws IOException
+    public String createExportAllDataRequest(String sortField, int size, String searchAfter) throws IOException
     {
         StringWriter out = new StringWriter();
         JsonWriter writer = createJsonWriter(out);
@@ -144,7 +145,7 @@ public class EsRequestBuilder
         // Sort is required by pagination
         writer.name("sort");
         writer.beginObject();
-        writer.name("lidvid").value("asc");
+        writer.name(sortField).value("asc");
         writer.endObject();
 
         writer.endObject();
