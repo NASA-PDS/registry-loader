@@ -114,6 +114,29 @@
                     <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.ragedunicorn.tools.maven</groupId>
+                <artifactId>github-release-maven-plugin</artifactId>
+                <version>1.0.2</version>
+                <executions>
+                  <execution>
+                    <id>default-cli</id>
+                    <configuration>
+                    <owner>nasa-pds</owner>
+                    <repository>pds-registry-mgr-elastic</repository>
+                    <server>github-oauth</server>
+                    <tagName>${project.version}</tagName>
+                    <name>${project.version}</name>
+                    <targetCommitish>master</targetCommitish>
+                    <body>Release ${project.version} see changelog https://github.com/NASA-PDS/pds-registry-mgr-elastic/blob/master/CHANGELOG.md</body>
+                    <assets>
+                        <asset>target/registry-manager-${project.version}-bin.zip</asset>
+                        <asset>target/registry-manager-${project.version}-bin.tar.gz</asset>
+                    </assets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
         </plugins>
     </build>
 
