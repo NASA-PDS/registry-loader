@@ -1,9 +1,10 @@
 name: 📦 CI/CD
 
 on:
-    tag:
-      branches:
-          - master
+    push:
+        tags:
+            -  '[0-9]+.[0-9]+.[0-9]+'
+
 
 jobs:
     roundup:
