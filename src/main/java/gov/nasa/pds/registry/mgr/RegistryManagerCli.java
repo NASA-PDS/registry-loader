@@ -11,6 +11,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
+import gov.nasa.pds.registry.mgr.cmd.data.DeleteDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.ExportDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.ExportFileCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.LoadDataCmd;
@@ -170,7 +171,7 @@ public class RegistryManagerCli
         
         // Data
         commands.put("load-data", new LoadDataCmd());
-        commands.put("delete-data", new DeleteDDCmd());
+        commands.put("delete-data", new DeleteDataCmd());
         commands.put("export-data", new ExportDataCmd());
         commands.put("export-file", new ExportFileCmd());
         commands.put("set-archive-status", new SetArchiveStatusCmd());
