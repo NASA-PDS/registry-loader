@@ -1,8 +1,13 @@
 # Changelog
 
-## [4.0.1-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/4.0.1-SNAPSHOT) (2020-10-30)
+## [4.0.2-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/4.0.2-SNAPSHOT) (2020-11-05)
 
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/4.0.1...4.0.1-SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/4.0.1...4.0.2-SNAPSHOT)
+
+**Defects:**
+
+- Missing Science\_Facets fields definitions in registry schema [\#14](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/14)
+- registry-mgr  delete-data options are not correct in -help [\#12](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/12) [[high](https://github.com/NASA-PDS/pds-registry-mgr-elastic/labels/high)]
 
 ## [4.0.1](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/4.0.1) (2020-10-30)
 
