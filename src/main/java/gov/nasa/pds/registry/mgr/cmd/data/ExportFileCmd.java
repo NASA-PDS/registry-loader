@@ -40,7 +40,7 @@ public class ExportFileCmd implements CliCommand
         {
             found = true;
          
-            Object blob = ((Map)rec).get("_file_blob");
+            Object blob = ((Map)rec).get(Constants.BLOB_FIELD);
             if(blob == null)
             {
                 System.out.println("There is no BLOB in a document with LIDVID = " + lidvid);

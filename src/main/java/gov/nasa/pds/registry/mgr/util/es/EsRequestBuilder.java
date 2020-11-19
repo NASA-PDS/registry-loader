@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 
+import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 
 public class EsRequestBuilder
@@ -165,7 +166,7 @@ public class EsRequestBuilder
         // Return only BLOB
         writer.name("_source");
         writer.beginArray();
-        writer.value("_file_blob");
+        writer.value(Constants.BLOB_FIELD);
         writer.endArray();
 
         // Query
