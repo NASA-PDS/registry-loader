@@ -36,12 +36,19 @@
 
       "_package_id": { "type": "keyword" },
 
-      "_file_ref": { "type": "keyword" },
-      "_file_name": { "type": "keyword" },
-      "_file_type": { "type": "keyword" },
-      "_file_size": { "type": "long" },
-      "_file_md5": { "type": "keyword" },
-      "_file_blob": { "type": "binary", "index": false },
+      "ops/Label_File_Info/ops/creation_date_time": { "type": "date" },
+      "ops/Label_File_Info/ops/file_ref": { "type": "keyword" },
+      "ops/Label_File_Info/ops/file_name": { "type": "keyword" },
+      "ops/Label_File_Info/ops/file_size": { "type": "long" },
+      "ops/Label_File_Info/ops/md5_checksum": { "type": "keyword" },
+      "ops/Label_File_Info/ops/blob": { "type": "binary", "index": false },
+
+      "ops/Data_File_Info/ops/creation_date_time": { "type": "date" },
+      "ops/Data_File_Info/ops/file_ref": { "type": "keyword" },
+      "ops/Data_File_Info/ops/file_name": { "type": "keyword" },
+      "ops/Data_File_Info/ops/file_size": { "type": "long" },
+      "ops/Data_File_Info/ops/md5_checksum": { "type": "keyword" },
+      "ops/Data_File_Info/ops/mime_type": { "type": "keyword" },
 
       "ref_lid_document": { "type": "keyword" },
       "ref_lid_instrument": { "type": "keyword" },
