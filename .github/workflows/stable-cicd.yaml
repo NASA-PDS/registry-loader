@@ -33,7 +33,7 @@ name: 😌 Stable integration & delivery
 on:
     push:
         tags:
-            -  '[0-9]+.[0-9]+.[0-9]+'
+            -  'v[0-9]+.[0-9]+.[0-9]+'
 
 
 # What to Do
@@ -58,7 +58,7 @@ jobs:
                 with:
                     assembly: stable
                 env:
-		    ossrh_username: ${{secrets.OSSRH_USERNAME}}
+                    ossrh_username: ${{secrets.OSSRH_USERNAME}}
                     ossrh_password: ${{secrets.OSSRH_PASSWORD}}
                     CODE_SIGNING_KEY: ${{secrets.CODE_SIGNING_KEY}}
                     ADMIN_GITHUB_TOKEN: ${{secrets.ADMIN_GITHUB_TOKEN}}
