@@ -48,13 +48,7 @@
       "ops/Data_File_Info/ops/file_name": { "type": "keyword" },
       "ops/Data_File_Info/ops/file_size": { "type": "long" },
       "ops/Data_File_Info/ops/md5_checksum": { "type": "keyword" },
-      "ops/Data_File_Info/ops/mime_type": { "type": "keyword" },
-
-      "ref_lid_document": { "type": "keyword" },
-      "ref_lid_instrument": { "type": "keyword" },
-      "ref_lid_instrument_host": { "type": "keyword" },
-      "ref_lid_investigation": { "type": "keyword" },
-      "ref_lid_target": { "type": "keyword" }
+      "ops/Data_File_Info/ops/mime_type": { "type": "keyword" }
     }
   }
 }
