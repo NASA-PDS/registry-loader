@@ -1,7 +1,7 @@
 # PDS Registry Manager
 The PDS Registry Manager provides functionality for configuring the PDS Registry.
 
-A sub-component of the PDS Registry App (https://github.com/NASA-PDS/pds-app-registry).
+A sub-component of the PDS Registry App (https://github.com/NASA-PDS/pds-registry-app).
 
 # Documentation
 The documentation for the latest release of the PDS Registry, including release notes, installation and operation of the software are online at https://nasa-pds.github.io/pds-registry-app/.
