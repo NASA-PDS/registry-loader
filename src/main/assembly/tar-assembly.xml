@@ -71,6 +71,18 @@
     </fileSet>
 
     <fileSet>
+      <directory>src/main/resources/bin</directory>
+      <outputDirectory>/bin/</outputDirectory>
+      <includes>
+        <include>**/registry-manager.bat</include>
+      </includes>
+      <fileMode>775</fileMode>
+      <lineEnding>dos</lineEnding>
+      <filtered>true</filtered>
+    </fileSet>
+
+
+    <fileSet>
       <directory>src/main/resources/elastic</directory>
       <outputDirectory>/elastic/</outputDirectory>
       <fileMode>664</fileMode>
