@@ -36,19 +36,19 @@
 
       "_package_id": { "type": "keyword" },
 
-      "ops/Label_File_Info/ops/creation_date_time": { "type": "date" },
-      "ops/Label_File_Info/ops/file_ref": { "type": "keyword" },
-      "ops/Label_File_Info/ops/file_name": { "type": "keyword" },
-      "ops/Label_File_Info/ops/file_size": { "type": "long" },
-      "ops/Label_File_Info/ops/md5_checksum": { "type": "keyword" },
-      "ops/Label_File_Info/ops/blob": { "type": "binary", "index": false },
+      "ops:Label_File_Info/ops:creation_date_time": { "type": "date" },
+      "ops:Label_File_Info/ops:file_ref": { "type": "keyword" },
+      "ops:Label_File_Info/ops:file_name": { "type": "keyword" },
+      "ops:Label_File_Info/ops:file_size": { "type": "long" },
+      "ops:Label_File_Info/ops:md5_checksum": { "type": "keyword" },
+      "ops:Label_File_Info/ops:blob": { "type": "binary", "index": false },
 
-      "ops/Data_File_Info/ops/creation_date_time": { "type": "date" },
-      "ops/Data_File_Info/ops/file_ref": { "type": "keyword" },
-      "ops/Data_File_Info/ops/file_name": { "type": "keyword" },
-      "ops/Data_File_Info/ops/file_size": { "type": "long" },
-      "ops/Data_File_Info/ops/md5_checksum": { "type": "keyword" },
-      "ops/Data_File_Info/ops/mime_type": { "type": "keyword" }
+      "ops:Data_File_Info/ops:creation_date_time": { "type": "date" },
+      "ops:Data_File_Info/ops:file_ref": { "type": "keyword" },
+      "ops:Data_File_Info/ops:file_name": { "type": "keyword" },
+      "ops:Data_File_Info/ops:file_size": { "type": "long" },
+      "ops:Data_File_Info/ops:md5_checksum": { "type": "keyword" },
+      "ops:Data_File_Info/ops:mime_type": { "type": "keyword" }
     }
   }
 }
