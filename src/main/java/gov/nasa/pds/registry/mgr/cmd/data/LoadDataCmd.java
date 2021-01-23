@@ -1,10 +1,11 @@
 package gov.nasa.pds.registry.mgr.cmd.data;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Iterator;
+import java.util.function.BiPredicate;
 
 import org.apache.commons.cli.CommandLine;
 import org.elasticsearch.client.ResponseException;
@@ -46,12 +47,11 @@ public class LoadDataCmd implements CliCommand
         indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         authPath = cmdLine.getOptionValue("auth");
 
-        // Get list of files to load
-        String filePath = cmdLine.getOptionValue("file");
-        if(filePath == null) 
-        {
-            throw new Exception("Missing required parameter '-file'");
-        }
+        String strDir = cmdLine.getOptionValue("dir");
+        if(strDir == null) throw new Exception("Missing required parameter '-dir'");
+        
+        File dir = new File(strDir);
+        if(!dir.exists() || !dir.isDirectory()) throw new Exception("Invalid directory " + dir.getAbsolutePath());
         
         String tmp = cmdLine.getOptionValue("updateSchema", "Y");
         boolean updateSchema = parseYesNo("updateSchema", tmp);
@@ -63,11 +63,11 @@ public class LoadDataCmd implements CliCommand
         // Update schema
         if(updateSchema)
         {
-            updateSchema(filePath);
+            updateSchema(dir);
         }
         
         // Load data
-        loadData(filePath);
+        loadData(dir);
     }
 
     
@@ -89,9 +89,9 @@ public class LoadDataCmd implements CliCommand
     }
     
     
-    private void updateSchema(String filePath) throws Exception
+    private void updateSchema(File dir) throws Exception
     {
-        File newFields = getFieldListFile(filePath);
+        File newFields = new File(dir, FIELDS_FILE);
         System.out.println("Updating schema with fields from " + newFields.getAbsolutePath());
         
         RestClient client = null;
@@ -113,78 +113,44 @@ public class LoadDataCmd implements CliCommand
     }
     
     
-    private File getFieldListFile(String filePath)
+    private void loadData(File dir) throws Exception
     {
-        File file = new File(filePath);
-        if(file.isDirectory())
-        {
-            return new File(file, FIELDS_FILE);
-        }
-        
-        return new File(file.getParent(), FIELDS_FILE);
-    }
-    
-    
-    private void loadData(String filePath) throws Exception
-    {
-        System.out.println("Loading data...");
-        
-        List<File> files = getFiles(filePath);
-        if(files == null || files.isEmpty()) return;
+        DataLoader registryLoader = new DataLoader(esUrl, indexName, authPath);
+        DataLoader refsLoader = new DataLoader(esUrl, indexName + "-refs", authPath);
+        refsLoader.setBatchSize(10);
 
-        DataLoader loader = new DataLoader(esUrl, indexName, authPath);
         
-        for(File file: files)
+        Iterator<Path> it = Files.find(dir.toPath(), 1, new JsonMatcher()).iterator();
+        while(it.hasNext())
         {
-            loader.loadFile(file);
-        }
-    }
-    
-    
-    private static class JsonFileFilter implements FileFilter
-    {
-        public JsonFileFilter()
-        {
-        }
-        
-        @Override
-        public boolean accept(File file)
-        {
-            if(!file.isFile()) return false;
-
-            if(file.getName().toLowerCase().endsWith(".json")) return true;
-            
-            return false;
-        }
-    }
-
-    
-    private List<File> getFiles(String filePath) throws Exception
-    {
-        File file = new File(filePath);
-
-        if(file.isDirectory())
-        {
-            File[] ff = file.listFiles(new JsonFileFilter());
-            if(ff == null || ff.length == 0)
+            File file = it.next().toFile();
+            String fileName = file.getName();
+            if(fileName.startsWith("registry-docs"))
             {
-                System.out.println("Could not find any JSON files in " + file.getAbsolutePath());
-                return null;
+                registryLoader.loadFile(file);
             }
-            
-            return Arrays.asList(ff);
-        }
-        else
-        {
-            // Check if the file exists
-            if(!file.exists()) throw new Exception("File does not exist: " + file.getAbsolutePath());
-        
-            List<File> list = new ArrayList<>(1);
-            list.add(file);
-            return list;
+            else if(fileName.startsWith("refs-docs"))
+            {
+                refsLoader.loadFile(file);
+            }
+            else
+            {
+                System.out.println("[WARN] Unknown file type: " + file.getAbsolutePath());
+            }
         }
     }
     
+
+    private static class JsonMatcher implements BiPredicate<Path, BasicFileAttributes>
+    {
+        @Override
+        public boolean test(Path path, BasicFileAttributes attrs)
+        {
+            String fileName = path.getFileName().toString().toLowerCase();
+            return fileName.endsWith(".json");
+        }
+    }
+
     
     public void printHelp()
     {
@@ -194,7 +160,7 @@ public class LoadDataCmd implements CliCommand
         System.out.println("Load data into registry index");
         System.out.println();
         System.out.println("Required parameters:");
-        System.out.println("  -file <path>          A JSON file (generated by Harvest) or a directory to load."); 
+        System.out.println("  -dir <path>           Harvest output directory to load"); 
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>          Authentication config file");
         System.out.println("  -es <url>             Elasticsearch URL. Default is http://localhost:9200");

@@ -196,6 +196,9 @@ public class RegistryManagerCli
         bld = Option.builder("file").hasArg().argName("path");
         options.addOption(bld.build());
 
+        bld = Option.builder("dir").hasArg().argName("path");
+        options.addOption(bld.build());
+
         // Data dictionary commands
         bld = Option.builder("id").hasArg().argName("id");
         options.addOption(bld.build());
