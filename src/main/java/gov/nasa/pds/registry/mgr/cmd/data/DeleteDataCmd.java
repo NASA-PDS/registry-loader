@@ -24,7 +24,10 @@ import gov.nasa.pds.registry.mgr.util.es.EsUtils;
 public class DeleteDataCmd implements CliCommand
 {
     private String filterMessage;
+    private String regQuery;
+    private String refsQuery;
 
+    
     public DeleteDataCmd()
     {
     }
@@ -43,11 +46,7 @@ public class DeleteDataCmd implements CliCommand
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
 
-        String query = buildEsQuery(cmdLine);
-        if(query == null)
-        {
-            throw new Exception("One of the following options is required: -lidvid, -lid, -packageId, -all");
-        }
+        buildEsQuery(cmdLine);
 
         System.out.println("Elasticsearch URL: " + esUrl);
         System.out.println("            Index: " + indexName);
@@ -58,18 +57,11 @@ public class DeleteDataCmd implements CliCommand
         
         try
         {
-            // Create Elasticsearch client
             client = EsClientFactory.createRestClient(esUrl, authPath);
-
-            // Create request
-            Request req = new Request("POST", "/" + indexName + "/_delete_by_query");
-            req.setJsonEntity(query);
-            
-            // Execute request
-            Response resp = client.performRequest(req);
-            double numDeleted = extractNumDeleted(resp); 
-            
-            System.out.format("Deleted %.0f document(s)\n", numDeleted);
+            // Delete from registry index
+            deleteByQuery(client, indexName, regQuery);
+            // Delete from product references index
+            deleteByQuery(client, indexName + "-refs", refsQuery);
         }
         catch(ResponseException ex)
         {
@@ -82,8 +74,20 @@ public class DeleteDataCmd implements CliCommand
     }
 
     
+    private static void deleteByQuery(RestClient client, String indexName, String query) throws Exception
+    {
+        Request req = new Request("POST", "/" + indexName + "/_delete_by_query");
+        req.setJsonEntity(query);
+        
+        Response resp = client.performRequest(req);
+        double numDeleted = extractNumDeleted(resp); 
+        
+        System.out.format("Deleted %.0f document(s) from %s index\n", numDeleted, indexName);
+    }
+    
+    
     @SuppressWarnings("rawtypes")
-    private double extractNumDeleted(Response resp)
+    private static double extractNumDeleted(Response resp)
     {
         try
         {
@@ -104,38 +108,53 @@ public class DeleteDataCmd implements CliCommand
     }
     
     
-    private String buildEsQuery(CommandLine cmdLine) throws Exception
+    private void buildEsQuery(CommandLine cmdLine) throws Exception
     {
-        EsRequestBuilder bld = new EsRequestBuilder();
+        // Registry index
+        EsRequestBuilder regBld = new EsRequestBuilder();
+        // Product references index
+        EsRequestBuilder refsBld = new EsRequestBuilder();
         
         String id = cmdLine.getOptionValue("lidvid");
         if(id != null)
         {
-            filterMessage = "           LIDVID: " + id;
-            return bld.createFilterQuery("lidvid", id);
+            this.filterMessage = "           LIDVID: " + id;
+            this.regQuery = regBld.createFilterQuery("lidvid", id);
+            this.refsQuery = refsBld.createFilterQuery("collection_lidvid", id);
+            
+            return;
         }
         
         id = cmdLine.getOptionValue("lid");
         if(id != null)
         {
-            filterMessage = "              LID: " + id;
-            return bld.createFilterQuery("lid", id);
+            this.filterMessage = "              LID: " + id;
+            this.regQuery = regBld.createFilterQuery("lid", id);
+            this.refsQuery = refsBld.createFilterQuery("collection_lid", id);
+            
+            return;
         }
 
         id = cmdLine.getOptionValue("packageId");
         if(id != null)
         {
-            filterMessage = "       Package ID: " + id;            
-            return bld.createFilterQuery("_package_id", id);
+            this.filterMessage = "       Package ID: " + id;
+            this.regQuery = regBld.createFilterQuery("_package_id", id);
+            this.refsQuery = refsBld.createFilterQuery("_package_id", id);
+            
+            return;
         }
 
         if(cmdLine.hasOption("all"))
         {
-            filterMessage = "Delete all documents ";
-            return bld.createMatchAllQuery();
+            this.filterMessage = "Delete all documents ";
+            this.regQuery = regBld.createMatchAllQuery();
+            this.refsQuery = refsBld.createMatchAllQuery();
+            
+            return;
         }
 
-        return null;
+        throw new Exception("One of the following options is required: -lidvid, -lid, -packageId, -all");
     }
     
     
