@@ -19,9 +19,8 @@ import gov.nasa.pds.registry.mgr.util.es.EsUtils;
 
 public class CreateRegistryCmd implements CliCommand
 {
-    private static final String ERR_CFG = "Could not find default configuration directory. REGISTRY_MANAGER_HOME environment variable is not set."; 
-    
-    private static enum SchemaType { Registry, DataDictionary };
+    private static final String ERR_CFG = 
+            "Could not find default configuration directory. REGISTRY_MANAGER_HOME environment variable is not set."; 
     
     private RestClient client;
 
@@ -44,7 +43,6 @@ public class CreateRegistryCmd implements CliCommand
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
         
-        File schemaFile = getSchemaFile(cmdLine.getOptionValue("schema"), SchemaType.Registry);
         int shards = parseShards(cmdLine.getOptionValue("shards", "1"));
         int replicas = parseReplicas(cmdLine.getOptionValue("replicas", "0"));
         
@@ -56,13 +54,15 @@ public class CreateRegistryCmd implements CliCommand
         try
         {
             // Registry
-            createIndex(schemaFile, indexName, shards, replicas);
+            createIndex("elastic/registry.json", indexName, shards, replicas);
+            System.out.println();
+            
+            // Collection inventory (product references)
+            createIndex("elastic/refs.json", indexName + "-refs", shards, replicas);
             System.out.println();
             
             // Data dictionary
-            // Create index
-            File ddSchemaFile = getSchemaFile(null, SchemaType.DataDictionary); 
-            createIndex(ddSchemaFile, indexName + "-dd", 1, replicas);
+            createIndex("elastic/data-dic.json", indexName + "-dd", 1, replicas);
             // Load data
             DataLoader dl = new DataLoader(esUrl, indexName + "-dd", authPath);
             File zipFile = getDDDataFile();
@@ -75,8 +75,10 @@ public class CreateRegistryCmd implements CliCommand
     }
 
     
-    private void createIndex(File schemaFile, String indexName, int shards, int replicas) throws Exception
+    private void createIndex(String relativeSchemaPath, String indexName, int shards, int replicas) throws Exception
     {
+        File schemaFile = getSchemaFile(relativeSchemaPath);
+        
         try
         {
             System.out.println("Creating index...");
@@ -136,34 +138,12 @@ public class CreateRegistryCmd implements CliCommand
     }
     
     
-    private File getSchemaFile(String path, SchemaType type) throws Exception
+    private File getSchemaFile(String relPath) throws Exception
     {
-        File file = null;
-        
-        if(path == null)
-        {
-            // Get default
-            String home = System.getenv("REGISTRY_MANAGER_HOME");
-            if(home == null) 
-            {
-                throw new Exception(ERR_CFG);
-            }
+        String home = System.getenv("REGISTRY_MANAGER_HOME");
+        if(home == null) throw new Exception(ERR_CFG);
 
-            switch(type)
-            {
-            case Registry:
-                file = new File(home, "elastic/registry.json");
-                break;
-            case DataDictionary:
-                file = new File(home, "elastic/data-dic.json");
-                break;
-            }
-        }
-        else
-        {
-            file = new File(path);
-        }
-        
+        File file = new File(home, relPath);
         if(!file.exists()) throw new Exception("Schema file " + file.getAbsolutePath() + " does not exist");
         
         return file;
@@ -194,8 +174,6 @@ public class CreateRegistryCmd implements CliCommand
         System.out.println("  -auth <file>         Authentication config file");
         System.out.println("  -es <url>            Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>        Elasticsearch index name. Default is 'registry'");
-        System.out.println("  -schema <path>       Elasticsearch index schema (JSON file)"); 
-        System.out.println("                       Default value is $REGISTRY_MANAGER_HOME/elastic/registry.json");
         System.out.println("  -shards <number>     Number of shards (partitions) for registry index. Default is 1");
         System.out.println("  -replicas <number>   Number of replicas (extra copies) of registry index. Default is 0");
         System.out.println();

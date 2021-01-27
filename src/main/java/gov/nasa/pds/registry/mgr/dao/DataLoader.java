@@ -92,7 +92,6 @@ public class DataLoader
             }
             
             System.out.println("Loaded " + totalRecords + " document(s)");
-            System.out.println("Done");
         }
         finally
         {

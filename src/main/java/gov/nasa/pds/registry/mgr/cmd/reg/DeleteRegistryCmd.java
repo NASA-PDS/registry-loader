@@ -45,6 +45,7 @@ public class DeleteRegistryCmd implements CliCommand
         try
         {
             deleteIndex(indexName);
+            deleteIndex(indexName + "-refs");
             deleteIndex(indexName + "-dd");
             System.out.println("Done");            
         }
