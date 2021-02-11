@@ -7,11 +7,11 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 
-import gov.nasa.pds.registry.mgr.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.es.client.EsUtils;
+import gov.nasa.pds.registry.common.es.client.SearchResponseParser;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.util.es.EsDocWriter;
-import gov.nasa.pds.registry.mgr.util.es.EsUtils;
-import gov.nasa.pds.registry.mgr.util.es.SearchResponseParser;
 
 
 public abstract class DataExporter

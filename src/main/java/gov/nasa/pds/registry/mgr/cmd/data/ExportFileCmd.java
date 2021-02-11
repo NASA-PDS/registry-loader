@@ -8,14 +8,14 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 
+import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.es.client.EsUtils;
+import gov.nasa.pds.registry.common.es.client.SearchResponseParser;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
-import gov.nasa.pds.registry.mgr.es.client.EsClientFactory;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.util.EmbeddedBlobExporter;
 import gov.nasa.pds.registry.mgr.util.es.EsRequestBuilder;
-import gov.nasa.pds.registry.mgr.util.es.EsUtils;
-import gov.nasa.pds.registry.mgr.util.es.SearchResponseParser;
 
 
 public class ExportFileCmd implements CliCommand

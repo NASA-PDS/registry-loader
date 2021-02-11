@@ -6,12 +6,12 @@ import org.apache.commons.cli.CommandLine;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 
+import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.SchemaUpdater;
-import gov.nasa.pds.registry.mgr.es.client.EsClientFactory;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.es.EsUtils;
 
 
 public class UpdateSchemaCmd implements CliCommand

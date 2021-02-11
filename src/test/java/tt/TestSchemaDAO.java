@@ -6,8 +6,8 @@ import java.util.TreeSet;
 
 import org.elasticsearch.client.RestClient;
 
+import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.mgr.dao.SchemaDAO;
-import gov.nasa.pds.registry.mgr.es.client.EsClientFactory;
 import gov.nasa.pds.registry.mgr.util.Tuple;
 
 

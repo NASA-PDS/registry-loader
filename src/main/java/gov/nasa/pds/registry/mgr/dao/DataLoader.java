@@ -12,9 +12,9 @@ import java.net.UnknownHostException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import gov.nasa.pds.registry.mgr.es.client.HttpConnectionFactory;
+import gov.nasa.pds.registry.common.es.client.EsUtils;
+import gov.nasa.pds.registry.common.es.client.HttpConnectionFactory;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.es.EsUtils;
 
 
 public class DataLoader

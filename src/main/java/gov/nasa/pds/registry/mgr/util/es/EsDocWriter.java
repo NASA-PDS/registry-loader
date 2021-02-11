@@ -9,6 +9,8 @@ import java.io.StringWriter;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 
+import gov.nasa.pds.registry.common.es.client.SearchResponseParser;
+
 /**
  * <p>
  * Elasticsearch document writer.
