@@ -27,8 +27,12 @@
     "properties": {
       "collection_lidvid": { "type": "keyword" },
       "collection_lid": { "type": "keyword" },
+
       "product_lidvid": { "type": "keyword" },
       "product_lid": { "type": "keyword" },
+
+      "secondary_product_lidvid": { "type": "keyword" },
+      "secondary_product_lid": { "type": "keyword" },
 
       "_package_id": { "type": "keyword" }
     }

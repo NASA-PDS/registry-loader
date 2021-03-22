@@ -82,7 +82,14 @@ public class SchemaDAO
             }
             else
             {
-                throw new Exception("Could not find datatype for field '" + rec.id + "'");
+                if(rec.id.startsWith("ref_lid_") || rec.id.startsWith("ref_lidvid_"))
+                {
+                    results.add(new Tuple(rec.id, "keyword"));
+                }
+                else
+                {
+                    throw new Exception("Could not find datatype for field '" + rec.id + "'");
+                }
             }
         }
         
