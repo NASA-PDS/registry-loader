@@ -88,7 +88,8 @@ public class SchemaDAO
                 }
                 else
                 {
-                    throw new Exception("Could not find datatype for field '" + rec.id + "'");
+                    throw new Exception("Could not find datatype for field '" + rec.id + "'.\n" 
+                            + "See 'https://nasa-pds.github.io/pds-registry-app/operate/common-ops.html#Load' for more information.");
                 }
             }
         }
