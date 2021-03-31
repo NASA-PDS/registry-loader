@@ -82,10 +82,26 @@ public class SchemaDAO
             }
             else
             {
-                throw new Exception("Could not find datatype for field '" + rec.id + "'");
+                handleMissingDataTypeMapping(rec.id, results);
             }
         }
         
         return results;
+    }
+    
+    
+    private void handleMissingDataTypeMapping(String fieldId, List<Tuple> results) throws Exception
+    {
+        if(fieldId.startsWith("ref_lid_") || fieldId.startsWith("ref_lidvid_") 
+                || fieldId.endsWith("_Area"))
+        {
+            results.add(new Tuple(fieldId, "keyword"));
+        }
+        else
+        {
+            throw new Exception("Could not find datatype for field '" + fieldId + "'.\n" 
+                    + "See 'https://nasa-pds.github.io/pds-registry-app/operate/common-ops.html#Load' for more information.");
+        }
+        
     }
 }

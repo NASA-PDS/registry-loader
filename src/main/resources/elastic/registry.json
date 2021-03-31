@@ -27,7 +27,7 @@
     ],
     "properties": {
       "lid": { "type": "keyword" },
-      "vid": { "type": "keyword" },
+      "vid": { "type": "float" },
       "lidvid": { "type": "keyword" },
 
       "title": { "type": "text" },
