@@ -50,6 +50,7 @@ fi
 # Home
 SCRIPT_DIR=$(cd "$( dirname $0 )" && pwd)
 REGISTRY_MANAGER_HOME=$(cd ${SCRIPT_DIR}/.. && pwd)
+export REGISTRY_MANAGER_HOME
 
 # Executable Jar
 TOOL_JARS=(${REGISTRY_MANAGER_HOME}/dist/registry-manager-*.jar)
