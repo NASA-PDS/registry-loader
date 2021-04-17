@@ -52,6 +52,7 @@ jobs:
                 with:
                     lfs: true
                     fetch-depth: 0
+                    ref: ${{ github.event.pull_request.head.ref }}
                     token: ${{secrets.ADMIN_GITHUB_TOKEN}}
             -
                 name: 🤠 Roundup
