@@ -6,6 +6,12 @@ import java.security.cert.X509Certificate;
 import javax.net.ssl.X509TrustManager;
 
 
+/**
+ * This class is used for HTTPS connection configuration
+ * to support self-signed certificates.
+ * 
+ * @author karpenko
+ */
 public class TrustAllManager implements X509TrustManager
 {
     private X509Certificate[] certs;

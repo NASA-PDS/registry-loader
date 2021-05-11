@@ -4,11 +4,21 @@ import java.io.FileReader;
 import java.util.Properties;
 
 
+/**
+ * Utility class to read java properties files.
+ * 
+ * @author karpenko
+ */
 public class JavaProps
 {
     private Properties props;
     
     
+    /**
+     * Constructor
+     * @param filePath Java properties file
+     * @throws Exception
+     */
     public JavaProps(String filePath) throws Exception
     {
         if(filePath == null) throw new IllegalArgumentException("File path is null");
@@ -27,6 +37,12 @@ public class JavaProps
     }
     
     
+    /**
+     * Get boolean property.
+     * @param key
+     * @return
+     * @throws Exception
+     */
     public Boolean getBoolean(String key) throws Exception
     {
         if(props == null) return null;
@@ -43,6 +59,11 @@ public class JavaProps
     }
     
     
+    /**
+     * Get string property.
+     * @param key
+     * @return
+     */
     public String getProperty(String key)
     {
         return props.getProperty(key);

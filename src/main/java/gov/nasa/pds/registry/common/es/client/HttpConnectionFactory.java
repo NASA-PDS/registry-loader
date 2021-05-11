@@ -14,6 +14,11 @@ import org.apache.http.HttpHost;
 import gov.nasa.pds.registry.common.util.JavaProps;
 
 
+/**
+ * Factory class to create HTTP connections.
+ * 
+ * @author karpenko
+ */
 public class HttpConnectionFactory
 {
     private int timeout = 5000;
@@ -22,6 +27,13 @@ public class HttpConnectionFactory
     private String authHeader;
 
     
+    /**
+     * Constructor.
+     * @param esUrl Elasticsearch URL, e.g., "http://localhost:9200"
+     * @param indexName Elasticsearch index name.
+     * @param api API name, e.g., "_bulk".
+     * @throws Exception
+     */
     public HttpConnectionFactory(String esUrl, String indexName, String api) throws Exception
     {
         HttpHost host = EsUtils.parseEsUrl(esUrl);
@@ -29,6 +41,11 @@ public class HttpConnectionFactory
     }
     
     
+    /**
+     * Create HTTP connection
+     * @return
+     * @throws Exception
+     */
     public HttpURLConnection createConnection() throws Exception
     {
         HttpURLConnection con = (HttpURLConnection)url.openConnection();
@@ -45,6 +62,11 @@ public class HttpConnectionFactory
     }
 
     
+    /**
+     * Set connection timeout in seconds.
+     * 
+     * @param timeoutSec
+     */
     public void setTimeoutSec(int timeoutSec)
     {
         if(timeoutSec <= 0) throw new IllegalArgumentException("Timeout should be > 0");
@@ -52,12 +74,21 @@ public class HttpConnectionFactory
     }
 
     
+    /**
+     * Get host name
+     * @return
+     */
     public String getHostName()
     {
         return host.getHostName();
     }
     
     
+    /**
+     * Set user name and password for basic authentication
+     * @param user
+     * @param pass
+     */
     public void setBasicAuthentication(String user, String pass)
     {
         String auth = user + ":" + pass;
@@ -66,6 +97,11 @@ public class HttpConnectionFactory
     }
     
     
+    /**
+     * Setup authentication parameters and TLS/SSL.  
+     * @param authConfigFile Authentication configuration file.
+     * @throws Exception
+     */
     public void initAuth(String authConfigFile) throws Exception
     {
         if(authConfigFile == null) return;

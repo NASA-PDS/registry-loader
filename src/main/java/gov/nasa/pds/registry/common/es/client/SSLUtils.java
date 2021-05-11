@@ -7,8 +7,18 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 
+/**
+ * TLS/SSL utility methods.
+ * 
+ * @author karpenko
+ */
 public class SSLUtils
 {
+    /**
+     * Create "trust all" SSL context to support self-signed certificates.
+     * @return
+     * @throws Exception
+     */
     public static SSLContext createTrustAllContext() throws Exception
     {
         TrustManager[] trustManagers = new TrustManager[1];
