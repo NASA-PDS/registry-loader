@@ -17,7 +17,7 @@ public class EsClientFactory
      * @param esUrl Elasticsearch URL, e.g., "http://localhost:9200"
      * @param authPath Path to authentication configuration file.
      * @return Elasticsearch rest client instance.
-     * @throws Exception
+     * @throws Exception an exception
      */
     public static RestClient createRestClient(String esUrl, String authPath) throws Exception
     {

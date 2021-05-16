@@ -17,8 +17,8 @@ public class DebugUtils
 {
     /**
      * Print Elasticsearch API response.
-     * @param resp
-     * @throws IOException
+     * @param resp HTTP response
+     * @throws IOException an exception
      */
     public static void dumpResponseBody(Response resp) throws IOException
     {
@@ -30,8 +30,8 @@ public class DebugUtils
 
     /**
      * Print content of an input stream.
-     * @param is
-     * @throws IOException
+     * @param is input stream
+     * @throws IOException an exception
      */
     public static void dump(InputStream is) throws IOException
     {

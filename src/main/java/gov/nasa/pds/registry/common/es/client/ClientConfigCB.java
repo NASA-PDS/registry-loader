@@ -35,7 +35,7 @@ public class ClientConfigCB implements RestClientBuilder.HttpClientConfigCallbac
     
     /**
      * Set to true to trust self-signed certificates.
-     * @param b
+     * @param b Set to true to trust self-signed certificates.
      */
     public void setTrustSelfSignedCert(boolean b)
     {
@@ -45,8 +45,8 @@ public class ClientConfigCB implements RestClientBuilder.HttpClientConfigCallbac
     
     /**
      * Set user name and password for basic authentication.
-     * @param user
-     * @param pass
+     * @param user user name
+     * @param pass password
      */
     public void setUserPass(String user, String pass)
     {

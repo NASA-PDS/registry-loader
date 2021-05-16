@@ -27,8 +27,8 @@ public class RequestConfigCB implements RestClientBuilder.RequestConfigCallback
     
     /**
      * Constructor
-     * @param connectTimeoutSec
-     * @param socketTimeoutSec
+     * @param connectTimeoutSec connection timeout in seconds
+     * @param socketTimeoutSec socket timeout in seconds
      */
     public RequestConfigCB(int connectTimeoutSec, int socketTimeoutSec)
     {

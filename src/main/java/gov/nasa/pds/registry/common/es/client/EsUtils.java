@@ -20,9 +20,9 @@ public class EsUtils
 {
     /**
      * Parse Elasticsearch URL
-     * @param url
-     * @return
-     * @throws Exception
+     * @param url Elasticsearch URL, e.g., "http://localhost:9200"
+     * @return HTTP host information
+     * @throws Exception an exception
      */
     public static HttpHost parseEsUrl(String url) throws Exception
     {
@@ -88,8 +88,8 @@ public class EsUtils
     
     /**
      * Extract error message from Elasticsearch response exception.
-     * @param ex
-     * @return
+     * @param ex an exception
+     * @return error message
      */
     public static String extractErrorMessage(ResponseException ex)
     {
@@ -108,8 +108,8 @@ public class EsUtils
     
     /**
      * Extract error message from Elasticsearch response JSON.
-     * @param json
-     * @return
+     * @param json response JSON
+     * @return error message
      */
     @SuppressWarnings("rawtypes")
     public static String extractReasonFromJson(String json)
@@ -143,7 +143,7 @@ public class EsUtils
     
     /**
      * Print Elasticsearch response warnings.
-     * @param resp
+     * @param resp HTTP response
      */
     public static void printWarnings(Response resp)
     {

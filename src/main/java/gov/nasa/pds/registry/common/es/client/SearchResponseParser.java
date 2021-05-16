@@ -27,7 +27,7 @@ public class SearchResponseParser
          * This method is called for each record in response JSON.
          * @param id record ID / primary key
          * @param rec Parsed content of "_source" field. Usually it is a field name-value map.
-         * @throws Exception
+         * @throws Exception an exception
          */
         public void onRecord(String id, Object rec) throws Exception;
     }
@@ -49,7 +49,7 @@ public class SearchResponseParser
     
     /**
      * This method is used by searchAfter API to paginate results. 
-     * @return
+     * @return ID of the last parsed record
      */
     public String getLastId()
     {
@@ -59,7 +59,7 @@ public class SearchResponseParser
     
     /**
      * Get number of parsed documents.
-     * @return
+     * @return number of parsed documents
      */
     public int getNumDocs()
     {
@@ -71,7 +71,7 @@ public class SearchResponseParser
      * Parse response. Callback.onRecord() will be called for each record.
      * @param resp Elasticsearch rest client's response object.
      * @param cb Callback interface.
-     * @throws Exception
+     * @throws Exception an exception
      */
     public void parseResponse(Response resp, Callback cb) throws Exception
     {
@@ -107,8 +107,8 @@ public class SearchResponseParser
     
     /**
      * Parse "hits" array in JSON response.
-     * @param rd
-     * @throws Exception
+     * @param rd JSON reader
+     * @throws Exception an exception
      */
     private void parseHits(JsonReader rd) throws Exception
     {
@@ -138,8 +138,8 @@ public class SearchResponseParser
 
     /**
      * Parse a hit from "hits" array in JSON response.
-     * @param rd
-     * @throws Exception
+     * @param rd JSON reader
+     * @throws Exception an exception
      */
     private void parseHit(JsonReader rd) throws Exception
     {

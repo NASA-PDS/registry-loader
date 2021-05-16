@@ -32,7 +32,7 @@ public class HttpConnectionFactory
      * @param esUrl Elasticsearch URL, e.g., "http://localhost:9200"
      * @param indexName Elasticsearch index name.
      * @param api API name, e.g., "_bulk".
-     * @throws Exception
+     * @throws Exception an exception
      */
     public HttpConnectionFactory(String esUrl, String indexName, String api) throws Exception
     {
@@ -43,8 +43,8 @@ public class HttpConnectionFactory
     
     /**
      * Create HTTP connection
-     * @return
-     * @throws Exception
+     * @return HTTP connection
+     * @throws Exception an exception
      */
     public HttpURLConnection createConnection() throws Exception
     {
@@ -65,7 +65,7 @@ public class HttpConnectionFactory
     /**
      * Set connection timeout in seconds.
      * 
-     * @param timeoutSec
+     * @param timeoutSec timeout in seconds
      */
     public void setTimeoutSec(int timeoutSec)
     {
@@ -76,7 +76,7 @@ public class HttpConnectionFactory
     
     /**
      * Get host name
-     * @return
+     * @return host name
      */
     public String getHostName()
     {
@@ -86,8 +86,8 @@ public class HttpConnectionFactory
     
     /**
      * Set user name and password for basic authentication
-     * @param user
-     * @param pass
+     * @param user user name
+     * @param pass password
      */
     public void setBasicAuthentication(String user, String pass)
     {
@@ -100,7 +100,7 @@ public class HttpConnectionFactory
     /**
      * Setup authentication parameters and TLS/SSL.  
      * @param authConfigFile Authentication configuration file.
-     * @throws Exception
+     * @throws Exception an exception
      */
     public void initAuth(String authConfigFile) throws Exception
     {

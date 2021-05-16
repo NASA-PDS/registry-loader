@@ -17,7 +17,7 @@ public class JavaProps
     /**
      * Constructor
      * @param filePath Java properties file
-     * @throws Exception
+     * @throws Exception an exception
      */
     public JavaProps(String filePath) throws Exception
     {
@@ -39,9 +39,9 @@ public class JavaProps
     
     /**
      * Get boolean property.
-     * @param key
-     * @return
-     * @throws Exception
+     * @param key property key / name
+     * @return boolean value
+     * @throws Exception an exception
      */
     public Boolean getBoolean(String key) throws Exception
     {
@@ -61,8 +61,8 @@ public class JavaProps
     
     /**
      * Get string property.
-     * @param key
-     * @return
+     * @param key property key / name
+     * @return String value
      */
     public String getProperty(String key)
     {

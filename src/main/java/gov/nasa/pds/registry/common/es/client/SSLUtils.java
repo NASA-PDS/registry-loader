@@ -16,8 +16,8 @@ public class SSLUtils
 {
     /**
      * Create "trust all" SSL context to support self-signed certificates.
-     * @return
-     * @throws Exception
+     * @return SSL context object
+     * @throws Exception an exception
      */
     public static SSLContext createTrustAllContext() throws Exception
     {

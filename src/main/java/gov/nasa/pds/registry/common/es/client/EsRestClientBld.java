@@ -22,7 +22,7 @@ public class EsRestClientBld
     /**
      * Constructor.
      * @param url Elasticsearch URL, e.g., "http://localhost:9200"
-     * @throws Exception
+     * @throws Exception an exception
      */
     public EsRestClientBld(String url) throws Exception
     {
@@ -36,7 +36,7 @@ public class EsRestClientBld
     
     /**
      * Build the Elasticsearch rest client
-     * @return
+     * @return Elasticsearch rest client
      */
     public RestClient build() 
     {
@@ -49,8 +49,8 @@ public class EsRestClientBld
     
     /**
      * Configure authentication
-     * @param props
-     * @throws Exception
+     * @param props properties
+     * @throws Exception an exception
      */
     public void configureAuth(JavaProps props) throws Exception
     {
