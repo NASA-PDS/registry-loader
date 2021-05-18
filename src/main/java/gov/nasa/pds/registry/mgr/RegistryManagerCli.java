@@ -23,8 +23,15 @@ import gov.nasa.pds.registry.mgr.cmd.dd.UpdateSchemaCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
 import gov.nasa.pds.registry.mgr.util.ExceptionUtils;
+import gov.nasa.pds.registry.mgr.util.Logger;
 
-
+/**
+ * Main CLI (Command-Line Interface) manager / dispatcher.
+ * RegistryManagerCli.run() method parses command-line parameters and 
+ * calls different CLI commands, such as "load-data", "create-registry", etc.
+ *   
+ * @author karpenko
+ */
 public class RegistryManagerCli
 {
     private Map<String, CliCommand> commands;
@@ -33,6 +40,9 @@ public class RegistryManagerCli
     private CommandLine cmdLine;
     
     
+    /**
+     * Constructor
+     */
     public RegistryManagerCli()
     {
         initCommands();
@@ -40,6 +50,9 @@ public class RegistryManagerCli
     }
     
     
+    /**
+     * Print main help screen.
+     */
     public void printHelp()
     {
         System.out.println("Usage: registry-manager <command> <options>");
@@ -76,7 +89,11 @@ public class RegistryManagerCli
         System.out.println("  registry-manager load-data -help");
     }
 
-        
+
+    /**
+     * Main entry point into this class. 
+     * @param args Command line arguments from main() function.
+     */
     public void run(String[] args)
     {
         // Print help if there are no command line parameters
@@ -110,7 +127,7 @@ public class RegistryManagerCli
         }
         catch(Exception ex)
         {
-            System.out.println("[ERROR] " + ExceptionUtils.getMessage(ex));
+            Logger.error(ExceptionUtils.getMessage(ex));
             return false;
         }
         
@@ -118,6 +135,11 @@ public class RegistryManagerCli
     }
     
     
+    /**
+     * Parse command line parameters. Apache Commons CLI library is used.
+     * @param pArgs
+     * @return
+     */
     private boolean parse(String[] pArgs)
     {
         try
@@ -128,20 +150,20 @@ public class RegistryManagerCli
             String[] args = cmdLine.getArgs();
             if(args == null || args.length == 0)
             {
-                System.out.println("[ERROR] Missing command.");
+                Logger.error("Missing command.");
                 return false;
             }
 
             if(args.length > 1)
             {
-                System.out.println("[ERROR] Invalid command: " + String.join(" ", args)); 
+                Logger.error("Invalid command: " + String.join(" ", args)); 
                 return false;
             }
             
             this.command = commands.get(args[0]);
             if(this.command == null)
             {
-                System.out.println("[ERROR] Invalid command: " + args[0]);
+                Logger.error("Invalid command: " + args[0]);
                 return false;
             }
             
@@ -155,6 +177,9 @@ public class RegistryManagerCli
     }
 
     
+    /**
+     * Initialize all CLI commands
+     */
     private void initCommands()
     {
         commands = new HashMap<>();
@@ -178,6 +203,9 @@ public class RegistryManagerCli
     }
     
     
+    /**
+     * Initialize Apache Commons CLI library.
+     */
     private void initOptions()
     {
         options = new Options();
@@ -216,6 +244,9 @@ public class RegistryManagerCli
         options.addOption(bld.build());
 
         bld = Option.builder("updateSchema").hasArg().argName("y/n");
+        options.addOption(bld.build());
+
+        bld = Option.builder("ldd").hasArg().argName("url");
         options.addOption(bld.build());
 
         // Data commands

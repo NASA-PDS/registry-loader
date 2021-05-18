@@ -9,12 +9,23 @@ import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.RegistryDataExporter;
 
 
+/**
+ * A CLI command to export data from registry index in Elasticsearch.
+ * 
+ * @author karpenko
+ */
 public class ExportDataCmd implements CliCommand
 {
+    private static enum FilterType { LidVid, PackageId, All };
+    
+    private FilterType filterType;
     private String filterFieldName;
     private String filterFieldValue;
     
-    
+
+    /**
+     * Constructor
+     */
     public ExportDataCmd()
     {
     }
@@ -40,15 +51,15 @@ public class ExportDataCmd implements CliCommand
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
 
-        String msg = extractFilterParams(cmdLine);
-        if(msg == null)
+        extractFilterParams(cmdLine);
+        if(filterType == null)
         {
             throw new Exception("One of the following options is required: -lidvid, -packageId, -all");
         }
 
         System.out.println("Elasticsearch URL: " + esUrl);
         System.out.println("            Index: " + indexName);
-        System.out.println(msg);
+        System.out.println(getFilterMessage());
         System.out.println();
         
         RegistryDataExporter exp = new RegistryDataExporter(esUrl, indexName, authPath);
@@ -57,33 +68,62 @@ public class ExportDataCmd implements CliCommand
     }
 
     
-    private String extractFilterParams(CommandLine cmdLine) throws Exception
+    /**
+     * Extract command-line filter parameters (-lidvid, -packageId, -all)
+     * @param cmdLine
+     * @throws Exception
+     */
+    private void extractFilterParams(CommandLine cmdLine) throws Exception
     {
         String id = cmdLine.getOptionValue("lidvid");
         if(id != null)
         {
+            filterType = FilterType.LidVid;
             filterFieldName = "lidvid";
             filterFieldValue = id;
-            return "           LIDVID: " + id;
+            return;
         }
         
         id = cmdLine.getOptionValue("packageId");
         if(id != null)
         {
+            filterType = FilterType.PackageId;
             filterFieldName = "_package_id";
             filterFieldValue = id;
-            return "       Package ID: " + id;            
+            return;            
         }
 
         if(cmdLine.hasOption("all"))
         {
-            return "Export all documents ";
+            filterType = FilterType.All;
+            return;
         }
-
-        return null;
     }
     
     
+    /**
+     * Get filter message (LIDVID, Package ID, All)
+     * @return
+     */
+    private String getFilterMessage()
+    {
+        switch(filterType)
+        {
+        case LidVid:
+            return "           LIDVID: " + filterFieldValue;
+        case PackageId:
+            return "       Package ID: " + filterFieldValue;
+        case All:
+            return "Export all documents ";
+        }
+        
+        return "";
+    }
+    
+    
+    /**
+     * Print help screen.
+     */
     public void printHelp()
     {
         System.out.println("Usage: registry-manager export-data <options>");

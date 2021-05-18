@@ -11,9 +11,21 @@ import org.w3c.dom.Node;
 import org.xml.sax.ErrorHandler;
 
 
+/**
+ * Helper methods to work with XML DOM API.
+ * 
+ * @author karpenko
+ */
 public class XmlDomUtils
 {
     
+    /**
+     * Read XML from a file into a DOM document.
+     * @param dbf document builder factory
+     * @param file XML file
+     * @return XML DOM model
+     * @throws Exception an exception
+     */
     public static Document readXml(DocumentBuilderFactory dbf, File file) throws Exception
     {
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -22,6 +34,12 @@ public class XmlDomUtils
     }
 
     
+    /**
+     * Read XML from a file into a DOM document.
+     * @param file XML file
+     * @return XML DOM model
+     * @throws Exception an exception
+     */
     public static Document readXml(File file) throws Exception
     {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -29,6 +47,14 @@ public class XmlDomUtils
     }
 
 
+    /**
+     * Read XML from a file into a DOM document.
+     * @param xmlFile XML file
+     * @param xsdFile XSD schema file to validate XML
+     * @param eh custom error handler
+     * @return XML DOM model
+     * @throws Exception an exception
+     */
     public static Document readXml(File xmlFile, File xsdFile, ErrorHandler eh) throws Exception
     {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -43,6 +69,12 @@ public class XmlDomUtils
     }
 
 
+    /**
+     * Get node attribute by name.
+     * @param node a node
+     * @param attributeName attribute name
+     * @return an attribute
+     */
     public static String getAttribute(Node node, String attributeName)
     {
         if(node == null || node.getAttributes() == null) return null;
@@ -52,6 +84,11 @@ public class XmlDomUtils
     }
 
 
+    /**
+     * Get node attributes.
+     * @param node a node
+     * @return attribute map
+     */
     public static NamedNodeMap getAttributes(Node node)
     {
         if(node == null || node.getAttributes() == null) return null;

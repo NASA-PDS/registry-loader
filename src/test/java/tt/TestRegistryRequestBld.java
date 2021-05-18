@@ -2,9 +2,9 @@ package tt;
 
 import java.io.File;
 
-import gov.nasa.pds.registry.mgr.util.es.EsRequestBuilder;
+import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 
-public class TestRequestBld
+public class TestRegistryRequestBld
 {
 
     public static void main(String[] args) throws Exception
@@ -15,7 +15,7 @@ public class TestRequestBld
     
     private static void testCreateRegistryRequest() throws Exception
     {
-        EsRequestBuilder bld = new EsRequestBuilder(true);
+        RegistryRequestBuilder bld = new RegistryRequestBuilder(true);
 
         File schemaFile = new File("/tmp/schema/t2.json");
         String json = bld.createCreateIndexRequest(schemaFile, 3, 1);
@@ -25,7 +25,7 @@ public class TestRequestBld
     
     private static void testExportDataRequest() throws Exception
     {
-        EsRequestBuilder bld = new EsRequestBuilder(true);
+        RegistryRequestBuilder bld = new RegistryRequestBuilder(true);
         
         String json = bld.createExportDataRequest("lidvid", "abc123", "lidvid", 100, null);
         System.out.println(json);

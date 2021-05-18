@@ -8,6 +8,11 @@ import java.util.Base64;
 import java.util.zip.InflaterInputStream;
 
 
+/**
+ * Few methods to export a BLOB to a file.
+ * 
+ * @author karpenko
+ */
 public class EmbeddedBlobExporter
 {
     
@@ -15,7 +20,7 @@ public class EmbeddedBlobExporter
      * Export Base64 encoded string into a file
      * @param blob Base64 encoded string
      * @param filePath output file path
-     * @throws Exception
+     * @throws Exception an exception
      */
     public static void export(String blob, String filePath) throws Exception
     {
@@ -28,7 +33,7 @@ public class EmbeddedBlobExporter
      * Export binary data into a file
      * @param blob raw data
      * @param filePath output file path
-     * @throws Exception
+     * @throws Exception an exception
      */
     public static void export(byte[] blob, String filePath) throws Exception
     {
@@ -44,9 +49,9 @@ public class EmbeddedBlobExporter
 
     /**
      * Copy data from input to output stream
-     * @param source
-     * @param dest
-     * @throws Exception
+     * @param source source stream
+     * @param dest destination stream
+     * @throws Exception an exception
      */
     private static void copy(InputStream source, OutputStream dest) throws Exception
     {

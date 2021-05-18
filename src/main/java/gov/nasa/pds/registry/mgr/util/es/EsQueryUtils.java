@@ -4,8 +4,18 @@ import java.io.IOException;
 
 import com.google.gson.stream.JsonWriter;
 
+/**
+ * Helper methods for building Elasticsearch queries. 
+ *  
+ * @author karpenko
+ */
 public class EsQueryUtils
 {
+    /**
+     * Append "match_all" object.
+     * @param writer JSON writer
+     * @throws IOException an exception
+     */
     public static void appendMatchAll(JsonWriter writer) throws IOException
     {
         writer.name("match_all");
@@ -14,6 +24,11 @@ public class EsQueryUtils
     }
 
 
+    /**
+     * Append match all query.
+     * @param writer JSON writer
+     * @throws IOException an exception
+     */
     public static void appendMatchAllQuery(JsonWriter writer) throws IOException
     {
         writer.name("query");
@@ -23,6 +38,13 @@ public class EsQueryUtils
     }
 
     
+    /**
+     * Append filter query
+     * @param writer JSON writer
+     * @param field field name
+     * @param value field value
+     * @throws IOException an exception
+     */
     public static void appendFilterQuery(JsonWriter writer, String field, String value) throws IOException
     {
         writer.name("query");
@@ -38,6 +60,11 @@ public class EsQueryUtils
     }
     
     
+    /**
+     * Append must match all criterion
+     * @param writer JSON writer
+     * @throws IOException an exception
+     */
     private static void appendMustMatchAll(JsonWriter writer) throws IOException
     {
         writer.name("must");
@@ -47,6 +74,13 @@ public class EsQueryUtils
     }
 
     
+    /**
+     * Append term filter
+     * @param writer JSON writer
+     * @param field field name
+     * @param value field value
+     * @throws IOException an exception
+     */
     private static void appendTermFilter(JsonWriter writer, String field, String value) throws IOException
     {
         writer.name("filter");

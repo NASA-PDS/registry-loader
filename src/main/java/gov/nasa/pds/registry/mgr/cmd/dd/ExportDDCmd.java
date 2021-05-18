@@ -9,8 +9,16 @@ import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.DDDataExporter;
 
 
+/**
+ * A CLI command to export data dictionary index ("registry-dd") from Elasticsearch. 
+ * 
+ * @author karpenko
+ */
 public class ExportDDCmd implements CliCommand
 {
+    /**
+     * Constructor
+     */
     public ExportDDCmd()
     {
     }
@@ -45,6 +53,9 @@ public class ExportDDCmd implements CliCommand
     }
 
     
+    /**
+     * Print help screen.
+     */
     public void printHelp()
     {
         System.out.println("Usage: registry-manager export-dd <options>");

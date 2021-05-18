@@ -13,10 +13,16 @@ import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.DataLoader;
+import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.es.EsRequestBuilder;
 
 
+/**
+ * A CLI command to create registry indices (registry, registry-dd, registry-refs)
+ * in Elasticsearch. Also, default data dictionary data is loaded into "registry-dd" index.
+ * 
+ * @author karpenko
+ */
 public class CreateRegistryCmd implements CliCommand
 {
     private static final String ERR_CFG = 
@@ -25,6 +31,9 @@ public class CreateRegistryCmd implements CliCommand
     private RestClient client;
 
     
+    /**
+     * Constructor
+     */
     public CreateRegistryCmd()
     {
     }
@@ -65,7 +74,7 @@ public class CreateRegistryCmd implements CliCommand
             createIndex("elastic/data-dic.json", indexName + "-dd", 1, replicas);
             // Load data
             DataLoader dl = new DataLoader(esUrl, indexName + "-dd", authPath);
-            File zipFile = getDDDataFile();
+            File zipFile = getDataDicFile();
             dl.loadZippedFile(zipFile, "dd.json");
         }
         finally
@@ -75,6 +84,15 @@ public class CreateRegistryCmd implements CliCommand
     }
 
     
+    /**
+     * Create Elasticsearch index
+     * @param relativeSchemaPath Relative path to Elasticsearch index schema file.
+     * The path is relative to $REGISTRY_MANGER_HOME, e.g., "elastic/registry.json"
+     * @param indexName Elasticsearch index name
+     * @param shards number of shards
+     * @param replicas number of replicas
+     * @throws Exception
+     */
     private void createIndex(String relativeSchemaPath, String indexName, int shards, int replicas) throws Exception
     {
         File schemaFile = getSchemaFile(relativeSchemaPath);
@@ -89,7 +107,7 @@ public class CreateRegistryCmd implements CliCommand
             
             // Create request
             Request req = new Request("PUT", "/" + indexName);
-            EsRequestBuilder bld = new EsRequestBuilder();
+            RegistryRequestBuilder bld = new RegistryRequestBuilder();
             String jsonReq = bld.createCreateIndexRequest(schemaFile, shards, replicas);
             req.setJsonEntity(jsonReq);
 
@@ -105,6 +123,12 @@ public class CreateRegistryCmd implements CliCommand
     }
     
 
+    /**
+     * Parse and validate "-shards" parameter
+     * @param str
+     * @return
+     * @throws Exception
+     */
     private int parseShards(String str) throws Exception
     {
         int val = parseInt(str);
@@ -114,6 +138,12 @@ public class CreateRegistryCmd implements CliCommand
     }
     
 
+    /**
+     * Parse and validate "-replicas" parameter
+     * @param str
+     * @return
+     * @throws Exception
+     */
     private int parseReplicas(String str) throws Exception
     {
         int val = parseInt(str);
@@ -123,6 +153,11 @@ public class CreateRegistryCmd implements CliCommand
     }
 
     
+    /**
+     * Parse integer
+     * @param str
+     * @return
+     */
     private int parseInt(String str)
     {
         if(str == null) return 0;
@@ -138,6 +173,12 @@ public class CreateRegistryCmd implements CliCommand
     }
     
     
+    /**
+     * Get Elasticsearch schema file by relative path.
+     * @param relPath
+     * @return
+     * @throws Exception
+     */
     private File getSchemaFile(String relPath) throws Exception
     {
         String home = System.getenv("REGISTRY_MANAGER_HOME");
@@ -150,7 +191,12 @@ public class CreateRegistryCmd implements CliCommand
     }
     
     
-    private File getDDDataFile() throws Exception
+    /**
+     * Get default data dictionary data file.
+     * @return
+     * @throws Exception
+     */
+    private File getDataDicFile() throws Exception
     {
         String home = System.getenv("REGISTRY_MANAGER_HOME");
         if(home == null) 
@@ -163,6 +209,9 @@ public class CreateRegistryCmd implements CliCommand
     }
     
     
+    /**
+     * Print help screen.
+     */
     public void printHelp()
     {
         System.out.println("Usage: registry-manager create-registry <options>");

@@ -23,9 +23,10 @@
       "attr_name": { "type": "keyword" },
       "data_type": { "type": "keyword" },
       "description": { "type": "text" },
-
       "es_field_name": { "type": "keyword" },
-      "es_data_type": { "type": "keyword", "store": true }
+      "es_data_type": { "type": "keyword" },
+      "version": { "type": "keyword" },
+      "date": { "type": "date" }
     }
   }
 }

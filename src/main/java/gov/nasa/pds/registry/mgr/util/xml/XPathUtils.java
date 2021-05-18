@@ -15,16 +15,31 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
+/**
+ * Helper methods to work with XPath API.
+ * 
+ * @author karpenko
+ */
 public class XPathUtils
 {
     private XPathFactory xpf;
     
+    /**
+     * Constructor
+     */
     public XPathUtils()
     {
         xpf = XPathFactory.newInstance();
     }
     
     
+    /**
+     * Compile XPath
+     * @param xpf XPath factory
+     * @param str String XPath to compile
+     * @return compiled XPath
+     * @throws Exception an exception
+     */
     public static XPathExpression compileXPath(XPathFactory xpf, String str) throws Exception
     {
         XPath xpath = xpf.newXPath();
@@ -33,6 +48,13 @@ public class XPathUtils
     }
 
     
+    /**
+     * Get a String value of an XPath 
+     * @param doc XML DOM model
+     * @param expr an XPath
+     * @return a string value
+     * @throws Exception an exception
+     */
     public static String getStringValue(Document doc, XPathExpression expr) throws Exception
     {
         Object res = expr.evaluate(doc, XPathConstants.STRING);
@@ -40,6 +62,13 @@ public class XPathUtils
     }
 
     
+    /**
+     * Get a list of String values of an XPath
+     * @param obj parent node
+     * @param expr an XPath
+     * @return String list
+     * @throws Exception an exception
+     */
     public static List<String> getStringList(Object obj, XPathExpression expr) throws Exception
     {
         String[] values = getStringArray(obj, expr);
@@ -47,6 +76,13 @@ public class XPathUtils
     }
 
     
+    /**
+     * Get a list of String values of an XPath
+     * @param obj parent node
+     * @param xpath an XPath
+     * @return String list
+     * @throws Exception an exception
+     */
     public List<String> getStringList(Object obj, String xpath) throws Exception
     {
         XPathExpression expr = compileXPath(xpf, xpath);
@@ -54,6 +90,13 @@ public class XPathUtils
     }
 
     
+    /**
+     * Get a set of String values of an XPath
+     * @param doc XML DOM model
+     * @param xpath an XPath
+     * @return String set
+     * @throws Exception an exception
+     */
     public Set<String> getStringSet(Document doc, String xpath) throws Exception
     {
         XPathExpression expr = compileXPath(xpf, xpath);
@@ -67,6 +110,13 @@ public class XPathUtils
     }
 
     
+    /**
+     * Get an array of String values of an XPath
+     * @param obj parent node
+     * @param expr an XPath
+     * @return String array
+     * @throws Exception an exception
+     */
     public static String[] getStringArray(Object obj, XPathExpression expr) throws Exception
     {
         NodeList nodes = (NodeList) expr.evaluate(obj, XPathConstants.NODESET);
@@ -83,6 +133,13 @@ public class XPathUtils
     }
 
     
+    /**
+     * Get node list of an XPath
+     * @param item parent node
+     * @param expr an XPath
+     * @return node list
+     * @throws Exception an exception
+     */
     public static NodeList getNodeList(Object item, XPathExpression expr) throws Exception
     {
         if(item == null) return null;
@@ -92,6 +149,13 @@ public class XPathUtils
     }
     
     
+    /**
+     * Get node list of an XPath
+     * @param item parent node
+     * @param xpath an XPath
+     * @return node list
+     * @throws Exception an exception
+     */
     public NodeList getNodeList(Object item, String xpath) throws Exception
     {
         if(item == null) return null;
@@ -101,6 +165,13 @@ public class XPathUtils
     }
 
     
+    /**
+     * Get node count of an XPath
+     * @param item parent node
+     * @param xpath an XPath
+     * @return node count
+     * @throws Exception an exception
+     */
     public int getNodeCount(Object item, String xpath) throws Exception
     {
         if(item == null) return 0;
@@ -111,6 +182,13 @@ public class XPathUtils
     }
     
     
+    /**
+     * Get first node of an XPath
+     * @param item parent node
+     * @param xpath an XPath
+     * @return a node
+     * @throws Exception an exception
+     */
     public Node getFirstNode(Object item, String xpath) throws Exception
     {
         if(item == null) return null;

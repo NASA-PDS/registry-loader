@@ -19,16 +19,24 @@ import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
+import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.es.EsRequestBuilder;
 
 
+/**
+ * A CLI command to set PDS label archive status in Elasticsearch registry index.
+ * Status can be updated by LidVid or PackageId.
+ * 
+ * @author karpenko
+ */
 public class SetArchiveStatusCmd implements CliCommand
 {
     private Set<String> statusNames; 
-
     private String filterMessage;
 
+    /**
+     * Constructor
+     */
     public SetArchiveStatusCmd()
     {
         statusNames = new TreeSet<>();
@@ -106,6 +114,11 @@ public class SetArchiveStatusCmd implements CliCommand
     }
 
     
+    /**
+     * Extract number of updated records from Elasticsearch API response.
+     * @param resp
+     * @return number of updated records
+     */
     @SuppressWarnings("rawtypes")
     private double extractNumUpdated(Response resp)
     {
@@ -128,13 +141,20 @@ public class SetArchiveStatusCmd implements CliCommand
     }
 
     
+    /**
+     * Create Elasticsearch query to update PDS label status
+     * @param cmdLine
+     * @param status
+     * @return
+     * @throws Exception
+     */
     private String buildEsQuery(CommandLine cmdLine, String status) throws Exception
     {
         String id = cmdLine.getOptionValue("lidvid");
         if(id != null)
         {
             filterMessage = "           LIDVID: " + id;
-            EsRequestBuilder bld = new EsRequestBuilder();
+            RegistryRequestBuilder bld = new RegistryRequestBuilder();
             return bld.createUpdateStatusRequest(status, "lidvid", id);
         }
         
@@ -142,7 +162,7 @@ public class SetArchiveStatusCmd implements CliCommand
         if(id != null)
         {
             filterMessage = "       Package ID: " + id;
-            EsRequestBuilder bld = new EsRequestBuilder();
+            RegistryRequestBuilder bld = new RegistryRequestBuilder();
             return bld.createUpdateStatusRequest(status, "_package_id", id);
         }
 
@@ -150,6 +170,13 @@ public class SetArchiveStatusCmd implements CliCommand
     }
 
     
+    /**
+     * Get value of "-status" command-line parameter. 
+     * Throw exception if invalid status is passed.
+     * @param cmdLine
+     * @return valid status value
+     * @throws Exception Throw exception if invalid status is passed.
+     */
     private String getStatus(CommandLine cmdLine) throws Exception
     {
         String tmp = cmdLine.getOptionValue("status");
@@ -168,6 +195,9 @@ public class SetArchiveStatusCmd implements CliCommand
     }
     
     
+    /**
+     * Print help screen
+     */
     public void printHelp()
     {
         System.out.println("Usage: registry-manager set-archive-status <options>");

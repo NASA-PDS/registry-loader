@@ -1,5 +1,10 @@
 package gov.nasa.pds.registry.mgr.dd.parser;
 
+/**
+ * Data dictionary attribute. 
+ * 
+ * @author karpenko
+ */
 public class DDAttribute
 {
     public String id;
@@ -14,6 +19,9 @@ public class DDAttribute
     public String description;
     
     
+    /**
+     * Constructor
+     */
     public DDAttribute()
     {        
     }

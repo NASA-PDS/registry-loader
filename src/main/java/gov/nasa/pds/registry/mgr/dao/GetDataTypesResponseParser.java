@@ -12,24 +12,54 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 
 
-public class MgetParser
+/**
+ *  This class is used by SchemaDao to parse response from Elasticsearch 
+ *  data dictionary query to get data types for a list of field ids.
+ *   
+ * @author karpenko
+ */
+public class GetDataTypesResponseParser
 {
+    /**
+     * Inner class to store one response record.
+     * @author karpenko
+     */
     public static class Record
     {
+        /**
+         * Field ID
+         */
         public String id;
+        
+        /**
+         * True if field ID was found in the data dictionary
+         */
         public boolean found;
+        
+        /**
+         * Elasticsearch data type.
+         */
         public String esDataType;
     }
     
     
     private JsonReader rd;
 
-    
-    public MgetParser()
+
+    /**
+     * Constructor
+     */
+    public GetDataTypesResponseParser()
     {
     }
     
     
+    /**
+     * Parse HTTP body of a multi-get response (JSON)
+     * @param entity HTTP response
+     * @return a list of records
+     * @throws IOException an exception
+     */
     public List<Record> parse(HttpEntity entity) throws IOException
     {
         List<Record> records = new ArrayList<>();
@@ -65,6 +95,11 @@ public class MgetParser
     }
     
     
+    /**
+     * Parse document sub-tree
+     * @return a record
+     * @throws IOException an exception
+     */
     private Record parseDoc() throws IOException
     {
         Record rec = new Record();
@@ -98,6 +133,11 @@ public class MgetParser
     }
     
     
+    /**
+     * Parse Elasticsearch document "_source" field and extract "es_data_type" value.  
+     * @param rec Update this object
+     * @throws IOException an exception
+     */
     protected void parseSource(Record rec) throws IOException
     {
         rd.beginObject();

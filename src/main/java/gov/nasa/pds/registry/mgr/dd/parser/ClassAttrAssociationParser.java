@@ -3,11 +3,33 @@ package gov.nasa.pds.registry.mgr.dd.parser;
 import java.io.File;
 import com.google.gson.stream.JsonToken;
 
+import gov.nasa.pds.registry.mgr.util.Logger;
 
-public class ClassAttrAssociationParser extends BaseDDParser
+
+/**
+ * PDS LDD JSON file parser. 
+ * Parses "dataDictionary" -&gt; "classDictionary" subtree and extracts attribute associations 
+ * ("class" -&gt; "association" -&gt; "isAttribute" == true).
+ * For each "attributeId" a callback method is called.
+ * 
+ * @author karpenko
+ */
+public class ClassAttrAssociationParser extends BaseLddParser
 {
+    /**
+     * Callback interface 
+     * @author karpenko
+     */
     public static interface Callback
     {
+        /**
+         * This method is called for each "attributeId" from class attribute association
+         * ("class" -&gt; "association" -&gt; "isAttribute" == true).
+         * @param classNs class namespace
+         * @param className class name
+         * @param attrId attribute ID
+         * @throws Exception an exception
+         */
         public void onAssociation(String classNs, String className, String attrId) throws Exception;
     }
     
@@ -21,6 +43,12 @@ public class ClassAttrAssociationParser extends BaseDDParser
     private String className;
     
     
+    /**
+     * Constructor
+     * @param file PDS LDD JSON file
+     * @param cb Callback
+     * @throws Exception an exception
+     */
     public ClassAttrAssociationParser(File file, Callback cb) throws Exception
     {
         super(file);
@@ -31,7 +59,7 @@ public class ClassAttrAssociationParser extends BaseDDParser
     @Override
     protected void parseClassDictionary() throws Exception
     {
-        System.out.println("Parsing class and attribute associations...");
+        Logger.debug("Parsing class and attribute associations from " + ddFile.getAbsolutePath());
 
         jsonReader.beginArray();
         

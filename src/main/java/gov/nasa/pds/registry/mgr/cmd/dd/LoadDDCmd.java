@@ -2,8 +2,6 @@ package gov.nasa.pds.registry.mgr.cmd.dd;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.cli.CommandLine;
 
@@ -12,14 +10,23 @@ import com.opencsv.CSVReader;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.DataLoader;
-import gov.nasa.pds.registry.mgr.dd.parser.AttributeDictionaryParser;
-import gov.nasa.pds.registry.mgr.dd.parser.ClassAttrAssociationParser;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
+import gov.nasa.pds.registry.mgr.util.Logger;
 import gov.nasa.pds.registry.mgr.dd.DDNJsonWriter;
-import gov.nasa.pds.registry.mgr.dd.DDProcessor;
 import gov.nasa.pds.registry.mgr.dd.DDRecord;
+import gov.nasa.pds.registry.mgr.dd.LddLoader;
+import gov.nasa.pds.registry.mgr.dd.LddUtils;
 
 
+/**
+ * A command to load data dictionary into registry.
+ * The following data dictionary formats are supported:
+ * - PDS LDD (JSON)
+ * - Elasticsearch dump (JSON)
+ * - CSV
+ * 
+ * @author karpenko
+ */
 public class LoadDDCmd implements CliCommand
 {
     private String esUrl;
@@ -27,11 +34,17 @@ public class LoadDDCmd implements CliCommand
     private String authPath;
     
     
+    /**
+     * Constructor
+     */
     public LoadDDCmd()
     {
     }
 
-    
+
+    /**
+     * Print help screen
+     */
     public void printHelp()
     {
         System.out.println("Usage: registry-manager load-dd <options>");
@@ -40,14 +53,14 @@ public class LoadDDCmd implements CliCommand
         System.out.println("Load data dictionary");
         System.out.println();        
         System.out.println("Required parameters, one of:");
-        System.out.println("  -dd <path>         Standard PDS4 data dictionary file (JSON)");
+        System.out.println("  -dd <path>         PDS4 LDD data dictionary file (JSON)");
         System.out.println("  -dump <path>       Data dump created by 'export-dd' command (NJSON)");
         System.out.println("  -csv <path>        Custom data dictionary file in CSV format");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>       Authentication config file");
         System.out.println("  -es <url>          Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>      Elasticsearch index name. Default is 'registry'");        
-        System.out.println("  -ns <namespaces>   Comma separated list of namespaces. Can be used with -dd parameter.");
+        System.out.println("  -ns <namespace>    LDD namespace. Can be used with -dd parameter.");
         System.out.println();
     }
 
@@ -68,8 +81,8 @@ public class LoadDDCmd implements CliCommand
         String path = cmdLine.getOptionValue("dd");
         if(path != null)
         {
-            String namespaces = cmdLine.getOptionValue("ns");
-            loadDataDictionary(path, namespaces);
+            String namespace = cmdLine.getOptionValue("ns");
+            loadLdd(path, namespace);
             return;
         }
         
@@ -90,53 +103,42 @@ public class LoadDDCmd implements CliCommand
         throw new Exception("One of the following options is required: -dd, -dump, -csv");
     }
 
-        
-    private void loadDataDictionary(String path, String namespaces) throws Exception
+
+    /**
+     * Load PDS LDD JSON. Only 1 namespace can be loaded. 
+     * Most (all?) PDS4 data dictionary only have 1 namespace.
+     * @param path Path to JSON LDD file.
+     * @param namespace Load only classes from this namespace. 
+     * If this parameter is "null", get namespace from LDD. 
+     * @throws Exception
+     */
+    private void loadLdd(String path, String namespace) throws Exception
     {
-        Set<String> nsFilter = new TreeSet<>();
-        
         System.out.println("Elasticsearch URL: " + esUrl);
         System.out.println("            Index: " + indexName);
         System.out.println("  Data dictionary: " + path);
         
-        if(namespaces != null)
+        if(namespace != null)
         {
-            System.out.println("       Namespaces: " + namespaces);
-            String[] tokens = namespaces.split(",");
-            for(String token: tokens)
-            {
-                token = token.trim();
-                if(token.length() > 0)
-                {
-                    nsFilter.add(token);
-                }
-            }
+            System.out.println("        Namespace: " + namespace);
         }
         System.out.println();
-                
-        // Parse data dictionary and create temporary file
-        File tempOutFile = getTempOutFile();
-        File dtCfgFile = getDataTypesCfgFile();
-        File ddFile = new File(path);
-        
-        DDProcessor proc = new DDProcessor(tempOutFile, dtCfgFile, nsFilter);
-        
-        AttributeDictionaryParser parser1 = new AttributeDictionaryParser(ddFile, proc);
-        parser1.parse();
-        ClassAttrAssociationParser parser2 = new ClassAttrAssociationParser(ddFile, proc);
-        parser2.parse();
-        
-        proc.close();
-        
-        // Load temporary file into data dictionary index
-        DataLoader loader = new DataLoader(esUrl, indexName + "-dd", authPath);
-        loader.loadFile(tempOutFile);
-        
-        // Delete temporary file
-        tempOutFile.delete();
+
+        // Init LDD loader
+        LddLoader loader = new LddLoader();
+        loader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile());
+        loader.setElasticInfo(esUrl, indexName, authPath);
+
+        //Load LDD
+        loader.load(new File(path), namespace);
     }
     
     
+    /**
+     * Load Elasticsearch data dictionary data dump
+     * @param path
+     * @throws Exception
+     */
     private void loadDataDump(String path) throws Exception
     {
         System.out.println("Elasticsearch URL: " + esUrl);
@@ -149,6 +151,11 @@ public class LoadDDCmd implements CliCommand
     }
     
     
+    /**
+     * Load CSV data dictionary file
+     * @param path
+     * @throws Exception
+     */
     private void loadCsv(String path) throws Exception
     {
         System.out.println("Elasticsearch URL: " + esUrl);
@@ -169,7 +176,7 @@ public class LoadDDCmd implements CliCommand
             if(header == null) return;
             validateCsvHeader(header);
             
-            System.out.println("Creating temprary ES NJSON " + tempOutFile.getAbsolutePath());
+            Logger.info("Creating temprary ES NJSON " + tempOutFile.getAbsolutePath());
             writer = new DDNJsonWriter(tempOutFile);
             
             int line = 1;
@@ -272,17 +279,5 @@ public class LoadDDCmd implements CliCommand
         File file = new File(tempDir, "pds-registry-dd.tmp.json");
         return file;
     }
-    
-    
-    private File getDataTypesCfgFile() throws Exception
-    {
-        String home = System.getenv("REGISTRY_MANAGER_HOME");
-        if(home == null) 
-        {
-            throw new Exception("Could not find default configuration directory. REGISTRY_MANAGER_HOME environment variable is not set.");
-        }
 
-        File file = new File(home, "elastic/data-dic-types.cfg");
-        return file;
-    }
 }

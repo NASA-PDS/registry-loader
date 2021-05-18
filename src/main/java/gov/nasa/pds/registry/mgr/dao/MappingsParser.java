@@ -12,6 +12,12 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 
 
+/**
+ * Parse Elasticsearch response from "/indexName/_mappings" API
+ * to extract field names.
+ * 
+ * @author karpenko
+ */
 public class MappingsParser
 {
     private String indexName;
@@ -19,12 +25,22 @@ public class MappingsParser
     private Set<String> fields;
     
     
+    /**
+     * Constructor
+     * @param indexName Elasticsearch index name
+     */
     public MappingsParser(String indexName)
     {
         this.indexName = indexName;
     }
 
     
+    /**
+     * Parse Elasticsearch response from "/indexName/_mappings" API.
+     * @param entity HTTP response body
+     * @return a collection of field names from a given Elasticsearch index.
+     * @throws IOException an exception
+     */
     public Set<String> parse(HttpEntity entity) throws IOException
     {
         InputStream is = entity.getContent();
@@ -36,11 +52,13 @@ public class MappingsParser
         
         while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
         {
+            // Usually there is only one root element = index name.
             String name = rd.nextName();
             if(indexName.equals(name))
             {
                 parseMappings();
             }
+            // Usually we should not go here.
             else
             {
                 rd.skipValue();
@@ -54,7 +72,11 @@ public class MappingsParser
         return fields;
     }
     
-    
+
+    /**
+     * Parse "mappings" JSON object.
+     * @throws IOException an exception
+     */
     private void parseMappings() throws IOException
     {
         rd.beginObject();
@@ -76,6 +98,10 @@ public class MappingsParser
     }
 
     
+    /**
+     * Parse "properties" JSON object 
+     * @throws IOException an exception
+     */
     private void parseProps() throws IOException
     {
         rd.beginObject();
@@ -97,6 +123,10 @@ public class MappingsParser
     }
 
     
+    /**
+     * Parse fields (indexName -&gt; mappings -&gt; properties -&gt; fields)
+     * @throws IOException an exception
+     */
     private void parseFields() throws IOException
     {
         rd.beginObject();

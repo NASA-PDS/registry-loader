@@ -1,4 +1,4 @@
-package gov.nasa.pds.registry.mgr.util.es;
+package gov.nasa.pds.registry.mgr.dao;
 
 import java.io.File;
 import java.io.FileReader;
@@ -13,19 +13,32 @@ import com.google.gson.stream.JsonWriter;
 
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
+import gov.nasa.pds.registry.mgr.util.es.EsQueryUtils;
 
-public class EsRequestBuilder
+/**
+ * A class to build Elasticsearch API JSON requests.
+ * 
+ * @author karpenko
+ */
+public class RegistryRequestBuilder
 {
     private boolean pretty;
 
     
-    public EsRequestBuilder(boolean pretty)
+    /**
+     * Constructor
+     * @param pretty Pretty-format JSON requests
+     */
+    public RegistryRequestBuilder(boolean pretty)
     {
         this.pretty = pretty;
     }
 
     
-    public EsRequestBuilder()
+    /**
+     * Constructor
+     */
+    public RegistryRequestBuilder()
     {
         this(false);
     }
@@ -43,6 +56,14 @@ public class EsRequestBuilder
     }
 
     
+    /**
+     * Build create index request
+     * @param schemaFile index schema file
+     * @param shards number of shards
+     * @param replicas number of replicas
+     * @return JSON
+     * @throws Exception Generic exception
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public String createCreateIndexRequest(File schemaFile, int shards, int replicas) throws Exception
     {
@@ -88,6 +109,16 @@ public class EsRequestBuilder
     }
 
 
+    /**
+     * Build export data request
+     * @param filterField Filter field name, such as "lidvid".
+     * @param filterValue Filter value.
+     * @param sortField Sort field is required to paginate data and use "search_after" field.
+     * @param size Batch / page size
+     * @param searchAfter "search_after" field to perform pagination
+     * @return JSON
+     * @throws IOException an exception
+     */
     public String createExportDataRequest(String filterField, String filterValue, 
             String sortField, int size, String searchAfter) throws IOException
     {
@@ -121,6 +152,14 @@ public class EsRequestBuilder
     }
 
     
+    /**
+     * Build export all data request
+     * @param sortField Sort field is required to paginate data and use "search_after" field. 
+     * @param size Batch / page size
+     * @param searchAfter "search_after" field to perform pagination
+     * @return JSON
+     * @throws IOException an exception
+     */
     public String createExportAllDataRequest(String sortField, int size, String searchAfter) throws IOException
     {
         StringWriter out = new StringWriter();
@@ -156,6 +195,12 @@ public class EsRequestBuilder
     }
 
     
+    /**
+     * Build get BLOB request 
+     * @param lidvid a LidVid
+     * @return JSON
+     * @throws IOException an exception
+     */
     public String createGetBlobRequest(String lidvid) throws IOException
     {
         StringWriter out = new StringWriter();
@@ -177,7 +222,14 @@ public class EsRequestBuilder
         return out.toString();
     }
 
-    
+
+    /**
+     * Create Elasticsearch filter query
+     * @param field filter field name
+     * @param value filter value
+     * @return JSON
+     * @throws IOException an exception
+     */
     public String createFilterQuery(String field, String value) throws IOException
     {
         StringWriter out = new StringWriter();
@@ -192,6 +244,11 @@ public class EsRequestBuilder
     }
 
     
+    /**
+     * Build match all query
+     * @return JSON
+     * @throws IOException an exception
+     */
     public String createMatchAllQuery() throws IOException
     {
         StringWriter out = new StringWriter();
@@ -211,6 +268,14 @@ public class EsRequestBuilder
     }
 
     
+    /**
+     * Build update label status request
+     * @param status new PDS label status
+     * @param field filter field name
+     * @param value filter value
+     * @return JSON
+     * @throws IOException an exception
+     */
     public String createUpdateStatusRequest(String status, String field, String value) throws IOException
     {
         StringWriter out = new StringWriter();

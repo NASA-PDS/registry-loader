@@ -7,49 +7,86 @@ import java.util.HashMap;
 import java.util.Map;
 
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
+import gov.nasa.pds.registry.mgr.util.Logger;
 
 
+/**
+ * Mappings between PDS LDD data types such as 'ASCII_LID' 
+ * and Elasticsearch data types such as 'keyword'.
+ * 
+ * <p>Mappings are loaded from a configuration file similar to Java properties file.
+ * There is one mapping per line:
+ * <p>&lt;PDS LDD data type&gt;=&lt;Elasticsearch data type&gt;
+ * 
+ * <p>Default configuration file is in 
+ * &lt;PROJECT_ROOT&gt;/src/main/resources/elastic/data-dic-types.cfg
+ * 
+ * @author karpenko
+ */
 public class Pds2EsDataTypeMap
 {
     private Map<String, String> map;
     
-    
+    /**
+     * Constructor
+     */
     public Pds2EsDataTypeMap()
     {
         map = new HashMap<>();
     }
 
     
-    public String getEsType(String pdsType)
+    /**
+     * Get Elasticsearch data type for a PDS LDD data type
+     * @param pdsType PDS LDD data type
+     * @return Elasticsearch data type
+     */
+    public String getEsDataType(String pdsType)
     {
-        String solrType = map.get(pdsType);
-        if(solrType != null) return solrType;
+        String esType = map.get(pdsType);
+        if(esType != null) return esType;
         
-        solrType = guessType(pdsType);
-        System.out.println("[WARN] No PDS to Elasticsearch data type mapping for '" + pdsType + "'. Will use '" + solrType + "'");
+        esType = guessEsDataType(pdsType);
+        Logger.warn("No PDS to Elasticsearch data type mapping for '" + pdsType 
+                + "'. Will use '" + esType + "'");
 
-        map.put(pdsType, solrType);
-        return solrType;
+        map.put(pdsType, esType);
+        return esType;
     }
     
     
-    private String guessType(String str)
+    /**
+     * Try to determine Elasticsearch data type from a PDS data type
+     * @param pdsType PDS data type, e.g., "UTF8_Text_Preserved"
+     * @return Elasticsearch data type, e.g., "text".
+     */
+    private String guessEsDataType(String pdsType)
     {
-        str = str.toLowerCase();
-        if(str.contains("_real")) return "double";
-        if(str.contains("_integer")) return "integer";
-        if(str.contains("_string")) return "keyword";
-        if(str.contains("_text")) return "text";
-        if(str.contains("_date")) return "date";
-        if(str.contains("_boolean")) return "boolean";        
+        pdsType = pdsType.toLowerCase();
+        if(pdsType.contains("_real")) return "double";
+        if(pdsType.contains("_integer")) return "integer";
+        if(pdsType.contains("_string")) return "keyword";
+        if(pdsType.contains("_text")) return "text";
+        if(pdsType.contains("_date")) return "date";
+        if(pdsType.contains("_boolean")) return "boolean";        
         
         return "keyword";
     }
     
     
+    /**
+     * Load data type mappings from a configuration file
+     * @param file Configuration file with PDS LDD to Elasticsearch data type mappings.
+     * <p>Mappings are loaded from a configuration file similar to Java properties file.
+     * There is one mapping per line:
+     * <p>&lt;PDS LDD data type&gt;=&lt;Elasticsearch data type&gt;</p>
+     * @throws Exception an exception
+     */
     public void load(File file) throws Exception
     {
-        System.out.println("Loading data type configuration from " + file.getAbsolutePath());
+        if(file == null) return;
+        
+        Logger.debug("Loading PDS to ES data type mapping from " + file.getAbsolutePath());
         
         BufferedReader rd = null;
         
@@ -100,12 +137,11 @@ public class Pds2EsDataTypeMap
     }
     
     
+    /**
+     * Print all mappings
+     */
     public void debug()
     {
-        for(String key: map.keySet())
-        {
-            String val = map.get(key);
-            System.out.println(key + "  -->  " + val);
-        }
+        map.forEach((key, val) -> { System.out.println(key + "  -->  " + val); } );
     }
 }

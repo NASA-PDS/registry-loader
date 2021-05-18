@@ -17,14 +17,23 @@ import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
+import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.es.EsRequestBuilder;
 
 
+/**
+ * A CLI command to delete records from the data dictionary index in Elasticsearch.
+ * Data can be deleted by ID, or namespace. All data can be also deleted.
+ *  
+ * @author karpenko
+ */
 public class DeleteDDCmd implements CliCommand
 {
     private String filterMessage;
 
+    /**
+     * Constructor
+     */
     public DeleteDDCmd()
     {
     }
@@ -82,6 +91,11 @@ public class DeleteDDCmd implements CliCommand
     }
 
     
+    /**
+     * Extract number of deleted records from Elasticsearch delete API response.
+     * @param resp
+     * @return number of deleted records
+     */
     @SuppressWarnings("rawtypes")
     private double extractNumDeleted(Response resp)
     {
@@ -104,9 +118,15 @@ public class DeleteDDCmd implements CliCommand
     }
     
     
+    /**
+     * Create Elasticsearch query to delete records from data dictionary index.
+     * @param cmdLine
+     * @return
+     * @throws Exception
+     */
     private String buildEsQuery(CommandLine cmdLine) throws Exception
     {
-        EsRequestBuilder bld = new EsRequestBuilder();
+        RegistryRequestBuilder bld = new RegistryRequestBuilder();
         
         String id = cmdLine.getOptionValue("id");
         if(id != null)
@@ -132,6 +152,9 @@ public class DeleteDDCmd implements CliCommand
     }
     
     
+    /**
+     * Print help screen
+     */
     public void printHelp()
     {
         System.out.println("Usage: registry-manager delete-dd <options>");

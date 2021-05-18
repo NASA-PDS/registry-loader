@@ -35,7 +35,7 @@ public class EsDocWriter implements Closeable, SearchResponseParser.Callback
     /**
      * Constructor
      * @param file output file
-     * @throws IOException
+     * @throws IOException an exception
      */
     public EsDocWriter(File file) throws IOException
     {
@@ -44,6 +44,9 @@ public class EsDocWriter implements Closeable, SearchResponseParser.Callback
     }
 
     
+    /**
+     * Close file
+     */
     @Override
     public void close() throws IOException
     {
@@ -51,6 +54,10 @@ public class EsDocWriter implements Closeable, SearchResponseParser.Callback
     }
 
 
+    /**
+     * Search response parser callback implementation.
+     * This method is called for every record.
+     */
     @Override
     public void onRecord(String id, Object rec) throws IOException
     {
@@ -72,8 +79,8 @@ public class EsDocWriter implements Closeable, SearchResponseParser.Callback
     
     /**
      * Write index primary key
-     * @param id
-     * @throws IOException
+     * @param id primary key
+     * @throws IOException an exception
      */
     private void writePK(String id) throws IOException
     {

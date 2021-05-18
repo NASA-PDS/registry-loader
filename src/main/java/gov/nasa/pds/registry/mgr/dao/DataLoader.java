@@ -15,8 +15,17 @@ import java.util.zip.ZipFile;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.es.client.HttpConnectionFactory;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
+import gov.nasa.pds.registry.mgr.util.Logger;
 
 
+/**
+ * Loads data from an NJSON (new-line-delimited JSON) file into Elasticsearch.
+ * NJSON file has 2 lines per record: 1 - primary key, 2 - data record.
+ * This is the standard file format used by Elasticsearch bulk load API.
+ * Data are loaded in batches.
+ * 
+ * @author karpenko
+ */
 public class DataLoader
 {
     private int printProgressSize = 5000;
@@ -25,7 +34,15 @@ public class DataLoader
     private HttpConnectionFactory conFactory; 
     private int totalRecords;
 
-    
+
+    /**
+     * Constructor
+     * @param esUrl Elasticsearch URL, e.g., "http://localhost:9200"
+     * @param indexName Elasticsearch index name
+     * @param authConfigFile Elasticsearch authentication configuration file 
+     * (see Registry Manager documentation for more info)
+     * @throws Exception an exception
+     */
     public DataLoader(String esUrl, String indexName, String authConfigFile) throws Exception
     {
         conFactory = new HttpConnectionFactory(esUrl, indexName, "_bulk");
@@ -33,6 +50,10 @@ public class DataLoader
     }
     
     
+    /**
+     * Set data batch size
+     * @param size batch size
+     */
     public void setBatchSize(int size)
     {
         if(size <= 0) throw new IllegalArgumentException("Batch size should be > 0");
@@ -40,18 +61,29 @@ public class DataLoader
     }
 
     
+    /**
+     * Load data from an NJSON (new-line-delimited JSON) file into Elasticsearch.
+     * @param file NJSON (new-line-delimited JSON) file to load
+     * @throws Exception an exception
+     */
     public void loadFile(File file) throws Exception
     {
-        System.out.println("Loading file: " + file.getAbsolutePath());
+        Logger.info("Loading ES data file: " + file.getAbsolutePath());
         
         BufferedReader rd = new BufferedReader(new FileReader(file));
-        loadFile(rd);
+        loadData(rd);
     }
     
     
+    /**
+     * Load data from a zipped NJSON (new-line-delimited JSON) file into Elasticsearch.
+     * @param zipFile Zip file with an NJSON data file.
+     * @param fileName NJSON data file name in the Zip file.
+     * @throws Exception an exception
+     */
     public void loadZippedFile(File zipFile, String fileName) throws Exception
     {
-        System.out.println("Loading file: " + zipFile.getAbsolutePath() + ":" + fileName);
+        Logger.info("Loading ES data file: " + zipFile.getAbsolutePath() + ":" + fileName);
         
         ZipFile zip = new ZipFile(zipFile);
         
@@ -64,7 +96,7 @@ public class DataLoader
             }
             
             BufferedReader rd = new BufferedReader(new InputStreamReader(zip.getInputStream(ze)));
-            loadFile(rd);
+            loadData(rd);
         }
         finally
         {
@@ -73,7 +105,12 @@ public class DataLoader
     }
     
     
-    private void loadFile(BufferedReader rd) throws Exception
+    /**
+     * Load NJSON data from a reader.
+     * @param rd reader
+     * @throws Exception an exception
+     */
+    private void loadData(BufferedReader rd) throws Exception
     {
         totalRecords = 0;
         
@@ -87,11 +124,11 @@ public class DataLoader
             {
                 if(totalRecords % printProgressSize == 0)
                 {
-                    System.out.println("Loaded " + totalRecords + " document(s)");
+                    Logger.info("Loaded " + totalRecords + " document(s)");
                 }
             }
             
-            System.out.println("Loaded " + totalRecords + " document(s)");
+            Logger.info("Loaded " + totalRecords + " document(s)");
         }
         finally
         {
@@ -100,6 +137,14 @@ public class DataLoader
     }
 
     
+    /**
+     * Load next batch of NJSON (new-line-delimited JSON) data.
+     * @param fileReader Reader object with NJSON data.
+     * @param firstLine NJSON file has 2 lines per record: 1 - primary key, 2 - data record.
+     * This is the primary key line.
+     * @return First line of 2-line NJSON record (line 1: primary key, line 2: data)
+     * @throws Exception an exception
+     */
     private String loadBatch(BufferedReader fileReader, String firstLine) throws Exception
     {
         HttpURLConnection con = null;
@@ -151,8 +196,10 @@ public class DataLoader
             writer.flush();
             writer.close();
         
+            // Read and ignore Elasticsearch response.
             String respJson = getLastLine(con.getInputStream());
-
+            Logger.debug(respJson);
+            
             totalRecords += numRecords;
 
             return line1;
@@ -163,12 +210,15 @@ public class DataLoader
         }
         catch(IOException ex)
         {
+            // Get HTTP response code
             int respCode = getResponseCode(con);
             if(respCode <= 0) throw ex;
             
+            // Try extracting JSON from multi-line error response (last line) 
             String json = getLastLine(con.getErrorStream());
             if(json == null) throw ex;
             
+            // Parse error JSON to extract reason.
             String msg = EsUtils.extractReasonFromJson(json);
             if(msg == null) msg = json;
             
@@ -177,6 +227,11 @@ public class DataLoader
     }
     
     
+    /**
+     * Get HTTP response code, e.g., 200 (OK)
+     * @param con HTTP connection
+     * @return HTTP response code, e.g., 200 (OK)
+     */
     private static int getResponseCode(HttpURLConnection con)
     {
         if(con == null) return -1;
@@ -192,6 +247,12 @@ public class DataLoader
     }
 
     
+    /**
+     * This method is used to parse multi-line Elasticsearch error responses.
+     * JSON error response is on the last line of a message.
+     * @param is input stream
+     * @return Last line
+     */
     private static String getLastLine(InputStream is)
     {
         String lastLine = null;
