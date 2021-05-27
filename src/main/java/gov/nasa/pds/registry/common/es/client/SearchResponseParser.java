@@ -10,10 +10,25 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 
 
+/**
+ * Helper class to parse search API's JSON responses. 
+ * 
+ * @author karpenko
+ */
 public class SearchResponseParser
 {
+    /**
+     * Inner callback interface
+     * @author karpenko
+     */
     public static interface Callback
     {
+        /**
+         * This method is called for each record in response JSON.
+         * @param id record ID / primary key
+         * @param rec Parsed content of "_source" field. Usually it is a field name-value map.
+         * @throws Exception an exception
+         */
         public void onRecord(String id, Object rec) throws Exception;
     }
     
@@ -24,6 +39,9 @@ public class SearchResponseParser
     private int numDocs;
 
     
+    /**
+     * Constructor
+     */
     public SearchResponseParser()
     {
     }
@@ -31,7 +49,7 @@ public class SearchResponseParser
     
     /**
      * This method is used by searchAfter API to paginate results. 
-     * @return
+     * @return ID of the last parsed record
      */
     public String getLastId()
     {
@@ -39,12 +57,22 @@ public class SearchResponseParser
     }
 
     
+    /**
+     * Get number of parsed documents.
+     * @return number of parsed documents
+     */
     public int getNumDocs()
     {
         return numDocs;
     }
 
-    
+
+    /**
+     * Parse response. Callback.onRecord() will be called for each record.
+     * @param resp Elasticsearch rest client's response object.
+     * @param cb Callback interface.
+     * @throws Exception an exception
+     */
     public void parseResponse(Response resp, Callback cb) throws Exception
     {
         if(cb == null) throw new IllegalArgumentException("Callback is null");
@@ -77,6 +105,11 @@ public class SearchResponseParser
     }
     
     
+    /**
+     * Parse "hits" array in JSON response.
+     * @param rd JSON reader
+     * @throws Exception an exception
+     */
     private void parseHits(JsonReader rd) throws Exception
     {
         rd.beginObject();
@@ -103,6 +136,11 @@ public class SearchResponseParser
     }
 
 
+    /**
+     * Parse a hit from "hits" array in JSON response.
+     * @param rd JSON reader
+     * @throws Exception an exception
+     */
     private void parseHit(JsonReader rd) throws Exception
     {
         Object src = null;
@@ -112,10 +150,12 @@ public class SearchResponseParser
         while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
         {
             String name = rd.nextName();
+            // Parse primary key
             if("_id".equals(name))
             {
                 lastId = rd.nextString();
             }
+            // Parse "_source" field. Usually it will be a Map.
             else if("_source".equals(name))
             {
                 src = gson.fromJson(rd, Object.class);

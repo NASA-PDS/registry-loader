@@ -13,23 +13,41 @@ import org.apache.http.ssl.SSLContexts;
 import org.elasticsearch.client.RestClientBuilder;
 
 
+/**
+ * Implementation of Elasticsearch client API's HTTP configuration callback.
+ * This class is used to setup TLS/SSL and authentication.
+ * 
+ * @author karpenko
+ */
 public class ClientConfigCB implements RestClientBuilder.HttpClientConfigCallback
 {
     private boolean trustSelfSignedCert = false;
     private CredentialsProvider credProvider;
 
     
+    /**
+     * Constructor
+     */
     public ClientConfigCB()
     {
     }
 
     
+    /**
+     * Set to true to trust self-signed certificates.
+     * @param b Set to true to trust self-signed certificates.
+     */
     public void setTrustSelfSignedCert(boolean b)
     {
         this.trustSelfSignedCert = b;
     }
 
     
+    /**
+     * Set user name and password for basic authentication.
+     * @param user user name
+     * @param pass password
+     */
     public void setUserPass(String user, String pass)
     {
         if(user == null || pass == null) return;

@@ -11,8 +11,19 @@ import org.elasticsearch.client.ResponseException;
 import com.google.gson.Gson;
 
 
+/**
+ * Elasticsearch utility methods.
+ * 
+ * @author karpenko
+ */
 public class EsUtils
 {
+    /**
+     * Parse Elasticsearch URL
+     * @param url Elasticsearch URL, e.g., "http://localhost:9200"
+     * @return HTTP host information
+     * @throws Exception an exception
+     */
     public static HttpHost parseEsUrl(String url) throws Exception
     {
         if(url == null) throw new Exception("URL is null");
@@ -75,6 +86,11 @@ public class EsUtils
     }
     
     
+    /**
+     * Extract error message from Elasticsearch response exception.
+     * @param ex an exception
+     * @return error message
+     */
     public static String extractErrorMessage(ResponseException ex)
     {
         String msg = ex.getMessage();
@@ -90,6 +106,11 @@ public class EsUtils
     }
     
     
+    /**
+     * Extract error message from Elasticsearch response JSON.
+     * @param json response JSON
+     * @return error message
+     */
     @SuppressWarnings("rawtypes")
     public static String extractReasonFromJson(String json)
     {
@@ -120,6 +141,10 @@ public class EsUtils
     }
 
     
+    /**
+     * Print Elasticsearch response warnings.
+     * @param resp HTTP response
+     */
     public static void printWarnings(Response resp)
     {
         List<String> warnings = resp.getWarnings();
