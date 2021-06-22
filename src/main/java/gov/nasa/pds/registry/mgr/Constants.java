@@ -17,5 +17,5 @@ public interface Constants
     
     // LDDs
     public static final String DEFAULT_LDD_LIST_URL 
-        = "https://raw.githubusercontent.com/NASA-PDS/pds4-information-model/master/docs/ldds/pds4-ldd-config.csv";
+        = "https://raw.githubusercontent.com/NASA-PDS/pds4-information-model/main/docs/ldds/pds4-ldd-config.csv";
 }
