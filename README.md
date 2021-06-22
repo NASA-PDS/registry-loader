@@ -54,7 +54,7 @@ mvn versions:set -DnewVersion=1.2.0
 mvn clean site deploy -P release
 ```
 
-4. Create pull request from dev -> master and merge.
+4. Create pull request from dev -> main and merge.
 
 5. Tag release in Github
 
