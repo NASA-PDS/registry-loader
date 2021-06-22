@@ -135,8 +135,8 @@
                     <server>github-oauth</server>
                     <tagName>${project.version}</tagName>
                     <name>${project.version}</name>
-                    <targetCommitish>master</targetCommitish>
-                    <body>Release ${project.version} see changelog https://github.com/NASA-PDS/pds-registry-mgr-elastic/blob/master/CHANGELOG.md</body>
+                    <targetCommitish>main</targetCommitish>
+                    <body>Release ${project.version} see changelog https://github.com/NASA-PDS/pds-registry-mgr-elastic/blob/main/CHANGELOG.md</body>
                     <assets>
                         <asset>target/registry-manager-${project.version}-bin.zip</asset>
                         <asset>target/registry-manager-${project.version}-bin.tar.gz</asset>
