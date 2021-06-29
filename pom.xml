@@ -74,6 +74,9 @@
 
 
   <scm>
+    <url>https://github.com/NASA-PDS/pds-registry-common</url>
+    <connection>scm:git:git@github.com/NASA-PDS/pds-registry-common.git</connection>
+    <developerConnection>scm:git:git@github.com:NASA-PDS/pds-registry-common.git</developerConnection>
     <tag>v1.0.0</tag>
   </scm>
 </project>
