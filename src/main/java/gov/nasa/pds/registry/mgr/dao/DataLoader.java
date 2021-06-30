@@ -9,8 +9,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import com.google.gson.Gson;
 
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.es.client.HttpConnectionFactory;
@@ -196,9 +200,14 @@ public class DataLoader
             writer.flush();
             writer.close();
         
-            // Read and ignore Elasticsearch response.
+            // Check for Elasticsearch errors.
             String respJson = getLastLine(con.getInputStream());
             Logger.debug(respJson);
+            
+            if(responseHasErrors(respJson))
+            {
+                throw new Exception("Could not load data.");
+            }
             
             totalRecords += numRecords;
 
@@ -223,6 +232,44 @@ public class DataLoader
             if(msg == null) msg = json;
             
             throw new Exception(msg);
+        }
+    }
+    
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private boolean responseHasErrors(String resp)
+    {
+        try
+        {
+            // Parse JSON response
+            Gson gson = new Gson();
+            Map json = (Map)gson.fromJson(resp, Object.class);
+            
+            Boolean hasErrors = (Boolean)json.get("errors");
+            if(hasErrors)
+            {
+                List<Object> list = (List)json.get("items");
+                
+                // List size = batch size (one item per document)
+                // NOTE: Only few items in the list could have errors
+                for(Object item: list)
+                {
+                    Map index = (Map)((Map)item).get("index");
+                    Map error = (Map)index.get("error");
+                    if(error != null)
+                    {
+                        String message = (String)error.get("reason");
+                        Logger.error(message);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+        catch(Exception ex)
+        {
+            return false;
         }
     }
     
