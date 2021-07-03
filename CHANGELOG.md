@@ -1,16 +1,12 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/«unknown») (2021-06-30)
+## [v4.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0-SNAPSHOT) (2021-06-30)
 
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.2.0-SNAPSHOT...«unknown»)
+[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.1.0...v4.2.0-SNAPSHOT)
 
 **Defects:**
 
 - Load-data command doesn't report Elasticsearch errors [\#25](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/25)
-
-## [v4.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0-SNAPSHOT) (2021-06-26)
-
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.1.0...v4.2.0-SNAPSHOT)
 
 ## [v4.1.0](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.1.0) (2021-04-17)
 
