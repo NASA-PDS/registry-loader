@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.1.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-common/tree/v1.1.0-SNAPSHOT) (2021-06-29)
+## [v1.1.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-common/tree/v1.1.0-SNAPSHOT) (2021-07-03)
 
 [Full Changelog](https://github.com/NASA-PDS/pds-registry-common/compare/v1.0.0...v1.1.0-SNAPSHOT)
 
