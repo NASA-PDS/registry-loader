@@ -88,10 +88,10 @@ public class LddEsJsonWriter
      * @param date LDD date
      * @throws Exception an exception
      */
-    public void writeDataDictionaryVersion(String namespace, String version, String date) throws Exception
+    public void writeDataDictionaryVersion(String namespace, String imVersion, 
+            String lddVersion, String date) throws Exception
     {
         if(namespace == null || namespace.isBlank()) throw new IllegalArgumentException("Missing data dictionary namespace");
-        if(version == null || version.isBlank()) throw new IllegalArgumentException("Missing data dictionary version");
         if(date == null || date.isBlank()) throw new IllegalArgumentException("Missing data dictionary date");
         
         DDRecord rec = new DDRecord();
@@ -100,7 +100,8 @@ public class LddEsJsonWriter
         rec.attrNs = "registry";
         rec.attrName = namespace;
         
-        rec.version = version;
+        rec.imVersion = imVersion;
+        rec.lddVersion = lddVersion;
         rec.date = LddUtils.lddDateToIsoInstant(date);
         
         writer.write(rec.esFieldNameFromComponents(), rec);

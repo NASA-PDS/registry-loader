@@ -128,7 +128,9 @@ public class LddLoader
         }
         
         // Write data dictionary version and date
-        writer.writeDataDictionaryVersion(namespace, attrParser.getLddVersion(), attrParser.getLddDate());
+        writer.writeDataDictionaryVersion(namespace, attrParser.getImVersion(), 
+                attrParser.getLddVersion(), attrParser.getLddDate());
+        
         writer.close();
     }
 }

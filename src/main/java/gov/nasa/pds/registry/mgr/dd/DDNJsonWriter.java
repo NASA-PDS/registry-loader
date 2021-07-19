@@ -45,7 +45,8 @@ public class DDNJsonWriter extends BaseNJsonWriter<DDRecord>
         writeField(jw, "data_type", data.dataType);
         writeField(jw, "description", data.description);
 
-        writeField(jw, "version", data.version);
+        writeField(jw, "im_version", data.imVersion);
+        writeField(jw, "ldd_version", data.lddVersion);
         writeField(jw, "date", data.date);
     }
 

@@ -21,7 +21,8 @@ public class DDRecord
     public String description;
     public String dataType;
 
-    public String version;
+    public String imVersion;
+    public String lddVersion;
     public String date;
     
     
