@@ -1,6 +1,6 @@
 # Changelog
 
-## [v4.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0-SNAPSHOT) (2021-06-30)
+## [v4.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0-SNAPSHOT) (2021-07-03)
 
 [Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.1.0...v4.2.0-SNAPSHOT)
 
