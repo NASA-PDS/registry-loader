@@ -20,7 +20,8 @@ public class BaseLddParser
     protected File ddFile;
     protected JsonReader jsonReader;
     
-    protected String ddVersion;
+    protected String imVersion;
+    protected String lddVersion;
     protected String ddDate;
     
     
@@ -41,8 +42,19 @@ public class BaseLddParser
      */
     public String getLddVersion()
     {
-        return ddVersion;
+        return lddVersion;
     }
+
+    
+    /**
+     * Returns Information Model version
+     * @return Information Model version
+     */
+    public String getImVersion()
+    {
+        return imVersion;
+    }
+
     
     /**
      * Returns LDD (creation) date
@@ -136,7 +148,15 @@ public class BaseLddParser
             
             if("Version".equals(name))
             {
-                ddVersion = jsonReader.nextString();
+                imVersion = jsonReader.nextString();
+            }
+            else if("IM Version".equals(name))
+            {
+                imVersion = jsonReader.nextString();
+            }
+            else if("LDD Version".equals(name))
+            {
+                lddVersion = jsonReader.nextString();
             }
             else if("Date".equals(name))
             {
