@@ -1,6 +1,14 @@
 # Changelog
 
-## [v4.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0-SNAPSHOT) (2021-07-03)
+## [«unknown»](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/«unknown») (2021-07-24)
+
+[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.2.0-SNAPSHOT...«unknown»)
+
+**Improvements:**
+
+- Update registry-mgr-elastic to support new LDD JSON version information [\#27](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/27)
+
+## [v4.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0-SNAPSHOT) (2021-07-23)
 
 [Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.1.0...v4.2.0-SNAPSHOT)
 
