@@ -30,12 +30,15 @@
       "vid": { "type": "float" },
       "lidvid": { "type": "keyword" },
 
-      "title": { "type": "text" },
+      "title": {"type": "text", "analyzer": "english"},
+      "description": {"type": "text", "analyzer": "english"},
+
       "product_class": { "type": "keyword" },
       "archive_status": { "type": "keyword" }, 
       "_package_id": { "type": "keyword" },
 
       "ops:Harvest_Info/ops:node_name": { "type": "keyword" },
+      "ops:Harvest_Info/ops:harvest_date_time": { "type": "date" },
 
       "ops:Label_File_Info/ops:creation_date_time": { "type": "date" },
       "ops:Label_File_Info/ops:file_ref": { "type": "keyword" },
