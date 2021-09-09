@@ -53,7 +53,7 @@ public class RegistryManagerCli
     /**
      * Print main help screen.
      */
-    public void printHelp()
+    public static void printHelp()
     {
         System.out.println("Usage: registry-manager <command> <options>");
 
@@ -81,6 +81,10 @@ public class RegistryManagerCli
         System.out.println("  update-schema        Update registry schema");
 
         System.out.println();
+        System.out.println("Other:");
+        System.out.println("  -V, --version        Print Registry Manager version");
+
+        System.out.println();
         System.out.println("Options:");
         System.out.println("  -help        Print help for a command");
         System.out.println("  -v <value>   Log verbosity: DEBUG, INFO, WARN, ERROR. Default is INFO.");
@@ -88,6 +92,16 @@ public class RegistryManagerCli
         System.out.println();
         System.out.println("Pass -help after any command to see command-specific usage information, for example,");
         System.out.println("  registry-manager load-data -help");
+    }
+
+    
+    /**
+     * Print Registry Manager version
+     */
+    public static void printVersion()
+    {
+        String version = RegistryManagerCli.class.getPackage().getImplementationVersion();
+        System.out.println("Registry Manager version: " + version);
     }
 
 
@@ -101,9 +115,16 @@ public class RegistryManagerCli
         if(args.length == 0)
         {
             printHelp();
-            System.exit(1);
+            System.exit(0);
         }
 
+        // Version
+        if(args.length == 1 && ("-V".equals(args[0]) || "--version".equals(args[0])))
+        {
+            printVersion();
+            System.exit(0);
+        }        
+        
         // Parse command line arguments
         if(!parse(args))
         {
