@@ -67,6 +67,18 @@
 
     <build>
         <plugins>
+            <!-- Add POM version to JAR's manifest -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <!-- SpringBoot single JAR executable. -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
