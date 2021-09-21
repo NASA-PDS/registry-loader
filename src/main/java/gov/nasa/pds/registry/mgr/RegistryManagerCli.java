@@ -2,6 +2,7 @@ package gov.nasa.pds.registry.mgr;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.jar.Attributes;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -24,6 +25,7 @@ import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
 import gov.nasa.pds.registry.mgr.util.ExceptionUtils;
 import gov.nasa.pds.registry.mgr.util.Logger;
+import gov.nasa.pds.registry.mgr.util.ManifestUtils;
 
 /**
  * Main CLI (Command-Line Interface) manager / dispatcher.
@@ -102,6 +104,11 @@ public class RegistryManagerCli
     {
         String version = RegistryManagerCli.class.getPackage().getImplementationVersion();
         System.out.println("Registry Manager version: " + version);
+        Attributes attrs = ManifestUtils.getAttributes();
+        if(attrs != null)
+        {
+            System.out.println("Build time: " + attrs.getValue("Build-Time"));
+        }
     }
 
 
