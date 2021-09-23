@@ -103,10 +103,15 @@ public class ClassAttrAssociationParser extends BaseLddParser
                 String id = jsonReader.nextString();
                 
                 String tokens[] = id.split("\\.");
-                if(tokens.length != 3) throw new Exception("Could not parse class id " + id);
-                
-                classNs = tokens[1];
-                className = tokens[2];
+                if(tokens.length >= 3)
+                {
+                    classNs = tokens[tokens.length-2];
+                    className = tokens[tokens.length-1];
+                }
+                else
+                {
+                    throw new Exception("Could not parse class identifier " + id);
+                }
             }
             else if("associationList".equals(name))
             {
