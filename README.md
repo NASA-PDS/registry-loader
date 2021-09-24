@@ -110,5 +110,4 @@ If you want to access snapshots, add the following to your `~/.m2/settings.xml`:
 
 ## 📃 License
 
-The project is licensed under the [Apache version 2](LICENSE.md) license. Or it isn't. Change this after consulting with your lawyers.
-
+The project is licensed under the [Apache version 2](LICENSE.md) license.
