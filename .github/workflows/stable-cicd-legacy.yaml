@@ -34,7 +34,7 @@ on:
 # Round up, yee-haw!
 jobs:
     stable-assembly:
-        name: 🐴 Stable Assembly
+        name: 🐴 Stable Assembly Legacy
         runs-on: ubuntu-latest
         steps:
             -
