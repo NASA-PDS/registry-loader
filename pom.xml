@@ -42,7 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
     
     <groupId>gov.nasa.pds</groupId>
     <artifactId>registry-common</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <name>PDS Registry Common</name>
@@ -119,6 +119,6 @@ POSSIBILITY OF SUCH DAMAGE.
     <url>https://github.com/NASA-PDS/pds-registry-common</url>
     <connection>scm:git:git@github.com/NASA-PDS/pds-registry-common.git</connection>
     <developerConnection>scm:git:git@github.com:NASA-PDS/pds-registry-common.git</developerConnection>
-    <tag>v1.1.0</tag>
+    <tag>HEAD</tag>
   </scm>
 </project>
