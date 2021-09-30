@@ -42,7 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
     
     <groupId>gov.nasa.pds</groupId>
     <artifactId>registry-manager</artifactId>
-    <version>4.2.0</version>
+    <version>4.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <name>PDS Registry Manager</name>
@@ -78,7 +78,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>gov.nasa.pds</groupId>
             <artifactId>registry-common</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0-SNAPSHOT</version>
         </dependency>
         <!-- JSON parser -->
         <dependency>
@@ -195,7 +195,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <url>https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/master</url>
         <connection>scm:git:git://github.com/NASA-PDS/pds-registry-mgr-elastic.git</connection>
         <developerConnection>scm:git:git@github.com:NASA-PDS/pds-registry-mgr-elastic.git</developerConnection>
-      <tag>v4.2.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <distributionManagement>
