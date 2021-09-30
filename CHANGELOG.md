@@ -1,14 +1,6 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/«unknown») (2021-09-27)
-
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.2.0-SNAPSHOT...«unknown»)
-
-**Defects:**
-
-- registry-mgr cannot handle updated JSON files output from LDDTool [\#33](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/33) [[s.medium](https://github.com/NASA-PDS/pds-registry-mgr-elastic/labels/s.medium)]
-
-## [v4.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0-SNAPSHOT) (2021-09-23)
+## [v4.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0-SNAPSHOT) (2021-09-27)
 
 [Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.1.0...v4.2.0-SNAPSHOT)
 
@@ -18,6 +10,7 @@
 
 **Defects:**
 
+- registry-mgr cannot handle updated JSON files output from LDDTool [\#33](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/33) [[s.medium](https://github.com/NASA-PDS/pds-registry-mgr-elastic/labels/s.medium)]
 - Load-data command doesn't report Elasticsearch errors [\#25](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/25)
 
 ## [v4.1.0](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.1.0) (2021-04-17)
