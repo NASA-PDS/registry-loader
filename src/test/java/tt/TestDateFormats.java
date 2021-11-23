@@ -32,7 +32,9 @@ public class TestDateFormats
         testPdsDate("2013-10-24T00:49:37.457Z");
         
         testPdsDate("2013-10-24T01");
+        
         testPdsDate("2013-302T01:02:03.123");
+        testPdsDate("2013-302T01:02:03.123Z");
         
         testPdsDate("20130302010203.123");
         
@@ -40,6 +42,7 @@ public class TestDateFormats
         testPdsDate("2013-03-02");
         testPdsDate("2013-12");
         testPdsDate("2013");
+        testPdsDate("2015Z");
         testPdsDate("2013-001");
         
         testPdsDate("invalid");
