@@ -3,8 +3,10 @@ package gov.nasa.pds.registry.mgr.dd;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import gov.nasa.pds.registry.mgr.dd.parser.DDAttribute;
-import gov.nasa.pds.registry.mgr.util.Logger;
 
 
 /**
@@ -14,6 +16,7 @@ import gov.nasa.pds.registry.mgr.util.Logger;
  */
 public class LddEsJsonWriter
 {
+    private Logger log;
     private DDNJsonWriter writer;
     private DDRecord ddRec = new DDRecord();
     
@@ -29,9 +32,11 @@ public class LddEsJsonWriter
      * @param ddAttrCache LDD attribute cache
      * @throws Exception an exception
      */
-    public LddEsJsonWriter(File outFile, Pds2EsDataTypeMap dtMap, Map<String, DDAttribute> ddAttrCache) throws Exception
+    public LddEsJsonWriter(File outFile, Pds2EsDataTypeMap dtMap, Map<String, 
+            DDAttribute> ddAttrCache, boolean overwrite) throws Exception
     {
-        writer = new DDNJsonWriter(outFile);
+        log = LogManager.getLogger(this.getClass());
+        writer = new DDNJsonWriter(outFile, overwrite);
         this.dtMap = dtMap;
         this.ddAttrCache = ddAttrCache;
     }
@@ -72,7 +77,7 @@ public class LddEsJsonWriter
         DDAttribute attr = ddAttrCache.get(attrId);
         if(attr == null)
         {
-            Logger.warn("Missing attribute " + attrId);
+            log.warn("Missing attribute " + attrId);
         }
         else
         {
@@ -88,8 +93,8 @@ public class LddEsJsonWriter
      * @param date LDD date
      * @throws Exception an exception
      */
-    public void writeDataDictionaryVersion(String namespace, String imVersion, 
-            String lddVersion, String date) throws Exception
+    public void writeLddInfo(String namespace, String schemaFileName, 
+            String imVersion, String lddVersion, String date) throws Exception
     {
         if(namespace == null || namespace.isBlank()) throw new IllegalArgumentException("Missing data dictionary namespace");
         if(date == null || date.isBlank()) throw new IllegalArgumentException("Missing data dictionary date");
@@ -97,14 +102,15 @@ public class LddEsJsonWriter
         DDRecord rec = new DDRecord();
         rec.classNs = "registry";
         rec.className = "LDD_Info";
-        rec.attrNs = "registry";
-        rec.attrName = namespace;
+        rec.attrNs = namespace;
+        rec.attrName = schemaFileName;
         
         rec.imVersion = imVersion;
         rec.lddVersion = lddVersion;
-        rec.date = LddUtils.lddDateToIsoInstant(date);
+        rec.date = LddUtils.lddDateToIsoInstantString(date);
         
-        writer.write(rec.esFieldNameFromComponents(), rec);
+        // Overwrite existing record
+        writer.write(rec.esFieldNameFromComponents(), rec, "index");
     }
     
     
@@ -131,5 +137,5 @@ public class LddEsJsonWriter
             writer.write(ddRec.esFieldNameFromComponents(), ddRec);
         }
     }
-        
+
 }

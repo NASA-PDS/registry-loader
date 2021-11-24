@@ -3,21 +3,20 @@ package gov.nasa.pds.registry.mgr.dao;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.RestClient;
 
-import gov.nasa.pds.registry.mgr.dd.LddInfo;
+import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.dd.LddLoader;
 import gov.nasa.pds.registry.mgr.dd.LddUtils;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.Logger;
+import gov.nasa.pds.registry.mgr.util.ExceptionUtils;
 import gov.nasa.pds.registry.mgr.util.file.FileDownloader;
 
 
@@ -36,39 +35,31 @@ import gov.nasa.pds.registry.mgr.util.file.FileDownloader;
  */
 public class SchemaUpdater
 {
-    private static final String WARN_LDD_NA = "Could not load list of LDDs. Automatic data dictionary updates are not available.";
-    
+    private Logger log;
+
     private SchemaDao dao;
 
-    private Map<String, LddInfo> remoteLddMap;
-    private Map<String, Instant> localLddMap = new TreeMap<>();
-    
-    private Set<String> esFieldNames;
-    
     private Set<String> batch;
     private int totalCount;
     private int batchSize = 100;
     
-    private SchemaUpdaterConfig cfg;
-
-    private FileDownloader fileDownloader = new FileDownloader();
+    private FileDownloader fileDownloader = new FileDownloader(true);
     private LddLoader lddLoader;
     
     /**
      * Constructor 
      * @param client Elasticsearch client
-     * @param lddLoader LDD loader class
-     * @param cfg Configuration parameters
+     * @param cfg Registry (Elasticsearch) configuration parameters
      * @throws Exception an exception
      */
-    public SchemaUpdater(RestClient client, LddLoader lddLoader, SchemaUpdaterConfig cfg) throws Exception
+    public SchemaUpdater(RestClient client, RegistryCfg cfg) throws Exception
     {
-        this.cfg = cfg;
-        this.dao = new SchemaDao(client);
-        this.lddLoader = lddLoader;
+        log = LogManager.getLogger(this.getClass());
         
-        // Get a list of existing field names from Elasticsearch
-        this.esFieldNames = dao.getFieldNames(cfg.indexName);
+        this.dao = new SchemaDao(client, cfg.indexName);
+        
+        lddLoader = new LddLoader(cfg.url, cfg.indexName, cfg.authFile);
+        lddLoader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile());
         
         this.batch = new TreeSet<>();
     }
@@ -92,7 +83,7 @@ public class SchemaUpdater
         }
 
         finish();
-        Logger.info("Updated " + totalCount + " fields");
+        log.info("Updated " + totalCount + " fields");
     }
     
     
@@ -103,8 +94,6 @@ public class SchemaUpdater
      */
     private void addField(String name) throws Exception
     {
-        if(esFieldNames.contains(name)) return;
-        
         // Add field request to the batch
         batch.add(name);
         totalCount++;
@@ -132,99 +121,133 @@ public class SchemaUpdater
      */
     public void updateSchema(Set<String> batch) throws Exception
     {
-        DataTypesInfo info = dao.getDataTypes(cfg.indexName, batch, false);
+        DataTypesInfo info = dao.getDataTypes(batch, false);
         if(info.lastMissingField == null) 
         {
-            dao.updateSchema(cfg.indexName, info.newFields);
+            dao.updateSchema(info.newFields);
             return;
         }
         
-        // Some fields are missing. Update LDDs if needed.
-        boolean updated = updateLdds(info.missingNamespaces);
-        
         // LDDs are up-to-date or LDD list is not available
-        if(!updated) throw new DataTypeNotFoundException(info.lastMissingField);
+        //if(!updated) throw new DataTypeNotFoundException(info.lastMissingField);
         
         // LDDs were updated. Reload last batch. Stop (throw exception) on first missing field.
-        info = dao.getDataTypes(cfg.indexName, batch, true);
-        dao.updateSchema(cfg.indexName, info.newFields);
+        info = dao.getDataTypes(batch, true);
+        dao.updateSchema(info.newFields);
     }
     
     
     /**
      * Update LDDs in Elasticsearch data dictionary. 
      * Only update if remote LDD date is after LDD date in Elasticsearch.
-     * @param namespaces A list of namespaces to update.
-     * @return true if at least one LDD was updated.
+     * @param fileName A file with a list of schema locations.
      * @throws Exception an exception
      */
-    public boolean updateLdds(Set<String> namespaces) throws Exception
+    public void updateLdds(String fileName) throws Exception
     {
-        if(namespaces == null || namespaces.isEmpty()) return false;
+        if(fileName == null) return;
         
-        // Load LDD list if needed
-        if(cfg.lddCfgUrl == null) return false;
+        File file = new File(fileName);
+        log.info("Updating LDDs from " + file.getAbsolutePath());
+
+        BufferedReader rd = null;
         try
         {
-            loadLddList();
-        }
-        catch(Exception ex)
-        {
-            Logger.warn(WARN_LDD_NA);
-            return false;
-        }
-        
-        boolean updated = false;
-        
-        for(String namespace: namespaces)
-        {
-            LddInfo remoteLdd = remoteLddMap.get(namespace);
-            if(remoteLdd == null || remoteLdd.date == null) 
+            rd = new BufferedReader(new FileReader(file));
+            String line;
+            while((line = rd.readLine()) != null)
             {
-                Logger.warn("There is no LDD for namespace '" + namespace + "'");
-                continue;
-            }
-
-            // Get local LDD date
-            if(!localLddMap.containsKey(namespace))
-            {
-                Instant date = dao.getLddDate(cfg.indexName, namespace);
-                if(date == null) date = Instant.MIN;
-                localLddMap.put(namespace, date);
-            }
-
-            Instant localDate = localLddMap.get(namespace);
-            Instant remoteDate = remoteLdd.date;
-            
-            // Load the latest version of remote LDD
-            if(localDate.isBefore(remoteDate))
-            {
-                String fileName = getFileNameFromUrl(remoteLdd.url);
-                File lddFile = new File(cfg.tempDir, fileName);
+                int idx = line.indexOf(";");
+                if(idx <= 0) continue;
                 
-                fileDownloader.download(remoteLdd.url, lddFile);
-                lddLoader.load(lddFile, namespace);
-                localLddMap.put(namespace, remoteDate);
-                updated = true;
+                String prefix = line.substring(0, idx);
+                String uri = line.substring(idx+1);
+                
+                try
+                {
+                    updateLdd(uri, prefix);
+                }
+                catch(Exception ex)
+                {
+                    log.error("Could not update LDD. " + ExceptionUtils.getMessage(ex));
+                }
             }
         }
-        
-        return updated;
+        finally
+        {
+            CloseUtils.close(rd);
+        }
     }
 
     
-    /**
-     * Load LDD list from a URL.
-     * @throws Exception an exception
-     */
-    private void loadLddList() throws Exception
+    private void updateLdd(String uri, String prefix) throws Exception
     {
-        if(remoteLddMap != null) return;
+        if(uri == null || uri.isEmpty()) return;
+        if(prefix == null || prefix.isEmpty()) return;
 
-        File file = new File(cfg.tempDir, "pds_registry_ldd_list.csv");
-        fileDownloader.download(cfg.lddCfgUrl, file);
+        log.info("Updating '" + prefix  + "' LDD. Schema location: " + uri);
+        
+        // Get JSON schema URL from XSD URL
+        String jsonUrl = getJsonUrl(uri);
 
-        remoteLddMap = LddUtils.loadLddList(file);
+        // Get schema file name
+        int idx = jsonUrl.lastIndexOf('/');
+        if(idx < 0) 
+        {
+            throw new Exception("Invalid schema URI." + uri);
+        }
+        String schemaFileName = jsonUrl.substring(idx+1);
+        
+        // Get stored LDDs info
+        LddInfo lddInfo = dao.getLddInfo(prefix);
+
+        // LDD already loaded
+        if(lddInfo.files.contains(schemaFileName)) 
+        {
+            log.info("This LDD already loaded.");
+            return;
+        }
+
+        // Download LDD
+        File lddFile = File.createTempFile("LDD-", ".JSON");
+        
+        try
+        {
+            fileDownloader.download(jsonUrl, lddFile);
+            lddLoader.load(lddFile, schemaFileName, prefix, lddInfo.lastDate);
+        }
+        catch(Exception ex)
+        {
+            log.error(ExceptionUtils.getMessage(ex));
+            if(lddInfo.isEmpty())
+            {
+                log.warn("Will use 'keyword' data type.");
+                return;
+            }
+            else
+            {
+                log.warn("Will use field definitions from " + lddInfo.files);
+                return;
+            }
+        }
+        finally
+        {
+            lddFile.delete();
+        }
+    }
+
+    
+    private String getJsonUrl(String uri) throws Exception
+    {
+        if(uri.endsWith(".xsd"))
+        {
+            String jsonUrl = uri.substring(0, uri.length()-3) + "JSON";
+            return jsonUrl;
+        }
+        else
+        {
+            throw new Exception("Invalid schema URI. URI doesn't end with '.xsd': " + uri);
+        }
     }
 
     

@@ -125,12 +125,12 @@ public class LoadDDCmd implements CliCommand
         System.out.println();
 
         // Init LDD loader
-        LddLoader loader = new LddLoader();
+        LddLoader loader = new LddLoader(esUrl, indexName, authPath);
         loader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile());
-        loader.setElasticInfo(esUrl, indexName, authPath);
 
         //Load LDD
-        loader.load(new File(path), namespace);
+        File lddFile = new File(path);
+        loader.load(lddFile, lddFile.getName(), namespace, LddUtils.getDefaultLddDate());
     }
     
     
@@ -177,7 +177,7 @@ public class LoadDDCmd implements CliCommand
             validateCsvHeader(header);
             
             Logger.info("Creating temprary ES NJSON " + tempOutFile.getAbsolutePath());
-            writer = new DDNJsonWriter(tempOutFile);
+            writer = new DDNJsonWriter(tempOutFile, true);
             
             int line = 1;
             String[] values = null;

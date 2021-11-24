@@ -1,16 +1,19 @@
 package gov.nasa.pds.registry.mgr.dd;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import gov.nasa.pds.registry.mgr.dao.DataLoader;
 import gov.nasa.pds.registry.mgr.dd.parser.AttributeDictionaryParser;
 import gov.nasa.pds.registry.mgr.dd.parser.ClassAttrAssociationParser;
 import gov.nasa.pds.registry.mgr.dd.parser.DDAttribute;
-import gov.nasa.pds.registry.mgr.util.Logger;
 
 
 /**
@@ -20,39 +23,27 @@ import gov.nasa.pds.registry.mgr.util.Logger;
  */
 public class LddLoader
 {
-    private String esUrl = "http://localhost:9200";
-    private String esIndexName = "registry-dd";
-    private String esAuthFilePath;
-
-    private File tempDir;
+    private Logger log;
+    
     private Pds2EsDataTypeMap dtMap;
+    private DataLoader loader;
     
     
     /**
      * Constructor
+     * @param esUrl Elasticsearch URL
+     * @param esIndex Elasticsearch index name
+     * @param esAuthFile Elasticsearch authentication configuration file
+     * @throws Exception an exception
      */
-    public LddLoader()
+    public LddLoader(String esUrl, String indexName, String authFilePath) throws Exception
     {
-        tempDir = new File(System.getProperty("java.io.tmpdir"));
+        log = LogManager.getLogger(this.getClass());
         dtMap = new Pds2EsDataTypeMap();
+        
+        loader = new DataLoader(esUrl, indexName + "-dd", authFilePath);
     }
  
-    
-    /**
-     * Set Elasticsearch information
-     * @param esUrl Elasticsearch URL, such as "http://localhost:9200"
-     * @param indexName Elasticsearch base index name, such as "registry". 
-     * NOTE: This class automatically creates full ES data dictionary index name, 
-     * such as "registry-dd". Pass "base" index name.
-     * @param authFilePath Path to optional authentication configuration file.
-     */
-    public void setElasticInfo(String esUrl, String indexName, String authFilePath)
-    {
-        this.esUrl = esUrl;
-        this.esIndexName = indexName + "-dd";
-        this.esAuthFilePath = authFilePath;
-    }
-    
     
     /**
      * Load PDS to Elasticsearch data type map
@@ -67,47 +58,53 @@ public class LddLoader
     
     /**
      * Load PDS LDD JSON file into Elasticsearch data dictionary index
-     * @param ddFile PDS LDD JSON file
+     * @param lddFile PDS LDD JSON file
      * @param namespace Namespace filter. Only load classes having this namespace.
      * @throws Exception an exception
      */
-    public void load(File ddFile, String namespace) throws Exception
+    public void load(File lddFile, String lddFileName, String namespace, Instant lastDate) throws Exception
     {
-        File tempEsDataFile = new File(tempDir, "pds-registry-dd.tmp.json");
-        Logger.info("Creating temporary ES data file " + tempEsDataFile.getAbsolutePath());
-        createEsDataFile(ddFile, namespace, tempEsDataFile);
+        File tempEsDataFile = File.createTempFile("es-", ".json");
+        log.info("Creating temporary ES data file " + tempEsDataFile.getAbsolutePath());
 
-        // Load temporary file into data dictionary index
-        DataLoader loader = new DataLoader(esUrl, esIndexName, esAuthFilePath);
-        loader.loadFile(tempEsDataFile);
-        
-        // Delete temporary file
-        tempEsDataFile.delete();
+        try
+        {
+            createEsDataFile(lddFile, lddFileName, namespace, tempEsDataFile, lastDate);
+            loader.loadFile(tempEsDataFile);
+        }
+        finally
+        {
+            // Delete temporary file
+            tempEsDataFile.delete();
+        }
     }
 
     
     /**
      * Create Elasticsearch data file to be loaded into data dictionary index.
-     * @param ddFile PDS LDD JSON file
+     * @param lddFile PDS LDD JSON file
      * @param namespace Namespace filter. Only load classes having this namespace.
-     * @param esFile Write to this Elasticsearch file
+     * @param tempEsFile Write to this Elasticsearch file
      * @throws Exception an exception
      */
-    public void createEsDataFile(File ddFile, String namespace, File esFile) throws Exception
+    public void createEsDataFile(File lddFile, String lddFileName, String namespace, 
+            File tempEsFile, Instant lastDate) throws Exception
     {
         // Parse and cache LDD attributes
         Map<String, DDAttribute> ddAttrCache = new TreeMap<>();
-        AttributeDictionaryParser attrParser = new AttributeDictionaryParser(ddFile, 
+        AttributeDictionaryParser attrParser = new AttributeDictionaryParser(lddFile, 
                 (attr) -> { ddAttrCache.put(attr.id, attr); } );
         attrParser.parse();
-
+        
+        boolean overwrite = overwriteLdd(lastDate, attrParser.getLddDate());
+        
         // Create a writer to save LDD data in Elasticsearch JSON data file
-        LddEsJsonWriter writer = new LddEsJsonWriter(esFile, dtMap, ddAttrCache);
+        LddEsJsonWriter writer = new LddEsJsonWriter(tempEsFile, dtMap, ddAttrCache, overwrite);
         writer.setNamespaceFilter(namespace);
         
         // Parse class attribute associations and write to ES data file
         Set<String> namespaces = new TreeSet<>();
-        ClassAttrAssociationParser caaParser = new ClassAttrAssociationParser(ddFile, 
+        ClassAttrAssociationParser caaParser = new ClassAttrAssociationParser(lddFile, 
                 (classNs, className, attrId) -> { 
                     writer.writeFieldDefinition(classNs, className, attrId);
                     namespaces.add(classNs);
@@ -128,9 +125,25 @@ public class LddLoader
         }
         
         // Write data dictionary version and date
-        writer.writeDataDictionaryVersion(namespace, attrParser.getImVersion(), 
+        writer.writeLddInfo(namespace, lddFileName, attrParser.getImVersion(), 
                 attrParser.getLddVersion(), attrParser.getLddDate());
         
         writer.close();
     }
+
+
+    private boolean overwriteLdd(Instant lastDate, String strLddDate)
+    {
+        try
+        {
+            Instant lddDate = LddUtils.lddDateToIsoInstant(strLddDate);
+            return lddDate.isAfter(lastDate);
+        }
+        catch(Exception ex)
+        {
+            log.warn("Could not parse LDD date " + strLddDate);
+            return false;
+        }
+    }
+
 }

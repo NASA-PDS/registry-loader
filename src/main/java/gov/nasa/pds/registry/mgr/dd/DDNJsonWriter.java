@@ -2,6 +2,7 @@ package gov.nasa.pds.registry.mgr.dd;
 
 import java.io.File;
 import com.google.gson.stream.JsonWriter;
+
 import gov.nasa.pds.registry.mgr.util.json.BaseNJsonWriter;
 
 
@@ -18,9 +19,9 @@ public class DDNJsonWriter extends BaseNJsonWriter<DDRecord>
      * @param file output file
      * @throws Exception an exception
      */
-    public DDNJsonWriter(File file) throws Exception
+    public DDNJsonWriter(File file, boolean overwrite) throws Exception
     {
-        super(file);
+        super(file, overwrite ? "index" : "create");
     }
 
     
@@ -31,7 +32,6 @@ public class DDNJsonWriter extends BaseNJsonWriter<DDRecord>
     public void writeDataRecord(JsonWriter jw, DDRecord data) throws Exception
     {
         String fieldName = (data.esFieldName != null) ? data.esFieldName : data.esFieldNameFromComponents();
-        if(fieldName == null) throw new Exception("ES field name is null");
         writeField(jw, "es_field_name", fieldName);
         
         writeField(jw, "es_data_type", data.esDataType);

@@ -1,6 +1,5 @@
 package gov.nasa.pds.registry.mgr.dao;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -23,25 +22,27 @@ import gov.nasa.pds.registry.mgr.util.Tuple;
 public class SchemaDao
 {
     private RestClient client;
+    private String indexName;
     
     
     /**
      * Constructor
      * @param client Elasticsearch client
+     * @param indexName Elasticsearch index name
      */
-    public SchemaDao(RestClient client)
+    public SchemaDao(RestClient client, String indexName)
     {
         this.client = client;
+        this.indexName = indexName;
     }
     
     
     /**
      * Call Elasticsearch "mappings" API to get a list of field names.
-     * @param indexName Elasticsearch index name
      * @return a collection of field names
      * @throws Exception an exception
      */
-    public Set<String> getFieldNames(String indexName) throws Exception
+    public Set<String> getFieldNames() throws Exception
     {
         Request req = new Request("GET", "/" + indexName + "/_mappings");
         Response resp = client.performRequest(req);
@@ -55,9 +56,18 @@ public class SchemaDao
      * Inner private class to parse LDD information response from Elasticsearch.
      * @author karpenko
      */
-    private static class GetLddDateRespParser extends SearchResponseParser implements SearchResponseParser.Callback
+    /**
+     * Inner private class to parse LDD information response from Elasticsearch.
+     * @author karpenko
+     */
+    private static class GetLddInfoRespParser extends SearchResponseParser implements SearchResponseParser.Callback
     {
-        public Instant date = null;
+        public LddInfo info;
+        
+        public GetLddInfoRespParser()
+        {
+            info = new LddInfo();
+        }
         
         @Override
         public void onRecord(String id, Object rec) throws Exception
@@ -66,14 +76,17 @@ public class SchemaDao
             {
                 @SuppressWarnings("rawtypes")
                 Map map = (Map)rec;
+                
                 String strDate = (String)map.get("date");
-                if(strDate == null) return;
-
-                date = Instant.parse(strDate);
+                info.updateDate(strDate);
+                
+                String file = (String)map.get("attr_name");
+                info.addSchemaFile(file);
             }
         }
     }
     
+
     /**
      * Get LDD date from data dictionary index in Elasticsearch.
      * @param indexName Elasticsearch base index name, e.g., "registry". 
@@ -82,7 +95,7 @@ public class SchemaDao
      * @return ISO instant class representing LDD date.
      * @throws Exception an exception
      */
-    public Instant getLddDate(String indexName, String namespace) throws Exception
+    public LddInfo getLddInfo(String namespace) throws Exception
     {
         SchemaRequestBuilder bld = new SchemaRequestBuilder();
         String json = bld.createGetLddInfoRequest(namespace);
@@ -91,19 +104,18 @@ public class SchemaDao
         req.setJsonEntity(json);
         Response resp = client.performRequest(req);
         
-        GetLddDateRespParser parser = new GetLddDateRespParser();
+        GetLddInfoRespParser parser = new GetLddInfoRespParser();
         parser.parseResponse(resp, parser); 
-        return parser.date;
+        return parser.info;
     }
     
     
     /**
      * Add new fields to Elasticsearch schema.
-     * @param indexName Elasticsearch index to update, e.g., "registry".
      * @param fields A list of fields to add. Each field tuple has a name and a data type.
      * @throws Exception an exception
      */
-    public void updateSchema(String indexName, List<Tuple> fields) throws Exception
+    public void updateSchema(List<Tuple> fields) throws Exception
     {
         if(fields == null || fields.isEmpty()) return;
         
@@ -118,7 +130,6 @@ public class SchemaDao
     
     /**
      * Query Elasticsearch data dictionary to get data types for a list of field ids.
-     * @param indexName Elasticsearch index name, e.g., "registry".
      * @param ids A list of field IDs, e.g., "pds:Array_3D/pds:axes".
      * @param stopOnFirstMissing If true, throw DataTypeNotFoundException on first 
      * field missing from Elasticsearch data dictionary. 
@@ -127,8 +138,7 @@ public class SchemaDao
      * @return Data types information object
      * @throws Exception DataTypeNotFoundException, IOException, etc.
      */
-    public DataTypesInfo getDataTypes(String indexName, Collection<String> ids, 
-            boolean stopOnFirstMissing) throws Exception
+    public DataTypesInfo getDataTypes(Collection<String> ids, boolean stopOnFirstMissing) throws Exception
     {
         if(indexName == null) throw new IllegalArgumentException("Index name is null");
 

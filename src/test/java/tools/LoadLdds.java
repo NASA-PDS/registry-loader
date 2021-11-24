@@ -12,7 +12,7 @@ public class LoadLdds
 
     public static void main(String[] args) throws Exception
     {
-        LddLoader loader = new LddLoader();
+        LddLoader loader = new LddLoader("http://localhost:9200", "registry", null);
         loader.loadPds2EsDataTypeMap(new File("src/main/resources/elastic/data-dic-types.cfg"));
 
         File baseDir = new File("/tmp/schema");
@@ -25,7 +25,7 @@ public class LoadLdds
             if(line.isEmpty() || line.startsWith("#")) continue;
             
             File file = new File(baseDir, line);
-            loader.load(file, null);
+            //loader.load(file, null);
         }
         
         rd.close();

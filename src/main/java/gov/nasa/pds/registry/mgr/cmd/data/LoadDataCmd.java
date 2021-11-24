@@ -14,14 +14,13 @@ import org.elasticsearch.client.RestClient;
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.mgr.Constants;
+import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.DataLoader;
 import gov.nasa.pds.registry.mgr.dao.SchemaUpdater;
-import gov.nasa.pds.registry.mgr.dao.SchemaUpdaterConfig;
-import gov.nasa.pds.registry.mgr.dd.LddLoader;
-import gov.nasa.pds.registry.mgr.dd.LddUtils;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.util.Logger;
+
 
 /**
  * A CLI command to load PDS4 metadata into Registry. 
@@ -37,11 +36,7 @@ import gov.nasa.pds.registry.mgr.util.Logger;
  */
 public class LoadDataCmd implements CliCommand
 {
-    private static final String FIELDS_FILE = "fields.txt";
-    
-    private String esUrl;
-    private String indexName;
-    private String authPath;
+    private RegistryCfg cfg;
     
     
     /**
@@ -61,9 +56,10 @@ public class LoadDataCmd implements CliCommand
             return;
         }
 
-        esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
-        indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
-        authPath = cmdLine.getOptionValue("auth");
+        cfg = new RegistryCfg();
+        cfg.url = cmdLine.getOptionValue("es", "http://localhost:9200");
+        cfg.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        cfg.authFile = cmdLine.getOptionValue("auth");
 
         String strDir = cmdLine.getOptionValue("dir");
         if(strDir == null) throw new Exception("Missing required parameter '-dir'");
@@ -74,15 +70,14 @@ public class LoadDataCmd implements CliCommand
         String tmp = cmdLine.getOptionValue("updateSchema", "Y");
         boolean updateSchema = parseYesNo("updateSchema", tmp);
         
-        System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println("            Index: " + indexName);
+        System.out.println("Elasticsearch URL: " + cfg.url);
+        System.out.println("            Index: " + cfg.indexName);
         System.out.println();
 
         // Update schema
         if(updateSchema)
         {
-            String lddCfgUrl = cmdLine.getOptionValue("ldd", Constants.DEFAULT_LDD_LIST_URL);
-            updateSchema(dir, lddCfgUrl);
+            updateSchema(dir);
         }
         
         // Load data
@@ -121,24 +116,15 @@ public class LoadDataCmd implements CliCommand
      * @param lddCfgUrl
      * @throws Exception
      */
-    private void updateSchema(File dir, String lddCfgUrl) throws Exception
+    private void updateSchema(File dir) throws Exception
     {
-        File newFields = new File(dir, FIELDS_FILE);
-        Logger.info("Updating schema with fields from " + newFields.getAbsolutePath());
-
-        // Create LDD loader
-        LddLoader lddLoader = new LddLoader();
-        lddLoader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile());
-        lddLoader.setElasticInfo(esUrl, indexName, authPath);
-        
         RestClient client = null;
         
         try
         {
-            client = EsClientFactory.createRestClient(esUrl, authPath);
-            SchemaUpdaterConfig suCfg = new SchemaUpdaterConfig(indexName, lddCfgUrl);
-            SchemaUpdater su = new SchemaUpdater(client, lddLoader, suCfg);
-            su.updateSchema(newFields);
+            client = EsClientFactory.createRestClient(cfg.url, cfg.authFile);
+            SchemaUpdater su = new SchemaUpdater(client, cfg);
+            su.updateSchema(dir);
         }
         catch(ResponseException ex)
         {
@@ -160,9 +146,9 @@ public class LoadDataCmd implements CliCommand
     private void loadData(File dir) throws Exception
     {
         // Loader for main metadata ("registry" index)
-        DataLoader registryLoader = new DataLoader(esUrl, indexName, authPath);
+        DataLoader registryLoader = new DataLoader(cfg.url, cfg.indexName, cfg.authFile);
         // Loader for references extracted from collection inventory files ("registry-refs" index)
-        DataLoader refsLoader = new DataLoader(esUrl, indexName + "-refs", authPath);
+        DataLoader refsLoader = new DataLoader(cfg.url, cfg.indexName + "-refs", cfg.authFile);
         refsLoader.setBatchSize(10);
 
         // Find all JSON files in the @param dir directory
@@ -221,7 +207,6 @@ public class LoadDataCmd implements CliCommand
         System.out.println("  -es <url>             Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>         Elasticsearch index name. Default is 'registry'");
         System.out.println("  -updateSchema <y/n>   Update registry schema. Default is 'yes'");
-        System.out.println("  -ldd <url>            PDS LDD configuration URL");
 
         System.out.println();
     }

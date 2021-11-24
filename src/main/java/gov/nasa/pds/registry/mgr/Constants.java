@@ -14,8 +14,4 @@ public interface Constants
     public static final String NS_SEPARATOR = ":";
     public static final String ATTR_SEPARATOR = "/";
     public static final String BLOB_FIELD = "ops:Label_File_Info/ops:blob";
-    
-    // LDDs
-    public static final String DEFAULT_LDD_LIST_URL 
-        = "https://raw.githubusercontent.com/NASA-PDS/pds4-information-model/main/docs/ldds/pds4-ldd-config.csv";
 }

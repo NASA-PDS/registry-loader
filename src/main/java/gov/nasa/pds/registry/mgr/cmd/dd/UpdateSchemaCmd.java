@@ -9,6 +9,7 @@ import org.elasticsearch.client.RestClient;
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.mgr.Constants;
+import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.SchemaUpdater;
 import gov.nasa.pds.registry.mgr.dao.SchemaUpdaterConfig;
@@ -49,25 +50,20 @@ public class UpdateSchemaCmd implements CliCommand
             throw new Exception("Missing required parameter '-file'");
         }
 
-        String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
-        String authPath = cmdLine.getOptionValue("auth");
-        String lddCfgUrl = cmdLine.getOptionValue("ldd", Constants.DEFAULT_LDD_LIST_URL);
+        RegistryCfg cfg = new RegistryCfg();
+        cfg.url = cmdLine.getOptionValue("es", "http://localhost:9200");
+        cfg.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        cfg.authFile = cmdLine.getOptionValue("auth");
         
-        Logger.info("Elasticsearch URL: " + esUrl);
-        Logger.info("Index: " + indexName);
+        Logger.info("Elasticsearch URL: " + cfg.url);
+        Logger.info("Index: " + cfg.indexName);
 
         RestClient client = null;
         
-        LddLoader lddLoader = new LddLoader();
-        lddLoader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile());
-        lddLoader.setElasticInfo(esUrl, indexName, authPath);
-        
         try
         {
-            client = EsClientFactory.createRestClient(esUrl, authPath);
-            SchemaUpdaterConfig suCfg = new SchemaUpdaterConfig(indexName, lddCfgUrl);
-            SchemaUpdater su = new SchemaUpdater(client, lddLoader, suCfg);
+            client = EsClientFactory.createRestClient(cfg.url, cfg.authFile);
+            SchemaUpdater su = new SchemaUpdater(client, cfg);
             su.updateSchema(new File(filePath));
             Logger.info("Done");
         }
@@ -98,7 +94,6 @@ public class UpdateSchemaCmd implements CliCommand
         System.out.println("  -auth <file>     Authentication config file");
         System.out.println("  -es <url>        Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>    Elasticsearch index name. Default is 'registry'");
-        System.out.println("  -ldd <url>       PDS LDD configuration url. Default is " + Constants.DEFAULT_LDD_LIST_URL);        
         System.out.println();
     }
 
