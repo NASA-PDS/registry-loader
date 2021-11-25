@@ -15,9 +15,8 @@ public class TestLddLoader
         //File ddFile = new File("src/test/data/PDS4_MSN_1B00_1100.JSON");
         //File ddFile = new File("/tmp/schema/PDS4_PDS_JSON_1F00.JSON");
         File lddFile = new File("/tmp/schema/PDS4_IMG_1F00_1810.JSON");        
-        File esFile = new File("/tmp/test.dd.json");
 
-        loader.createEsDataFile(lddFile, null, esFile);
+        loader.load(lddFile, null);
         
         System.out.println("Done");
     }

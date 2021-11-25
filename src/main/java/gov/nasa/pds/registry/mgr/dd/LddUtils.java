@@ -7,6 +7,10 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
+
+import gov.nasa.pds.registry.mgr.dd.parser.ClassAttrAssociationParser;
 
 
 /**
@@ -17,7 +21,6 @@ import java.util.Locale;
 public class LddUtils
 {
     private static final DateFormat LDD_DateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-    private static final String DEFAULT_LDD_DATE = "1965-01-01T00:00:00.000Z";
 
     
     /**
@@ -66,10 +69,73 @@ public class LddUtils
         return dt.toInstant();
     }
     
-    
-    public static Instant getDefaultLddDate()
+
+    /**
+     * Parse JSON LDD file and list all namespaces
+     * @param lddFile JSON LDD file
+     * @return a set of namespaces
+     * @throws Exception an exception
+     */
+    public static Set<String> listLddNamespaces(File lddFile) throws Exception
     {
-        return Instant.parse(DEFAULT_LDD_DATE);
+        Set<String> namespaces = new TreeSet<>();
+        ClassAttrAssociationParser.Callback cb = (classNs, className, attrId) -> 
+        {
+            namespaces.add(classNs);
+        };
+        
+        ClassAttrAssociationParser caaParser = new ClassAttrAssociationParser(lddFile, cb); 
+        caaParser.parse();
+
+        return namespaces;
     }
+
+    
+    /**
+     * Extract LDD namespace. If there are more than one namespace, throw an exception.
+     * @param lddFile JSON LDD file
+     * @return namespace (e.g., 'pds')
+     * @throws Exception an exception
+     */
+    public static String getLddNamespace(File lddFile) throws Exception
+    {
+        Set<String> namespaces = LddUtils.listLddNamespaces(lddFile);
+
+        if(namespaces.size() == 1)
+        {
+            return namespaces.iterator().next();
+        }
+        
+        if(namespaces.size() == 0)
+        {
+            throw new Exception("Data dictionary doesn't have any namespaces.");
+        }
+        else
+        {
+            throw new Exception("Data dictionary has multiple namespaces: " + namespaces 
+                                    + ". Specify one namespace to use.");
+        }
+    }
+
+    
+    /**
+     * Get JSON LDD URL from XSD location 
+     * @param uri XSD location URL
+     * @return JSON LDD URL
+     * @throws Exception an exception
+     */
+    public static String getJsonLddUrlFromXsd(String uri) throws Exception
+    {
+        if(uri.endsWith(".xsd"))
+        {
+            String jsonUrl = uri.substring(0, uri.length()-3) + "JSON";
+            return jsonUrl;
+        }
+        else
+        {
+            throw new Exception("Invalid schema URI. URI doesn't end with '.xsd': " + uri);
+        }
+    }
+
 }
 

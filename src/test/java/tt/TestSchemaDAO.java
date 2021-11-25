@@ -1,6 +1,5 @@
 package tt;
 
-import java.time.Instant;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -9,6 +8,7 @@ import org.elasticsearch.client.RestClient;
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.mgr.dao.DataTypesInfo;
 import gov.nasa.pds.registry.mgr.dao.IndexDao;
+import gov.nasa.pds.registry.mgr.dao.LddInfo;
 import gov.nasa.pds.registry.mgr.dao.SchemaDao;
 import gov.nasa.pds.registry.mgr.util.Tuple;
 
@@ -27,9 +27,9 @@ public class TestSchemaDAO
     {
         RestClient client = EsClientFactory.createRestClient("localhost", null);
         
-        SchemaDao dao = new SchemaDao(client);
-        Instant date = dao.getLddDate("registry", "test");
-        System.out.println(date);
+        SchemaDao dao = new SchemaDao(client, "t1");
+        LddInfo info = dao.getLddInfo("pds");
+        info.debug();
         
         client.close();
     }
@@ -50,9 +50,9 @@ public class TestSchemaDAO
     private static void testGetFieldNames() throws Exception
     {
         RestClient client = EsClientFactory.createRestClient("localhost", null);
-        SchemaDao dao = new SchemaDao(client);
+        SchemaDao dao = new SchemaDao(client, "t1");
         
-        Set<String> names = dao.getFieldNames("t1");
+        Set<String> names = dao.getFieldNames();
         for(String name: names)
         {
             System.out.println(name);
@@ -68,13 +68,13 @@ public class TestSchemaDAO
         
         try
         {
-            SchemaDao dao = new SchemaDao(client);
+            SchemaDao dao = new SchemaDao(client, "t1");
             
             Set<String> ids = new TreeSet<>();
             ids.add("pds:Property_Map/pds:identifier");
             ids.add("abc:test");
             
-            DataTypesInfo results = dao.getDataTypes("registry", ids, false);
+            DataTypesInfo results = dao.getDataTypes(ids, false);
             
             System.out.println("New fields:");
             for(Tuple res: results.newFields)

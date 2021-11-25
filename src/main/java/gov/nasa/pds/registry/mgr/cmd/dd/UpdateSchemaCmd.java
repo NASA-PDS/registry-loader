@@ -12,9 +12,6 @@ import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.SchemaUpdater;
-import gov.nasa.pds.registry.mgr.dao.SchemaUpdaterConfig;
-import gov.nasa.pds.registry.mgr.dd.LddLoader;
-import gov.nasa.pds.registry.mgr.dd.LddUtils;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.util.Logger;
 
@@ -44,10 +41,10 @@ public class UpdateSchemaCmd implements CliCommand
             return;
         }
 
-        String filePath = cmdLine.getOptionValue("file");
-        if(filePath == null) 
+        String dataDir = cmdLine.getOptionValue("dir");
+        if(dataDir == null) 
         {
-            throw new Exception("Missing required parameter '-file'");
+            throw new Exception("Missing required parameter '-dir'");
         }
 
         RegistryCfg cfg = new RegistryCfg();
@@ -64,7 +61,7 @@ public class UpdateSchemaCmd implements CliCommand
         {
             client = EsClientFactory.createRestClient(cfg.url, cfg.authFile);
             SchemaUpdater su = new SchemaUpdater(client, cfg);
-            su.updateSchema(new File(filePath));
+            su.updateSchema(new File(dataDir));
             Logger.info("Done");
         }
         catch(ResponseException ex)
@@ -89,7 +86,7 @@ public class UpdateSchemaCmd implements CliCommand
         System.out.println("Update Elasticsearch schema");
         System.out.println();
         System.out.println("Required parameters:");
-        System.out.println("  -file <path>     A file with a list of field names");
+        System.out.println("  -dir <path>      Harvest output directory with 'missing_fields.txt' and 'missing_xsds.txt' files");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>     Authentication config file");
         System.out.println("  -es <url>        Elasticsearch URL. Default is http://localhost:9200");

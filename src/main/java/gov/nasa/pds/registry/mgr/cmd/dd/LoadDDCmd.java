@@ -130,7 +130,7 @@ public class LoadDDCmd implements CliCommand
 
         //Load LDD
         File lddFile = new File(path);
-        loader.load(lddFile, lddFile.getName(), namespace, LddUtils.getDefaultLddDate());
+        loader.load(lddFile, namespace);
     }
     
     

@@ -39,7 +39,7 @@ public class SchemaUpdater
 
     private SchemaDao dao;
 
-    private Set<String> batch;
+    private List<String> batch;
     private int totalCount;
     private int batchSize = 100;
     
@@ -61,7 +61,7 @@ public class SchemaUpdater
         lddLoader = new LddLoader(cfg.url, cfg.indexName, cfg.authFile);
         lddLoader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile());
         
-        this.batch = new TreeSet<>();
+        this.batch = new ArrayList<>();
     }
 
     
@@ -119,7 +119,7 @@ public class SchemaUpdater
      * @param batch A batch of field names to add
      * @throws Exception an exception
      */
-    public void updateSchema(Set<String> batch) throws Exception
+    public void updateSchema(List<String> batch) throws Exception
     {
         DataTypesInfo info = dao.getDataTypes(batch, false);
         if(info.lastMissingField == null) 
@@ -188,7 +188,7 @@ public class SchemaUpdater
         log.info("Updating '" + prefix  + "' LDD. Schema location: " + uri);
         
         // Get JSON schema URL from XSD URL
-        String jsonUrl = getJsonUrl(uri);
+        String jsonUrl = LddUtils.getJsonLddUrlFromXsd(uri);
 
         // Get schema file name
         int idx = jsonUrl.lastIndexOf('/');
@@ -214,7 +214,7 @@ public class SchemaUpdater
         try
         {
             fileDownloader.download(jsonUrl, lddFile);
-            lddLoader.load(lddFile, schemaFileName, prefix, lddInfo.lastDate);
+            lddLoader.loadOnly(lddFile, schemaFileName, prefix, lddInfo.lastDate);
         }
         catch(Exception ex)
         {
@@ -233,20 +233,6 @@ public class SchemaUpdater
         finally
         {
             lddFile.delete();
-        }
-    }
-
-    
-    private String getJsonUrl(String uri) throws Exception
-    {
-        if(uri.endsWith(".xsd"))
-        {
-            String jsonUrl = uri.substring(0, uri.length()-3) + "JSON";
-            return jsonUrl;
-        }
-        else
-        {
-            throw new Exception("Invalid schema URI. URI doesn't end with '.xsd': " + uri);
         }
     }
 
@@ -279,21 +265,5 @@ public class SchemaUpdater
         
         return fields;
     }
-
     
-    /**
-     * Extract file name from a URL
-     * @param url a URL
-     * @return file name
-     */
-    private static String getFileNameFromUrl(String url)
-    {
-        if(url == null) return null;
-        
-        int idx = url.lastIndexOf('/');
-        if(idx < 0) return url;
-        
-        return url.substring(idx+1);
-    }
-
 }
