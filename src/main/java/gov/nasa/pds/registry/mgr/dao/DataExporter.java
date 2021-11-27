@@ -2,6 +2,8 @@ package gov.nasa.pds.registry.mgr.dao;
 
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
@@ -11,7 +13,6 @@ import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.es.client.SearchResponseParser;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.Logger;
 import gov.nasa.pds.registry.mgr.util.es.EsDocWriter;
 
 
@@ -27,6 +28,8 @@ public abstract class DataExporter
     private static final int BATCH_SIZE = 100;
     private static final int PRINT_STATUS_SIZE = 5000;
     
+    protected Logger log;
+
     private String esUrl;
     private String indexName;
     private String authConfigFile;
@@ -44,6 +47,8 @@ public abstract class DataExporter
         this.esUrl = esUrl;
         this.indexName = indexName;
         this.authConfigFile = authConfigFile;
+
+        log = LogManager.getLogger(this.getClass());
     }
     
     
@@ -91,21 +96,21 @@ public abstract class DataExporter
                 
                 if(numDocs % PRINT_STATUS_SIZE == 0)
                 {
-                    Logger.info("Exported " + numDocs + " document(s)");
+                    log.info("Exported " + numDocs + " document(s)");
                 }
             }
             while(parser.getNumDocs() == BATCH_SIZE);
 
             if(numDocs == 0)
             {
-                Logger.info("No documents found");
+                log.info("No documents found");
             }
             else
             {
-                Logger.info("Exported " + numDocs + " document(s)");
+                log.info("Exported " + numDocs + " document(s)");
             }
             
-            Logger.info("Done");
+            log.info("Done");
         }
         catch(ResponseException ex)
         {

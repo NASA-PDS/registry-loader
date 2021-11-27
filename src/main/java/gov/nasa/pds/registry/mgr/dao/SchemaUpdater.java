@@ -5,18 +5,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
-import gov.nasa.pds.registry.mgr.dd.LddLoader;
+import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
 import gov.nasa.pds.registry.mgr.dd.LddUtils;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.util.ExceptionUtils;
+import gov.nasa.pds.registry.mgr.util.Tuple;
 import gov.nasa.pds.registry.mgr.util.file.FileDownloader;
 
 
@@ -37,28 +35,23 @@ public class SchemaUpdater
 {
     private Logger log;
 
-    private SchemaDao dao;
-
     private List<String> batch;
     private int totalCount;
     private int batchSize = 100;
     
     private FileDownloader fileDownloader = new FileDownloader(true);
-    private LddLoader lddLoader;
+    private JsonLddLoader lddLoader;
     
     /**
      * Constructor 
-     * @param client Elasticsearch client
      * @param cfg Registry (Elasticsearch) configuration parameters
      * @throws Exception an exception
      */
-    public SchemaUpdater(RestClient client, RegistryCfg cfg) throws Exception
+    public SchemaUpdater(RegistryCfg cfg) throws Exception
     {
         log = LogManager.getLogger(this.getClass());
         
-        this.dao = new SchemaDao(client, cfg.indexName);
-        
-        lddLoader = new LddLoader(cfg.url, cfg.indexName, cfg.authFile);
+        lddLoader = new JsonLddLoader(cfg.url, cfg.indexName, cfg.authFile);
         lddLoader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile());
         
         this.batch = new ArrayList<>();
@@ -121,19 +114,12 @@ public class SchemaUpdater
      */
     public void updateSchema(List<String> batch) throws Exception
     {
-        DataTypesInfo info = dao.getDataTypes(batch, false);
-        if(info.lastMissingField == null) 
+        SchemaDao dao = RegistryManager.getInstance().getSchemaDao();
+        List<Tuple> newFields = dao.getDataTypes(batch, false);
+        if(newFields != null)
         {
-            dao.updateSchema(info.newFields);
-            return;
+            dao.updateSchema(newFields);
         }
-        
-        // LDDs are up-to-date or LDD list is not available
-        //if(!updated) throw new DataTypeNotFoundException(info.lastMissingField);
-        
-        // LDDs were updated. Reload last batch. Stop (throw exception) on first missing field.
-        info = dao.getDataTypes(batch, true);
-        dao.updateSchema(info.newFields);
     }
     
     
@@ -199,6 +185,7 @@ public class SchemaUpdater
         String schemaFileName = jsonUrl.substring(idx+1);
         
         // Get stored LDDs info
+        SchemaDao dao = RegistryManager.getInstance().getSchemaDao();
         LddInfo lddInfo = dao.getLddInfo(prefix);
 
         // LDD already loaded

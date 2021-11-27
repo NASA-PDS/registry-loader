@@ -1,11 +1,10 @@
 package tt;
 
 import java.io.File;
-import org.elasticsearch.client.RestClient;
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
+import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 import gov.nasa.pds.registry.mgr.dao.SchemaUpdater;
-import gov.nasa.pds.registry.mgr.dd.LddLoader;
+import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
 
 
 public class TestSchemaUpdater
@@ -19,22 +18,22 @@ public class TestSchemaUpdater
     
     public static void testUpdateLdds() throws Exception
     {
-        LddLoader lddLoader = new LddLoader("http://localhst:9200", "registry", null);
+        JsonLddLoader lddLoader = new JsonLddLoader("http://localhst:9200", "registry", null);
         lddLoader.loadPds2EsDataTypeMap(new File("src/main/resources/elastic/data-dic-types.cfg"));
 
         RegistryCfg cfg = new RegistryCfg();
         cfg.url = "http://localhst:9200";
         cfg.indexName = "registry";
         
-        RestClient client = EsClientFactory.createRestClient("localhost", null);
+        RegistryManager.init(cfg);
         try
         {
-            SchemaUpdater updater = new SchemaUpdater(client, cfg);
+            SchemaUpdater updater = new SchemaUpdater(cfg);
             updater.updateLdds("/tmp/harvest/out/missing_xsds.txt");
         }
         finally
         {
-            client.close();
+            RegistryManager.destroy();
         }
     }
     

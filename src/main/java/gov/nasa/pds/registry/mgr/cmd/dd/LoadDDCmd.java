@@ -11,10 +11,9 @@ import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.DataLoader;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.Logger;
 import gov.nasa.pds.registry.mgr.dd.DDNJsonWriter;
 import gov.nasa.pds.registry.mgr.dd.DDRecord;
-import gov.nasa.pds.registry.mgr.dd.LddLoader;
+import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
 import gov.nasa.pds.registry.mgr.dd.LddUtils;
 
 
@@ -125,7 +124,7 @@ public class LoadDDCmd implements CliCommand
         System.out.println();
 
         // Init LDD loader
-        LddLoader loader = new LddLoader(esUrl, indexName, authPath);
+        JsonLddLoader loader = new JsonLddLoader(esUrl, indexName, authPath);
         loader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile());
 
         //Load LDD

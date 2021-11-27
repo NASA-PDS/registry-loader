@@ -21,7 +21,7 @@ import gov.nasa.pds.registry.mgr.dd.parser.DDAttribute;
  * 
  * @author karpenko
  */
-public class LddLoader
+public class JsonLddLoader
 {
     private Logger log;
     
@@ -36,7 +36,7 @@ public class LddLoader
      * @param esAuthFile Elasticsearch authentication configuration file
      * @throws Exception an exception
      */
-    public LddLoader(String esUrl, String indexName, String authFilePath) throws Exception
+    public JsonLddLoader(String esUrl, String indexName, String authFilePath) throws Exception
     {
         log = LogManager.getLogger(this.getClass());
         dtMap = new Pds2EsDataTypeMap();

@@ -1,12 +1,12 @@
 package tt;
 
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
-import gov.nasa.pds.registry.mgr.dao.DataTypesInfo;
 import gov.nasa.pds.registry.mgr.dao.IndexDao;
 import gov.nasa.pds.registry.mgr.dao.LddInfo;
 import gov.nasa.pds.registry.mgr.dao.SchemaDao;
@@ -23,7 +23,7 @@ public class TestSchemaDAO
     }
 
 
-    private static void testGetLddDate() throws Exception
+    private static void testGetLddInfo() throws Exception
     {
         RestClient client = EsClientFactory.createRestClient("localhost", null);
         
@@ -74,19 +74,13 @@ public class TestSchemaDAO
             ids.add("pds:Property_Map/pds:identifier");
             ids.add("abc:test");
             
-            DataTypesInfo results = dao.getDataTypes(ids, false);
+            List<Tuple> results = dao.getDataTypes(ids, false);
+            if(results == null) return;
             
             System.out.println("New fields:");
-            for(Tuple res: results.newFields)
+            for(Tuple res: results)
             {
                 System.out.println("  " + res.item1 + "  -->  " + res.item2);
-            }
-            
-            if(results.lastMissingField != null)
-            {
-                System.out.println();
-                System.out.println("Missing namespaces: " + results.missingNamespaces);
-                System.out.println("Last missing field: " + results.lastMissingField);
             }
         }
         finally

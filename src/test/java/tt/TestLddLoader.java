@@ -1,7 +1,7 @@
 package tt;
 
 import java.io.File;
-import gov.nasa.pds.registry.mgr.dd.LddLoader;
+import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
 
 
 public class TestLddLoader
@@ -9,7 +9,7 @@ public class TestLddLoader
     
     public static void main(String[] args) throws Exception
     {
-        LddLoader loader = new LddLoader("http://localhost:9200", "t1", null);
+        JsonLddLoader loader = new JsonLddLoader("http://localhost:9200", "t1", null);
         loader.loadPds2EsDataTypeMap(new File("src/main/resources/elastic/data-dic-types.cfg"));
 
         //File ddFile = new File("src/test/data/PDS4_MSN_1B00_1100.JSON");

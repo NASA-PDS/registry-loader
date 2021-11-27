@@ -14,12 +14,14 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.Gson;
 
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.es.client.HttpConnectionFactory;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.Logger;
 
 
 /**
@@ -32,13 +34,14 @@ import gov.nasa.pds.registry.mgr.util.Logger;
  */
 public class DataLoader
 {
-    private int printProgressSize = 5000;
-    
+    private int printProgressSize = 500;    
     private int batchSize = 100;
-    private HttpConnectionFactory conFactory; 
     private int totalRecords;
 
+    private Logger log;
+    private HttpConnectionFactory conFactory; 
 
+    
     /**
      * Constructor
      * @param esUrl Elasticsearch URL, e.g., "http://localhost:9200"
@@ -49,7 +52,8 @@ public class DataLoader
      */
     public DataLoader(String esUrl, String indexName, String authConfigFile) throws Exception
     {
-        conFactory = new HttpConnectionFactory(esUrl, indexName, "_bulk");
+        log = LogManager.getLogger(this.getClass());
+        conFactory = new HttpConnectionFactory(esUrl, indexName, "_bulk?refresh=wait_for");
         conFactory.initAuth(authConfigFile);
     }
     
@@ -72,7 +76,7 @@ public class DataLoader
      */
     public void loadFile(File file) throws Exception
     {
-        Logger.info("Loading ES data file: " + file.getAbsolutePath());
+        log.info("Loading ES data file: " + file.getAbsolutePath());
         
         BufferedReader rd = new BufferedReader(new FileReader(file));
         loadData(rd);
@@ -87,7 +91,7 @@ public class DataLoader
      */
     public void loadZippedFile(File zipFile, String fileName) throws Exception
     {
-        Logger.info("Loading ES data file: " + zipFile.getAbsolutePath() + ":" + fileName);
+        log.info("Loading ES data file: " + zipFile.getAbsolutePath() + ":" + fileName);
         
         ZipFile zip = new ZipFile(zipFile);
         
@@ -128,11 +132,11 @@ public class DataLoader
             {
                 if(totalRecords % printProgressSize == 0)
                 {
-                    Logger.info("Loaded " + totalRecords + " document(s)");
+                    log.info("Loaded " + totalRecords + " document(s)");
                 }
             }
             
-            Logger.info("Loaded " + totalRecords + " document(s)");
+            log.info("Loaded " + totalRecords + " document(s)");
         }
         finally
         {
@@ -202,7 +206,7 @@ public class DataLoader
         
             // Check for Elasticsearch errors.
             String respJson = getLastLine(con.getInputStream());
-            Logger.debug(respJson);
+            log.debug(respJson);
             
             if(responseHasErrors(respJson))
             {
@@ -259,7 +263,7 @@ public class DataLoader
                     if(error != null)
                     {
                         String message = (String)error.get("reason");
-                        Logger.error(message);
+                        log.error(message);
                         return true;
                     }
                 }

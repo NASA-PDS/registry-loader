@@ -24,7 +24,6 @@ import gov.nasa.pds.registry.mgr.cmd.dd.UpdateSchemaCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
 import gov.nasa.pds.registry.mgr.util.ExceptionUtils;
-import gov.nasa.pds.registry.mgr.util.Logger;
 import gov.nasa.pds.registry.mgr.util.ManifestUtils;
 
 /**

@@ -4,16 +4,14 @@ import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
 
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
+import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 import gov.nasa.pds.registry.mgr.dao.SchemaUpdater;
-import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.Logger;
+
 
 /**
  * A CLI command to update Elasticsearch schema of the "registry" index.
@@ -52,17 +50,12 @@ public class UpdateSchemaCmd implements CliCommand
         cfg.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         cfg.authFile = cmdLine.getOptionValue("auth");
         
-        Logger.info("Elasticsearch URL: " + cfg.url);
-        Logger.info("Index: " + cfg.indexName);
-
-        RestClient client = null;
+        RegistryManager.init(cfg);
         
         try
         {
-            client = EsClientFactory.createRestClient(cfg.url, cfg.authFile);
-            SchemaUpdater su = new SchemaUpdater(client, cfg);
+            SchemaUpdater su = new SchemaUpdater(cfg);
             su.updateSchema(new File(dataDir));
-            Logger.info("Done");
         }
         catch(ResponseException ex)
         {
@@ -70,7 +63,7 @@ public class UpdateSchemaCmd implements CliCommand
         }
         finally
         {
-            CloseUtils.close(client);
+            RegistryManager.destroy();
         }
     }
 

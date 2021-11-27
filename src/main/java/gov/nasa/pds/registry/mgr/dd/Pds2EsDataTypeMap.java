@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.Logger;
 
 
 /**

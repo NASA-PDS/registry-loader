@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-import gov.nasa.pds.registry.mgr.dd.LddLoader;
+import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
 
 
 public class LoadLdds
@@ -12,7 +12,7 @@ public class LoadLdds
 
     public static void main(String[] args) throws Exception
     {
-        LddLoader loader = new LddLoader("http://localhost:9200", "registry", null);
+        JsonLddLoader loader = new JsonLddLoader("http://localhost:9200", "registry", null);
         loader.loadPds2EsDataTypeMap(new File("src/main/resources/elastic/data-dic-types.cfg"));
 
         File baseDir = new File("/tmp/schema");

@@ -3,8 +3,6 @@ package gov.nasa.pds.registry.mgr.dd.parser;
 import java.io.File;
 import com.google.gson.stream.JsonToken;
 
-import gov.nasa.pds.registry.mgr.util.Logger;
-
 
 /**
  * PDS LDD JSON file parser. 
@@ -59,8 +57,6 @@ public class ClassAttrAssociationParser extends BaseLddParser
     @Override
     protected void parseClassDictionary() throws Exception
     {
-        Logger.debug("Parsing class and attribute associations from " + ddFile.getAbsolutePath());
-
         jsonReader.beginArray();
         
         while(jsonReader.hasNext() && jsonReader.peek() != JsonToken.END_ARRAY)

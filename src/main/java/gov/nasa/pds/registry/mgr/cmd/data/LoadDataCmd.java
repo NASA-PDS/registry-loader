@@ -8,18 +8,13 @@ import java.util.Iterator;
 import java.util.function.BiPredicate;
 
 import org.apache.commons.cli.CommandLine;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
 
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
-import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.DataLoader;
+import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 import gov.nasa.pds.registry.mgr.dao.SchemaUpdater;
-import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.Logger;
 
 
 /**
@@ -73,15 +68,25 @@ public class LoadDataCmd implements CliCommand
         System.out.println("Elasticsearch URL: " + cfg.url);
         System.out.println("            Index: " + cfg.indexName);
         System.out.println();
-
-        // Update schema
-        if(updateSchema)
-        {
-            updateSchema(dir);
-        }
         
-        // Load data
-        loadData(dir);
+        RegistryManager.init(cfg);
+
+        try
+        {
+            // Update schema
+            if(updateSchema)
+            {
+                SchemaUpdater su = new SchemaUpdater(cfg);
+                su.updateSchema(dir);
+            }
+            
+            // Load data
+            loadData(dir);
+        }
+        finally
+        {
+            RegistryManager.destroy();
+        }
     }
 
     
@@ -107,33 +112,6 @@ public class LoadDataCmd implements CliCommand
         }
         
         throw new Exception("Parameter '" + paramName + "' has invalid value '" + val + "'");
-    }
-    
-    
-    /**
-     * Update Elasticsearch schema
-     * @param dir
-     * @param lddCfgUrl
-     * @throws Exception
-     */
-    private void updateSchema(File dir) throws Exception
-    {
-        RestClient client = null;
-        
-        try
-        {
-            client = EsClientFactory.createRestClient(cfg.url, cfg.authFile);
-            SchemaUpdater su = new SchemaUpdater(client, cfg);
-            su.updateSchema(dir);
-        }
-        catch(ResponseException ex)
-        {
-            throw new Exception(EsUtils.extractErrorMessage(ex));
-        }
-        finally
-        {
-            CloseUtils.close(client);
-        }
     }
     
     
