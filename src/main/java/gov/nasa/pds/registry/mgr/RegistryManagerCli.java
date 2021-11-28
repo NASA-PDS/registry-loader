@@ -25,6 +25,7 @@ import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
 import gov.nasa.pds.registry.mgr.util.ExceptionUtils;
 import gov.nasa.pds.registry.mgr.util.ManifestUtils;
+import gov.nasa.pds.registry.mgr.util.log.Log4jConfigurator;
 
 /**
  * Main CLI (Command-Line Interface) manager / dispatcher.
@@ -46,7 +47,6 @@ public class RegistryManagerCli
      */
     public RegistryManagerCli()
     {
-        initCommands();
         initOptions();
     }
     
@@ -88,6 +88,7 @@ public class RegistryManagerCli
         System.out.println();
         System.out.println("Options:");
         System.out.println("  -help        Print help for a command");
+        System.out.println("  -l <file>    Log file. Default is /tmp/harvest/registry-manager.log");
         System.out.println("  -v <value>   Log verbosity: DEBUG, INFO, WARN, ERROR. Default is INFO.");
         
         System.out.println();
@@ -138,8 +139,6 @@ public class RegistryManagerCli
             printHelp();
             System.exit(1);
         }
-
-        initLogger();
         
         // Run command
         if(!runCommand())
@@ -149,37 +148,19 @@ public class RegistryManagerCli
     }
 
     
-    private void initLogger()
+    /**
+     * Initialize Log4j logger
+     * @param cmdLine Command line parameters
+     */
+    private static void initLogger(CommandLine cmdLine)
     {
         String verbosity = cmdLine.getOptionValue("v", "INFO");
-        int level = parseLogLevel(verbosity);
-        Logger.setLevel(level);
+        String logFile = cmdLine.getOptionValue("l");
+
+        Log4jConfigurator.configure(verbosity, logFile);
     }
     
 
-    private static int parseLogLevel(String verbosity)
-    {
-        // Logger is not setup yet. Print to console.
-        if(verbosity == null)
-        {
-            System.out.println("[WARN] Log verbosity is not set. Will use 'INFO'.");
-            return Logger.LEVEL_INFO;
-        }
-        
-        switch(verbosity.toUpperCase())
-        {
-        case "DEBUG": return Logger.LEVEL_DEBUG;
-        case "INFO": return Logger.LEVEL_INFO;
-        case "WARN": return Logger.LEVEL_WARN;
-        case "ERROR": return Logger.LEVEL_ERROR;
-        }
-
-        // Logger is not setup yet. Print to console.
-        System.out.println("[WARN] Invalid log verbosity '" + verbosity + "'. Will use 'INFO'.");
-        return Logger.LEVEL_INFO;
-    }
-    
-    
     private boolean runCommand()
     {
         try
@@ -188,7 +169,7 @@ public class RegistryManagerCli
         }
         catch(Exception ex)
         {
-            Logger.error(ExceptionUtils.getMessage(ex));
+            System.out.println("[ERROR] " + ExceptionUtils.getMessage(ex));
             return false;
         }
         
@@ -205,26 +186,35 @@ public class RegistryManagerCli
     {
         try
         {
+            // Parse command line parameters
             CommandLineParser parser = new DefaultParser();
             cmdLine = parser.parse(options, pArgs);
             
+            // Init logger
+            initLogger(cmdLine);
+            
+            // Validate
             String[] args = cmdLine.getArgs();
             if(args == null || args.length == 0)
             {
-                Logger.error("Missing command.");
+                System.out.println("[ERROR] " + "Missing command.");
                 return false;
             }
 
             if(args.length > 1)
             {
-                Logger.error("Invalid command: " + String.join(" ", args)); 
+                System.out.println("[ERROR] " + "Invalid command: " + String.join(" ", args)); 
                 return false;
             }
+
+            // NOTE: Init commands after logger
+            initCommands();
             
+            // Lookup command by name
             this.command = commands.get(args[0]);
             if(this.command == null)
             {
-                Logger.error("Invalid command: " + args[0]);
+                System.out.println("[ERROR] " + "Invalid command: " + args[0]);
                 return false;
             }
             

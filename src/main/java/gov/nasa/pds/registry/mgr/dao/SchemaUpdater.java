@@ -59,12 +59,25 @@ public class SchemaUpdater
 
     
     /**
+     * Update LDDs and Schema
+     * @param dir Harvest output directory
+     * @throws Exception an exception
+     */
+    public void updateLddsAndSchema(File dir) throws Exception
+    {
+        updateLdds(new File(dir, "missing_xsds.txt"));
+        updateSchema(new File(dir, "missing_fields.txt"));
+    }
+    
+    /**
      * Add new fields to Elasticsearch "registry" index. 
      * @param file A file with a list of fields to add.
      * @throws Exception an exception
      */
     public void updateSchema(File file) throws Exception
     {
+        log.info("Updating schema with fields from " + file.getAbsolutePath());
+        
         List<String> newFields = getNewFields(file);
 
         totalCount = 0;
@@ -129,11 +142,8 @@ public class SchemaUpdater
      * @param fileName A file with a list of schema locations.
      * @throws Exception an exception
      */
-    public void updateLdds(String fileName) throws Exception
+    public void updateLdds(File file) throws Exception
     {
-        if(fileName == null) return;
-        
-        File file = new File(fileName);
         log.info("Updating LDDs from " + file.getAbsolutePath());
 
         BufferedReader rd = null;

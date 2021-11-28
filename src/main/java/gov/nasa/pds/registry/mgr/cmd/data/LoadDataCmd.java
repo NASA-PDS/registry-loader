@@ -65,10 +65,6 @@ public class LoadDataCmd implements CliCommand
         String tmp = cmdLine.getOptionValue("updateSchema", "Y");
         boolean updateSchema = parseYesNo("updateSchema", tmp);
         
-        System.out.println("Elasticsearch URL: " + cfg.url);
-        System.out.println("            Index: " + cfg.indexName);
-        System.out.println();
-        
         RegistryManager.init(cfg);
 
         try
@@ -77,7 +73,7 @@ public class LoadDataCmd implements CliCommand
             if(updateSchema)
             {
                 SchemaUpdater su = new SchemaUpdater(cfg);
-                su.updateSchema(dir);
+                su.updateLddsAndSchema(dir);
             }
             
             // Load data
@@ -145,7 +141,7 @@ public class LoadDataCmd implements CliCommand
             }
             else
             {
-                Logger.warn("Unknown file type: " + file.getAbsolutePath());
+                System.out.println("[WARN] " + "Unknown file type: " + file.getAbsolutePath());
             }
         }
     }

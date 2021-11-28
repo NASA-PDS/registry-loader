@@ -6,6 +6,9 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 
 
@@ -24,6 +27,7 @@ import gov.nasa.pds.registry.mgr.util.CloseUtils;
  */
 public class Pds2EsDataTypeMap
 {
+    private Logger log;
     private Map<String, String> map;
     
     /**
@@ -31,6 +35,7 @@ public class Pds2EsDataTypeMap
      */
     public Pds2EsDataTypeMap()
     {
+        log = LogManager.getLogger(this.getClass());
         map = new HashMap<>();
     }
 
@@ -46,7 +51,7 @@ public class Pds2EsDataTypeMap
         if(esType != null) return esType;
         
         esType = guessEsDataType(pdsType);
-        Logger.warn("No PDS to Elasticsearch data type mapping for '" + pdsType 
+        log.warn("No PDS to Elasticsearch data type mapping for '" + pdsType 
                 + "'. Will use '" + esType + "'");
 
         map.put(pdsType, esType);
@@ -85,7 +90,7 @@ public class Pds2EsDataTypeMap
     {
         if(file == null) return;
         
-        Logger.debug("Loading PDS to ES data type mapping from " + file.getAbsolutePath());
+        log.info("Loading PDS to ES data type mapping from " + file.getAbsolutePath());
         
         BufferedReader rd = null;
         

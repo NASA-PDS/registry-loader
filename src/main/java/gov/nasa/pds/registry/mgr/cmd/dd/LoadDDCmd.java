@@ -175,7 +175,7 @@ public class LoadDDCmd implements CliCommand
             if(header == null) return;
             validateCsvHeader(header);
             
-            Logger.info("Creating temprary ES NJSON " + tempOutFile.getAbsolutePath());
+            System.out.println("[INFO] " + "Creating temprary ES NJSON " + tempOutFile.getAbsolutePath());
             writer = new DDNJsonWriter(tempOutFile, true);
             
             int line = 1;

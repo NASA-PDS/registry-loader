@@ -29,7 +29,7 @@ public class TestSchemaUpdater
         try
         {
             SchemaUpdater updater = new SchemaUpdater(cfg);
-            updater.updateLdds("/tmp/harvest/out/missing_xsds.txt");
+            updater.updateLdds(new File("/tmp/harvest/out/missing_xsds.txt"));
         }
         finally
         {
