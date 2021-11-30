@@ -49,12 +49,14 @@ public class UpdateSchemaCmd implements CliCommand
         cfg.url = cmdLine.getOptionValue("es", "http://localhost:9200");
         cfg.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         cfg.authFile = cmdLine.getOptionValue("auth");
+
+        boolean fixMissingFDs = cmdLine.hasOption("fixMissingFD");
         
         RegistryManager.init(cfg);
         
         try
         {
-            SchemaUpdater su = new SchemaUpdater(cfg);
+            SchemaUpdater su = new SchemaUpdater(cfg, fixMissingFDs);
             su.updateSchema(new File(dataDir));
         }
         catch(ResponseException ex)
@@ -84,6 +86,7 @@ public class UpdateSchemaCmd implements CliCommand
         System.out.println("  -auth <file>     Authentication config file");
         System.out.println("  -es <url>        Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>    Elasticsearch index name. Default is 'registry'");
+        System.out.println("  -fixMissingFD    Use 'keyword' ES datatype for missing field definitions.");        
         System.out.println();
     }
 

@@ -28,7 +28,7 @@ public class TestSchemaUpdater
         RegistryManager.init(cfg);
         try
         {
-            SchemaUpdater updater = new SchemaUpdater(cfg);
+            SchemaUpdater updater = new SchemaUpdater(cfg, false);
             updater.updateLdds(new File("/tmp/harvest/out/missing_xsds.txt"));
         }
         finally

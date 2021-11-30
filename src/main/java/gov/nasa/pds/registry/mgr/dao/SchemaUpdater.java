@@ -42,15 +42,17 @@ public class SchemaUpdater
     private FileDownloader fileDownloader = new FileDownloader(true);
     private JsonLddLoader lddLoader;
     
-    private boolean useStringDataType = false;
+    private boolean fixMissingFDs = false;
     
     /**
      * Constructor 
      * @param cfg Registry (Elasticsearch) configuration parameters
      * @throws Exception an exception
      */
-    public SchemaUpdater(RegistryCfg cfg) throws Exception
+    public SchemaUpdater(RegistryCfg cfg, boolean fixMissingFDs) throws Exception
     {
+        this.fixMissingFDs = fixMissingFDs;
+        
         log = LogManager.getLogger(this.getClass());
         
         lddLoader = new JsonLddLoader(cfg.url, cfg.indexName, cfg.authFile);
@@ -130,7 +132,7 @@ public class SchemaUpdater
     public void updateSchema(List<String> batch) throws Exception
     {
         SchemaDao dao = RegistryManager.getInstance().getSchemaDao();
-        List<Tuple> newFields = dao.getDataTypes(batch, false);
+        List<Tuple> newFields = dao.getDataTypes(batch, fixMissingFDs);
         if(newFields != null)
         {
             dao.updateSchema(newFields);
@@ -213,7 +215,7 @@ public class SchemaUpdater
             log.error(ExceptionUtils.getMessage(ex));
             if(lddInfo.isEmpty())
             {
-                if(useStringDataType)
+                if(fixMissingFDs)
                 {
                     log.warn("Will use 'keyword' data type.");
                     return;
