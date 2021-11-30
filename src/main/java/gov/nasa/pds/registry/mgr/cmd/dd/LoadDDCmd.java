@@ -1,18 +1,11 @@
 package gov.nasa.pds.registry.mgr.cmd.dd;
 
 import java.io.File;
-import java.io.FileReader;
-
 import org.apache.commons.cli.CommandLine;
-
-import com.opencsv.CSVReader;
-
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.DataLoader;
-import gov.nasa.pds.registry.mgr.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.dd.DDNJsonWriter;
-import gov.nasa.pds.registry.mgr.dd.DDRecord;
+import gov.nasa.pds.registry.mgr.dd.CsvLddLoader;
 import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
 import gov.nasa.pds.registry.mgr.dd.LddUtils;
 
@@ -162,121 +155,9 @@ public class LoadDDCmd implements CliCommand
         System.out.println("         CSV file: " + path);
         System.out.println();
         
-
-        File tempOutFile = getTempOutFile();
-        
-        DDNJsonWriter writer = null;
-        CSVReader rd = new CSVReader(new FileReader(path));
-        
-        try
-        {
-            // Header
-            String[] header = rd.readNext();
-            if(header == null) return;
-            validateCsvHeader(header);
-            
-            System.out.println("[INFO] " + "Creating temprary ES NJSON " + tempOutFile.getAbsolutePath());
-            writer = new DDNJsonWriter(tempOutFile, true);
-            
-            int line = 1;
-            String[] values = null;
-            while((values = rd.readNext()) != null)
-            {
-                ++line;
-                DDRecord rec = createDDRecord(header, values, line);
-                writer.write(rec.esFieldName, rec);
-            }
-        }
-        finally
-        {
-            CloseUtils.close(rd);
-            CloseUtils.close(writer);
-        }
-        
-        // Load temporary file into data dictionary index
-        DataLoader loader = new DataLoader(esUrl, indexName + "-dd", authPath);
-        loader.loadFile(tempOutFile);
-        
-        // Delete temporary file
-        tempOutFile.delete();
+        CsvLddLoader loader = new CsvLddLoader(esUrl, indexName, authPath);
+        File lddFile = new File(path);
+        loader.load(lddFile);
     }
     
-    
-    private static DDRecord createDDRecord(String[] header, String[] values, int line) throws Exception
-    {
-        if(values.length != header.length) throw new Exception("Invalid number of values at line " + line);
-        
-        DDRecord rec = new DDRecord();
-        
-        for(int i = 0; i < values.length; i++)
-        {
-            String column = header[i];
-            String value = values[i];
-            
-            switch(column)
-            {
-            case "es_field_name":
-                rec.esFieldName = value;
-                break;
-            case "es_data_type":
-                rec.esDataType = value;
-                break;
-            case "class_ns":
-                rec.classNs = value;
-                break;
-            case "class_name":
-                rec.className = value;
-                break;
-            case "attr_ns":
-                rec.attrNs = value;
-                break;
-            case "attr_name":
-                rec.attrName = value;
-                break;
-            case "data_type":
-                rec.dataType = value;
-                break;
-            case "description":
-                rec.description = value;
-                break;
-            }
-        }
-        
-        return rec;
-    }
-    
-    
-    private void validateCsvHeader(String[] hdr) throws Exception
-    {
-        if(hdr == null) return;
-        
-        boolean esFieldNameExists = false;
-        boolean esDataTypeExists = false;
-        
-        for(int i = 0; i < hdr.length; i++)
-        {
-            String val = hdr[i].toLowerCase();
-            hdr[i] = val;
-            if("es_field_name".equals(val))
-            {
-                esFieldNameExists = true;
-            }
-            else if("es_data_type".equals(val))
-            {
-                esDataTypeExists = true;
-            }
-        }
-        
-        if(!esFieldNameExists) throw new Exception("Invalid CSV file header. Missing 'es_field_name' column");
-        if(!esDataTypeExists) throw new Exception("Invalid CSV file header. Missing 'es_data_type' column");
-    }
-    
-    
-    private File getTempOutFile()
-    {
-        File tempDir = new File(System.getProperty("java.io.tmpdir"));
-        File file = new File(tempDir, "pds-registry-dd.tmp.json");
-        return file;
-    }
-
 }

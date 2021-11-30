@@ -42,6 +42,8 @@ public class SchemaUpdater
     private FileDownloader fileDownloader = new FileDownloader(true);
     private JsonLddLoader lddLoader;
     
+    private boolean useStringDataType = false;
+    
     /**
      * Constructor 
      * @param cfg Registry (Elasticsearch) configuration parameters
@@ -159,14 +161,7 @@ public class SchemaUpdater
                 String prefix = line.substring(0, idx);
                 String uri = line.substring(idx+1);
                 
-                try
-                {
-                    updateLdd(uri, prefix);
-                }
-                catch(Exception ex)
-                {
-                    log.error("Could not update LDD. " + ExceptionUtils.getMessage(ex));
-                }
+                updateLdd(uri, prefix);
             }
         }
         finally
@@ -218,8 +213,15 @@ public class SchemaUpdater
             log.error(ExceptionUtils.getMessage(ex));
             if(lddInfo.isEmpty())
             {
-                log.warn("Will use 'keyword' data type.");
-                return;
+                if(useStringDataType)
+                {
+                    log.warn("Will use 'keyword' data type.");
+                    return;
+                }
+                else
+                {
+                    throw new Exception("The Registry doesn't have LDD for '" + prefix + "'");
+                }
             }
             else
             {
