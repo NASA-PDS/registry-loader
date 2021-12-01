@@ -17,7 +17,7 @@
 # ``OSSRH_USERNAME``
 #     Password for the Central Repository.
 ---
-name: 😌 Stable integration & delivery
+name: 😌 Stable integration & delivery (Legacy 🤷‍♀️)
 # Driving Event
 # -------------
 #
@@ -44,7 +44,7 @@ jobs:
                     lfs: true
             -
                 name: 🤠 Roundup
-                uses: NASA-PDS/roundup-action@main
+                uses: NASA-PDS/roundup-action@stable
                 with:
                     assembly: stable
                     packages: openjdk11-jdk
