@@ -1,4 +1,7 @@
-package gov.nasa.pds.registry.mgr.dao;
+package gov.nasa.pds.registry.mgr.dao.dd;
+
+import gov.nasa.pds.registry.mgr.dao.DataExporter;
+import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 
 /**
  * Exports data dictionary records from Elasticsearch into a file.

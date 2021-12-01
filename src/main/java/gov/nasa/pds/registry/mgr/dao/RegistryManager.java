@@ -6,6 +6,7 @@ import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
+import gov.nasa.pds.registry.mgr.dao.dd.DataDictionaryDao;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 
 
@@ -20,6 +21,7 @@ public class RegistryManager
     
     private RestClient esClient;
     private SchemaDao schemaDao;
+    private DataDictionaryDao dataDictionaryDao;
     
     
     /**
@@ -44,6 +46,7 @@ public class RegistryManager
         log.info("Registry index: " + indexName);
         
         schemaDao = new SchemaDao(esClient, indexName);
+        dataDictionaryDao = new DataDictionaryDao(esClient, indexName);                
     }
     
     
@@ -87,6 +90,16 @@ public class RegistryManager
     public SchemaDao getSchemaDao()
     {
         return schemaDao;
+    }
+
+    
+    /**
+     * Get schema DAO object.
+     * @return Schema DAO
+     */
+    public DataDictionaryDao getDataDictionaryDao()
+    {
+        return dataDictionaryDao;
     }
 
 }

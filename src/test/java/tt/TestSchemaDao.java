@@ -7,45 +7,20 @@ import java.util.TreeSet;
 import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
-import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.dao.IndexDao;
-import gov.nasa.pds.registry.mgr.dao.LddInfo;
-import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 import gov.nasa.pds.registry.mgr.dao.SchemaDao;
 import gov.nasa.pds.registry.mgr.util.Tuple;
 
 
-public class TestSchemaDAO
+public class TestSchemaDao
 {
 
     public static void main(String[] args) throws Exception
     {
-        testGetLddInfo();
-        //testGetDataTypes();
+        testGetDataTypes();
     }
 
 
-    private static void testGetLddInfo() throws Exception
-    {
-        RegistryCfg cfg = new RegistryCfg();
-        cfg.url = "http://localhost:9200";
-        cfg.indexName = "registry";
-        
-        try
-        {
-            RegistryManager.init(cfg);
-            
-            SchemaDao dao = RegistryManager.getInstance().getSchemaDao();
-            LddInfo info = dao.getLddInfo("pds");
-            info.debug();
-        }
-        finally
-        {
-            RegistryManager.destroy();
-        }
-    }
-
-    
     private static void testIndexExists() throws Exception
     {
         RestClient client = EsClientFactory.createRestClient("localhost", null);

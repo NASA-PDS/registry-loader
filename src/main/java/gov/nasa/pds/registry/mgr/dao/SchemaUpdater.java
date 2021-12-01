@@ -10,6 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
+import gov.nasa.pds.registry.mgr.dao.dd.DataDictionaryDao;
+import gov.nasa.pds.registry.mgr.dao.dd.LddInfo;
 import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
 import gov.nasa.pds.registry.mgr.dd.LddUtils;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
@@ -192,7 +194,7 @@ public class SchemaUpdater
         String schemaFileName = jsonUrl.substring(idx+1);
         
         // Get stored LDDs info
-        SchemaDao dao = RegistryManager.getInstance().getSchemaDao();
+        DataDictionaryDao dao = RegistryManager.getInstance().getDataDictionaryDao();
         LddInfo lddInfo = dao.getLddInfo(prefix);
 
         // LDD already loaded

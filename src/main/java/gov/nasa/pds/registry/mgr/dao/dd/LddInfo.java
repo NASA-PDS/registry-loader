@@ -1,4 +1,4 @@
-package gov.nasa.pds.registry.mgr.dao;
+package gov.nasa.pds.registry.mgr.dao.dd;
 
 import java.time.Instant;
 import java.util.Set;
