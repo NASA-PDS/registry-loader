@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.mgr.dao.DataLoader;
 import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 import gov.nasa.pds.registry.mgr.dao.dd.DataDictionaryDao;
+import gov.nasa.pds.registry.mgr.dao.dd.LddVersions;
 import gov.nasa.pds.registry.mgr.dd.parser.AttributeDictionaryParser;
 import gov.nasa.pds.registry.mgr.dd.parser.ClassAttrAssociationParser;
 import gov.nasa.pds.registry.mgr.dd.parser.DDAttribute;
@@ -88,7 +89,7 @@ public class JsonLddLoader
         
         // Get information about LDDs already loaded into the registry (for this namespace)
         DataDictionaryDao dao = RegistryManager.getInstance().getDataDictionaryDao();
-        gov.nasa.pds.registry.mgr.dao.dd.LddInfo info = dao.getLddInfo(namespace);
+        LddVersions info = dao.getLddInfo(namespace);
         if(info.files.contains(lddFileName)) 
         {
             log.info("This LDD already loaded.");

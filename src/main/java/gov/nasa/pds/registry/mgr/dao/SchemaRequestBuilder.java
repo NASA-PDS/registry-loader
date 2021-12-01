@@ -113,7 +113,7 @@ public class SchemaRequestBuilder
      * @return Elasticsearch query in JSON format
      * @throws IOException an exception
      */
-    public String createGetLddInfoRequest(String namespace) throws IOException
+    public String createListLddsRequest(String namespace) throws IOException
     {
         StringWriter wr = new StringWriter();
         JsonWriter jw = createJsonWriter(wr);
@@ -132,7 +132,10 @@ public class SchemaRequestBuilder
         jw.beginArray();
         appendMatch(jw, "class_ns", "registry");
         appendMatch(jw, "class_name", "LDD_Info");
-        appendMatch(jw, "attr_ns", namespace);
+        if(namespace != null)
+        {
+            appendMatch(jw, "attr_ns", namespace);
+        }
         jw.endArray();
         
         jw.endObject();
@@ -142,7 +145,7 @@ public class SchemaRequestBuilder
         // Start source
         jw.name("_source");
         jw.beginArray();
-        jw.value("date").value("attr_name");
+        jw.value("date").value("attr_name").value("attr_ns");
         jw.endArray();        
         // End source
         

@@ -19,6 +19,7 @@ import gov.nasa.pds.registry.mgr.cmd.data.LoadDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.SetArchiveStatusCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.DeleteDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ExportDDCmd;
+import gov.nasa.pds.registry.mgr.cmd.dd.ListDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.LoadDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.UpdateSchemaCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
@@ -76,6 +77,7 @@ public class RegistryManagerCli
         
         System.out.println();
         System.out.println("Data Dictionary:");
+        System.out.println("  list-dd              List data dictionaries");
         System.out.println("  load-dd              Load data into data dictionary");
         System.out.println("  delete-dd            Delete data from data dictionary");        
         System.out.println("  export-dd            Export data dictionary");
@@ -240,6 +242,7 @@ public class RegistryManagerCli
         commands.put("delete-registry", new DeleteRegistryCmd());
 
         // Data dictionary
+        commands.put("list-dd", new ListDDCmd());
         commands.put("load-dd", new LoadDDCmd());
         commands.put("delete-dd", new DeleteDDCmd());
         commands.put("export-dd", new ExportDDCmd());

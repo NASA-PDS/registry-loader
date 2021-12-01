@@ -13,7 +13,7 @@ public class TestSchemaRequestBuilder
     public static void testGetLddInfoRequest() throws Exception
     {
         SchemaRequestBuilder bld = new SchemaRequestBuilder(true);
-        String req = bld.createGetLddInfoRequest("pds");
+        String req = bld.createListLddsRequest("pds");
         System.out.println(req);
     }
 }

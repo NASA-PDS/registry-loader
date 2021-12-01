@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.dao.dd.DataDictionaryDao;
-import gov.nasa.pds.registry.mgr.dao.dd.LddInfo;
+import gov.nasa.pds.registry.mgr.dao.dd.LddVersions;
 import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
 import gov.nasa.pds.registry.mgr.dd.LddUtils;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
@@ -195,7 +195,7 @@ public class SchemaUpdater
         
         // Get stored LDDs info
         DataDictionaryDao dao = RegistryManager.getInstance().getDataDictionaryDao();
-        LddInfo lddInfo = dao.getLddInfo(prefix);
+        LddVersions lddInfo = dao.getLddInfo(prefix);
 
         // LDD already loaded
         if(lddInfo.files.contains(schemaFileName)) 

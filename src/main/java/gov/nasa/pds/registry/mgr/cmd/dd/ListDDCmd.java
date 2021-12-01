@@ -1,9 +1,16 @@
 package gov.nasa.pds.registry.mgr.cmd.dd;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.cli.CommandLine;
 
 import gov.nasa.pds.registry.mgr.Constants;
+import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
+import gov.nasa.pds.registry.mgr.dao.RegistryManager;
+import gov.nasa.pds.registry.mgr.dao.dd.DataDictionaryDao;
+import gov.nasa.pds.registry.mgr.dao.dd.LddInfo;
 
 /**
  * A CLI command to list data dictionary registered in Elasticsearch.
@@ -29,11 +36,34 @@ public class ListDDCmd implements CliCommand
             return;
         }
 
-        String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
-        String authPath = cmdLine.getOptionValue("auth");
-
-        //String query = buildEsQuery(cmdLine);
+        RegistryCfg cfg = new RegistryCfg();
+        cfg.url = cmdLine.getOptionValue("es", "http://localhost:9200");
+        cfg.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        cfg.authFile = cmdLine.getOptionValue("auth");
+        
+        String namespace = cmdLine.getOptionValue("ns");
+        
+        try
+        {
+            RegistryManager.init(cfg);
+            
+            DataDictionaryDao dao = RegistryManager.getInstance().getDataDictionaryDao();
+            List<LddInfo> list = dao.listLdds(namespace);
+            Collections.sort(list);
+            
+            System.out.println();
+            System.out.format("%-20s %-40s %s\n", "Namespace", "File", "Date");
+            System.out.println("----------------------------------------------------------------------------------");
+            
+            for(LddInfo info: list)
+            {
+                System.out.format("%-20s %-40s %s\n", info.namespace, info.file, info.date);
+            }
+        }
+        finally
+        {
+            RegistryManager.destroy();
+        }
     }
 
     
@@ -51,6 +81,7 @@ public class ListDDCmd implements CliCommand
         System.out.println("  -auth <file>      Authentication config file");
         System.out.println("  -es <url>         Elasticsearch URL. Default is http://localhost:9200");
         System.out.println("  -index <name>     Elasticsearch index name. Default is 'registry'");
+        System.out.println("  -ns <namespace>   LDD namespace. Can be used with -dd parameter.");        
         System.out.println();
     }
     

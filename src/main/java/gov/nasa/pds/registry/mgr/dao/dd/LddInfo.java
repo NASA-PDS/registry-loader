@@ -1,83 +1,51 @@
 package gov.nasa.pds.registry.mgr.dao.dd;
 
 import java.time.Instant;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
- * information about LDDs stored in Elasticsearch
+ * LDD information
  * @author karpenko
  */
-public class LddInfo
+public class LddInfo implements Comparable<LddInfo>
 {
-    private static final String DEFAULT_DATE = "1965-01-01T00:00:00.000Z";
+    public String namespace;
+    public String file;
+    public Instant date;
     
-    public Set<String> files;
-    public Instant lastDate;
     
-    
-    /**
-     * Constructor
-     */
-    public LddInfo()
+    @Override
+    public int compareTo(LddInfo o)
     {
-        files = new TreeSet<>();
-        lastDate = Instant.parse(DEFAULT_DATE);
-    }
-    
-    
-    /**
-     * Check if there are any LDDs
-     * @return boolean flag
-     */
-    public boolean isEmpty()
-    {
-        return files.isEmpty();
-    }
-    
-    
-    /**
-     * Update LDD date (find the maximum / last date)
-     * @param str date (timestamp) as a string
-     */
-    public void updateDate(String str)
-    {
-        try
+        if(namespace.equals(o.namespace))
         {
-            Instant inst = Instant.parse(str);
-            if(inst.isAfter(lastDate))
-            {
-                lastDate = inst;
-            }
+            if(date == null) return -1;
+            if(o.date == null) return 1;
+            return date.compareTo(o.date);
         }
-        catch(Exception ex)
+        else
         {
-            Logger log = LogManager.getLogger(this.getClass());
-            log.warn("Could not parse date " + str);
+            return namespace.compareTo(o.namespace);
         }
     }
     
     
-    /**
-     * Add schema file, such as "PDS4_IMG_1F00_1810.JSON"
-     * @param file Schema file name
-     */
-    public void addSchemaFile(String file)
+    @Override
+    public boolean equals(Object o)
     {
-        if(file == null || file.isBlank()) return;
-        files.add(file);
+        if(o instanceof LddInfo)
+        {
+            return file.equals(((LddInfo) o).file);
+        }
+        else 
+        {
+            return false;
+        }
     }
     
     
-    /**
-     * Print debug information
-     */
-    public void debug()
+    @Override
+    public int hashCode()
     {
-        System.out.println("Last date: " + lastDate);
-        System.out.println("Files: " + files);
+        return file.hashCode();
     }
 }

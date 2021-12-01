@@ -1,5 +1,8 @@
 package gov.nasa.pds.registry.mgr.dao.dd;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.client.Request;
@@ -39,11 +42,11 @@ public class DataDictionaryDao
      */
     private static class GetLddInfoRespParser extends SearchResponseParser implements SearchResponseParser.Callback
     {
-        public LddInfo info;
+        public LddVersions info;
         
         public GetLddInfoRespParser()
         {
-            info = new LddInfo();
+            info = new LddVersions();
         }
         
         @Override
@@ -72,10 +75,10 @@ public class DataDictionaryDao
      * @return ISO instant class representing LDD date.
      * @throws Exception an exception
      */
-    public LddInfo getLddInfo(String namespace) throws Exception
+    public LddVersions getLddInfo(String namespace) throws Exception
     {
         SchemaRequestBuilder bld = new SchemaRequestBuilder();
-        String json = bld.createGetLddInfoRequest(namespace);
+        String json = bld.createListLddsRequest(namespace);
 
         Request req = new Request("GET", "/" + indexName + "-dd/_search");
         req.setJsonEntity(json);
@@ -86,4 +89,66 @@ public class DataDictionaryDao
         return parser.info;
     }
 
+
+    /**
+     * Inner private class to parse LDD information response from Elasticsearch.
+     * @author karpenko
+     */
+    private static class ListLddsParser extends SearchResponseParser implements SearchResponseParser.Callback
+    {
+        public List<LddInfo> list;
+        
+        public ListLddsParser()
+        {
+            list = new ArrayList<>();
+        }
+        
+        @Override
+        public void onRecord(String id, Object rec) throws Exception
+        {
+            if(rec instanceof Map)
+            {
+                @SuppressWarnings("rawtypes")
+                Map map = (Map)rec;
+                
+                LddInfo info = new LddInfo();
+                
+                // Namespace
+                info.namespace = (String)map.get("attr_ns");
+                
+                // Date
+                String str = (String)map.get("date");
+                if(str != null && !str.isEmpty())
+                {
+                    info.date = Instant.parse(str);
+                }
+                
+                // File name
+                info.file = (String)map.get("attr_name");
+                
+                list.add(info);                
+            }
+        }
+    }
+
+    
+    /**
+     * List registered LDDs
+     * @param namespace if this parameter is null list all LDDs
+     * @return a list of LDDs
+     * @throws Exception an exception
+     */
+    public List<LddInfo> listLdds(String namespace) throws Exception
+    {
+        SchemaRequestBuilder bld = new SchemaRequestBuilder();
+        String json = bld.createListLddsRequest(namespace);
+
+        Request req = new Request("GET", "/" + indexName + "-dd/_search");
+        req.setJsonEntity(json);
+        Response resp = client.performRequest(req);
+
+        ListLddsParser parser = new ListLddsParser();
+        parser.parseResponse(resp, parser); 
+        return parser.list;
+    }
 }
