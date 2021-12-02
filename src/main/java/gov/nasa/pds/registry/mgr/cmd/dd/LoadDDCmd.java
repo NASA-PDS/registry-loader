@@ -2,9 +2,14 @@ package gov.nasa.pds.registry.mgr.cmd.dd;
 
 import java.io.File;
 import org.apache.commons.cli.CommandLine;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import gov.nasa.pds.registry.mgr.Constants;
+import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.DataLoader;
+import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 import gov.nasa.pds.registry.mgr.dd.CsvLddLoader;
 import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
 import gov.nasa.pds.registry.mgr.dd.LddUtils;
@@ -21,9 +26,7 @@ import gov.nasa.pds.registry.mgr.dd.LddUtils;
  */
 public class LoadDDCmd implements CliCommand
 {
-    private String esUrl;
-    private String indexName;
-    private String authPath;
+    private RegistryCfg cfg;
     
     
     /**
@@ -66,31 +69,41 @@ public class LoadDDCmd implements CliCommand
             return;
         }
 
-        this.esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
-        this.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
-        this.authPath = cmdLine.getOptionValue("auth");
-
-        String path = cmdLine.getOptionValue("dd");
-        if(path != null)
-        {
-            String namespace = cmdLine.getOptionValue("ns");
-            loadLdd(path, namespace);
-            return;
-        }
+        cfg = new RegistryCfg();
+        cfg.url = cmdLine.getOptionValue("es", "http://localhost:9200");
+        cfg.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        cfg.authFile = cmdLine.getOptionValue("auth");
         
-        path = cmdLine.getOptionValue("dump");
-        if(path != null)
-        {
-            loadDataDump(path);
-            return;
-        }        
+        RegistryManager.init(cfg);
 
-        path = cmdLine.getOptionValue("csv");
-        if(path != null)
+        try
         {
-            loadCsv(path);
-            return;
-        }        
+            String path = cmdLine.getOptionValue("dd");
+            if(path != null)
+            {
+                String namespace = cmdLine.getOptionValue("ns");
+                loadLdd(path, namespace);
+                return;
+            }
+            
+            path = cmdLine.getOptionValue("dump");
+            if(path != null)
+            {
+                loadDataDump(path);
+                return;
+            }        
+    
+            path = cmdLine.getOptionValue("csv");
+            if(path != null)
+            {
+                loadCsv(path);
+                return;
+            }
+        }
+        finally
+        {
+            RegistryManager.destroy();
+        }
 
         throw new Exception("One of the following options is required: -dd, -dump, -csv");
     }
@@ -106,18 +119,17 @@ public class LoadDDCmd implements CliCommand
      */
     private void loadLdd(String path, String namespace) throws Exception
     {
-        System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println("            Index: " + indexName);
-        System.out.println("  Data dictionary: " + path);
+        Logger log = LogManager.getLogger(this.getClass());
+        
+        log.info("Data dictionary: " + path);
         
         if(namespace != null)
         {
-            System.out.println("        Namespace: " + namespace);
+            log.info("Namespace: " + namespace);
         }
-        System.out.println();
 
         // Init LDD loader
-        JsonLddLoader loader = new JsonLddLoader(esUrl, indexName, authPath);
+        JsonLddLoader loader = new JsonLddLoader(cfg.url, cfg.indexName, cfg.authFile);
         loader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile());
 
         //Load LDD
@@ -133,12 +145,10 @@ public class LoadDDCmd implements CliCommand
      */
     private void loadDataDump(String path) throws Exception
     {
-        System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println("            Index: " + indexName);
-        System.out.println("        Data dump: " + path);        
-        System.out.println();
+        Logger log = LogManager.getLogger(this.getClass());
+        log.info("Data dump: " + path);
         
-        DataLoader loader = new DataLoader(esUrl, indexName + "-dd", authPath);
+        DataLoader loader = new DataLoader(cfg.url, cfg.indexName + "-dd", cfg.authFile);
         loader.loadFile(new File(path));
     }
     
@@ -150,12 +160,10 @@ public class LoadDDCmd implements CliCommand
      */
     private void loadCsv(String path) throws Exception
     {
-        System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println("            Index: " + indexName);
-        System.out.println("         CSV file: " + path);
-        System.out.println();
+        Logger log = LogManager.getLogger(this.getClass());
+        log.info("CSV file: " + path);
         
-        CsvLddLoader loader = new CsvLddLoader(esUrl, indexName, authPath);
+        CsvLddLoader loader = new CsvLddLoader(cfg.url, cfg.indexName, cfg.authFile);
         File lddFile = new File(path);
         loader.load(lddFile);
     }
