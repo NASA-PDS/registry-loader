@@ -1,12 +1,12 @@
 # Changelog
 
+## [v4.3.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.3.0-SNAPSHOT) (2021-09-30)
+
+[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.2.0...v4.3.0-SNAPSHOT)
+
 ## [v4.2.0](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0) (2021-09-30)
 
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.2.0-SNAPSHOT...v4.2.0)
-
-## [v4.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0-SNAPSHOT) (2021-09-30)
-
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.1.0...v4.2.0-SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.1.0...v4.2.0)
 
 **Improvements:**
 
