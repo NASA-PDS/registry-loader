@@ -7,12 +7,20 @@ import java.time.ZoneId;
 
 import org.apache.commons.lang3.StringUtils;
 
-
+/**
+ * Parse dates in PDS format
+ * @author karpenko
+ */
 public class PdsDateParser
 {
     private static final ZoneId UTC = ZoneId.of("UTC");
     
-    
+    /**
+     * Parse PDS date string.
+     * @param str PDS date string
+     * @return ISO instant
+     * @throws Exception an exception
+     */
     public static Instant parse(String str) throws Exception
     {
         if(str == null) return null;

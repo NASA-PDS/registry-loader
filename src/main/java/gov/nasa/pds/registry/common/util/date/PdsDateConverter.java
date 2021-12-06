@@ -20,12 +20,6 @@ public class PdsDateConverter
 
     private Logger log;
        
-    private CompactDateTimeConverter compactDateTimeConverter;
-    private DoyDateTimeConverter doyDateTimeConverter;
-    private IsoDateTimeConverter isoDateTimeConverter;
-    private LocalDateConverter localDateConverter;
-    
-
     private boolean strict;
     
     /**
@@ -36,13 +30,7 @@ public class PdsDateConverter
     public PdsDateConverter(boolean strict)
     {
         this.strict = strict;
-     
         log = LogManager.getLogger(this.getClass());
-        
-        compactDateTimeConverter = new CompactDateTimeConverter();
-        doyDateTimeConverter = new DoyDateTimeConverter();
-        isoDateTimeConverter = new IsoDateTimeConverter();
-        localDateConverter = new LocalDateConverter();
     }
 
 
@@ -68,41 +56,24 @@ public class PdsDateConverter
             return getDefaultValue(fieldName);
         }
 
-        // DateTime
-        if(value.length() > 10)
+
+        Instant inst = null;
+        try
         {
-            String newValue = null;
-            
-            if(value.length() == 11 && value.endsWith("Z"))
-            {
-                newValue = convertDate(value.substring(0, 10));
-                if(newValue != null) return newValue;
-                
-                handleInvalidDate(value);
-                return value;
-            }
-            
-            newValue = convertIsoDateTime(value);
-            if(newValue != null) return newValue;
-
-            newValue = convertCompactDateTime(value);
-            if(newValue != null) return newValue;
-
-            newValue = convertDoyTime(value);
-            if(newValue != null) return newValue;
-            
-            handleInvalidDate(value);
+            inst = PdsDateParser.parse(value);
         }
-        // Date only
-        else
+        catch(Exception ex)
         {
-            String newValue = convertDate(value);
-            if(newValue != null) return newValue;
-            
-            handleInvalidDate(value);
+            // Ignore
         }
         
-        return value;
+        if(inst == null) 
+        {
+            handleInvalidDate(value);
+            return value;
+        }
+        
+        return toInstantString(inst);
     }
 
     
@@ -121,62 +92,6 @@ public class PdsDateConverter
     }
     
 
-    private String convertIsoDateTime(String value)
-    {
-        try
-        {
-            Instant inst = isoDateTimeConverter.toInstant(value);
-            return toInstantString(inst);
-        }
-        catch(Exception ex)
-        {
-            return null;
-        }
-    }
-
-    
-    private String convertCompactDateTime(String value)
-    {
-        try
-        {
-            Instant inst = compactDateTimeConverter.toInstant(value);
-            return toInstantString(inst);
-        }
-        catch(Exception ex)
-        {
-            return null;
-        }
-    }
-
-
-    private String convertDoyTime(String value)
-    {
-        try
-        {
-            Instant inst = doyDateTimeConverter.toInstant(value);
-            return toInstantString(inst);
-        }
-        catch(Exception ex)
-        {
-            return null;
-        }
-    }
-
-    
-    private String convertDate(String value)
-    {
-        try
-        {
-            Instant inst = localDateConverter.toInstant(value);
-            return toInstantString(inst);
-        }
-        catch(Exception ex)
-        {
-            return null;
-        }
-    }
-
-    
     private static String toInstantString(Instant inst)
     {
         return (inst == null) ? null : DateTimeFormatter.ISO_INSTANT.format(inst);
