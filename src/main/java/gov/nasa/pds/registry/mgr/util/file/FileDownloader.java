@@ -75,7 +75,7 @@ public class FileDownloader
             }
             catch(Exception ex)
             {
-                log.error(ex.getMessage());
+                log.info(ex.getMessage());
                 if(count < numRetries)
                 {
                     log.info("Will retry in 5 seconds");

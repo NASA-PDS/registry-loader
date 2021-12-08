@@ -156,7 +156,10 @@ public class SchemaUpdater
         try
         {
             rd = new BufferedReader(new FileReader(file));
+            
+            boolean hasErrors = false;
             String line;
+            
             while((line = rd.readLine()) != null)
             {
                 int idx = line.indexOf(";");
@@ -165,7 +168,20 @@ public class SchemaUpdater
                 String prefix = line.substring(0, idx);
                 String uri = line.substring(idx+1);
                 
-                updateLdd(uri, prefix);
+                try
+                {
+                    updateLdd(uri, prefix);
+                }
+                catch(Exception ex)
+                {
+                    hasErrors = true;
+                    log.error(ex.getMessage());
+                }
+            }
+            
+            if(hasErrors)
+            {
+                throw new Exception("There were errors updating LDDs.");
             }
         }
         finally
@@ -214,7 +230,7 @@ public class SchemaUpdater
         }
         catch(Exception ex)
         {
-            log.error(ExceptionUtils.getMessage(ex));
+            log.warn(ExceptionUtils.getMessage(ex));
             if(lddInfo.isEmpty())
             {
                 if(fixMissingFDs)

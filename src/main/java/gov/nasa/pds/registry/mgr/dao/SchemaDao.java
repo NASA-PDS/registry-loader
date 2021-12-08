@@ -101,7 +101,7 @@ public class SchemaDao
         GetDataTypesResponseParser parser = new GetDataTypesResponseParser();
         List<GetDataTypesResponseParser.Record> records = parser.parse(resp.getEntity());
         
-        
+        // Process response (list of fields)
         boolean missing = false;
         
         for(GetDataTypesResponseParser.Record rec: records)
@@ -131,10 +131,10 @@ public class SchemaDao
                     log.error("Could not find datatype for field " + rec.id);
                     missing = true;
                 }
-                
-                if(missing) throw new DataTypeNotFoundException();
             }
         }
+        
+        if(stringForMissing == false && missing == true) throw new DataTypeNotFoundException();
         
         return dtInfo;
     }
