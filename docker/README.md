@@ -14,14 +14,11 @@ Currently, the docker.properties file contains following 3 properties. Update th
     docker.image.name.tag=pds/registry-loader   - The image name tag to be used to identify the docker image
 ```
 
-
-
 2. Change the execution permission of the build.sh file as follows.
 
 ```
     chmod u+x build.sh
 ```
-
 
 3. Execute the build.sh with docker.properties file passed as an argument.
 
