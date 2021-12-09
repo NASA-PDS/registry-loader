@@ -1,6 +1,14 @@
 # Changelog
 
-## [v4.3.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.3.0-SNAPSHOT) (2021-09-30)
+## [«unknown»](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/«unknown») (2021-12-09)
+
+[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.3.0-SNAPSHOT...«unknown»)
+
+**Improvements:**
+
+- Update registy-mgr to use schema from schemaLocation in file [\#31](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/31)
+
+## [v4.3.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.3.0-SNAPSHOT) (2021-12-03)
 
 [Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.2.0...v4.3.0-SNAPSHOT)
 
