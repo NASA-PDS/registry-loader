@@ -1,5 +1,7 @@
 # Common Library for the PDS Registry
 
+[![🤪 Unstable integration & delivery](https://github.com/NASA-PDS/pds-registry-common/actions/workflows/unstable-cicd.yaml/badge.svg)](https://github.com/NASA-PDS/pds-registry-common/actions/workflows/unstable-cicd.yaml) [![😌 Stable integration & delivery](https://github.com/NASA-PDS/pds-registry-common/actions/workflows/stable-cicd.yaml/badge.svg)](https://github.com/NASA-PDS/pds-registry-common/actions/workflows/stable-cicd.yaml)
+
 This is a Java library used by the various registry components containing common functions for interacting with the [Planetary Data System](https://pds.nasa.gov/) Registry and Elasticsearch.
 
 
