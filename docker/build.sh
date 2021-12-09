@@ -42,8 +42,8 @@
 
 # Check if a properties file name is provided as an argument to this script
 if [ -z "$1" ]; then
-  echo -e "\nPlease provide a properties file as an argument to $0"
-  echo -e "\tUsage: $0 docker.properties \n"
+  echo -e "\nPlease provide a properties file as an argument to the $0" 1>&2
+  echo -e "\tUsage: $0 docker.properties \n" 1>&2
   exit 1
 fi
 
@@ -51,31 +51,31 @@ PROPERTY_FILE=$1
 
 # Check if the provided properties file exists
 if [ ! -f "$PROPERTY_FILE" ]; then
-    echo -e "\nThe file $PROPERTY_FILE does not exist."
-    echo -e "\tPlease provide an existing properties file as an argument to $0"
-    echo -e "\tUsage: $0 docker.properties \n"
+    echo -e "\nThe file $PROPERTY_FILE does not exist." 1>&2
+    echo -e "\tPlease provide an existing properties file as an argument to the $0" 1>&2
+    echo -e "\tUsage: $0 docker.properties \n" 1>&2
     exit 1
 fi
 
 # Returns the value for a given property key
 function getProperty {
    PROPERTY_KEY=$1
-   PROPERTY_VALUE=$(cat "$PROPERTY_FILE" | grep -w "$PROPERTY_KEY" | cut -d'=' -f2)
+   PROPERTY_VALUE=$(grep -w "$PROPERTY_KEY" < "$PROPERTY_FILE" | cut -d '=' -f2)
    echo "$PROPERTY_VALUE"
 }
 
 # Read property values from the properties file
-echo "Reading properties from $PROPERTY_FILE"
+echo "Reading properties from $PROPERTY_FILE" 1>&2
 HARVEST_VERSION=$(getProperty "harvest.version")
 REG_MANAGER_VERSION=$(getProperty "reg.manager.version")
 DOCKER_IMAGE_NAME_TAG=$(getProperty "docker.image.name.tag")
 
-echo "HARVEST_VERSION  = $HARVEST_VERSION"
-echo "REG_MANAGER_VERSION = $REG_MANAGER_VERSION"
-echo "DOCKER_IMAGE_NAME_TAG = $DOCKER_IMAGE_NAME_TAG"
+echo "HARVEST_VERSION  = $HARVEST_VERSION" 1>&2
+echo "REG_MANAGER_VERSION = $REG_MANAGER_VERSION" 1>&2
+echo "DOCKER_IMAGE_NAME_TAG = $DOCKER_IMAGE_NAME_TAG" 1>&2
 
-# Execute Docker build with build arguments
-docker build --build-arg harvest_version="$HARVEST_VERSION" \
+# Execute docker image build with build arguments
+docker image build --build-arg harvest_version="$HARVEST_VERSION" \
              --build-arg reg_manager_version="$REG_MANAGER_VERSION" \
              --tag "$DOCKER_IMAGE_NAME_TAG" \
              --file Dockerfile .
