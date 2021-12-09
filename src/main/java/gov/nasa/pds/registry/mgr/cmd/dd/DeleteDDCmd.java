@@ -29,7 +29,9 @@ import gov.nasa.pds.registry.mgr.util.CloseUtils;
  */
 public class DeleteDDCmd implements CliCommand
 {
-    private String filterMessage;
+    private String esUrl;
+    private String indexName;
+    private String authPath;
 
     /**
      * Constructor
@@ -48,21 +50,30 @@ public class DeleteDDCmd implements CliCommand
             return;
         }
 
-        String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
-        String authPath = cmdLine.getOptionValue("auth");
-
-        String query = buildEsQuery(cmdLine);
-        if(query == null)
+        esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
+        indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        authPath = cmdLine.getOptionValue("auth");
+        
+        String id = cmdLine.getOptionValue("id");
+        if(id != null)
         {
-            throw new Exception("One of the following options is required: -id, -ns, -all");
+            deleteById(id);
+            return;
+        }
+        
+        String ns = cmdLine.getOptionValue("ns");
+        if(ns != null)
+        {
+            deleteByNamespace(ns);
+            return;
         }
 
-        System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println("            Index: " + indexName);
-        System.out.println(filterMessage);
-        System.out.println();
-        
+        throw new Exception("One of the following options is required: -id, -ns");
+    }
+
+    
+    private void deleteById(String id) throws Exception
+    {
         RestClient client = null;
         
         try
@@ -71,7 +82,10 @@ public class DeleteDDCmd implements CliCommand
             client = EsClientFactory.createRestClient(esUrl, authPath);
 
             // Create request
-            Request req = new Request("POST", "/" + indexName + "-dd" + "/_delete_by_query");
+            RegistryRequestBuilder bld = new RegistryRequestBuilder();
+            String query = bld.createFilterQuery("_id", id);
+            
+            Request req = new Request("POST", "/" + indexName + "-dd" + "/_delete_by_query?refresh=true");
             req.setJsonEntity(query);
             
             // Execute request
@@ -87,9 +101,56 @@ public class DeleteDDCmd implements CliCommand
         finally
         {
             CloseUtils.close(client);
-        }
+        }        
     }
 
+    
+    private void deleteByNamespace(String ns) throws Exception
+    {
+        RestClient client = null;
+        
+        try
+        {
+            // Create Elasticsearch client
+            client = EsClientFactory.createRestClient(esUrl, authPath);
+
+            // (1) Delete by class namespace
+            
+            // Create request
+            RegistryRequestBuilder bld = new RegistryRequestBuilder();
+            String query = bld.createFilterQuery("class_ns", ns);
+            
+            Request req = new Request("POST", "/" + indexName + "-dd" + "/_delete_by_query?refresh=true");
+            req.setJsonEntity(query);
+            
+            // Execute request
+            Response resp = client.performRequest(req);
+            double numDeleted = extractNumDeleted(resp); 
+            
+            // (2) Delete by attribute namespace
+            
+            // Create request
+            query = bld.createFilterQuery("attr_ns", ns);
+            
+            req = new Request("POST", "/" + indexName + "-dd" + "/_delete_by_query?refresh=true");
+            req.setJsonEntity(query);
+            
+            // Execute request
+            resp = client.performRequest(req);
+            numDeleted += extractNumDeleted(resp); 
+            
+            System.out.format("Deleted %.0f document(s)\n", numDeleted);
+        }
+        catch(ResponseException ex)
+        {
+            throw new Exception(EsUtils.extractErrorMessage(ex));
+        }
+        finally
+        {
+            CloseUtils.close(client);
+        }        
+    }
+    
     
     /**
      * Extract number of deleted records from Elasticsearch delete API response.
@@ -119,40 +180,6 @@ public class DeleteDDCmd implements CliCommand
     
     
     /**
-     * Create Elasticsearch query to delete records from data dictionary index.
-     * @param cmdLine
-     * @return
-     * @throws Exception
-     */
-    private String buildEsQuery(CommandLine cmdLine) throws Exception
-    {
-        RegistryRequestBuilder bld = new RegistryRequestBuilder();
-        
-        String id = cmdLine.getOptionValue("id");
-        if(id != null)
-        {
-            filterMessage = "               ID: " + id;
-            return bld.createFilterQuery("_id", id);
-        }
-        
-        id = cmdLine.getOptionValue("ns");
-        if(id != null)
-        {
-            filterMessage = "        Namespace: " + id;
-            return bld.createFilterQuery("class_ns", id);
-        }
-
-        if(cmdLine.hasOption("all"))
-        {
-            filterMessage = "Delete all documents ";
-            return bld.createMatchAllQuery();
-        }
-
-        return null;
-    }
-    
-    
-    /**
      * Print help screen
      */
     public void printHelp()
@@ -165,7 +192,6 @@ public class DeleteDDCmd implements CliCommand
         System.out.println("Required parameters, one of:");
         System.out.println("  -id <id>          Delete data by ID (Full field name)");
         System.out.println("  -ns <namespace>   Delete data by namespace");
-        System.out.println("  -all              Delete all data");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>      Authentication config file");
         System.out.println("  -es <url>         Elasticsearch URL. Default is http://localhost:9200");
