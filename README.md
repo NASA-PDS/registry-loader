@@ -1,5 +1,7 @@
 # PDS Registry Manager Elastic
 
+[![🤪 Unstable integration & delivery](https://github.com/NASA-PDS/pds-registry-mgr-elastic/actions/workflows/unstable-cicd.yaml/badge.svg)](https://github.com/NASA-PDS/pds-registry-mgr-elastic/actions/workflows/unstable-cicd.yaml) [![😌 Stable integration & delivery](https://github.com/NASA-PDS/pds-registry-mgr-elastic/actions/workflows/stable-cicd.yaml/badge.svg)](https://github.com/NASA-PDS/pds-registry-mgr-elastic/actions/workflows/stable-cicd.yaml)
+
 The [Planetary Data System](https://pds.nasa.gov/) (PDS) Registry Manager Elastic provides functionality for configuring the PDS Registry Elastic. It's a sub-component of the PDS Registry App (https://github.com/NASA-PDS/pds-registry-app).
 
 
