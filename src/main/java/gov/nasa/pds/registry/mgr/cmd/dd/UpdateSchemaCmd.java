@@ -57,7 +57,7 @@ public class UpdateSchemaCmd implements CliCommand
         try
         {
             SchemaUpdater su = new SchemaUpdater(cfg, fixMissingFDs);
-            su.updateSchema(new File(dataDir));
+            su.updateLddsAndSchema(new File(dataDir));
         }
         catch(ResponseException ex)
         {
