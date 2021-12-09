@@ -7,6 +7,7 @@ import org.elasticsearch.client.RestClient;
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.dao.dd.DataDictionaryDao;
+import gov.nasa.pds.registry.mgr.dao.schema.SchemaDao;
 import gov.nasa.pds.registry.mgr.util.CloseUtils;
 
 

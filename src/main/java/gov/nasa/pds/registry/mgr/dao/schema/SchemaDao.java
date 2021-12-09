@@ -1,4 +1,4 @@
-package gov.nasa.pds.registry.mgr.dao;
+package gov.nasa.pds.registry.mgr.dao.schema;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +10,10 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
+
+import gov.nasa.pds.registry.mgr.dao.DataTypeNotFoundException;
+import gov.nasa.pds.registry.mgr.dao.GetDataTypesResponseParser;
+import gov.nasa.pds.registry.mgr.dao.MappingsParser;
 import gov.nasa.pds.registry.mgr.util.Tuple;
 
 

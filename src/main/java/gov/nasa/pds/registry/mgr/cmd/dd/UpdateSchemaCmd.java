@@ -10,7 +10,7 @@ import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.RegistryManager;
-import gov.nasa.pds.registry.mgr.dao.SchemaUpdater;
+import gov.nasa.pds.registry.mgr.dao.schema.SchemaUpdater;
 
 
 /**

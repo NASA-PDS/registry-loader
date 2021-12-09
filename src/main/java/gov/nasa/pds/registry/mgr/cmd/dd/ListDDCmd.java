@@ -52,12 +52,12 @@ public class ListDDCmd implements CliCommand
             Collections.sort(list);
             
             System.out.println();
-            System.out.format("%-20s %-40s %s\n", "Namespace", "File", "Date");
-            System.out.println("----------------------------------------------------------------------------------");
+            System.out.format("%-20s %-40s %10s   %s\n", "Namespace", "File", "Version", "Date");
+            System.out.println("-----------------------------------------------------------------------------------------------");
             
             for(LddInfo info: list)
             {
-                System.out.format("%-20s %-40s %s\n", info.namespace, info.file, info.date);
+                System.out.format("%-20s %-40s %10s   %s\n", info.namespace, info.file, info.imVersion, info.date);
             }
         }
         finally

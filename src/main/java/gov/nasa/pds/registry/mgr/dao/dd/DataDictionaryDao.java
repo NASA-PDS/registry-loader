@@ -10,7 +10,6 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.es.client.SearchResponseParser;
-import gov.nasa.pds.registry.mgr.dao.SchemaRequestBuilder;
 
 
 /**
@@ -77,7 +76,7 @@ public class DataDictionaryDao
      */
     public LddVersions getLddInfo(String namespace) throws Exception
     {
-        SchemaRequestBuilder bld = new SchemaRequestBuilder();
+        DDRequestBuilder bld = new DDRequestBuilder();
         String json = bld.createListLddsRequest(namespace);
 
         Request req = new Request("GET", "/" + indexName + "-dd/_search");
@@ -123,6 +122,9 @@ public class DataDictionaryDao
                     info.date = Instant.parse(str);
                 }
                 
+                // Versions
+                info.imVersion = (String)map.get("im_version");
+                
                 // File name
                 info.file = (String)map.get("attr_name");
                 
@@ -140,7 +142,7 @@ public class DataDictionaryDao
      */
     public List<LddInfo> listLdds(String namespace) throws Exception
     {
-        SchemaRequestBuilder bld = new SchemaRequestBuilder();
+        DDRequestBuilder bld = new DDRequestBuilder();
         String json = bld.createListLddsRequest(namespace);
 
         Request req = new Request("GET", "/" + indexName + "-dd/_search");

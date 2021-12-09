@@ -8,7 +8,7 @@ import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.mgr.dao.IndexDao;
-import gov.nasa.pds.registry.mgr.dao.SchemaDao;
+import gov.nasa.pds.registry.mgr.dao.schema.SchemaDao;
 import gov.nasa.pds.registry.mgr.util.Tuple;
 
 

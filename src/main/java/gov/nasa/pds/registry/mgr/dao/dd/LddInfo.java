@@ -10,6 +10,7 @@ public class LddInfo implements Comparable<LddInfo>
 {
     public String namespace;
     public String file;
+    public String imVersion;
     public Instant date;
     
     

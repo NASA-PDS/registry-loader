@@ -1,8 +1,9 @@
 package tt;
 
-import gov.nasa.pds.registry.mgr.dao.SchemaRequestBuilder;
+import gov.nasa.pds.registry.mgr.dao.dd.DDRequestBuilder;
 
-public class TestSchemaRequestBuilder
+
+public class TestDDRequestBuilder
 {
     public static void main(String[] args) throws Exception
     {
@@ -12,7 +13,7 @@ public class TestSchemaRequestBuilder
     
     public static void testGetLddInfoRequest() throws Exception
     {
-        SchemaRequestBuilder bld = new SchemaRequestBuilder(true);
+        DDRequestBuilder bld = new DDRequestBuilder(true);
         String req = bld.createListLddsRequest("pds");
         System.out.println(req);
     }

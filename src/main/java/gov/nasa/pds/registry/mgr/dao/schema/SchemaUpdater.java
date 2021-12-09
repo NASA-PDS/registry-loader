@@ -1,4 +1,4 @@
-package gov.nasa.pds.registry.mgr.dao;
+package gov.nasa.pds.registry.mgr.dao.schema;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
+import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 import gov.nasa.pds.registry.mgr.dao.dd.DataDictionaryDao;
 import gov.nasa.pds.registry.mgr.dao.dd.LddVersions;
 import gov.nasa.pds.registry.mgr.dd.JsonLddLoader;
