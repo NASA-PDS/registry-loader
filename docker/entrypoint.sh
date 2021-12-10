@@ -36,15 +36,15 @@
 
 # Check if the ES_URL environment variable is set
 if [ -z "$ES_URL" ]; then
-    echo "Error: 'ES_URL' (Elasticsearch URL) environment variable is not set. Use docker's -e option."
+    echo "Error: 'ES_URL' (Elasticsearch URL) environment variable is not set. Use docker's -e option." 1>&2
     exit 1
 fi
 
 # Harvest data
-echo "Harvesting data ..."
+echo "Harvesting data ..." 1>&2
 harvest -c "$HARVEST_CFG_FILE"
 
 # Load data into Elasticsearch
-echo "Loading harvested data into Elasticsearch ..."
+echo "Loading harvested data into Elasticsearch ..." 1>&2
 registry-manager create-registry -es "$ES_URL"
 registry-manager load-data -dir /tmp/harvest/out/ -es "$ES_URL"
