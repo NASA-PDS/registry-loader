@@ -65,7 +65,7 @@ public class LoadDataCmd implements CliCommand
         
         String tmp = cmdLine.getOptionValue("updateSchema", "Y");
         boolean updateSchema = ParamParserUtils.parseYesNo("updateSchema", tmp);
-        boolean fixMissingFDs = cmdLine.hasOption("fixMissingFD");
+        boolean fixMissingFDs = cmdLine.hasOption("force");
         
         RegistryManager.init(cfg);
 
