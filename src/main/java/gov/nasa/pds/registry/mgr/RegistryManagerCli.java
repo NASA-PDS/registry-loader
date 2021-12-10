@@ -300,7 +300,7 @@ public class RegistryManagerCli
         bld = Option.builder("updateSchema").hasArg().argName("y/n");
         options.addOption(bld.build());
 
-        bld = Option.builder("fixMissingFD");
+        bld = Option.builder("force");
         options.addOption(bld.build());
 
         bld = Option.builder("ldd").hasArg().argName("url");
