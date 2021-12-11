@@ -30,9 +30,9 @@
 
 FROM openjdk:11-slim
 
-# Get arguments from the build command line
-ARG harvest_version
-ARG reg_manager_version
+# Set following arguments with compatible versions
+ARG harvest_version=3.5.0
+ARG reg_manager_version=4.2.0
 
 ENV HARVEST_IMAGE_PATH=https://github.com/NASA-PDS/harvest/releases/download/v${harvest_version}/harvest-${harvest_version}-bin.tar.gz
 ENV REG_MANAGER_IMAGE_PATH=https://github.com/NASA-PDS/pds-registry-mgr-elastic/releases/download/v${reg_manager_version}/registry-manager-${reg_manager_version}-bin.tar.gz

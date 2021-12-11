@@ -1,29 +1,59 @@
-# 🪐 Building a Docker Image for Registry Loader
+# 🪐 Docker Image and Container for Registry Loader
 
 The Registry Loader is a docker image which contains both Harvest and Registry Manager command line tools.
 
-## 🏃 Steps to build the docker image for Registry Loader
+## 🏃 Steps to build the docker image of the Registry Loader
 
-1. Update the values in the docker.properties file.
+1. [Optional] Update the following versions in the Dockerfile with compatible versions.
 
-Currently, the docker.properties file contains following 3 properties. Update these properties with the compatible versions and a preferred docker image name tag.
+| Variable            | Description |
+| ------------------- | ------------|
+| harvest.version     | The version of the Harvest release to be included in the docker image|
+| reg.manager.version | The version of the Registry Manager release to be included in the docker image|
 
-```
-    harvest.version=3.6.0-SNAPSHOT              - The version of the Harvest release to be included in the docker image
-    reg.manager.version=4.3.0-SNAPSHOT          - The version of the Registry Manager release to be included in the docker image
-    docker.image.name.tag=pds/registry-loader   - The image name tag to be used to identify the docker image
-```
-
-2. Change the execution permission of the build.sh file as follows.
-
-```
-    chmod u+x build.sh
+```    
+    # Set following arguments with compatible versions
+    ARG harvest_version=3.5.0
+    ARG reg_manager_version=4.2.0
 ```
 
-3. Execute the build.sh with docker.properties file passed as an argument.
+2. Build the docker image as follows.
 
 ```
-    ./build.sh docker.properties
+    docker image build -t pds/registry-loader .
 ```
 
-Above steps will build a docker image. This docker image will have the name tag, which was specified as docker.image.name.tag in the docker.properties file.
+## 🏃 Steps to run a docker container of the Registry Loader
+
+1. Update the following variables in the run.sh.
+
+| Variable          | Description |
+| ----------------- | ------------|
+| ES_URL            | The Elasticsearch URL|
+| HARVEST_CFG_FILE  | Harvest configuration file path (in the container)|
+| HARVEST_CFG_DIR   | Harvest configuration directory in the host machine, to be mapped as /cfg directory in the container|
+| HARVEST_DATA_DIR  |Harvest data directory in the host machine, to be mapped as /data directory in the container|
+| NETWORK_NAME      |Name of the network, if this container is located in a docker network with other components such as Elasticsearch|
+
+```    
+    # Configure the following variables before executing this script
+    ES_URL=http://elasticsearch:9200
+    HARVEST_CFG_FILE=/cfg/dir1.xml
+    HARVEST_CFG_DIR=/<absolute_path_in_host>/cfg
+    HARVEST_DATA_DIR=<absolute_path_in_host>/data
+    NETWORK_NAME=pds
+```
+
+2. If executing for the first time, change the execution permissions of run.sh file as follows.
+
+```
+    chmod u+x run.sh
+```
+
+3. Execute the run.sh as follows.
+
+```
+    ./run.sh
+```
+
+Above steps will run a docker container of the Registry Loader.

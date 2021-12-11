@@ -31,51 +31,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 # ----------------------------------------------------------------------------------------------
-# This script is used to build the docker image for the Registry Loader with a single command.
+# This script is used to run the Registry Loader docker container with a single command.
 #
-# Both Harvest and Registry Manager tools are included in this Registry Loader docker image.
-# This script reads required configurations from a properties file passed as an argument.
-#
-# Usage: ./build.sh docker.properties
+# Usage: ./run.sh
 #
 # ----------------------------------------------------------------------------------------------
 
-# Check if a properties file name is provided as an argument to this script
-if [ -z "$1" ]; then
-  echo -e "\nPlease provide a properties file as an argument to the $0" 1>&2
-  echo -e "\tUsage: $0 docker.properties \n" 1>&2
-  exit 1
-fi
+# Configure the following variables before executing this script
+ES_URL=http://elasticsearch:9200
+HARVEST_CFG_FILE=/cfg/dir1.xml
+HARVEST_CFG_DIR=/<absolute_path_in_host>/cfg
+HARVEST_DATA_DIR=<absolute_path_in_host>/data
+NETWORK_NAME=pds
 
-PROPERTY_FILE=$1
-
-# Check if the provided properties file exists
-if [ ! -f "$PROPERTY_FILE" ]; then
-    echo -e "\nThe file $PROPERTY_FILE does not exist." 1>&2
-    echo -e "\tPlease provide an existing properties file as an argument to the $0" 1>&2
-    echo -e "\tUsage: $0 docker.properties \n" 1>&2
-    exit 1
-fi
-
-# Returns the value for a given property key
-function getProperty {
-   PROPERTY_KEY=$1
-   PROPERTY_VALUE=$(grep -w "$PROPERTY_KEY" < "$PROPERTY_FILE" | cut -d '=' -f2)
-   echo "$PROPERTY_VALUE"
-}
-
-# Read property values from the properties file
-echo "Reading properties from $PROPERTY_FILE" 1>&2
-HARVEST_VERSION=$(getProperty "harvest.version")
-REG_MANAGER_VERSION=$(getProperty "reg.manager.version")
-DOCKER_IMAGE_NAME_TAG=$(getProperty "docker.image.name.tag")
-
-echo "HARVEST_VERSION  = $HARVEST_VERSION" 1>&2
-echo "REG_MANAGER_VERSION = $REG_MANAGER_VERSION" 1>&2
-echo "DOCKER_IMAGE_NAME_TAG = $DOCKER_IMAGE_NAME_TAG" 1>&2
-
-# Execute docker image build with build arguments
-docker image build --build-arg harvest_version="$HARVEST_VERSION" \
-             --build-arg reg_manager_version="$REG_MANAGER_VERSION" \
-             --tag "$DOCKER_IMAGE_NAME_TAG" \
-             --file Dockerfile .
+# Execute docker container run
+docker container run --name registry-loader \
+           --network $NETWORK_NAME \
+           --rm \
+           --env ES_URL=${ES_URL} \
+           --env HARVEST_CFG_FILE=${HARVEST_CFG_FILE} \
+           --volume ${HARVEST_CFG_DIR}:/cfg \
+           --volume ${HARVEST_DATA_DIR}:/data \
+           pds/registry-loader
