@@ -93,9 +93,8 @@ if [ -z "$1" ]; then
                  --network $NETWORK_NAME \
                  --rm \
                  --env ES_URL=${ES_URL} \
-                 --env HARVEST_CFG_FILE="${HARVEST_CFG_FILE}" \
                  --volume "${HARVEST_CFG_FILE}":/cfg/harvest-config.xml \
-                 --volume ${HARVEST_DATA_DIR}:/data \
+                 --volume "${HARVEST_DATA_DIR}":/data \
                  pds/registry-loader
 else
 
@@ -103,11 +102,11 @@ else
 
       # Execute docker container run with test data
       docker container run --name registry-loader \
-                 --network $NETWORK_NAME \
+                 --network "$NETWORK_NAME" \
                  --rm \
-                 --env ES_URL=${ES_URL} \
+                 --env ES_URL="${ES_URL}" \
                  --env RUN_TESTS=true \
-                 --env TEST_DATA_URL=${TEST_DATA_URL} \
+                 --env TEST_DATA_URL="${TEST_DATA_URL}" \
                  pds/registry-loader
 
     else
