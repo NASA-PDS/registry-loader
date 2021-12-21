@@ -25,35 +25,68 @@ The Registry Loader is a docker image which contains both Harvest and Registry M
 
 ## 🏃 Steps to run a docker container of the Registry Loader
 
-1. Update the following variables in the run.sh.
+1. Update the following environment variables in the run.sh.
 
 | Variable          | Description |
 | ----------------- | ------------|
-| ES_URL            | The Elasticsearch URL|
-| HARVEST_CFG_FILE  | Harvest configuration file path (in the container)|
-| HARVEST_CFG_DIR   | Harvest configuration directory in the host machine, to be mapped as /cfg directory in the container|
-| HARVEST_DATA_DIR  |Harvest data directory in the host machine, to be mapped as /data directory in the container|
-| NETWORK_NAME      |Name of the network, if this container is located in a docker network with other components such as Elasticsearch|
+| ES_URL            | The Elasticsearch URL |
+| NETWORK_NAME      | Name of the docker network, where above specified Elasticsearch URL is reachable with the given hostname |
+| HARVEST_CFG_FILE  | Absolute path of the Harvest configuration file in the host machine (E.g.: /tmp/cfg/harvest-config.xml) |
+| HARVEST_DATA_DIR  | Absolute path of the Harvest data directory in the host machine (E.g.: /tmp/data/urn-nasa-pds-insight_rad) |
 
 ```    
-    # Configure the following variables before executing this script
-    ES_URL=http://elasticsearch:9200
-    HARVEST_CFG_FILE=/cfg/dir1.xml
-    HARVEST_CFG_DIR=/<absolute_path_in_host>/cfg
-    HARVEST_DATA_DIR=<absolute_path_in_host>/data
-    NETWORK_NAME=pds
+# Update the following environment variables before executing this script
+
+# Elasticsearch URL
+ES_URL=http://elasticsearch:9200
+
+# Docker network name, where above specified Elasticsearch URL is reachable with the given hostname
+NETWORK_NAME=docker_pds
+
+# Absolute path of the Harvest configuration file in the host machine (E.g.: /tmp/cfg/harvest-config.xml)
+HARVEST_CFG_FILE=${PWD}/test/cfg/harvest-test-config.xml
+
+# Absolute path of the Harvest data directory in the host machine (E.g.: /tmp/data/urn-nasa-pds-insight_rad)
+HARVEST_DATA_DIR=/tmp/data
 ```
 
 2. If executing for the first time, change the execution permissions of run.sh file as follows.
 
 ```
-    chmod u+x run.sh
+chmod u+x run.sh
 ```
 
 3. Execute the run.sh as follows.
 
 ```
-    ./run.sh
+./run.sh
 ```
 
 Above steps will run a docker container of the Registry Loader.
+
+## 🏃 Steps to run a docker container of the Registry Loader with test data
+
+1. Update the following environment variable in the run.sh.
+
+| Variable          | Description |
+| ----------------- | ------------|
+| TEST_DATA_URL     | URL to download the test data to Harvest |
+
+```    
+# Update the following environment variable before executing this script
+
+# URL to download the test data to Harvest (only required, if executing with test data)
+TEST_DATA_URL=https://pds-gamma.jpl.nasa.gov/data/pds4/test-data/registry/urn-nasa-pds-insight_rad.tar.gz
+```
+
+2. If executing for the first time, change the execution permissions of run.sh file as follows.
+
+```
+chmod u+x run.sh
+```
+
+3. Execute the run.sh with the argument 'test' as follows.
+
+```
+./run.sh test
+```

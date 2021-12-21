@@ -41,7 +41,17 @@ if [ -z "$ES_URL" ]; then
 fi
 
 # Harvest data
-echo "Harvesting data ..." 1>&2
+if [ "$RUN_TESTS" = "true" ]; then
+  echo "Downloading Harvest test data ..." 1>&2
+  curl -o /tmp/data.tar.gz "$TEST_DATA_URL"
+  mkdir /data && tar xzf /tmp/data.tar.gz -C /data --strip-components 1
+  rm -f /tmp/data.tar.gz
+  HARVEST_CFG_FILE=/test/cfg/harvest-config.xml
+else
+  HARVEST_CFG_FILE=/cfg/harvest-config.xml
+fi
+
+echo "Harvesting data based on the configuration file: $HARVEST_CFG_FILE ..." 1>&2
 harvest -c "$HARVEST_CFG_FILE"
 
 # Load data into Elasticsearch

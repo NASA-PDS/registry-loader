@@ -33,23 +33,89 @@
 # ----------------------------------------------------------------------------------------------
 # This script is used to run the Registry Loader docker container with a single command.
 #
-# Usage: ./run.sh
+# Usage: ./run.sh [test]
+#
+# Optional arguments:
+#     test     Download and harvest test data
 #
 # ----------------------------------------------------------------------------------------------
 
-# Configure the following variables before executing this script
-ES_URL=http://elasticsearch:9200
-HARVEST_CFG_FILE=/cfg/dir1.xml
-HARVEST_CFG_DIR=/<absolute_path_in_host>/cfg
-HARVEST_DATA_DIR=<absolute_path_in_host>/data
-NETWORK_NAME=pds
+# Update the following environment variables before executing this script
 
-# Execute docker container run
-docker container run --name registry-loader \
-           --network $NETWORK_NAME \
-           --rm \
-           --env ES_URL=${ES_URL} \
-           --env HARVEST_CFG_FILE=${HARVEST_CFG_FILE} \
-           --volume ${HARVEST_CFG_DIR}:/cfg \
-           --volume ${HARVEST_DATA_DIR}:/data \
-           pds/registry-loader
+# Elasticsearch URL
+ES_URL=http://elasticsearch:9200
+
+# Docker network name, where above specified Elasticsearch URL is reachable with the given hostname
+NETWORK_NAME=docker_pds
+
+# Absolute path of the Harvest configuration file in the host machine (E.g.: /tmp/cfg/harvest-config.xml)
+HARVEST_CFG_FILE=${PWD}/test/cfg/harvest-test-config.xml
+
+# Absolute path of the Harvest data directory in the host machine (E.g.: /tmp/data/urn-nasa-pds-insight_rad)
+HARVEST_DATA_DIR=/tmp/data
+
+# URL to download the test data to Harvest (only required, if executing with test data)
+TEST_DATA_URL=https://pds-gamma.jpl.nasa.gov/data/pds4/test-data/registry/urn-nasa-pds-insight_rad.tar.gz
+
+
+
+# Check if the ES_URL environment variable is set
+if [ -z "$ES_URL" ]; then
+    echo "Error: 'ES_URL' (Elasticsearch URL) environment variable is not set." 1>&2
+    exit 1
+fi
+
+# Check if an argument is provided to this script
+if [ -z "$1" ]; then
+
+      # If an argument is not provided, then do not harvest test data. Execute the registry loader with actual
+      # configurations and data provided with 'HARVEST_CFG_FILE' and 'HARVEST_DATA_DIR' environment variables
+      # in this file.
+
+      # Check if the Harvest configuration file exists
+      if [ ! -f "$HARVEST_CFG_FILE" ]; then
+          echo -e "Error: The Harvest configuration file $HARVEST_CFG_FILE does not exist." \
+                  "Set an absolute file path of an existing Harvest configuration file in $0 " \
+                  "as the environment variable 'HARVEST_CFG_FILE'.\n" 1>&2
+          exit 1
+      fi
+
+      # Check if the Harvest configuration file exists
+      if [ ! -d "$HARVEST_DATA_DIR" ]; then
+          echo -e "Error: The Harvest data directory $HARVEST_DATA_DIR does not exist." \
+                  "Set an absolute directory path of an existing Harvest data directory in $0" \
+                  "as the environment variable 'HARVEST_DATA_DIR'.\n" 1>&2
+          exit 1
+      fi
+
+      # Execute docker container run with actual data
+      docker container run --name registry-loader \
+                 --network $NETWORK_NAME \
+                 --rm \
+                 --env ES_URL=${ES_URL} \
+                 --env HARVEST_CFG_FILE="${HARVEST_CFG_FILE}" \
+                 --volume "${HARVEST_CFG_FILE}":/cfg/harvest-config.xml \
+                 --volume ${HARVEST_DATA_DIR}:/data \
+                 pds/registry-loader
+else
+
+    if [ "$1" = "test" ]; then
+
+      # Execute docker container run with test data
+      docker container run --name registry-loader \
+                 --network $NETWORK_NAME \
+                 --rm \
+                 --env ES_URL=${ES_URL} \
+                 --env RUN_TESTS=true \
+                 --env TEST_DATA_URL=${TEST_DATA_URL} \
+                 pds/registry-loader
+
+    else
+      echo -e "Usage: $0 [test]\n" 1>&2
+      echo -e "Optional argument:" 1>&2
+      echo -e "\ttest     Download and harvest test data\n" 1>&2
+      echo -e "Execute $0 without any arguments to harvest with actual configurations and data provided" \
+              "with 'HARVEST_CFG_FILE' and 'HARVEST_DATA_DIR' environment variables set in $0 file.\n" 1>&2
+      exit 1
+    fi
+fi
