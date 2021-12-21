@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Copyright 2021, California Institute of Technology ("Caltech").
 # U.S. Government sponsorship acknowledged.
@@ -42,14 +42,11 @@
 
 # Update the following environment variables before executing this script
 
-# Elasticsearch URL
-ES_URL=http://elasticsearch:9200
-
-# Docker network name, where above specified Elasticsearch URL is reachable with the given hostname
-NETWORK_NAME=docker_pds
+# Elasticsearch URL (E.g.: http://192.168.0.1:9200)
+ES_URL=http://<HOST NAME OR IP ADDRESS>:9200
 
 # Absolute path of the Harvest configuration file in the host machine (E.g.: /tmp/cfg/harvest-config.xml)
-HARVEST_CFG_FILE=${PWD}/test/cfg/harvest-test-config.xml
+HARVEST_CFG_FILE=/tmp/cfg/harvest-config.xml
 
 # Absolute path of the Harvest data directory in the host machine (E.g.: /tmp/data/urn-nasa-pds-insight_rad)
 HARVEST_DATA_DIR=/tmp/data
@@ -90,7 +87,6 @@ if [ -z "$1" ]; then
 
       # Execute docker container run with actual data
       docker container run --name registry-loader \
-                 --network $NETWORK_NAME \
                  --rm \
                  --env ES_URL=${ES_URL} \
                  --volume "${HARVEST_CFG_FILE}":/cfg/harvest-config.xml \
@@ -102,7 +98,6 @@ else
 
       # Execute docker container run with test data
       docker container run --name registry-loader \
-                 --network "$NETWORK_NAME" \
                  --rm \
                  --env ES_URL="${ES_URL}" \
                  --env RUN_TESTS=true \

@@ -30,7 +30,6 @@ The Registry Loader is a docker image which contains both Harvest and Registry M
 | Variable          | Description |
 | ----------------- | ------------|
 | ES_URL            | The Elasticsearch URL |
-| NETWORK_NAME      | Name of the docker network, where above specified Elasticsearch URL is reachable with the given hostname |
 | HARVEST_CFG_FILE  | Absolute path of the Harvest configuration file in the host machine (E.g.: /tmp/cfg/harvest-config.xml) |
 | HARVEST_DATA_DIR  | Absolute path of the Harvest data directory in the host machine (E.g.: /tmp/data/urn-nasa-pds-insight_rad) |
 
@@ -39,9 +38,6 @@ The Registry Loader is a docker image which contains both Harvest and Registry M
 
 # Elasticsearch URL
 ES_URL=http://elasticsearch:9200
-
-# Docker network name, where above specified Elasticsearch URL is reachable with the given hostname
-NETWORK_NAME=docker_pds
 
 # Absolute path of the Harvest configuration file in the host machine (E.g.: /tmp/cfg/harvest-config.xml)
 HARVEST_CFG_FILE=${PWD}/test/cfg/harvest-test-config.xml
