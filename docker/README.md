@@ -20,7 +20,7 @@ The Registry Loader is a docker image which contains both Harvest and Registry M
 2. Build the docker image as follows.
 
 ```
-    docker image build -t pds/registry-loader .
+    docker image build -t nasapds/registry-loader .
 ```
 
 ## 🏃 Steps to run a docker container of the Registry Loader
