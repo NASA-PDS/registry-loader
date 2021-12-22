@@ -58,7 +58,7 @@ TEST_DATA_URL=https://pds-gamma.jpl.nasa.gov/data/pds4/test-data/registry/urn-na
 
 # Check if the ES_URL environment variable is set
 if [ -z "$ES_URL" ]; then
-    echo "Error: 'ES_URL' (Elasticsearch URL) environment variable is not set." 1>&2
+    echo "Error: 'ES_URL' (Elasticsearch URL) environment variable is not properly set in the $0 file." 1>&2
     exit 1
 fi
 
@@ -72,7 +72,7 @@ if [ -z "$1" ]; then
       # Check if the Harvest configuration file exists
       if [ ! -f "$HARVEST_CFG_FILE" ]; then
           echo -e "Error: The Harvest configuration file $HARVEST_CFG_FILE does not exist." \
-                  "Set an absolute file path of an existing Harvest configuration file in $0 " \
+                  "Set an absolute file path of an existing Harvest configuration file in the $0 file" \
                   "as the environment variable 'HARVEST_CFG_FILE'.\n" 1>&2
           exit 1
       fi
@@ -80,7 +80,7 @@ if [ -z "$1" ]; then
       # Check if the Harvest configuration file exists
       if [ ! -d "$HARVEST_DATA_DIR" ]; then
           echo -e "Error: The Harvest data directory $HARVEST_DATA_DIR does not exist." \
-                  "Set an absolute directory path of an existing Harvest data directory in $0" \
+                  "Set an absolute directory path of an existing Harvest data directory in the $0 file" \
                   "as the environment variable 'HARVEST_DATA_DIR'.\n" 1>&2
           exit 1
       fi
@@ -109,7 +109,7 @@ else
       echo -e "Optional argument:" 1>&2
       echo -e "\ttest     Download and harvest test data\n" 1>&2
       echo -e "Execute $0 without any arguments to harvest with actual configurations and data provided" \
-              "with 'HARVEST_CFG_FILE' and 'HARVEST_DATA_DIR' environment variables set in $0 file.\n" 1>&2
+              "with 'HARVEST_CFG_FILE' and 'HARVEST_DATA_DIR' environment variables set in the $0 file.\n" 1>&2
       exit 1
     fi
 fi
