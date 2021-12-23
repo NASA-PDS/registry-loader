@@ -1,59 +1,63 @@
 # Changelog
 
-## [v4.3.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.3.0-SNAPSHOT) (2021-12-10)
+## [v4.3.0](https://github.com/NASA-PDS/registry-mgr/tree/v4.3.0) (2021-12-10)
 
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.2.0...v4.3.0-SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.3.0-SNAPSHOT...v4.3.0)
 
-**Improvements:**
+## [v4.3.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.3.0-SNAPSHOT) (2021-12-10)
 
-- Update registy-mgr to use schema from schemaLocation in file [\#31](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/31)
-
-## [v4.2.0](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.2.0) (2021-09-30)
-
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.1.0...v4.2.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.2.0...v4.3.0-SNAPSHOT)
 
 **Improvements:**
 
-- Update registry-mgr-elastic to support new LDD JSON version information [\#27](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/27)
+- Update registy-mgr to use schema from schemaLocation in file [\#31](https://github.com/NASA-PDS/registry-mgr/issues/31)
 
-**Defects:**
+## [v4.2.0](https://github.com/NASA-PDS/registry-mgr/tree/v4.2.0) (2021-09-30)
 
-- registry-mgr cannot handle updated JSON files output from LDDTool [\#33](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/33) [[s.medium](https://github.com/NASA-PDS/pds-registry-mgr-elastic/labels/s.medium)]
-- Load-data command doesn't report Elasticsearch errors [\#25](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/25)
-
-## [v4.1.0](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.1.0) (2021-04-17)
-
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/v4.0.2...v4.1.0)
-
-## [v4.0.2](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/v4.0.2) (2020-12-02)
-
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/4.0.1...v4.0.2)
-
-**Defects:**
-
-- Missing Science\_Facets fields definitions in registry schema [\#14](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/14)
-- registry-mgr  delete-data options are not correct in -help [\#12](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/12)
-
-## [4.0.1](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/4.0.1) (2020-10-30)
-
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/4.0.0...4.0.1)
-
-## [4.0.0](https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/4.0.0) (2020-10-26)
-
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-mgr-elastic/compare/7fd5a2640c71921f086fa467648c78d108c4bb24...4.0.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.1.0...v4.2.0)
 
 **Improvements:**
 
-- Implement Authentication [\#3](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/3)
+- Update registry-mgr-elastic to support new LDD JSON version information [\#27](https://github.com/NASA-PDS/registry-mgr/issues/27)
 
 **Defects:**
 
-- update-schema command doesn't work [\#7](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/7)
+- registry-mgr cannot handle updated JSON files output from LDDTool [\#33](https://github.com/NASA-PDS/registry-mgr/issues/33) [[s.medium](https://github.com/NASA-PDS/registry-mgr/labels/s.medium)]
+- Load-data command doesn't report Elasticsearch errors [\#25](https://github.com/NASA-PDS/registry-mgr/issues/25)
+
+## [v4.1.0](https://github.com/NASA-PDS/registry-mgr/tree/v4.1.0) (2021-04-17)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.0.2...v4.1.0)
+
+## [v4.0.2](https://github.com/NASA-PDS/registry-mgr/tree/v4.0.2) (2020-12-02)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/4.0.1...v4.0.2)
+
+**Defects:**
+
+- Missing Science\_Facets fields definitions in registry schema [\#14](https://github.com/NASA-PDS/registry-mgr/issues/14)
+- registry-mgr  delete-data options are not correct in -help [\#12](https://github.com/NASA-PDS/registry-mgr/issues/12)
+
+## [4.0.1](https://github.com/NASA-PDS/registry-mgr/tree/4.0.1) (2020-10-30)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/4.0.0...4.0.1)
+
+## [4.0.0](https://github.com/NASA-PDS/registry-mgr/tree/4.0.0) (2020-10-26)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/7fd5a2640c71921f086fa467648c78d108c4bb24...4.0.0)
+
+**Improvements:**
+
+- Implement Authentication [\#3](https://github.com/NASA-PDS/registry-mgr/issues/3)
+
+**Defects:**
+
+- update-schema command doesn't work [\#7](https://github.com/NASA-PDS/registry-mgr/issues/7)
 
 **Other closed issues:**
 
-- Update the field-data type lookup table [\#6](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/6)
-- Create a field-data type lookup table [\#5](https://github.com/NASA-PDS/pds-registry-mgr-elastic/issues/5)
+- Update the field-data type lookup table [\#6](https://github.com/NASA-PDS/registry-mgr/issues/6)
+- Create a field-data type lookup table [\#5](https://github.com/NASA-PDS/registry-mgr/issues/5)
 
 
 
