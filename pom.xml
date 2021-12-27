@@ -175,12 +175,12 @@ POSSIBILITY OF SUCH DAMAGE.
                     <id>default-cli</id>
                     <configuration>
                     <owner>nasa-pds</owner>
-                    <repository>pds-registry-mgr-elastic</repository>
+                    <repository>registry-mgr</repository>
                     <server>github-oauth</server>
                     <tagName>${project.version}</tagName>
                     <name>${project.version}</name>
                     <targetCommitish>main</targetCommitish>
-                    <body>Release ${project.version} see changelog https://github.com/NASA-PDS/pds-registry-mgr-elastic/blob/main/CHANGELOG.md</body>
+                    <body>Release ${project.version} see changelog https://github.com/NASA-PDS/registry-mgr/blob/main/CHANGELOG.md</body>
                     <assets>
                         <asset>target/registry-manager-${project.version}-bin.zip</asset>
                         <asset>target/registry-manager-${project.version}-bin.tar.gz</asset>
@@ -192,9 +192,9 @@ POSSIBILITY OF SUCH DAMAGE.
         </plugins>
     </build>
     <scm>
-        <url>https://github.com/NASA-PDS/pds-registry-mgr-elastic/tree/master</url>
-        <connection>scm:git:git://github.com/NASA-PDS/pds-registry-mgr-elastic.git</connection>
-        <developerConnection>scm:git:git@github.com:NASA-PDS/pds-registry-mgr-elastic.git</developerConnection>
+        <url>https://github.com/NASA-PDS/registry-mgr/tree/master</url>
+        <connection>scm:git:git://github.com/NASA-PDS/registry-mgr.git</connection>
+        <developerConnection>scm:git:git@github.com:NASA-PDS/registry-mgr.git</developerConnection>
       <tag>HEAD</tag>
   </scm>
 
@@ -202,7 +202,7 @@ POSSIBILITY OF SUCH DAMAGE.
       <repository>
         <id>github</id>       
         <name>Releases</name>
-        <url>https://github.com/NASA-PDS/pds-registry-mgr-elastic</url> 
+        <url>https://github.com/NASA-PDS/registry-mgr</url> 
     </repository>
 </distributionManagement>   
 
