@@ -1,8 +1,8 @@
 # Changelog
 
-## [v4.3.1-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.3.1-SNAPSHOT) (2021-12-23)
+## [v4.4.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.4.0-SNAPSHOT) (2021-12-27)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.3.0...v4.3.1-SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.3.0...v4.4.0-SNAPSHOT)
 
 ## [v4.3.0](https://github.com/NASA-PDS/registry-mgr/tree/v4.3.0) (2021-12-10)
 
