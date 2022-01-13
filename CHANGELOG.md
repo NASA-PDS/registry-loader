@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.0](https://github.com/NASA-PDS/registry-loader/tree/v0.1.0) (2022-01-11)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.0.0-SNAPSHOT...v0.1.0)
+
 ## [v1.0.0-SNAPSHOT](https://github.com/NASA-PDS/registry-loader/tree/v1.0.0-SNAPSHOT) (2022-01-06)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/94da5387d0ac1d151b09f809652131d407c950de...v1.0.0-SNAPSHOT)
