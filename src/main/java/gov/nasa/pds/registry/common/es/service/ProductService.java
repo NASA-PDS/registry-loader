@@ -35,7 +35,7 @@ public class ProductService
      * @param status new status
      * @throws Exception an exception
      */
-    public void setArchveStatus(String lidvid, String status) throws Exception
+    public void updateArchveStatus(String lidvid, String status) throws Exception
     {
         log.info("Setting product status. LIDVID = " + lidvid + ", status = " + status);
         
@@ -47,7 +47,7 @@ public class ProductService
         }
         
         // Update the product
-        dao.updateStatus(Arrays.asList(lidvid), status);
+        dao.updateArchiveStatus(Arrays.asList(lidvid), status);
         
         // Update collection inventory
         if("Product_Collection".equals(pClass))
@@ -72,14 +72,14 @@ public class ProductService
             log.warn("Collection " + lidvid + " doesn't have inventory.");
             return;
         }
-        
+
         // NOTE: Page numbers start from 1
         for(int i = 1; i <= pages; i++)
         {
             List<String> ids = dao.getRefs(lidvid, 'P', i);
             log.debug("Primary refs: " + ids);
             
-            dao.updateStatus(ids, status);
+            dao.updateArchiveStatus(ids, status);
         }
     }
 }

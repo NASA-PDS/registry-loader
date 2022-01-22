@@ -29,6 +29,7 @@ public class ProductDao
     
     private RestClient client;
     private String indexName;
+    private BulkResponseParser bulkRespParser;
 
     
     /**
@@ -42,6 +43,8 @@ public class ProductDao
         
         this.client = client;
         this.indexName = indexName;
+        
+        bulkRespParser = new BulkResponseParser();
     }
 
     
@@ -267,7 +270,13 @@ public class ProductDao
     }
     
     
-    public void updateStatus(List<String> lidvids, String status) throws Exception
+    /**
+     * Update archive status by lidvids
+     * @param lidvids a list of lidvids to update
+     * @param status new status
+     * @throws Exception
+     */
+    public void updateArchiveStatus(List<String> lidvids, String status) throws Exception
     {
         if(lidvids == null || status == null) return;
         
@@ -283,10 +292,12 @@ public class ProductDao
         // Check for Elasticsearch errors.
         String respJson = DaoUtils.getLastLine(resp.getEntity().getContent());
         log.debug("Response: " + respJson);
+        
+        bulkRespParser.parse(respJson);
     }
     
     
-    public static String buildUpdateStatusJson(List<String> lidvids, String status)
+    private static String buildUpdateStatusJson(List<String> lidvids, String status)
     {
         if(lidvids == null || lidvids.isEmpty()) return null;
         if(status == null || status.isEmpty()) throw new IllegalArgumentException("Status could not be null or empty.");
