@@ -367,8 +367,4 @@ public class ProductDao
     }
 
 
-    private void processBulkResponse(String json)
-    {
-        
-    }
 }
