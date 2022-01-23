@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.common.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -68,6 +69,18 @@ public class FieldMapList implements FieldMap
         }
 
         return values;
+    }
+    
+
+    /**
+     * Set field's value
+     */
+    public void setValue(String fieldName, String value)
+    {
+        if(fieldName == null) throw new IllegalArgumentException("Field name is null");
+        if(value == null) return;
+        
+        fields.put(fieldName, Arrays.asList(value));
     }
     
     

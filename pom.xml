@@ -87,6 +87,12 @@ POSSIBILITY OF SUCH DAMAGE.
             <artifactId>gson</artifactId>
             <version>2.8.6</version>
         </dependency>
+        <!-- XML to JSON converter -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
+        </dependency>
         <!-- Log4j logger -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -103,6 +109,12 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
+        </dependency>
+        <!-- File type detection -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.23</version>
         </dependency>
     </dependencies>
 
