@@ -1,7 +1,7 @@
 package gov.nasa.pds.registry.common.es.dao;
 
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.Reader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,18 +30,18 @@ public class BulkResponseParser
     
     /**
      * Parse JSON string
-     * @param json bulk API response string
+     * @param reader bulk API response stream
      * @throws IOException an exception
      */
-    public void parse(String json) throws IOException
+    public void parse(Reader reader) throws IOException
     {
-        if(json == null) return;
+        if(reader == null) return;
         
         JsonReader rd = null;
         
         try
         {
-            rd = new JsonReader(new StringReader(json));
+            rd = new JsonReader(reader);
             
             rd.beginObject();
             
@@ -68,7 +68,7 @@ public class BulkResponseParser
         finally
         {
             CloseUtils.close(rd);
-        }     
+        }
     }
     
     

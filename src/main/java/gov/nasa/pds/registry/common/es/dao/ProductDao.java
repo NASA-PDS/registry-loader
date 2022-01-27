@@ -3,7 +3,7 @@ package gov.nasa.pds.registry.common.es.dao;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,9 +29,7 @@ public class ProductDao
     
     private RestClient client;
     private String indexName;
-    private BulkResponseParser bulkRespParser;
-
-    
+        
     /**
      * Constructor.
      * @param client Elasticsearch client
@@ -43,8 +41,6 @@ public class ProductDao
         
         this.client = client;
         this.indexName = indexName;
-        
-        bulkRespParser = new BulkResponseParser();
     }
 
     
@@ -280,7 +276,7 @@ public class ProductDao
     {
         if(lidvids == null || status == null) return;
         
-        String json = buildUpdateStatusJson(lidvids, status);
+        String json = ProductRequestBuilder.buildUpdateStatusJson(lidvids, status);
         log.debug("Request:\n" + json);
         
         String reqUrl = "/" + indexName + "/_bulk"; //?refresh=wait_for";
@@ -290,28 +286,21 @@ public class ProductDao
         Response resp = client.performRequest(req);
         
         // Check for Elasticsearch errors.
-        String respJson = DaoUtils.getLastLine(resp.getEntity().getContent());
-        log.debug("Response: " + respJson);
-        
-        bulkRespParser.parse(respJson);
-    }
-    
-    
-    private static String buildUpdateStatusJson(List<String> lidvids, String status)
-    {
-        if(lidvids == null || lidvids.isEmpty()) return null;
-        if(status == null || status.isEmpty()) throw new IllegalArgumentException("Status could not be null or empty.");
-        
-        StringBuilder bld = new StringBuilder();
-        String dataLine = "{ \"doc\" : {\"archive_status\" : \"" + status + "\"} }\n";
-        
-        for(String lidvid: lidvids)
+        InputStream is = null;
+        InputStreamReader rd = null;
+        try
         {
-            bld.append("{ \"update\" : {\"_id\" : \"" + lidvid + "\" } }\n");
-            bld.append(dataLine);
+            is = resp.getEntity().getContent();
+            rd = new InputStreamReader(is);
+            
+            BulkResponseParser parser = new BulkResponseParser();
+            parser.parse(rd);
         }
-        
-        return bld.toString();
+        finally
+        {
+            CloseUtils.close(rd);
+            CloseUtils.close(is);
+        }
     }
     
     
@@ -347,7 +336,7 @@ public class ProductDao
             String name = rd.nextName();
             if("product_lidvid".equals(name))
             {
-                return parseList(rd);
+                return DaoUtils.parseList(rd);
             }
             else
             {
@@ -361,21 +350,146 @@ public class ProductDao
     }
 
     
-    private static List<String> parseList(JsonReader rd) throws Exception
+    /**
+     * Get collection references of a bundle. References can be either LIDs, LIDVIDs or both.
+     * @param bundleLidvid bundle LIDVID
+     * @return Collection references
+     * @throws Exception an exception
+     */
+    public LidvidSet getCollectionIds(String bundleLidvid) throws Exception
     {
-        List<String> list = new ArrayList<>();
+        if(bundleLidvid == null) return null;
         
-        rd.beginArray();
-
-        while(rd.hasNext() && rd.peek() != JsonToken.END_ARRAY)
+        String reqUrl = "/" + indexName + "/_doc/" + bundleLidvid + "?_source=ref_lidvid_collection,ref_lid_collection";
+        Request req = new Request("GET", reqUrl);
+        Response resp = null;
+        
+        try
         {
-            list.add(rd.nextString());
-        }        
+            resp = client.performRequest(req);
+        }
+        catch(ResponseException ex)
+        {
+            resp = ex.getResponse();
+            int code = resp.getStatusLine().getStatusCode();
+            // Invalid LIDVID
+            if(code == 404 || code == 405) 
+            {
+                return null;
+            }
+            else
+            {
+                throw ex;
+            }
+        }
+
+        InputStream is = null;
         
-        rd.endArray();
+        try
+        {
+            is = resp.getEntity().getContent();
+            JsonReader rd = new JsonReader(new InputStreamReader(is));
+            
+            rd.beginObject();
+            
+            while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
+            {
+                String name = rd.nextName();
+                if("_source".equals(name))
+                {
+                    return parseCollectionIdsSource(rd);
+                }
+                else
+                {
+                    rd.skipValue();
+                }
+            }
+            
+            rd.endObject();
+        }
+        finally
+        {
+            CloseUtils.close(is);
+        }
         
-        return list;
+        return null;
     }
 
+    
+    private static LidvidSet parseCollectionIdsSource(JsonReader rd) throws Exception
+    {
+        LidvidSet ids = new LidvidSet();
+        
+        rd.beginObject();
 
+        while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
+        {
+            String name = rd.nextName();
+            if("ref_lid_collection".equals(name))
+            {
+                ids.lids = DaoUtils.parseSet(rd);
+            }
+            else if("ref_lidvid_collection".equals(name))
+            {
+                ids.lidvids = DaoUtils.parseSet(rd);
+            }
+            else
+            {
+                rd.skipValue();
+            }
+        }
+        
+        rd.endObject();
+        
+        return ids;
+    }
+
+    
+    public List<String> getLatestLidVids(Collection<String> lids) throws Exception
+    {
+        if(lids == null) return null;
+        
+        String json = ProductRequestBuilder.buildGetLatestLidVidsJson(lids);
+        log.debug("getGetLatestLidVids() request: " + json);
+        
+        if(json == null) return null;
+        
+        String reqUrl = "/" + indexName + "/_search/";
+        Request req = new Request("GET", reqUrl);
+        req.setJsonEntity(json);
+        
+        Response resp = null;
+        
+        try
+        {
+            resp = client.performRequest(req);
+        }
+        catch(ResponseException ex)
+        {
+            throw ex;
+        }
+        
+        //DebugUtils.dumpResponseBody(resp);
+        
+        InputStream is = null;
+        InputStreamReader rd = null;
+        
+        try
+        {
+            is = resp.getEntity().getContent();
+            rd = new InputStreamReader(is);
+
+            LatestLidsResponseParser parser = new LatestLidsResponseParser();
+            parser.parse(rd);            
+            return parser.getLidvids();
+        }
+        finally
+        {
+            CloseUtils.close(rd);
+            CloseUtils.close(is);
+        }
+    }
+
+    
 }
+

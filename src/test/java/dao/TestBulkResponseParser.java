@@ -1,6 +1,9 @@
-package tt;
+package dao;
+
+import java.io.StringReader;
 
 import gov.nasa.pds.registry.common.es.dao.BulkResponseParser;
+import tt.TestLogConfigurator;
 
 public class TestBulkResponseParser
 {
@@ -22,7 +25,9 @@ public class TestBulkResponseParser
     {
         TestLogConfigurator.configureLogger();
         
+        StringReader rd = new StringReader(TWO_ERRORS_JSON);
+        
         BulkResponseParser parser = new BulkResponseParser();
-        parser.parse(TWO_ERRORS_JSON);
+        parser.parse(rd);
     }
 }
