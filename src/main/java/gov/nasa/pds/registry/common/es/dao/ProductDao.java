@@ -17,6 +17,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 
 import gov.nasa.pds.registry.common.util.CloseUtils;
+import gov.nasa.pds.registry.common.util.LidVidUtils;
 
 /**
  * Product data access object. 
@@ -383,6 +384,7 @@ public class ProductDao
             }
         }
 
+        LidvidSet collectionIds = null;
         InputStream is = null;
         
         try
@@ -397,7 +399,7 @@ public class ProductDao
                 String name = rd.nextName();
                 if("_source".equals(name))
                 {
-                    return parseCollectionIdsSource(rd);
+                    collectionIds = parseCollectionIdsSource(rd);
                 }
                 else
                 {
@@ -412,7 +414,21 @@ public class ProductDao
             CloseUtils.close(is);
         }
         
-        return null;
+        if(collectionIds == null || collectionIds.lidvids == null 
+                || collectionIds.lids == null) return collectionIds;
+        
+        // Harvest converts LIDVIDs to LIDs, so let's delete those converted LIDs.
+        for(String lidvid: collectionIds.lidvids)
+        {
+            String lid = LidVidUtils.lidvidToLid(lidvid);
+            if(lid != null)
+            {
+                collectionIds.lids.remove(lid);
+            }
+        }
+        
+        
+        return collectionIds;
     }
 
     
@@ -447,7 +463,7 @@ public class ProductDao
     
     public List<String> getLatestLidVids(Collection<String> lids) throws Exception
     {
-        if(lids == null) return null;
+        if(lids == null || lids.isEmpty()) return null;
         
         String json = ProductRequestBuilder.buildGetLatestLidVidsJson(lids);
         log.debug("getGetLatestLidVids() request: " + json);

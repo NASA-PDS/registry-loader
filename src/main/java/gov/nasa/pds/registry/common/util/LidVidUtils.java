@@ -40,7 +40,11 @@ public class LidVidUtils
      */
     public static String lidvidToLid(String lidvid)
     {
+        if(lidvid == null) return null;
+        
         int idx = lidvid.indexOf("::");
+        if(idx < 0) return null;
+        
         return lidvid.substring(0, idx);
     }
 

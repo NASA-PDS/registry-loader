@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gson.stream.JsonWriter;
 
+import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 
 /**
@@ -27,11 +28,14 @@ public class ProductRequestBuilder
         if(status == null || status.isEmpty()) throw new IllegalArgumentException("Status could not be null or empty.");
         
         StringBuilder bld = new StringBuilder();
-        String dataLine = "{ \"doc\" : {\"archive_status\" : \"" + status + "\"} }\n";
+        String dataLine = "{ \"doc\" : {\"" + Metadata.FLD_ARCHIVE_STATUS + "\" : \"" + status + "\"} }\n";
         
+        // Build NJSON (new-line delimited JSON)
         for(String lidvid: lidvids)
         {
+            // Line 1: Elasticsearch document ID
             bld.append("{ \"update\" : {\"_id\" : \"" + lidvid + "\" } }\n");
+            // Line 2: Data
             bld.append(dataLine);
         }
         

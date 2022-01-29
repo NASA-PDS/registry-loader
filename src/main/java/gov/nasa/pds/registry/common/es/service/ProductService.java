@@ -1,11 +1,15 @@
 package gov.nasa.pds.registry.common.es.service;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nasa.pds.registry.common.es.dao.LidvidSet;
 import gov.nasa.pds.registry.common.es.dao.ProductDao;
 
 
@@ -57,8 +61,26 @@ public class ProductService
         }
         else if("Product_Bundle".equals(pClass))
         {
-            // TODOD
+            // Get collection IDs. There could be both LIDs and LIDVIDs at the same time.
+            LidvidSet collectionIds = dao.getCollectionIds(lidvid);
+            if(collectionIds == null) return;
+            
+            Set<String> lidvids = new TreeSet<String>();            
+            if(collectionIds.lidvids != null) lidvids.addAll(collectionIds.lidvids);
+            
+            List<String> tmp = dao.getLatestLidVids(collectionIds.lids);
+            if(tmp != null) lidvids.addAll(tmp);
+                
+            updateCollections(lidvids, status);
         }
+    }
+    
+    
+    private void updateCollections(Collection<String> lidvids, String status)
+    {
+        if(lidvids == null || lidvids.isEmpty() || status == null) return;
+        
+        
     }
     
     

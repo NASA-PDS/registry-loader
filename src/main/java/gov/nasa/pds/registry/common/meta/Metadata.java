@@ -16,21 +16,22 @@ import gov.nasa.pds.registry.common.util.FieldMapSet;
 public class Metadata
 {
     public static final String FLD_NODE_NAME = "ops:Harvest_Info/ops:node_name";
-    public static final String FLD_HARVEST_DATE_TIME = "ops:Harvest_Info/ops:harvest_date_time";
+    public static final String FLD_HARVEST_DATE_TIME = "ops:Harvest_Info/ops:harvest_date_time";    
+    public static final String FLD_ARCHIVE_STATUS = "ops:Tracking_Meta/ops:archive_status";
 
-    
+
     public String lid;
-    public String strVid;
-    public float vid;
+    public String strVid;           // Original VID from XML
+    public float vid;               // Float for sorting (fining the latest version)
     public String lidvid;
 
     public String title;
-    public String prodClass;
+    public String prodClass;        // Label's root element, e.g., "Product_Observational"
     
-    public FieldMapSet intRefs;
-    public FieldMapList fields;
+    public FieldMapSet intRefs;     // Internal references (preprocessed)
+    public FieldMapList fields;     // Metadata fields
     
-    public Set<String> dataFiles;
+    public Set<String> dataFiles;   // File names from <File_Area...> tags
 
 
     /**
@@ -62,4 +63,15 @@ public class Metadata
         String strVal = DateTimeFormatter.ISO_INSTANT.format(val);
         fields.setValue(FLD_HARVEST_DATE_TIME, strVal);
     }
+
+
+    /**
+     * Set archive status
+     * @param name
+     */
+    public void setArchiveStatus(String status)
+    {
+        fields.setValue(FLD_ARCHIVE_STATUS, status);
+    }
+
 }

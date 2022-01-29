@@ -57,13 +57,13 @@ public class BasicMetadataExtractor
     public Metadata extract(File file, Document doc) throws Exception
     {
         Metadata md = new Metadata();  
+        // Set default fields
+        md.setHarvestTimestamp(Instant.now());
+        md.setArchiveStatus("staged");
         
         // Product class
         md.prodClass = doc.getDocumentElement().getNodeName();
 
-        // Harvest date time
-        md.setHarvestTimestamp(Instant.now());
-        
         // LID
         md.lid = trim(XPathUtils.getStringValue(doc, xLid));
         if(md.lid == null || md.lid.isEmpty())
