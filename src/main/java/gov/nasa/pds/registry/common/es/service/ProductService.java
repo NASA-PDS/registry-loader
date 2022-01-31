@@ -70,17 +70,24 @@ public class ProductService
             
             List<String> tmp = dao.getLatestLidVids(collectionIds.lids);
             if(tmp != null) lidvids.addAll(tmp);
-                
+
             updateCollections(lidvids, status);
         }
     }
     
     
-    private void updateCollections(Collection<String> lidvids, String status)
+    private void updateCollections(Collection<String> lidvids, String status) throws Exception
     {
         if(lidvids == null || lidvids.isEmpty() || status == null) return;
         
+        // Update collections
+        dao.updateArchiveStatus(lidvids, status);
         
+        // Update products
+        for(String lidvid: lidvids)
+        {
+            updateCollectionInventory(lidvid, status);
+        }
     }
     
     
@@ -91,7 +98,7 @@ public class ProductService
         
         if(pages == 0)
         {
-            log.warn("Collection " + lidvid + " doesn't have inventory.");
+            log.warn("Collection " + lidvid + " doesn't have primary products.");
             return;
         }
 

@@ -273,7 +273,7 @@ public class ProductDao
      * @param status new status
      * @throws Exception
      */
-    public void updateArchiveStatus(List<String> lidvids, String status) throws Exception
+    public void updateArchiveStatus(Collection<String> lidvids, String status) throws Exception
     {
         if(lidvids == null || status == null) return;
         

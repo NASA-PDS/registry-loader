@@ -3,7 +3,6 @@ package gov.nasa.pds.registry.common.es.dao;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
-import java.util.List;
 
 import com.google.gson.stream.JsonWriter;
 
@@ -22,7 +21,7 @@ public class ProductRequestBuilder
      * @param status new status
      * @return JSON
      */
-    public static String buildUpdateStatusJson(List<String> lidvids, String status)
+    public static String buildUpdateStatusJson(Collection<String> lidvids, String status)
     {
         if(lidvids == null || lidvids.isEmpty()) return null;
         if(status == null || status.isEmpty()) throw new IllegalArgumentException("Status could not be null or empty.");
