@@ -31,7 +31,6 @@ public class BasicMetadataExtractor
     
     /**
      * Constructor
-     * @param config configuration
      * @throws Exception an exception
      */
     public BasicMetadataExtractor() throws Exception
@@ -152,7 +151,7 @@ public class BasicMetadataExtractor
 
         if(dir == null) return fileName;
         
-        return (dir.endsWith("/")) ? dir + fileName : dir + "/" + fileName;
+        return dir.endsWith("/") ? dir + fileName : dir + "/" + fileName;
     }
     
     
