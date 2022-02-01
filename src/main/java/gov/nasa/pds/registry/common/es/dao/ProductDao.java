@@ -271,7 +271,7 @@ public class ProductDao
      * Update archive status by lidvids
      * @param lidvids a list of lidvids to update
      * @param status new status
-     * @throws Exception
+     * @throws Exception an exception
      */
     public void updateArchiveStatus(Collection<String> lidvids, String status) throws Exception
     {
@@ -461,6 +461,12 @@ public class ProductDao
     }
 
     
+    /**
+     * Given a list of LIDs, find latest versions
+     * @param lids a list of LIDs
+     * @return a list of latest LIDVIDs
+     * @throws Exception an exception
+     */
     public List<String> getLatestLidVids(Collection<String> lids) throws Exception
     {
         if(lids == null || lids.isEmpty()) return null;
