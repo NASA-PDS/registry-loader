@@ -46,7 +46,7 @@ public class Metadata
 
     /**
      * Set node name
-     * @param name
+     * @param name node name
      */
     public void setNodeName(String name)
     {
@@ -56,7 +56,7 @@ public class Metadata
     
     /**
      * Set harvest timestamp
-     * @param val
+     * @param val timestamp
      */
     public void setHarvestTimestamp(Instant val)
     {
@@ -67,7 +67,7 @@ public class Metadata
 
     /**
      * Set archive status
-     * @param name
+     * @param status archive status
      */
     public void setArchiveStatus(String status)
     {

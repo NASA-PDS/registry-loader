@@ -35,7 +35,7 @@ public class FieldNameCache
     
     /**
      * Set cached values
-     * @param fieldNames
+     * @param fieldNames collection of field names
      */
     public void set(Set<String> fieldNames)
     {

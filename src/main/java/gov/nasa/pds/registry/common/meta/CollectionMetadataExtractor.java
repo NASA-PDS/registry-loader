@@ -21,7 +21,7 @@ public class CollectionMetadataExtractor
 
     /**
      * Constructor
-     * @throws Exception
+     * @throws Exception an exception
      */
     public CollectionMetadataExtractor() throws Exception
     {
