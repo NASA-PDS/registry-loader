@@ -83,7 +83,7 @@ public class NsUtils
                 if(prefix == null)
                 {
                     Logger log = LogManager.getLogger(NsUtils.class);
-                    log.warn("Could not find prefix for URI " + uri);
+                    log.warn("Could not find 'xmlns:XXX' definition for a schema listed in 'xsi:schemaLocation': " + uri);
                 }
                 
                 prefixToLocationMap.put(prefix, location);
