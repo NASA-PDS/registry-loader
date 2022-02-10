@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2021, California Institute of Technology ("Caltech").
+# Copyright 2022, California Institute of Technology ("Caltech").
 # U.S. Government sponsorship acknowledged.
 #
 # All rights reserved.
@@ -50,8 +50,6 @@ if [ "$RUN_TESTS" = "true" ]; then
 else
   HARVEST_CFG_FILE=/cfg/harvest-config.xml
 fi
-
-registry-manager create-registry -es "$ES_URL" 
 
 echo "Harvesting data based on the configuration file: $HARVEST_CFG_FILE ..." 1>&2
 harvest -c "$HARVEST_CFG_FILE"

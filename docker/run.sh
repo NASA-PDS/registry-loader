@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2021, California Institute of Technology ("Caltech").
+# Copyright 2022, California Institute of Technology ("Caltech").
 # U.S. Government sponsorship acknowledged.
 #
 # All rights reserved.
@@ -77,7 +77,7 @@ if [ -z "$1" ]; then
           exit 1
       fi
 
-      # Check if the Harvest configuration file exists
+      # Check if the Harvest data directory exists
       if [ ! -d "$HARVEST_DATA_DIR" ]; then
           echo -e "Error: The Harvest data directory $HARVEST_DATA_DIR does not exist." \
                   "Set an absolute directory path of an existing Harvest data directory in the $0 file" \
