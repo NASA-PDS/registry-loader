@@ -8,8 +8,8 @@ The Registry Loader is a docker image which contains both Harvest and the Regist
 
 | Variable            | Description |
 | ------------------- | ------------|
-| harvest.version     | The version of the Harvest release to be included in the docker image|
-| reg.manager.version | The version of the Registry Manager release to be included in the docker image|
+| harvest_version     | The version of the Harvest release to be included in the docker image |
+| reg_manager_version | The version of the Registry Manager release to be included in the docker image |
 
 ```    
 # Set following arguments with compatible versions
