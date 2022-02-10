@@ -34,8 +34,9 @@
       "description": {"type": "text", "analyzer": "english"},
 
       "product_class": { "type": "keyword" },
-      "archive_status": { "type": "keyword" }, 
       "_package_id": { "type": "keyword" },
+
+      "ops:Tracking_Meta/ops:archive_status": { "type": "keyword" }, 
 
       "ops:Harvest_Info/ops:node_name": { "type": "keyword" },
       "ops:Harvest_Info/ops:harvest_date_time": { "type": "date" },

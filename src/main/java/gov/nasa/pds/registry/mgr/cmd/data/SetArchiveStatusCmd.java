@@ -1,26 +1,19 @@
 package gov.nasa.pds.registry.mgr.cmd.data;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.cli.CommandLine;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 
-import com.google.gson.Gson;
-
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
+import gov.nasa.pds.registry.common.es.dao.ProductDao;
+import gov.nasa.pds.registry.common.es.service.ProductService;
+import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
-import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
-import gov.nasa.pds.registry.mgr.util.CloseUtils;
 
 
 /**
@@ -32,7 +25,6 @@ import gov.nasa.pds.registry.mgr.util.CloseUtils;
 public class SetArchiveStatusCmd implements CliCommand
 {
     private Set<String> statusNames; 
-    private String filterMessage;
 
     /**
      * Constructor
@@ -40,22 +32,10 @@ public class SetArchiveStatusCmd implements CliCommand
     public SetArchiveStatusCmd()
     {
         statusNames = new TreeSet<>();
-
-        statusNames.add("ARCHIVED");
-        statusNames.add("ARCHIVED_ACCUMULATING");
-        statusNames.add("IN_LIEN_RESOLUTION");
-        statusNames.add("IN_LIEN_RESOLUTION_ACCUMULATING");
-        statusNames.add("IN_PEER_REVIEW");
-        statusNames.add("IN_PEER_REVIEW_ACCUMULATING");
-        statusNames.add("IN_QUEUE");
-        statusNames.add("IN_QUEUE_ACCUMULATING");
-        statusNames.add("LOCALLY_ARCHIVED");
-        statusNames.add("LOCALLY_ARCHIVED_ACCUMULATING");
-        statusNames.add("PRE_PEER_REVIEW");
-        statusNames.add("PRE_PEER_REVIEW_ACCUMULATING");
-        statusNames.add("SAFED");
-        statusNames.add("STAGED");
-        statusNames.add("SUPERSEDED");
+        statusNames.add("staged");
+        statusNames.add("archived");
+        statusNames.add("certified");
+        statusNames.add("restricted");
     }
     
     
@@ -73,35 +53,20 @@ public class SetArchiveStatusCmd implements CliCommand
         String authPath = cmdLine.getOptionValue("auth");
         
         String status = getStatus(cmdLine);
+
+        String lidvid = cmdLine.getOptionValue("lidvid");
+        if(lidvid == null) throw new Exception("Missing required parameter '-lidvid'");
         
-        String query = buildEsQuery(cmdLine, status);
-        if(query == null)
-        {
-            throw new Exception("One of the following options is required: -lidvid, -packageId");
-        }
-
-        System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println("            Index: " + indexName);
-        System.out.println("       New status: " + status);
-        System.out.println(filterMessage);
-        System.out.println();
-
         RestClient client = null;
         
         try
         {
-            // Create Elasticsearch client
+            // Call Elasticsearch
             client = EsClientFactory.createRestClient(esUrl, authPath);
-
-            // Create request
-            Request req = new Request("POST", "/" + indexName + "/_update_by_query");
-            req.setJsonEntity(query);
+            ProductDao dao = new ProductDao(client, indexName);
+            ProductService srv = new ProductService(dao);
             
-            // Execute request
-            Response resp = client.performRequest(req);
-            double numDeleted = extractNumUpdated(resp); 
-            
-            System.out.format("Updated %.0f document(s)\n", numDeleted);
+            srv.updateArchveStatus(lidvid, status);
         }
         catch(ResponseException ex)
         {
@@ -111,62 +76,6 @@ public class SetArchiveStatusCmd implements CliCommand
         {
             CloseUtils.close(client);
         }
-    }
-
-    
-    /**
-     * Extract number of updated records from Elasticsearch API response.
-     * @param resp
-     * @return number of updated records
-     */
-    @SuppressWarnings("rawtypes")
-    private double extractNumUpdated(Response resp)
-    {
-        try
-        {
-            InputStream is = resp.getEntity().getContent();
-            Reader rd = new InputStreamReader(is);
-            
-            Gson gson = new Gson();
-            Object obj = gson.fromJson(rd, Object.class);
-            rd.close();
-            
-            obj = ((Map)obj).get("updated");
-            return (Double)obj;
-        }
-        catch(Exception ex)
-        {
-            return 0;
-        }
-    }
-
-    
-    /**
-     * Create Elasticsearch query to update PDS label status
-     * @param cmdLine
-     * @param status
-     * @return
-     * @throws Exception
-     */
-    private String buildEsQuery(CommandLine cmdLine, String status) throws Exception
-    {
-        String id = cmdLine.getOptionValue("lidvid");
-        if(id != null)
-        {
-            filterMessage = "           LIDVID: " + id;
-            RegistryRequestBuilder bld = new RegistryRequestBuilder();
-            return bld.createUpdateStatusRequest(status, "lidvid", id);
-        }
-        
-        id = cmdLine.getOptionValue("packageId");
-        if(id != null)
-        {
-            filterMessage = "       Package ID: " + id;
-            RegistryRequestBuilder bld = new RegistryRequestBuilder();
-            return bld.createUpdateStatusRequest(status, "_package_id", id);
-        }
-
-        return null;
     }
 
     
@@ -185,7 +94,7 @@ public class SetArchiveStatusCmd implements CliCommand
             throw new Exception("Missing required parameter '-status'");
         }
 
-        String status = tmp.toUpperCase();
+        String status = tmp.toLowerCase();
         if(!statusNames.contains(status))
         {
             throw new Exception("Invalid '-status' parameter value: '" + tmp + "'");
@@ -213,12 +122,12 @@ public class SetArchiveStatusCmd implements CliCommand
             System.out.println("     " + name);
         }
         
-        System.out.println("  -lidvid <id>       Update archive status of a document with given lidvid, or");
-        System.out.println("  -packageId <id>    Update archive status of all documents with given package id"); 
+        System.out.println("  -lidvid <id>    Update archive status of a document with given LIDVID.");
+        System.out.println("                  For a collection also update primary references from collection inventory.");
         System.out.println("Optional parameters:");
-        System.out.println("  -auth <file>       Authentication config file");
-        System.out.println("  -es <url>          Elasticsearch URL. Default is http://localhost:9200");
-        System.out.println("  -index <name>      Elasticsearch index name. Default is 'registry'");
+        System.out.println("  -auth <file>    Authentication config file");
+        System.out.println("  -es <url>       Elasticsearch URL. Default is http://localhost:9200");
+        System.out.println("  -index <name>   Elasticsearch index name. Default is 'registry'");
         System.out.println();
     }
 

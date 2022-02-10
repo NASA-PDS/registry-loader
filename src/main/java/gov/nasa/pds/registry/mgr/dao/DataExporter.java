@@ -12,7 +12,7 @@ import org.elasticsearch.client.RestClient;
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.es.client.SearchResponseParser;
-import gov.nasa.pds.registry.mgr.util.CloseUtils;
+import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.util.es.EsDocWriter;
 
 

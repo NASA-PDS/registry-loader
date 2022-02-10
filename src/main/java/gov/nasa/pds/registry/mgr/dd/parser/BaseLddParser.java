@@ -6,7 +6,8 @@ import java.io.FileReader;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 
-import gov.nasa.pds.registry.mgr.util.CloseUtils;
+import gov.nasa.pds.registry.common.util.CloseUtils;
+
 
 /**
  * Base parser of PDS LDD JSON files (Data dictionary files).

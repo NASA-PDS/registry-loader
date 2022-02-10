@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.es.client.HttpConnectionFactory;
-import gov.nasa.pds.registry.mgr.util.CloseUtils;
+import gov.nasa.pds.registry.common.util.CloseUtils;
 
 
 /**

@@ -11,8 +11,8 @@ import java.util.TreeMap;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 
+import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
-import gov.nasa.pds.registry.mgr.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.util.es.EsQueryUtils;
 
 /**

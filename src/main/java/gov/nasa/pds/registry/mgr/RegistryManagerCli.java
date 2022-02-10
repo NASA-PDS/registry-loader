@@ -11,6 +11,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import gov.nasa.pds.registry.common.util.ExceptionUtils;
+import gov.nasa.pds.registry.common.util.ManifestUtils;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.cmd.data.DeleteDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.ExportDataCmd;
@@ -24,9 +26,8 @@ import gov.nasa.pds.registry.mgr.cmd.dd.LoadDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.UpdateSchemaCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
-import gov.nasa.pds.registry.mgr.util.ExceptionUtils;
-import gov.nasa.pds.registry.mgr.util.ManifestUtils;
 import gov.nasa.pds.registry.mgr.util.log.Log4jConfigurator;
+
 
 /**
  * Main CLI (Command-Line Interface) manager / dispatcher.
