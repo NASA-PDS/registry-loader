@@ -80,6 +80,44 @@ public class DDRequestBuilder extends BaseRequestBuilder
         return wr.toString();        
     }
 
+    
+    public String createListFieldsRequest(String dataType) throws IOException
+    {
+        StringWriter wr = new StringWriter();
+        JsonWriter jw = createJsonWriter(wr);
+
+        jw.beginObject();
+        // Size (number of records to return)
+        jw.name("size").value(1000);
+        
+        // Start query
+        jw.name("query");
+        jw.beginObject();
+        jw.name("bool");
+        jw.beginObject();
+
+        jw.name("must");
+        jw.beginArray();
+        appendMatch(jw, "es_data_type", dataType);
+        jw.endArray();
+        
+        jw.endObject();
+        jw.endObject();
+        // End query
+        
+        // Start source
+        jw.name("_source");
+        jw.beginArray();
+        jw.value("es_field_name");
+        jw.endArray();
+        // End source
+        
+        jw.endObject();
+        jw.close();        
+
+        return wr.toString();        
+    }
+
 
     private static void appendMatch(JsonWriter jw, String field, String value) throws IOException
     {

@@ -2,8 +2,10 @@ package gov.nasa.pds.registry.common.es.dao.dd;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
@@ -150,6 +152,55 @@ public class DataDictionaryDao
         Response resp = client.performRequest(req);
 
         ListLddsParser parser = new ListLddsParser();
+        parser.parseResponse(resp, parser); 
+        return parser.list;
+    }
+
+    
+    
+    /**
+     * Inner private class to parse LDD information response from Elasticsearch.
+     * @author karpenko
+     */
+    private static class ListFieldsParser extends SearchResponseParser implements SearchResponseParser.Callback
+    {
+        public Set<String> list;
+        
+        public ListFieldsParser()
+        {
+            list = new HashSet<>(200);
+        }
+        
+        @Override
+        public void onRecord(String id, Object rec) throws Exception
+        {
+            if(rec instanceof Map)
+            {
+                @SuppressWarnings("rawtypes")
+                Map map = (Map)rec;
+                
+                String fieldName = (String)map.get("es_field_name");
+                list.add(fieldName);                
+            }
+        }
+    }
+
+    
+    /**
+     * List boolean fields
+     * @return a set of field names
+     * @throws Exception an exception
+     */
+    public Set<String> getBooleanFieldNames() throws Exception
+    {
+        DDRequestBuilder bld = new DDRequestBuilder();
+        String json = bld.createListFieldsRequest("boolean");
+
+        Request req = new Request("GET", "/" + indexName + "-dd/_search");
+        req.setJsonEntity(json);
+        Response resp = client.performRequest(req);
+
+        ListFieldsParser parser = new ListFieldsParser();
         parser.parseResponse(resp, parser); 
         return parser.list;
     }
