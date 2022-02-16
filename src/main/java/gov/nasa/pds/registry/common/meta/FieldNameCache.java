@@ -1,7 +1,7 @@
 package gov.nasa.pds.registry.common.meta;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * A cache of field names in Elasticsearch schema for the registry index.
@@ -19,7 +19,7 @@ public class FieldNameCache
      */
     private FieldNameCache()
     {
-        fieldNames = new TreeSet<>();
+        fieldNames = new HashSet<>();
     }
 
     

@@ -25,16 +25,17 @@ public class LddUtils
     
     /**
      * Get default PDS to Elasticsearch data type mapping configuration file.
+     * @param homeEnvVar Home environment variable name, such as "HARVEST_HOME". 
      * @return File pointing to default configuration file.
      * @throws Exception an exception
      */
-    public static File getPds2EsDataTypeCfgFile() throws Exception
+    public static File getPds2EsDataTypeCfgFile(String homeEnvVar) throws Exception
     {
-        String home = System.getenv("REGISTRY_MANAGER_HOME");
+        String home = System.getenv(homeEnvVar);
         if(home == null) 
         {
             throw new Exception("Could not find default configuration directory. " 
-                    + "REGISTRY_MANAGER_HOME environment variable is not set.");
+                    + homeEnvVar + " environment variable is not set.");
         }
 
         File file = new File(home, "elastic/data-dic-types.cfg");

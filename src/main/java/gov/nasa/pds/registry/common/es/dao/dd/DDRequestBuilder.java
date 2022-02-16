@@ -118,6 +118,52 @@ public class DDRequestBuilder extends BaseRequestBuilder
         return wr.toString();        
     }
 
+    
+    /**
+     * Create get data dictionary (LDD) info request.
+     * @param namespace LDD namespace ID, such as 'pds', 'cart', etc.
+     * @return Elasticsearch query in JSON format
+     * @throws IOException an exception
+     */
+    public String createGetLddInfoRequest(String namespace) throws IOException
+    {
+        StringWriter wr = new StringWriter();
+        JsonWriter jw = createJsonWriter(wr);
+
+        jw.beginObject();
+        // Size (number of records to return)
+        jw.name("size").value(1000);
+        
+        // Start query
+        jw.name("query");
+        jw.beginObject();
+        jw.name("bool");
+        jw.beginObject();
+
+        jw.name("must");
+        jw.beginArray();
+        appendMatch(jw, "class_ns", "registry");
+        appendMatch(jw, "class_name", "LDD_Info");
+        appendMatch(jw, "attr_ns", namespace);
+        jw.endArray();
+        
+        jw.endObject();
+        jw.endObject();
+        // End query
+        
+        // Start source
+        jw.name("_source");
+        jw.beginArray();
+        jw.value("date").value("attr_name");
+        jw.endArray();        
+        // End source
+        
+        jw.endObject();
+        jw.close();        
+
+        return wr.toString();        
+    }
+
 
     private static void appendMatch(JsonWriter jw, String field, String value) throws IOException
     {
