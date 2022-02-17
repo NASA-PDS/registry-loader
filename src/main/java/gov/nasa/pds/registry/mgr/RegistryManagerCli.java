@@ -337,7 +337,7 @@ public class RegistryManagerCli
         options.addOption(bld.build());
         
         // Logger
-        bld = Option.builder("log").hasArg().argName("file");
+        bld = Option.builder("l").hasArg().argName("file");
         options.addOption(bld.build());
         
         bld = Option.builder("v").hasArg().argName("level");
