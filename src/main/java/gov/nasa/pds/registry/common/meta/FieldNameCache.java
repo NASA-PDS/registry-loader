@@ -11,7 +11,10 @@ import java.util.Set;
 public class FieldNameCache
 {
     private static FieldNameCache singleton = new FieldNameCache();
-    private Set<String> fieldNames;
+    
+    private Set<String> schemaFieldNames;
+    private Set<String> boolFieldNames;
+    private Set<String> dateFieldNames;
     
     
     /**
@@ -19,7 +22,9 @@ public class FieldNameCache
      */
     private FieldNameCache()
     {
-        fieldNames = new HashSet<>();
+        schemaFieldNames = new HashSet<>();
+        boolFieldNames = new HashSet<>();
+        dateFieldNames = new HashSet<>();
     }
 
     
@@ -34,22 +39,65 @@ public class FieldNameCache
     
     
     /**
-     * Set cached values
+     * Set field names present in "registry" Elasticsearch schema
      * @param fieldNames collection of field names
      */
-    public void set(Set<String> fieldNames)
+    public void setSchemaFieldNames(Set<String> fieldNames)
     {
-        this.fieldNames = fieldNames;
+        this.schemaFieldNames = fieldNames;
     }
-    
+
     
     /**
-     * Check if a name is in the cache.
-     * @param name field name
-     * @return true if field name is cached.
+     * Set boolean field names present in LDDs
+     * @param fieldNames collection of field names
      */
-    public boolean containsName(String name)
+    public void setBooleanFieldNames(Set<String> fieldNames)
     {
-        return fieldNames.contains(name);
+        this.boolFieldNames = fieldNames;
     }
+
+    
+    /**
+     * Set date field names present in LDDs
+     * @param fieldNames collection of field names
+     */
+    public void setDateFieldNames(Set<String> fieldNames)
+    {
+        this.boolFieldNames = fieldNames;
+    }
+
+    
+    /**
+     * Check if a field name is in the "registry" Elasticsearch schema.
+     * @param name field name
+     * @return true if field name is in "registry" schema.
+     */
+    public boolean schemaContainsField(String name)
+    {
+        return schemaFieldNames.contains(name);
+    }
+
+    
+    /**
+     * Check if a field is a boolean field.
+     * @param name field name
+     * @return true if this is a boolean field
+     */
+    public boolean isBooleanField(String name)
+    {
+        return boolFieldNames.contains(name);
+    }
+
+
+    /**
+     * Check if a field is a date field.
+     * @param name field name
+     * @return true if this is a date field
+     */
+    public boolean isDateField(String name)
+    {
+        return dateFieldNames.contains(name);
+    }
+
 }

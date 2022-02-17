@@ -196,14 +196,14 @@ public class DataDictionaryDao
 
     
     /**
-     * List boolean fields
+     * Get field names by Elasticsearch type, such as "boolean" or "date".
      * @return a set of field names
      * @throws Exception an exception
      */
-    public Set<String> getBooleanFieldNames() throws Exception
+    public Set<String> getFieldNamesByEsType(String esType) throws Exception
     {
         DDRequestBuilder bld = new DDRequestBuilder();
-        String json = bld.createListFieldsRequest("boolean");
+        String json = bld.createListFieldsRequest(esType);
 
         Request req = new Request("GET", "/" + indexName + "-dd/_search");
         req.setJsonEntity(json);
@@ -214,7 +214,7 @@ public class DataDictionaryDao
         return parser.list;
     }
 
-
+    
     /**
      * Query Elasticsearch data dictionary to get data types for a list of field ids.
      * @param ids A list of field IDs, e.g., "pds:Array_3D/pds:axes".

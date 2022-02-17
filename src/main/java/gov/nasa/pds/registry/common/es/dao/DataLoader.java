@@ -240,6 +240,135 @@ public class DataLoader
     }
     
     
+    /**
+     * Load data into Elasticsearch
+     * @param data NJSON data. (2 lines per record)
+     * @throws Exception an exception
+     */
+    public int loadBatch(List<String> data) throws Exception
+    {
+        if(data == null || data.isEmpty()) return 0;
+        if(data.size() % 2 != 0) throw new Exception("Data list size should be an even number.");
+        
+        HttpURLConnection con = null;
+        
+        try
+        {
+            con = conFactory.createConnection();
+            con.setDoInput(true);
+            con.setDoOutput(true);
+            con.setRequestMethod("POST");
+            con.setRequestProperty("content-type", "application/x-ndjson; charset=utf-8");
+            
+            OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
+            
+            for(int i = 0; i < data.size(); i+=2)
+            {
+                writer.write(data.get(i));
+                writer.write("\n");
+                writer.write(data.get(i+1));
+                writer.write("\n");
+            }
+            
+            writer.flush();
+            writer.close();
+        
+            // Check for Elasticsearch errors.
+            String respJson = DaoUtils.getLastLine(con.getInputStream());
+            log.debug(respJson);
+            
+            int numErrors = processErrors(respJson);
+            // Return number of successfully saved records
+            // NOTE: data list has two lines per record (primary key + data)
+            return data.size() / 2 - numErrors;
+        }
+        catch(UnknownHostException ex)
+        {
+            throw new Exception("Unknown host " + conFactory.getHostName());
+        }
+        catch(IOException ex)
+        {
+            // Get HTTP response code
+            int respCode = getResponseCode(con);
+            if(respCode <= 0) throw ex;
+            
+            // Try extracting JSON from multi-line error response (last line) 
+            String json = DaoUtils.getLastLine(con.getErrorStream());
+            if(json == null) throw ex;
+            
+            // Parse error JSON to extract reason.
+            String msg = EsUtils.extractReasonFromJson(json);
+            if(msg == null) msg = json;
+            
+            throw new Exception(msg);
+        }
+    }
+
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private int processErrors(String resp)
+    {
+        int numErrors = 0;
+
+        try
+        {
+            // TODO: Use streaming parser. Stop parsing if there are no errors.
+            // Parse JSON response
+            Gson gson = new Gson();
+            Map json = (Map)gson.fromJson(resp, Object.class);
+            
+            Boolean hasErrors = (Boolean)json.get("errors");
+            if(hasErrors)
+            {                
+                List<Object> list = (List)json.get("items");
+             
+                // List size = batch size (one item per document)
+                for(Object item: list)
+                {
+                    Map action = (Map)((Map)item).get("index");
+                    if(action == null)
+                    {
+                        action = (Map)((Map)item).get("create");
+                        if(action != null)
+                        {
+                            String status = String.valueOf(action.get("status"));
+                            // For "create" requests status=409 means that the record already exists.
+                            // It is not an error. We use "create" action to insert records which don't exist
+                            // and keep existing records as is. We do this when loading an old LDD and more
+                            // recent version of the LDD is already loaded.
+                            // NOTE: Gson JSON parser stores numbers as floats. 
+                            // The string value is usually "409.0". Can it be something else?
+                            if(status.startsWith("409")) 
+                            {
+                                // Increment to properly report number of processed records.
+                                numErrors++;
+                                continue;
+                            }
+                        }
+                    }
+                    if(action == null) continue;
+                    
+                    String id = (String)action.get("_id");
+                    Map error = (Map)action.get("error");
+                    if(error != null)
+                    {
+                        String message = (String)error.get("reason");
+                        log.error("LIDVID = " + id + ", Message = " + message);
+                        numErrors++;
+                    }
+                }
+            }
+
+            return numErrors;
+        }
+        catch(Exception ex)
+        {
+            return 0;
+        }
+    }
+
+    
+    
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private boolean responseHasErrors(String resp)
     {

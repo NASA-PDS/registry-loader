@@ -18,7 +18,8 @@ public class TestDataDictionaryDao
     public static void main(String[] args) throws Exception
     {
         //testListLdds();
-        testListBooleanFields();
+        //testListBooleanFields();
+        testListDateFields();
     }
 
 
@@ -29,9 +30,28 @@ public class TestDataDictionaryDao
         try
         {
             DataDictionaryDao dao = new DataDictionaryDao(esClient, "registry");
-            Set<String> list = dao.getBooleanFieldNames();
+            Set<String> list = dao.getFieldNamesByEsType("boolean");
             
             System.out.println("Boolean fields count = " + list.size());
+            list.forEach((name) -> { System.out.println(name); });
+        }
+        finally
+        {
+            esClient.close();
+        }
+    }
+
+
+    private static void testListDateFields() throws Exception
+    {
+        RestClient esClient = EsClientFactory.createRestClient("http://localhost:9200", null);
+        
+        try
+        {
+            DataDictionaryDao dao = new DataDictionaryDao(esClient, "registry");
+            Set<String> list = dao.getFieldNamesByEsType("date");
+            
+            System.out.println("Date fields count = " + list.size());
             list.forEach((name) -> { System.out.println(name); });
         }
         finally
