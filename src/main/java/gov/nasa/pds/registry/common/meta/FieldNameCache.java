@@ -60,7 +60,7 @@ public class FieldNameCache
      */
     public void setDateFieldNames(Set<String> fieldNames)
     {
-        this.boolFieldNames = fieldNames;
+        this.dateFieldNames = fieldNames;
     }
 
     
