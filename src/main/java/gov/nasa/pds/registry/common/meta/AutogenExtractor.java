@@ -12,7 +12,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import gov.nasa.pds.registry.common.util.FieldMap;
-import gov.nasa.pds.registry.common.util.date.PdsDateConverter;
 import gov.nasa.pds.registry.common.util.xml.NsUtils;
 import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
 import gov.nasa.pds.registry.common.util.xml.XmlNamespaces;
@@ -26,11 +25,9 @@ public class AutogenExtractor
 {
     private Set<String> classFilterIncludes;
     private Set<String> classFilterExcludes;
-    private Set<String> dateFields;
     
     private XmlNamespaces xmlnsInfo;
     private FieldMap fields;
-    private PdsDateConverter dateConverter;
     
    
     /**
@@ -38,7 +35,6 @@ public class AutogenExtractor
      */
     public AutogenExtractor()
     {
-        dateConverter = new PdsDateConverter(false);
     }
 
     
@@ -54,16 +50,6 @@ public class AutogenExtractor
         this.classFilterExcludes = exclude;
     }
     
-    
-    /**
-     * Set date fields. Will try to convert these fields to ISO format.
-     * @param fields date field names
-     */
-    public void setDateFields(Set<String> fields)
-    {
-        this.dateFields = fields;
-    }
-
     
     /**
      * Extracts all fields from a label file into a FieldMap
@@ -132,14 +118,6 @@ public class AutogenExtractor
         
         // Field value
         String fieldValue = StringUtils.normalizeSpace(node.getTextContent());
-        
-        // Convert dates to "ISO instant" format
-        String nodeName = node.getLocalName();
-        if(nodeName.contains("date") || (dateFields != null && dateFields.contains(fieldName)))
-        {
-            fieldValue = dateConverter.toIsoInstantString(nodeName, fieldValue);
-        }
-        
         fields.addValue(fieldName, fieldValue);
     }
     

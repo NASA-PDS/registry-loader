@@ -71,9 +71,11 @@ public class FieldMapList implements FieldMap
         return values;
     }
     
-
+    
     /**
      * Set field's value
+     * @param fieldName field name
+     * @param value field value
      */
     public void setValue(String fieldName, String value)
     {
@@ -82,7 +84,21 @@ public class FieldMapList implements FieldMap
         
         fields.put(fieldName, Arrays.asList(value));
     }
+
     
+    /**
+     * Set field's value
+     * @param fieldName field name
+     * @param values field values
+     */
+    public void setValues(String fieldName, List<String> values)
+    {
+        if(fieldName == null) throw new IllegalArgumentException("Field name is null");
+        if(values == null) return;
+        
+        fields.put(fieldName, values);
+    }
+
     
     /**
      * Add field's value

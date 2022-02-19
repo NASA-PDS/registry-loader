@@ -3,40 +3,36 @@ package gov.nasa.pds.registry.common.meta;
 import java.util.HashSet;
 import java.util.Set;
 
+import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
+import gov.nasa.pds.registry.common.es.dao.schema.SchemaDao;
+
 /**
  * A cache of field names in Elasticsearch schema for the registry index.
- * Implemented as a singleton.
  * @author karpenko
  */
 public class FieldNameCache
 {
-    private static FieldNameCache singleton = new FieldNameCache();
-    
     private Set<String> schemaFieldNames;
     private Set<String> boolFieldNames;
     private Set<String> dateFieldNames;
+
+    private SchemaDao schemaDao;
+    private DataDictionaryDao ddDao;
     
     
     /**
      * Private constructor. Use getInstance() instead.
      */
-    private FieldNameCache()
+    public FieldNameCache(DataDictionaryDao ddDao, SchemaDao schemaDao)
     {
         schemaFieldNames = new HashSet<>();
         boolFieldNames = new HashSet<>();
         dateFieldNames = new HashSet<>();
+        
+        this.ddDao = ddDao;
+        this.schemaDao = schemaDao;
     }
 
-    
-    /**
-     * Get the singleton instance 
-     * @return field cache instance
-     */
-    public static FieldNameCache getInstance()
-    {
-        return singleton;
-    }
-    
     
     /**
      * Set field names present in "registry" Elasticsearch schema
@@ -100,4 +96,15 @@ public class FieldNameCache
         return dateFieldNames.contains(name);
     }
 
+    
+    /**
+     * Update cache
+     * @throws Exception an exception
+     */
+    public void update() throws Exception
+    {
+        setSchemaFieldNames(schemaDao.getFieldNames());
+        setBooleanFieldNames(ddDao.getFieldNamesByEsType("boolean"));
+        setDateFieldNames(ddDao.getFieldNamesByEsType("date"));
+    }
 }
