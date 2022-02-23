@@ -64,8 +64,10 @@ public class CollectionInventoryWriter
      */
     public void writeCollectionInventory(String collectionLidVid, File inventoryFile, String jobId) throws Exception
     {
-        writeRefs(collectionLidVid, inventoryFile, jobId, RefType.PRIMARY);
-        writeRefs(collectionLidVid, inventoryFile, jobId, RefType.SECONDARY);
+        int count = writeRefs(collectionLidVid, inventoryFile, jobId, RefType.PRIMARY);
+        count += writeRefs(collectionLidVid, inventoryFile, jobId, RefType.SECONDARY);
+        
+        log.info("Wrote " + count + " collection inventory document(s)");
     }
     
     
@@ -74,14 +76,16 @@ public class CollectionInventoryWriter
      * @param collectionLidVid Collection LIDVID
      * @param inventoryFile Collection inventory file, e.g., "document_collection_inventory.csv"
      * @param jobId Harvest job id
+     * @return number of documents written
      * @throws Exception Generic exception
      */
-    private void writeRefs(String collectionLidVid, File inventoryFile, String jobId, RefType refType) throws Exception
+    private int writeRefs(String collectionLidVid, File inventoryFile, String jobId, RefType refType) throws Exception
     {
         batch.batchNum = 0;
         writer.clearData();
         
         InventoryBatchReader rd = null;
+        int writeCount = 0;
         
         try
         {
@@ -96,7 +100,7 @@ public class CollectionInventoryWriter
                 if(batch.batchNum % ES_DOC_BATCH_SIZE == 0)
                 {
                     List<String> data = writer.getData();
-                    loader.loadBatch(data);
+                    writeCount += loader.loadBatch(data);
                     writer.clearData();
                 }
                 
@@ -105,7 +109,9 @@ public class CollectionInventoryWriter
     
             // Load last page if size > 0
             List<String> data = writer.getData();
-            loader.loadBatch(data);
+            writeCount += loader.loadBatch(data);
+            
+            return writeCount;
         }
         finally
         {

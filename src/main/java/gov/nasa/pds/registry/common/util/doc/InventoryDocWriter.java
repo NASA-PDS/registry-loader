@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.gson.stream.JsonWriter;
 
 import gov.nasa.pds.registry.common.util.LidVidUtils;
@@ -23,13 +20,11 @@ import gov.nasa.pds.registry.common.util.json.NJsonDocUtils;
  */
 public class InventoryDocWriter implements Closeable
 {
-    private Logger log;
     private List<String> data;
 
 
     public InventoryDocWriter()
     {
-        log = LogManager.getLogger(this.getClass());
         data = new ArrayList<>();
     }
     
