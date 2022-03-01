@@ -79,8 +79,6 @@ public class DataDictionaryDao
 
     /**
      * Get LDD date from data dictionary index in Elasticsearch.
-     * @param indexName Elasticsearch base index name, e.g., "registry". 
-     * NOTE: don't use full index name, like "registry-dd". 
      * @param namespace LDD namespace, e.g., "pds", "geom", etc.
      * @return ISO instant class representing LDD date.
      * @throws Exception an exception

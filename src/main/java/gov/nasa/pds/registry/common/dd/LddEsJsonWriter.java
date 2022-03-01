@@ -85,12 +85,14 @@ public class LddEsJsonWriter
         }
     }
 
-    
+
     /**
      * Write PDS LDD version and date
-     * @param namespace LDD namespace
-     * @param version LDD version
-     * @param date LDD date
+     * @param namespace namespace
+     * @param schemaFileName schema file name
+     * @param imVersion IM version
+     * @param lddVersion LDD version
+     * @param date date
      * @throws Exception an exception
      */
     public void writeLddInfo(String namespace, String schemaFileName, 

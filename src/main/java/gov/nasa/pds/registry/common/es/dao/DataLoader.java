@@ -155,7 +155,8 @@ public class DataLoader
      */
     private String loadBatch(BufferedReader fileReader, String firstLine) throws Exception
     {
-        HttpURLConnection con = null;
+        HttpURLConnection con = null;        
+        OutputStreamWriter writer = null;
         
         try
         {
@@ -165,7 +166,7 @@ public class DataLoader
             con.setRequestMethod("POST");
             con.setRequestProperty("content-type", "application/x-ndjson; charset=utf-8");
             
-            OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
+            writer = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
             
             // First record
             String line1 = firstLine;
@@ -237,6 +238,10 @@ public class DataLoader
             
             throw new Exception(msg);
         }
+        finally
+        {
+            CloseUtils.close(writer);
+        }
     }
     
     
@@ -251,6 +256,7 @@ public class DataLoader
         if(data.size() % 2 != 0) throw new Exception("Data list size should be an even number.");
         
         HttpURLConnection con = null;
+        OutputStreamWriter writer = null;
         
         try
         {
@@ -260,7 +266,7 @@ public class DataLoader
             con.setRequestMethod("POST");
             con.setRequestProperty("content-type", "application/x-ndjson; charset=utf-8");
             
-            OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
+            writer = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
             
             for(int i = 0; i < data.size(); i+=2)
             {
@@ -301,6 +307,10 @@ public class DataLoader
             if(msg == null) msg = json;
             
             throw new Exception(msg);
+        }
+        finally
+        {
+            CloseUtils.close(writer);
         }
     }
 

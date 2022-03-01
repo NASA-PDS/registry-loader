@@ -27,11 +27,9 @@ public class MissingFieldsProcessor
     /**
      * Constructor.
      * NOTE: Init registry manager before calling this constructor
-     * 
-     * @param cfg registry configuration
-     * @param ddDao data dictionary DAO
-     * @param sDao schema DAO
-     * @throws Exception and exception.
+     * @param su schema updater
+     * @param fnc field name cache
+     * @throws Exception an exception
      */
     public MissingFieldsProcessor(SchemaUpdater su, FieldNameCache fnc) throws Exception
     {

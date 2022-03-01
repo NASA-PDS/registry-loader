@@ -35,9 +35,10 @@ public class JsonLddLoader
     
     /**
      * Constructor
+     * @param dao Data dictionary data access object
      * @param esUrl Elasticsearch URL
-     * @param esIndex Elasticsearch index name
-     * @param esAuthFile Elasticsearch authentication configuration file
+     * @param indexName Elasticsearch index name
+     * @param authFilePath authentication configuration file
      * @throws Exception an exception
      */
     public JsonLddLoader(DataDictionaryDao dao, String esUrl, String indexName, String authFilePath) throws Exception
