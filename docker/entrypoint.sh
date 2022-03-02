@@ -56,4 +56,4 @@ harvest -c "$HARVEST_CFG_FILE"
 
 # Load data into Elasticsearch
 echo "Loading harvested data into Elasticsearch ..." 1>&2
-registry-manager load-data -dir /tmp/harvest/out/ -es "$ES_URL" -force
+registry-manager load-data -dir /tmp/harvest/out/ -es "$ES_URL" -force -auth /etc/es-auth.cfg
