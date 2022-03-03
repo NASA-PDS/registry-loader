@@ -65,20 +65,7 @@ public class FileMetadataExtractor
     public void setStoreLabels(boolean storeXml, boolean storeJson)
     {
         this.storeLabels = storeXml;
-        if(storeLabels == false)
-        {
-            log.warn("XML BLOB storage is disabled "
-                    + "(see <fileInfo storeLabels=\"false\"> configuration). "
-                    + "Not all Registry features will be available.");
-        }
-
         this.storeJsonLabels = storeJson;
-        if(storeJsonLabels == false)
-        {
-            log.warn("JSON BLOB storage is disabled "
-                    + "(see <fileInfo storeJsonLabels=\"false\"> configuration). "
-                    + "Not all Registry features will be available.");
-        }
     }
     
     
