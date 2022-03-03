@@ -15,15 +15,12 @@ import gov.nasa.pds.registry.common.util.ExceptionUtils;
 import gov.nasa.pds.registry.common.util.ManifestUtils;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.cmd.data.DeleteDataCmd;
-import gov.nasa.pds.registry.mgr.cmd.data.ExportDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.ExportFileCmd;
-import gov.nasa.pds.registry.mgr.cmd.data.LoadDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.SetArchiveStatusCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.DeleteDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ExportDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ListDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.LoadDDCmd;
-import gov.nasa.pds.registry.mgr.cmd.dd.UpdateSchemaCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
 import gov.nasa.pds.registry.mgr.util.log.Log4jConfigurator;
@@ -65,9 +62,7 @@ public class RegistryManagerCli
         
         System.out.println();
         System.out.println("Data:");
-        System.out.println("  load-data            Load data into registry index");
         System.out.println("  delete-data          Delete data from registry index");
-        System.out.println("  export-data          Export data from registry index");
         System.out.println("  export-file          Export a file from blob storage");
         System.out.println("  set-archive-status   Set product archive status");
         
@@ -82,7 +77,6 @@ public class RegistryManagerCli
         System.out.println("  load-dd              Load data into data dictionary");
         System.out.println("  delete-dd            Delete data from data dictionary");        
         System.out.println("  export-dd            Export data dictionary");
-        System.out.println("  update-schema        Update registry schema");
 
         System.out.println();
         System.out.println("Other:");
@@ -247,12 +241,10 @@ public class RegistryManagerCli
         commands.put("load-dd", new LoadDDCmd());
         commands.put("delete-dd", new DeleteDDCmd());
         commands.put("export-dd", new ExportDDCmd());
-        commands.put("update-schema", new UpdateSchemaCmd());
         
         // Data
-        commands.put("load-data", new LoadDataCmd());
         commands.put("delete-data", new DeleteDataCmd());
-        commands.put("export-data", new ExportDataCmd());
+        //commands.put("export-data", new ExportDataCmd());
         commands.put("export-file", new ExportFileCmd());
         commands.put("set-archive-status", new SetArchiveStatusCmd());
     }

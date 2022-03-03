@@ -7,9 +7,11 @@ import java.util.TreeSet;
 import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.es.dao.schema.*;
+import gov.nasa.pds.registry.common.es.dao.dd.*;
+import gov.nasa.pds.registry.common.util.*;
 import gov.nasa.pds.registry.mgr.dao.IndexDao;
-import gov.nasa.pds.registry.mgr.dao.schema.SchemaDao;
-import gov.nasa.pds.registry.mgr.util.Tuple;
+
 
 
 public class TestSchemaDao
@@ -54,7 +56,7 @@ public class TestSchemaDao
         
         try
         {
-            SchemaDao dao = new SchemaDao(client, "t1");
+            DataDictionaryDao dao = new DataDictionaryDao(client, "t1");
             
             Set<String> ids = new TreeSet<>();
             ids.add("pds:Property_Map/pds:identifier");

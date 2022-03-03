@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 
+import gov.nasa.pds.registry.common.cfg.RegistryCfg;
+import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
+import gov.nasa.pds.registry.common.es.dao.dd.LddInfo;
 import gov.nasa.pds.registry.mgr.Constants;
-import gov.nasa.pds.registry.mgr.cfg.RegistryCfg;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.RegistryManager;
-import gov.nasa.pds.registry.mgr.dao.dd.DataDictionaryDao;
-import gov.nasa.pds.registry.mgr.dao.dd.LddInfo;
 
 /**
  * A CLI command to list data dictionary registered in Elasticsearch.

@@ -10,10 +10,10 @@ import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
+import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
-import gov.nasa.pds.registry.mgr.dao.DataLoader;
 import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 
 

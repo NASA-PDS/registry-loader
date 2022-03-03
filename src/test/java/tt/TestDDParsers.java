@@ -2,8 +2,8 @@ package tt;
 
 import java.io.File;
 
-import gov.nasa.pds.registry.mgr.dd.parser.AttributeDictionaryParser;
-import gov.nasa.pds.registry.mgr.dd.parser.DDAttribute;
+import gov.nasa.pds.registry.common.dd.parser.AttributeDictionaryParser;
+import gov.nasa.pds.registry.common.dd.parser.DDAttribute;
 
 
 public class TestDDParsers

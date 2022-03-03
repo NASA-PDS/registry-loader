@@ -8,8 +8,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.opencsv.CSVReader;
 
+import gov.nasa.pds.registry.common.dd.DDNJsonWriter;
+import gov.nasa.pds.registry.common.dd.DDRecord;
+import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.dao.DataLoader;
+
 
 /**
  * Loads CSV formatted LDDs into Registry (Elasticsearch)

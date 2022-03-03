@@ -1,7 +1,6 @@
 package tt;
 
-import gov.nasa.pds.registry.mgr.dao.dd.DDRequestBuilder;
-
+import gov.nasa.pds.registry.common.es.dao.dd.DDRequestBuilder;
 
 public class TestDDRequestBuilder
 {
