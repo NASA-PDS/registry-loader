@@ -42,7 +42,7 @@ jobs:
                 with:
                     lfs: true
                     fetch-depth: 0
-                    token: $${secrets.ADMIN_GITHUB_TOKEN}
+                    token: ${{secrets.ADMIN_GITHUB_TOKEN}}
                     ref: ${{github.event.client_payload.ref}}
             -
                 name: 🎰 QEMU Multiple Machine Emulation
@@ -54,8 +54,8 @@ jobs:
                 name: 🧱 Image Construction and Publication
                 uses: docker/build-push-action@v2
                 with:
-                    context: docker
-                    file: Dockerfile
+                    context: ./docker
+                    file: ./docker/Dockerfile
                     platforms: linux/amd64,linux/arm64
                     push: true
                     tags: ${{secrets.DOCKERHUB_USERNAME}}/registry-loader:${{github.event.client_payload.image_tag}}
