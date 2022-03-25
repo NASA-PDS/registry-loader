@@ -1,28 +1,36 @@
 # Changelog
 
-## [v1.2.0-SNAPSHOT](https://github.com/NASA-PDS/pds-registry-common/tree/v1.2.0-SNAPSHOT) (2022-01-11)
+## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2022-03-25)
 
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-common/compare/v1.1.2...v1.2.0-SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.2.0-SNAPSHOT...«unknown»)
 
-## [v1.1.2](https://github.com/NASA-PDS/pds-registry-common/tree/v1.1.2) (2022-01-11)
+**Defects:**
 
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-common/compare/v1.1.1...v1.1.2)
+- Missing support for datetime conversion for ASCII\_Date\_Time\_DOY\_UTC [\#20](https://github.com/NASA-PDS/registry-common/issues/20) [[s.low](https://github.com/NASA-PDS/registry-common/labels/s.low)]
 
-## [v1.1.1](https://github.com/NASA-PDS/pds-registry-common/tree/v1.1.1) (2021-12-10)
+## [v1.2.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.2.0-SNAPSHOT) (2022-02-07)
 
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-common/compare/v1.1.0...v1.1.1)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.1.2...v1.2.0-SNAPSHOT)
 
-## [v1.1.0](https://github.com/NASA-PDS/pds-registry-common/tree/v1.1.0) (2021-09-29)
+## [v1.1.2](https://github.com/NASA-PDS/registry-common/tree/v1.1.2) (2022-01-11)
 
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-common/compare/v1.0.0...v1.1.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.1.1...v1.1.2)
 
-## [v1.0.0](https://github.com/NASA-PDS/pds-registry-common/tree/v1.0.0) (2021-06-29)
+## [v1.1.1](https://github.com/NASA-PDS/registry-common/tree/v1.1.1) (2021-12-10)
 
-[Full Changelog](https://github.com/NASA-PDS/pds-registry-common/compare/cdda44b7ee3c3c9ded4c11a60dabc7fe36dffc90...v1.0.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.1.0...v1.1.1)
+
+## [v1.1.0](https://github.com/NASA-PDS/registry-common/tree/v1.1.0) (2021-09-29)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.0.0...v1.1.0)
+
+## [v1.0.0](https://github.com/NASA-PDS/registry-common/tree/v1.0.0) (2021-06-29)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/cdda44b7ee3c3c9ded4c11a60dabc7fe36dffc90...v1.0.0)
 
 **Improvements:**
 
-- verify artifact is pushed to Maven central and setup the ci [\#1](https://github.com/NASA-PDS/pds-registry-common/issues/1)
+- verify artifact is pushed to Maven central and setup the ci [\#1](https://github.com/NASA-PDS/registry-common/issues/1)
 
 
 
