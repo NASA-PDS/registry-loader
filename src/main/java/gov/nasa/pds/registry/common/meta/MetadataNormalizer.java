@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import gov.nasa.pds.registry.common.util.FieldMapList;
 import gov.nasa.pds.registry.common.util.date.PdsDateConverter;
 
@@ -18,7 +15,6 @@ import gov.nasa.pds.registry.common.util.date.PdsDateConverter;
  */
 public class MetadataNormalizer
 {
-    private Logger log;
     private PdsDateConverter dateConverter;
     private FieldNameCache fieldNameCache;
     
@@ -27,8 +23,7 @@ public class MetadataNormalizer
      */
     public MetadataNormalizer(FieldNameCache cache)
     {
-        log = LogManager.getLogger(this.getClass());
-        dateConverter = new PdsDateConverter(false);
+        dateConverter = new PdsDateConverter(true);
         this.fieldNameCache = cache;
     }
 
@@ -37,7 +32,7 @@ public class MetadataNormalizer
      * Normalize field values
      * @param fields Metadata extracted from PDS4 label
      */
-    public void normalizeValues(FieldMapList fields)
+    public void normalizeValues(FieldMapList fields) throws Exception
     {
         for(String key: fields.getNames())
         {
@@ -63,7 +58,7 @@ public class MetadataNormalizer
     }
 
     
-    private List<String> convertDateValues(String key, Collection<String> oldValues)
+    private List<String> convertDateValues(String key, Collection<String> oldValues) throws Exception
     {
         List<String> newValues = new ArrayList<>();
         
@@ -76,9 +71,7 @@ public class MetadataNormalizer
             }
             catch(Exception ex)
             {
-                log.warn("Could not convert date value. Field = " + key + ", value = " + oldValue 
-                        + ". Will use '" + PdsDateConverter.DEFAULT_STOPTIME + "'.");
-                newValues.add(PdsDateConverter.DEFAULT_STOPTIME);
+                throw new Exception("Could not convert date value. Field = " + key + ", value = " + oldValue); 
             }
         }
         
@@ -86,34 +79,25 @@ public class MetadataNormalizer
     }
 
 
-    private List<String> convertBooleanValues(String key, Collection<String> oldValues)
+    private List<String> convertBooleanValues(String key, Collection<String> oldValues) throws Exception
     {
         List<String> newValues = new ArrayList<>();
         
         for(String oldValue: oldValues)
         {
-            try
+            String tmp = oldValue.toLowerCase();
+            
+            if("true".equals(tmp) || "1".equals(tmp))
             {
-                String tmp = oldValue.toLowerCase();
-                
-                if("true".equals(tmp) || "1".equals(tmp))
-                {
-                    newValues.add("true");
-                }
-                else if("false".equals(tmp) || "0".equals(tmp))
-                {
-                    newValues.add("false");
-                }
-                else
-                {
-                    log.warn("Could not convert boolean value. Field = " + key + ", value = " + oldValue 
-                            + ". Will use 'false'.");
-                    newValues.add("false");
-                }
+                newValues.add("true");
             }
-            catch(Exception ex)
+            else if("false".equals(tmp) || "0".equals(tmp))
             {
-                log.warn("Could not convert boolean value. Field = " + key + ", value = " + oldValue);
+                newValues.add("false");
+            }
+            else
+            {
+                throw new Exception("Could not convert boolean value. Field = " + key + ", value = " + oldValue); 
             }
         }
         
