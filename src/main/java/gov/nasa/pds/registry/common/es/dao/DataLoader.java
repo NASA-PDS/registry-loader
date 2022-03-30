@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -246,11 +247,23 @@ public class DataLoader
     
     
     /**
+     * Response of loadBatch() method
+     */
+    public static class LoadBatchResponse
+    {
+        public int loadedCount;
+        public int failedCount;
+    }
+    
+    
+    /**
      * Load data into Elasticsearch
      * @param data NJSON data. (2 lines per record)
+     * @param errorLidvids output parameter. If not null, add failed LIDVIDs to this set.
+     * @return Number of loaded documents
      * @throws Exception an exception
      */
-    public int loadBatch(List<String> data) throws Exception
+    public int loadBatch(List<String> data, Set<String> errorLidvids) throws Exception
     {
         if(data == null || data.isEmpty()) return 0;
         if(data.size() % 2 != 0) throw new Exception("Data list size should be an even number.");
@@ -279,14 +292,16 @@ public class DataLoader
             writer.flush();
             writer.close();
         
-            // Check for Elasticsearch errors.
+            // Read Elasticsearch response.
             String respJson = DaoUtils.getLastLine(con.getInputStream());
             log.debug(respJson);
-            
-            int numErrors = processErrors(respJson);
-            // Return number of successfully saved records
+
+            // Check for Elasticsearch errors.
+            int failedCount = processErrors(respJson, errorLidvids);
+            // Calculate number of successfully saved records
             // NOTE: data list has two lines per record (primary key + data)
-            return data.size() / 2 - numErrors;
+            int loadedCount = data.size() / 2 - failedCount;            
+            return loadedCount; 
         }
         catch(UnknownHostException ex)
         {
@@ -315,11 +330,23 @@ public class DataLoader
     }
 
     
+    /**
+     * Load data into Elasticsearch
+     * @param data data NJSON data. (2 lines per record)
+     * @return Number of loaded documents
+     * @throws Exception an exception
+     */
+    public int loadBatch(List<String> data) throws Exception
+    {
+        return loadBatch(data, null);
+    }
+    
+    
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private int processErrors(String resp)
+    private int processErrors(String resp, Set<String> errorLidvids)
     {
         int numErrors = 0;
-
+        
         try
         {
             // TODO: Use streaming parser. Stop parsing if there are no errors.
@@ -365,6 +392,7 @@ public class DataLoader
                         String message = (String)error.get("reason");
                         log.error("LIDVID = " + id + ", Message = " + message);
                         numErrors++;
+                        if(errorLidvids != null) errorLidvids.add(id);
                     }
                 }
             }
