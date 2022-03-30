@@ -247,16 +247,6 @@ public class DataLoader
     
     
     /**
-     * Response of loadBatch() method
-     */
-    public static class LoadBatchResponse
-    {
-        public int loadedCount;
-        public int failedCount;
-    }
-    
-    
-    /**
      * Load data into Elasticsearch
      * @param data NJSON data. (2 lines per record)
      * @param errorLidvids output parameter. If not null, add failed LIDVIDs to this set.
