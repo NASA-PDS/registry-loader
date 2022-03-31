@@ -13,8 +13,8 @@ The Registry Loader is a docker image which contains both Harvest and the Regist
 
 ```    
 # Set following arguments with compatible versions
-ARG harvest_version=3.5.0
-ARG reg_manager_version=4.2.0
+ARG harvest_version=3.6.0-SNAPSHOT
+ARG reg_manager_version=4.4.0-SNAPSHOT
 ```
 
 #### 2. Open a terminal and change the current working directory to `registry-loader/docker`.
@@ -29,23 +29,33 @@ ARG reg_manager_version=4.2.0
 
 #### 1. Update the following environment variables in the `run.sh`.
 
-| Variable          | Description |
-| ----------------- | ----------- |
-| ES_URL            | The Elasticsearch URL (E.g.: `http://192.168.0.1:9200`) |
-| HARVEST_CFG_FILE  | Absolute path of the Harvest configuration file in the host machine (E.g.: `/tmp/cfg/harvest-config.xml`) |
-| HARVEST_DATA_DIR  | Absolute path of the Harvest data directory in the host machine (E.g.: `/tmp/data/urn-nasa-pds-insight_rad`) |
+Note: 
+
+Copies of `harvest-job-config.xml` and `es-auth.cfg` can be obtained from 
+https://github.com/NASA-PDS/registry/tree/main/docker/default-config. Please change the Elasticsearch URL, username and 
+password to match with your environment.
+
+| Variable            | Description |
+| ------------------- | ----------- |
+| ES_URL              | The Elasticsearch URL (E.g.: `https://192.168.0.1:9200`) |
+| HARVEST_CFG_FILE    | Absolute path of the Harvest configuration file in the host machine (E.g.: `/tmp/cfg/harvest-config.xml`) |
+| HARVEST_DATA_DIR    | Absolute path of the Harvest data directory in the host machine (E.g.: `/tmp/data/urn-nasa-pds-insight_rad`) |
+| ES_AUTH_CONFIG_FILE | Absolute path of the es-auth.cfg file, which contains elasticsearch authentication details (E.g.: `/tmp/cfg/es-auth.cfg`) |
 
 ```    
 # Update the following environment variables before executing this script
 
-# Elasticsearch URL (E.g.: http://192.168.0.1:9200)
-ES_URL=http://<HOST NAME OR IP ADDRESS>:9200
+# Elasticsearch URL (E.g.: https://192.168.0.1:9200)
+ES_URL=https://<HOST NAME OR IP ADDRESS>:9200
 
-# Absolute path of the Harvest configuration file in the host machine (E.g.: /tmp/cfg/harvest-config.xml)
-HARVEST_CFG_FILE=${PWD}/test/cfg/harvest-test-config.xml
+# Absolute path of the Harvest job configuration file in the host machine (E.g.: /tmp/cfg/harvest-job-config.xml)
+HARVEST_CFG_FILE=/tmp/cfg/harvest-job-config.xml
 
 # Absolute path of the Harvest data directory in the host machine (E.g.: /tmp/data/urn-nasa-pds-insight_rad)
 HARVEST_DATA_DIR=/tmp/data
+
+# Absolute path of the es-auth.cfg file, which contains elasticsearch authentication details (E.g.: /tmp/cfg/es-auth.cfg)
+ES_AUTH_CONFIG_FILE=/tmp/cfg/es-auth.cfg
 ```
 
 #### 2. Open a terminal and change the current working directory to `registry-loader/docker`.
@@ -71,12 +81,16 @@ Above steps will run a docker container of the Registry Loader.
 | Variable          | Description |
 | ----------------- | ----------- |
 | TEST_DATA_URL     | URL to download the test data to harvest |
+| TEST_DATA_LIDVID  | The lidvid of the test data, which is used to set the archive status |
 
 ```    
-# Update the following environment variable before executing this script
+# Update the following environment variables before executing this script
 
 # URL to download the test data to Harvest (only required, if executing with test data)
 TEST_DATA_URL=https://pds-gamma.jpl.nasa.gov/data/pds4/test-data/registry/urn-nasa-pds-insight_rad.tar.gz
+
+# The lidvid of the test data, which is used to set the archive status (only required, if executing with test data)
+TEST_DATA_LIDVID=urn:nasa:pds:insight_rad::2.1
 ```
 
 #### 2. Open a terminal and change the current working directory to `registry-loader/docker`.

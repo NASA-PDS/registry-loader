@@ -42,23 +42,36 @@
 
 # Update the following environment variables before executing this script
 
-# Elasticsearch URL (E.g.: http://192.168.0.1:9200)
-ES_URL=http://<HOST NAME OR IP ADDRESS>:9200
+# Elasticsearch URL (E.g.: https://192.168.0.1:9200)
+ES_URL=https://192.168.0.1:9200
 
-# Absolute path of the Harvest configuration file in the host machine (E.g.: /tmp/cfg/harvest-config.xml)
-HARVEST_CFG_FILE=/tmp/cfg/harvest-config.xml
+# Absolute path of the Harvest job configuration file in the host machine (E.g.: /tmp/cfg/harvest-job-config.xml)
+HARVEST_CFG_FILE=/tmp/cfg/harvest-job-config.xml
 
 # Absolute path of the Harvest data directory in the host machine (E.g.: /tmp/data/urn-nasa-pds-insight_rad)
 HARVEST_DATA_DIR=/tmp/data
 
+# Absolute path of the es-auth.cfg file, which contains elasticsearch authentication details (E.g.: /tmp/cfg/es-auth.cfg)
+ES_AUTH_CONFIG_FILE=/tmp/cfg/es-auth.cfg
+
 # URL to download the test data to Harvest (only required, if executing with test data)
 TEST_DATA_URL=https://pds-gamma.jpl.nasa.gov/data/pds4/test-data/registry/urn-nasa-pds-insight_rad.tar.gz
 
+# The lidvid of the test data, which is used to set the archive status (only required, if executing with test data)
+TEST_DATA_LIDVID=urn:nasa:pds:insight_rad::2.1
 
 
 # Check if the ES_URL environment variable is set
 if [ -z "$ES_URL" ]; then
     echo "Error: 'ES_URL' (Elasticsearch URL) environment variable is not properly set in the $0 file." 1>&2
+    exit 1
+fi
+
+# Check if the Elasticsearch auth file exists
+if [ ! -f "$ES_AUTH_CONFIG_FILE" ]; then
+    echo -e "Error: The Elasticsearch auth file $ES_AUTH_CONFIG_FILE does not exist." \
+            "Set an absolute file path of an existing Elasticsearch auth file in the $0 file" \
+            "as the environment variable 'ES_AUTH_CONFIG_FILE'.\n" 1>&2
     exit 1
 fi
 
@@ -91,7 +104,8 @@ if [ -z "$1" ]; then
                  --env ES_URL=${ES_URL} \
                  --volume "${HARVEST_CFG_FILE}":/cfg/harvest-config.xml \
                  --volume "${HARVEST_DATA_DIR}":/data \
-                 pds/registry-loader
+                 --volume "${ES_AUTH_CONFIG_FILE}":/etc/es-auth.cfg \
+                 nasapds/registry-loader
 else
 
     if [ "$1" = "test" ]; then
@@ -102,7 +116,9 @@ else
                  --env ES_URL="${ES_URL}" \
                  --env RUN_TESTS=true \
                  --env TEST_DATA_URL="${TEST_DATA_URL}" \
-                 pds/registry-loader
+                 --env TEST_DATA_LIDVID="${TEST_DATA_LIDVID}" \
+                 --volume "${ES_AUTH_CONFIG_FILE}":/etc/es-auth.cfg \
+                 nasapds/registry-loader
 
     else
       echo -e "Usage: $0 [test]\n" 1>&2

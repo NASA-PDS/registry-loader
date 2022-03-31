@@ -57,5 +57,8 @@ harvest -c "$HARVEST_CFG_FILE"
 # Load data into Elasticsearch
 echo "Loading harvested data into Elasticsearch ..." 1>&2
 registry-manager load-data -dir /tmp/harvest/out/ -es "$ES_URL" -force -auth /etc/es-auth.cfg
-registry-manager set-archive-status -status archived -lidvid urn:nasa:pds:insight_rad::2.1 -es "$ES_URL" -auth /etc/es-auth.cfg
 
+if [ "$RUN_TESTS" = "true" ]; then
+  echo "Setting archive status ..." 1>&2
+  registry-manager set-archive-status -status archived -lidvid "$TEST_DATA_LIDVID" -es "$ES_URL" -auth /etc/es-auth.cfg
+fi
