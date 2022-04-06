@@ -1,16 +1,12 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2022-03-25)
+## [v1.2.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.2.0-SNAPSHOT) (2022-03-25)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.2.0-SNAPSHOT...«unknown»)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.1.2...v1.2.0-SNAPSHOT)
 
 **Defects:**
 
 - Missing support for datetime conversion for ASCII\_Date\_Time\_DOY\_UTC [\#20](https://github.com/NASA-PDS/registry-common/issues/20) [[s.low](https://github.com/NASA-PDS/registry-common/labels/s.low)]
-
-## [v1.2.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.2.0-SNAPSHOT) (2022-02-07)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.1.2...v1.2.0-SNAPSHOT)
 
 ## [v1.1.2](https://github.com/NASA-PDS/registry-common/tree/v1.1.2) (2022-01-11)
 
