@@ -17,6 +17,7 @@ import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.cmd.data.DeleteDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.ExportFileCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.SetArchiveStatusCmd;
+import gov.nasa.pds.registry.mgr.cmd.data.UpdateAltIdsCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.DeleteDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ExportDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ListDDCmd;
@@ -65,6 +66,7 @@ public class RegistryManagerCli
         System.out.println("  delete-data          Delete data from registry index");
         System.out.println("  export-file          Export a file from blob storage");
         System.out.println("  set-archive-status   Set product archive status");
+        System.out.println("  update-alt-ids       Update alternate IDs");
         
         System.out.println();
         System.out.println("Registry:");
@@ -244,9 +246,9 @@ public class RegistryManagerCli
         
         // Data
         commands.put("delete-data", new DeleteDataCmd());
-        //commands.put("export-data", new ExportDataCmd());
         commands.put("export-file", new ExportFileCmd());
         commands.put("set-archive-status", new SetArchiveStatusCmd());
+        commands.put("update-alt-ids", new UpdateAltIdsCmd());
     }
     
     
