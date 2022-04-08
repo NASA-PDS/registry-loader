@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -286,6 +287,49 @@ public class RegistryRequestBuilder
         writer.name("script").value("ctx._source.archive_status = '" + status + "'");
         // Query
         EsQueryUtils.appendFilterQuery(writer, field, value);
+        writer.endObject();
+
+        writer.close();
+        return out.toString();
+    }
+
+    
+    /**
+     * Build a query to select alternate ids by document primary key
+     * @param ids list of primary keys (lidvids right now)
+     * @param pageSize request page size
+     * @return JSON
+     * @throws Exception an exception
+     */
+    public String createGetAlternateIdsRequest(Collection<String> ids) throws Exception
+    {
+        if(ids == null || ids.isEmpty()) throw new Exception("Missing ids");
+            
+        StringWriter out = new StringWriter();
+        JsonWriter writer = createJsonWriter(out);
+
+        // Create ids query
+        writer.beginObject();
+
+        // Exclude source from response
+        writer.name("_source").value("alternate_ids");
+        writer.name("size").value(ids.size());
+
+        writer.name("query");
+        writer.beginObject();
+        writer.name("ids");
+        writer.beginObject();
+        
+        writer.name("values");
+        writer.beginArray();
+        for(String id: ids)
+        {
+            writer.value(id);
+        }
+        writer.endArray();
+        
+        writer.endObject();
+        writer.endObject();
         writer.endObject();
 
         writer.close();
