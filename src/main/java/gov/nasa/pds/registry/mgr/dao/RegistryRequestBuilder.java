@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.google.gson.Gson;
@@ -270,31 +271,6 @@ public class RegistryRequestBuilder
 
     
     /**
-     * Build update label status request
-     * @param status new PDS label status
-     * @param field filter field name
-     * @param value filter value
-     * @return JSON
-     * @throws IOException an exception
-     */
-    public String createUpdateStatusRequest(String status, String field, String value) throws IOException
-    {
-        StringWriter out = new StringWriter();
-        JsonWriter writer = createJsonWriter(out);
-
-        writer.beginObject();
-        // Script
-        writer.name("script").value("ctx._source.archive_status = '" + status + "'");
-        // Query
-        EsQueryUtils.appendFilterQuery(writer, field, value);
-        writer.endObject();
-
-        writer.close();
-        return out.toString();
-    }
-
-    
-    /**
      * Build a query to select alternate ids by document primary key
      * @param ids list of primary keys (lidvids right now)
      * @param pageSize request page size
@@ -336,4 +312,53 @@ public class RegistryRequestBuilder
         return out.toString();
     }
 
+    
+    public String createUpdateAltIdsRequest(Map<String, Set<String>> newIds) throws Exception
+    {
+        if(newIds == null || newIds.isEmpty()) throw new IllegalArgumentException("Missing ids");
+        
+        StringBuilder bld = new StringBuilder();
+        
+        // Build NJSON (new-line delimited JSON)
+        for(Map.Entry<String, Set<String>> entry: newIds.entrySet())
+        {
+            // Line 1: Elasticsearch document ID
+            bld.append("{ \"update\" : {\"_id\" : \"" + entry.getKey() + "\" } }\n");
+            
+            // Line 2: Data
+            String dataJson = buildUpdateDocJson("alternate_ids", entry.getValue());
+            bld.append(dataJson);
+            bld.append("\n");
+        }
+        
+        return bld.toString();
+
+    }
+    
+    
+    private String buildUpdateDocJson(String field, Collection<String> values) throws Exception
+    {
+        StringWriter out = new StringWriter();
+        JsonWriter writer = createJsonWriter(out);
+
+        writer.beginObject();
+
+        writer.name("doc");
+        writer.beginObject();
+        
+        writer.name(field);
+        
+        writer.beginArray();        
+        for(String value: values)
+        {
+            writer.value(value);
+        }
+        writer.endArray();
+        
+        writer.endObject();        
+        writer.endObject();
+        
+        writer.close();
+        return out.toString();
+    }
 }

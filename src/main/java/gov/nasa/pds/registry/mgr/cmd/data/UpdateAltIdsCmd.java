@@ -4,6 +4,12 @@ package gov.nasa.pds.registry.mgr.cmd.data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.StringUtils;
@@ -12,11 +18,14 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 
+import gov.nasa.pds.registry.common.cfg.RegistryCfg;
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
+import gov.nasa.pds.registry.mgr.dao.RegistryDao;
+import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 
 
 /**
@@ -26,12 +35,14 @@ import gov.nasa.pds.registry.mgr.cmd.CliCommand;
  */
 public class UpdateAltIdsCmd implements CliCommand
 {
+    private Logger log;
     
     /**
      * Constructor
      */
     public UpdateAltIdsCmd()
     {
+        log = LogManager.getLogger(this.getClass());
     }
 
     
@@ -44,23 +55,20 @@ public class UpdateAltIdsCmd implements CliCommand
             return;
         }
 
-        String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
-        String authPath = cmdLine.getOptionValue("auth");
+        RegistryCfg cfg = new RegistryCfg();
+        cfg.url = cmdLine.getOptionValue("es", "http://localhost:9200");
+        cfg.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        cfg.authFile = cmdLine.getOptionValue("auth");
 
         String filePath = cmdLine.getOptionValue("file");
         if(filePath == null) throw new Exception("Missing required parameter '-file'");
         File file = new File(filePath);
         if(!file.exists()) throw new Exception("Input file doesn't exist: " + file.getAbsolutePath());
         
-        RestClient client = null;
-        
         try
         {
-            client = EsClientFactory.createRestClient(esUrl, authPath);
-
-            updateIds(client, file);
-            
+            RegistryManager.init(cfg);
+            updateIds(file);
         }
         catch(ResponseException ex)
         {
@@ -68,12 +76,12 @@ public class UpdateAltIdsCmd implements CliCommand
         }
         finally
         {
-            CloseUtils.close(client);
+            RegistryManager.destroy();
         }
     }
 
     
-    private void updateIds(RestClient client, File file) throws Exception
+    private void updateIds(File file) throws Exception
     {
         BufferedReader rd = null;
         Logger log = LogManager.getLogger(this.getClass());
@@ -97,19 +105,39 @@ public class UpdateAltIdsCmd implements CliCommand
                     continue;
                 }
                 
-                if(!ids[0].contains("::"))
+                List<String> newIds = new ArrayList<String>(4);
+                
+                // First LIDVID value (old)
+                int idx = ids[0].indexOf("::");
+                if(idx < 1)
                 {
                     log.warn("Line " + lineNum + " has invalid LIDVID: [" + ids[0] + "]");
                     continue;
                 }
                 
-                if(!ids[1].contains("::"))
+                // Add LIDVID
+                newIds.add(ids[0]);
+                // Add LID
+                newIds.add(ids[0].substring(0, idx));
+                
+                // Second LIDVID value (new)
+                idx = ids[1].indexOf("::");
+                if(idx < 1)
                 {
                     log.warn("Line " + lineNum + " has invalid LIDVID: [" + ids[1] + "]");
                     continue;
                 }
 
-                updateIds(client, ids);
+                // Add LIDVID
+                newIds.add(ids[1]);
+                // Add LID
+                newIds.add(ids[1].substring(0, idx));
+
+                Map<String, List<String>> idMap = new TreeMap<>();
+                idMap.put(ids[0], newIds);
+                idMap.put(ids[1], newIds);
+                
+                updateIds(idMap);
             }
         }
         finally
@@ -119,10 +147,21 @@ public class UpdateAltIdsCmd implements CliCommand
     }
     
     
-    private void updateIds(RestClient client, String[] lidvids) throws Exception
+    private void updateIds(Map<String, List<String>> newIds) throws Exception
     {
-        System.out.println(lidvids[0]);
-        System.out.println(lidvids[1]);
+        RegistryDao dao = RegistryManager.getInstance().getRegistryDao();
+        Map<String, Set<String>> existingIds = dao.getAlternateIds(newIds.keySet());
+        
+        for(Map.Entry<String, Set<String>> entry: existingIds.entrySet())            
+        {
+            List<String> additionalIds = newIds.get(entry.getKey());
+            if(additionalIds != null)
+            {
+                entry.getValue().addAll(additionalIds);
+            }
+        }
+        
+        dao.updateAlternateIds(existingIds);
     }
     
     
