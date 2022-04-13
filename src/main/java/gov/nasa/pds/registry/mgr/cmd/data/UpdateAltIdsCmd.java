@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,10 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.cfg.RegistryCfg;
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
@@ -84,7 +81,6 @@ public class UpdateAltIdsCmd implements CliCommand
     private void updateIds(File file) throws Exception
     {
         BufferedReader rd = null;
-        Logger log = LogManager.getLogger(this.getClass());
 
         try
         {
@@ -137,6 +133,7 @@ public class UpdateAltIdsCmd implements CliCommand
                 idMap.put(ids[0], newIds);
                 idMap.put(ids[1], newIds);
                 
+                log.info("Updating " + ids[0] + " -> " + ids[1]);
                 updateIds(idMap);
             }
         }
