@@ -1,8 +1,12 @@
 # Changelog
 
-## [v4.4.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.4.0-SNAPSHOT) (2022-02-10)
+## [v4.4.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.4.0-SNAPSHOT) (2022-04-12)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.3.1...v4.4.0-SNAPSHOT)
+
+**Defects:**
+
+- Improve error message for corrupted registry\_docs.json [\#43](https://github.com/NASA-PDS/registry-mgr/issues/43) [[s.medium](https://github.com/NASA-PDS/registry-mgr/labels/s.medium)]
 
 ## [v4.3.1](https://github.com/NASA-PDS/registry-mgr/tree/v4.3.1) (2022-01-11)
 
