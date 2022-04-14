@@ -95,7 +95,7 @@ Go through this file line-by-line and replace the template values with your own.
 
     So be sure to replace all five `myproject`s below with your actual project name!
     -->
-    <url>https://nasa-pds.github.io/myproject</url>
+    <url>https://nasa-pds.github.io/registry-loader</url>
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/NASA-PDS/registry-loader/issues</url>
