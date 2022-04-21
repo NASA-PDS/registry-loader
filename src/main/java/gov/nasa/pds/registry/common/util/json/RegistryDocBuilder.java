@@ -22,7 +22,7 @@ public class RegistryDocBuilder
      */
     public static String createPKJson(Metadata meta) throws Exception
     {
-        String lidvid = meta.lid + "::" + meta.vid;
+        String lidvid = meta.lidvid;
         String pkJson = NJsonDocUtils.createPKJson(lidvid);
         return pkJson;
     }
@@ -36,8 +36,6 @@ public class RegistryDocBuilder
      */
     public static String createDataJson(Metadata meta, String jobId) throws Exception
     {
-        String lidvid = meta.lid + "::" + meta.vid;
-        
         StringWriter sw = new StringWriter();
         JsonWriter jw = new JsonWriter(sw);
         
@@ -46,7 +44,7 @@ public class RegistryDocBuilder
         // Basic info
         NJsonDocUtils.writeField(jw, "lid", meta.lid);
         NJsonDocUtils.writeField(jw, "vid", meta.strVid);
-        NJsonDocUtils.writeField(jw, "lidvid", lidvid);
+        NJsonDocUtils.writeField(jw, "lidvid", meta.lidvid);
         NJsonDocUtils.writeField(jw, "title", meta.title);
         NJsonDocUtils.writeField(jw, "product_class", meta.prodClass);
 
