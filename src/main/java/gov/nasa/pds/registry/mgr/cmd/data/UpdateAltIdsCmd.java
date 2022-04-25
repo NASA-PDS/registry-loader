@@ -147,7 +147,9 @@ public class UpdateAltIdsCmd implements CliCommand
     private void updateIds(Map<String, List<String>> newIds) throws Exception
     {
         RegistryDao dao = RegistryManager.getInstance().getRegistryDao();
+        
         Map<String, Set<String>> existingIds = dao.getAlternateIds(newIds.keySet());
+        if(existingIds == null || existingIds.isEmpty()) return;
         
         for(Map.Entry<String, Set<String>> entry: existingIds.entrySet())            
         {

@@ -32,8 +32,8 @@ public class RegistryDao
 
     /**
      * Constructor
-     * @param client Elasticsearch client, Elasticsearch index
-     * @param indexName
+     * @param client Elasticsearch client
+     * @param indexName Elasticsearch index
      */
     public RegistryDao(RestClient client, String indexName)
     {

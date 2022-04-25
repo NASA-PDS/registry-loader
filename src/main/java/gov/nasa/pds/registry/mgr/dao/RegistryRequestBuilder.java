@@ -273,7 +273,6 @@ public class RegistryRequestBuilder
     /**
      * Build a query to select alternate ids by document primary key
      * @param ids list of primary keys (lidvids right now)
-     * @param pageSize request page size
      * @return JSON
      * @throws Exception an exception
      */
