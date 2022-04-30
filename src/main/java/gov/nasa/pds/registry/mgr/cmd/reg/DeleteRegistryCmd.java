@@ -1,17 +1,13 @@
 package gov.nasa.pds.registry.mgr.cmd.reg;
 
 import org.apache.commons.cli.CommandLine;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
-import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
-import gov.nasa.pds.registry.mgr.dao.IndexDao;
+import gov.nasa.pds.registry.mgr.srv.IndexService;
 
 
 /**
@@ -22,9 +18,6 @@ import gov.nasa.pds.registry.mgr.dao.IndexDao;
  */
 public class DeleteRegistryCmd implements CliCommand
 {
-    private RestClient client;
-    private IndexDao dao;
-    
     /**
      * Constructor
      */
@@ -45,17 +38,19 @@ public class DeleteRegistryCmd implements CliCommand
         String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
-
         System.out.println("Elasticsearch URL: " + esUrl);
 
-        client = EsClientFactory.createRestClient(esUrl, authPath);
-        dao = new IndexDao(client);
+        RestClient client = null;
         
         try
         {
-            deleteIndex(indexName);
-            deleteIndex(indexName + "-refs");
-            deleteIndex(indexName + "-dd");
+            client = EsClientFactory.createRestClient(esUrl, authPath);
+            IndexService srv = new IndexService(client);
+
+            srv.deleteIndex(indexName);
+            srv.deleteIndex(indexName + "-refs");
+            srv.deleteIndex(indexName + "-dd");
+
             System.out.println("Done");            
         }
         finally
@@ -64,36 +59,6 @@ public class DeleteRegistryCmd implements CliCommand
         }
     }
 
-    
-    /**
-     * Delete Elasticsearch index by name
-     * @param indexName Elasticsearch index name
-     * @throws Exception
-     */
-    private void deleteIndex(String indexName) throws Exception
-    {
-        try
-        {
-            System.out.println("Deleting index " + indexName);
-            
-            if(!dao.indexExists(indexName)) 
-            {
-                return;
-            }
-
-            // Create request
-            Request req = new Request("DELETE", "/" + indexName);
-
-            // Execute request
-            Response resp = client.performRequest(req);
-            EsUtils.printWarnings(resp);
-        }
-        catch(ResponseException ex)
-        {
-            throw new Exception(EsUtils.extractErrorMessage(ex));
-        }
-    }
-    
     
     /**
      * Print help screen.

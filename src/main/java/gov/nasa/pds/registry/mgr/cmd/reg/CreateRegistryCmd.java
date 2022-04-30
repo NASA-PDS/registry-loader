@@ -3,18 +3,14 @@ package gov.nasa.pds.registry.mgr.cmd.reg;
 import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
-import gov.nasa.pds.registry.common.es.client.EsUtils;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
-import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
+import gov.nasa.pds.registry.mgr.srv.IndexService;
 
 
 /**
@@ -25,11 +21,6 @@ import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
  */
 public class CreateRegistryCmd implements CliCommand
 {
-    private static final String ERR_CFG = 
-            "Could not find default configuration directory. REGISTRY_MANAGER_HOME environment variable is not set."; 
-    
-    private RestClient client;
-
     
     /**
      * Constructor
@@ -58,23 +49,26 @@ public class CreateRegistryCmd implements CliCommand
         System.out.println("Elasticsearch URL: " + esUrl);
         System.out.println();
         
-        client = EsClientFactory.createRestClient(esUrl, authPath);
+        RestClient client = null;
 
         try
         {
+            client = EsClientFactory.createRestClient(esUrl, authPath);
+            IndexService srv = new IndexService(client);
+            
             // Registry
-            createIndex("elastic/registry.json", indexName, shards, replicas);
+            srv.createIndex("elastic/registry.json", indexName, shards, replicas);
             System.out.println();
             
             // Collection inventory (product references)
-            createIndex("elastic/refs.json", indexName + "-refs", shards, replicas);
+            srv.createIndex("elastic/refs.json", indexName + "-refs", shards, replicas);
             System.out.println();
             
             // Data dictionary
-            createIndex("elastic/data-dic.json", indexName + "-dd", 1, replicas);
+            srv.createIndex("elastic/data-dic.json", indexName + "-dd", 1, replicas);
             // Load data
             DataLoader dl = new DataLoader(esUrl, indexName + "-dd", authPath);
-            File zipFile = getDataDicFile();
+            File zipFile = srv.getDataDicFile();
             dl.loadZippedFile(zipFile, "dd.json");
         }
         finally
@@ -83,45 +77,6 @@ public class CreateRegistryCmd implements CliCommand
         }
     }
 
-    
-    /**
-     * Create Elasticsearch index
-     * @param relativeSchemaPath Relative path to Elasticsearch index schema file.
-     * The path is relative to $REGISTRY_MANGER_HOME, e.g., "elastic/registry.json"
-     * @param indexName Elasticsearch index name
-     * @param shards number of shards
-     * @param replicas number of replicas
-     * @throws Exception
-     */
-    private void createIndex(String relativeSchemaPath, String indexName, int shards, int replicas) throws Exception
-    {
-        File schemaFile = getSchemaFile(relativeSchemaPath);
-        
-        try
-        {
-            System.out.println("Creating index...");
-            System.out.println("   Index: " + indexName);
-            System.out.println("  Schema: " + schemaFile.getAbsolutePath());
-            System.out.println("  Shards: " + shards);
-            System.out.println("Replicas: " + replicas);
-            
-            // Create request
-            Request req = new Request("PUT", "/" + indexName);
-            RegistryRequestBuilder bld = new RegistryRequestBuilder();
-            String jsonReq = bld.createCreateIndexRequest(schemaFile, shards, replicas);
-            req.setJsonEntity(jsonReq);
-
-            // Execute request
-            Response resp = client.performRequest(req);
-            EsUtils.printWarnings(resp);
-            System.out.println("Done");
-        }
-        catch(ResponseException ex)
-        {
-            throw new Exception(EsUtils.extractErrorMessage(ex));
-        }
-    }
-    
 
     /**
      * Parse and validate "-shards" parameter
@@ -170,42 +125,6 @@ public class CreateRegistryCmd implements CliCommand
         {
             return -1;
         }
-    }
-    
-    
-    /**
-     * Get Elasticsearch schema file by relative path.
-     * @param relPath
-     * @return
-     * @throws Exception
-     */
-    private File getSchemaFile(String relPath) throws Exception
-    {
-        String home = System.getenv("REGISTRY_MANAGER_HOME");
-        if(home == null) throw new Exception(ERR_CFG);
-
-        File file = new File(home, relPath);
-        if(!file.exists()) throw new Exception("Schema file " + file.getAbsolutePath() + " does not exist");
-        
-        return file;
-    }
-    
-    
-    /**
-     * Get default data dictionary data file.
-     * @return
-     * @throws Exception
-     */
-    private File getDataDicFile() throws Exception
-    {
-        String home = System.getenv("REGISTRY_MANAGER_HOME");
-        if(home == null) 
-        {
-            throw new Exception(ERR_CFG);
-        }
-        
-        File file = new File(home, "elastic/data-dic-data.jar");
-        return file;
     }
     
     

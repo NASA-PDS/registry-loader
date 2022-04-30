@@ -22,6 +22,7 @@ import gov.nasa.pds.registry.mgr.cmd.dd.DeleteDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ExportDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ListDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.LoadDDCmd;
+import gov.nasa.pds.registry.mgr.cmd.dd.UpgradeDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
 import gov.nasa.pds.registry.mgr.util.log.Log4jConfigurator;
@@ -79,6 +80,7 @@ public class RegistryManagerCli
         System.out.println("  load-dd              Load data into data dictionary");
         System.out.println("  delete-dd            Delete data from data dictionary");        
         System.out.println("  export-dd            Export data dictionary");
+        System.out.println("  upgrade-dd           Upgrade data dictionary");
 
         System.out.println();
         System.out.println("Other:");
@@ -243,6 +245,7 @@ public class RegistryManagerCli
         commands.put("load-dd", new LoadDDCmd());
         commands.put("delete-dd", new DeleteDDCmd());
         commands.put("export-dd", new ExportDDCmd());
+        commands.put("upgrade-dd", new UpgradeDDCmd());
         
         // Data
         commands.put("delete-data", new DeleteDataCmd());
@@ -311,9 +314,6 @@ public class RegistryManagerCli
         bld = Option.builder("packageId").hasArg().argName("id");
         options.addOption(bld.build());
         
-        bld = Option.builder("all");
-        options.addOption(bld.build());
-        
         bld = Option.builder("status").hasArg().argName("status");
         options.addOption(bld.build());
         
@@ -335,6 +335,13 @@ public class RegistryManagerCli
         options.addOption(bld.build());
         
         bld = Option.builder("v").hasArg().argName("level");
+        options.addOption(bld.build());
+
+        // No arguments
+        bld = Option.builder("all");
+        options.addOption(bld.build());
+
+        bld = Option.builder("r");
         options.addOption(bld.build());
     }
     
