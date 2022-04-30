@@ -29,6 +29,7 @@
       "lid": { "type": "keyword" },
       "vid": { "type": "float" },
       "lidvid": { "type": "keyword" },
+      "alternate_ids": { "type": "keyword" },
 
       "title": {"type": "text", "analyzer": "english"},
       "description": {"type": "text", "analyzer": "english"},

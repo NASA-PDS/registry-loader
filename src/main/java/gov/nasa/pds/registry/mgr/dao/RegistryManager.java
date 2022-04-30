@@ -23,6 +23,7 @@ public class RegistryManager
     private RestClient esClient;
     private SchemaDao schemaDao;
     private DataDictionaryDao dataDictionaryDao;
+    private RegistryDao registryDao;
     
     
     /**
@@ -47,7 +48,8 @@ public class RegistryManager
         log.info("Registry index: " + indexName);
         
         schemaDao = new SchemaDao(esClient, indexName);
-        dataDictionaryDao = new DataDictionaryDao(esClient, indexName);                
+        dataDictionaryDao = new DataDictionaryDao(esClient, indexName);
+        registryDao = new RegistryDao(esClient, indexName);
     }
     
     
@@ -101,6 +103,16 @@ public class RegistryManager
     public DataDictionaryDao getDataDictionaryDao()
     {
         return dataDictionaryDao;
+    }
+
+    
+    /**
+     * Get registry DAO object.
+     * @return Registry DAO
+     */
+    public RegistryDao getRegistryDao()
+    {
+        return registryDao;
     }
 
 }

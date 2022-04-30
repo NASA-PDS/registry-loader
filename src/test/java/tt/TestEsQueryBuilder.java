@@ -11,9 +11,6 @@ public class TestEsQueryBuilder
         
         testDelete();
         System.out.println();
-        
-        testUpdateStatus();
-        System.out.println();
     }
 
 
@@ -33,10 +30,4 @@ public class TestEsQueryBuilder
     }
 
     
-    private static void testUpdateStatus() throws Exception
-    {
-        RegistryRequestBuilder bld = new RegistryRequestBuilder(true);
-        String json = bld.createUpdateStatusRequest("STAGED", "lidvid", "test::1.0");
-        System.out.println(json);
-    }
 }
