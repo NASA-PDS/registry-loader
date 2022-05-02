@@ -38,7 +38,6 @@ public class DeleteRegistryCmd implements CliCommand
         String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
-        System.out.println("Elasticsearch URL: " + esUrl);
 
         RestClient client = null;
         
@@ -50,8 +49,6 @@ public class DeleteRegistryCmd implements CliCommand
             srv.deleteIndex(indexName);
             srv.deleteIndex(indexName + "-refs");
             srv.deleteIndex(indexName + "-dd");
-
-            System.out.println("Done");            
         }
         finally
         {

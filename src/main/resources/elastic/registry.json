@@ -47,8 +47,8 @@
       "ops:Label_File_Info/ops:file_name": { "type": "keyword" },
       "ops:Label_File_Info/ops:file_size": { "type": "long" },
       "ops:Label_File_Info/ops:md5_checksum": { "type": "keyword" },
-      "ops:Label_File_Info/ops:blob": { "type": "binary", "index": false },
-      "ops:Label_File_Info/ops:json_blob": { "type": "binary", "index": false },
+      "ops:Label_File_Info/ops:blob": { "type": "binary" },
+      "ops:Label_File_Info/ops:json_blob": { "type": "binary" },
 
       "ops:Data_File_Info/ops:creation_date_time": { "type": "date" },
       "ops:Data_File_Info/ops:file_ref": { "type": "keyword" },

@@ -46,9 +46,6 @@ public class CreateRegistryCmd implements CliCommand
         int shards = parseShards(cmdLine.getOptionValue("shards", "1"));
         int replicas = parseReplicas(cmdLine.getOptionValue("replicas", "0"));
         
-        System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println();
-        
         RestClient client = null;
 
         try
@@ -58,17 +55,15 @@ public class CreateRegistryCmd implements CliCommand
             
             // Registry
             srv.createIndex("elastic/registry.json", indexName, shards, replicas);
-            System.out.println();
-            
+
             // Collection inventory (product references)
             srv.createIndex("elastic/refs.json", indexName + "-refs", shards, replicas);
-            System.out.println();
             
             // Data dictionary
             srv.createIndex("elastic/data-dic.json", indexName + "-dd", 1, replicas);
             // Load data
             DataLoader dl = new DataLoader(esUrl, indexName + "-dd", authPath);
-            File zipFile = srv.getDataDicFile();
+            File zipFile = IndexService.getDataDicFile();
             dl.loadZippedFile(zipFile, "dd.json");
         }
         finally
