@@ -61,4 +61,5 @@ registry-manager load-data -dir /tmp/harvest/out/ -es "$ES_URL" -force -auth /et
 if [ "$RUN_TESTS" = "true" ]; then
   echo "Setting archive status ..." 1>&2
   registry-manager set-archive-status -status archived -lidvid "$TEST_DATA_LIDVID" -es "$ES_URL" -auth /etc/es-auth.cfg
+  registry-manager set-archive-status -status staged -lidvid "urn:nasa:pds:insight_rad:data_calibrated::7.0" -es "$ES_URL" -auth /etc/es-auth.cfg
 fi
