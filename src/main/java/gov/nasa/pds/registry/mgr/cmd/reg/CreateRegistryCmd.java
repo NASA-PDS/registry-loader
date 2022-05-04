@@ -105,8 +105,8 @@ public class CreateRegistryCmd implements CliCommand
     
     /**
      * Parse integer
-     * @param str
-     * @return
+     * @param str a string to convert to int
+     * @return parsed int
      */
     private int parseInt(String str)
     {
