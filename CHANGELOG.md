@@ -1,12 +1,12 @@
 # Changelog
 
+## [v1.3.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.3.0-SNAPSHOT) (2022-04-13)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.2.0...v1.3.0-SNAPSHOT)
+
 ## [v1.2.0](https://github.com/NASA-PDS/registry-common/tree/v1.2.0) (2022-04-13)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.2.0SNAPSHOT...v1.2.0)
-
-## [v1.2.0SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.2.0SNAPSHOT) (2022-04-13)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.1.2...v1.2.0SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.1.2...v1.2.0)
 
 **Defects:**
 
