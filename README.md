@@ -6,7 +6,8 @@ _staged_, _restricted_, _certified_ and _archived_. Only those records with an a
 through the API.
 
 The script contained in this repository; _upgrade/archive-status.sh_ introduces this field to all records stored within
-the indicated ElasticSearch/Opensearch endpoint, setting all values to _staged_. 
+the indicated ElasticSearch/Opensearch endpoint, setting all values to _staged_. *This script must be applied to your registry 
+Opensearch if you are upgrading the Registry API from any release before 0.5.1 to 0.5.1 or later.*
 
 The syntax for invoking this script is as follows:
 
