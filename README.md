@@ -13,5 +13,6 @@ The syntax for invoking this script is as follows:
 ```archive-status.sh <Opensearch URL> [<Opensearch username> <Opensearch password>]```
 
 Once this script has been applied, the _registry-manager_ utility is used to promote the archive status of the 
-products, collections and bundles to other values. Refer to the [_registry-manager_ documentation]
-(https://nasa-pds.github.io/pds-registry-app/operate/reg-manager.html#ArchiveStatus) on using the set-archive-status command.
+products, collections and bundles to other values. Refer to the 
+[_registry-manager_ documentation](https://nasa-pds.github.io/pds-registry-app/operate/reg-manager.html#ArchiveStatus) 
+on using the set-archive-status command.
