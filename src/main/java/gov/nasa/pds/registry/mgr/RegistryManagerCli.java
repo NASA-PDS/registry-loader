@@ -17,10 +17,12 @@ import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.cmd.data.DeleteDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.ExportFileCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.SetArchiveStatusCmd;
+import gov.nasa.pds.registry.mgr.cmd.data.UpdateAltIdsCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.DeleteDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ExportDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ListDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.LoadDDCmd;
+import gov.nasa.pds.registry.mgr.cmd.dd.UpgradeDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
 import gov.nasa.pds.registry.mgr.util.log.Log4jConfigurator;
@@ -65,6 +67,7 @@ public class RegistryManagerCli
         System.out.println("  delete-data          Delete data from registry index");
         System.out.println("  export-file          Export a file from blob storage");
         System.out.println("  set-archive-status   Set product archive status");
+        System.out.println("  update-alt-ids       Update alternate IDs");
         
         System.out.println();
         System.out.println("Registry:");
@@ -77,6 +80,7 @@ public class RegistryManagerCli
         System.out.println("  load-dd              Load data into data dictionary");
         System.out.println("  delete-dd            Delete data from data dictionary");        
         System.out.println("  export-dd            Export data dictionary");
+        System.out.println("  upgrade-dd           Upgrade data dictionary");
 
         System.out.println();
         System.out.println("Other:");
@@ -241,12 +245,13 @@ public class RegistryManagerCli
         commands.put("load-dd", new LoadDDCmd());
         commands.put("delete-dd", new DeleteDDCmd());
         commands.put("export-dd", new ExportDDCmd());
+        commands.put("upgrade-dd", new UpgradeDDCmd());
         
         // Data
         commands.put("delete-data", new DeleteDataCmd());
-        //commands.put("export-data", new ExportDataCmd());
         commands.put("export-file", new ExportFileCmd());
         commands.put("set-archive-status", new SetArchiveStatusCmd());
+        commands.put("update-alt-ids", new UpdateAltIdsCmd());
     }
     
     
@@ -309,9 +314,6 @@ public class RegistryManagerCli
         bld = Option.builder("packageId").hasArg().argName("id");
         options.addOption(bld.build());
         
-        bld = Option.builder("all");
-        options.addOption(bld.build());
-        
         bld = Option.builder("status").hasArg().argName("status");
         options.addOption(bld.build());
         
@@ -333,6 +335,13 @@ public class RegistryManagerCli
         options.addOption(bld.build());
         
         bld = Option.builder("v").hasArg().argName("level");
+        options.addOption(bld.build());
+
+        // No arguments
+        bld = Option.builder("all");
+        options.addOption(bld.build());
+
+        bld = Option.builder("r");
         options.addOption(bld.build());
     }
     
