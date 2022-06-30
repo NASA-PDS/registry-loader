@@ -15,6 +15,7 @@ import gov.nasa.pds.registry.common.util.FieldMapSet;
  */
 public class Metadata
 {
+    public static final String FLD_ALTERNATE_IDS = "alternate_ids";
     public static final String FLD_NODE_NAME = "ops:Harvest_Info/ops:node_name";
     public static final String FLD_HARVEST_DATE_TIME = "ops:Harvest_Info/ops:harvest_date_time";    
     public static final String FLD_ARCHIVE_STATUS = "ops:Tracking_Meta/ops:archive_status";

@@ -91,6 +91,10 @@ public class BasicMetadataExtractor
         // LIDVID
         md.lidvid = md.lid + "::" + md.strVid;
         
+        // Alternate IDs
+        md.fields.addValue(Metadata.FLD_ALTERNATE_IDS, md.lidvid);
+        md.fields.addValue(Metadata.FLD_ALTERNATE_IDS, md.lid);        
+        
         // Title
         md.title = StringUtils.normalizeSpace(XPathUtils.getStringValue(doc, xTitle));
 
