@@ -94,7 +94,7 @@ public class RegistryManagerCli
         
         System.out.println();
         System.out.println("Pass -help after any command to see command-specific usage information, for example,");
-        System.out.println("  registry-manager load-data -help");
+        System.out.println("  registry-manager set-archive-status -help");
     }
 
     
