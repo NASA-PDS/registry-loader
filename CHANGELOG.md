@@ -1,12 +1,20 @@
 # Changelog
 
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2022-08-01)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v0.2.2-SNAPSHOT...«unknown»)
+
+**Other closed issues:**
+
+- Add README / documentation for executing archive status update script and upgrade dd command [\#14](https://github.com/NASA-PDS/registry-loader/issues/14)
+
+## [v0.2.2-SNAPSHOT](https://github.com/NASA-PDS/registry-loader/tree/v0.2.2-SNAPSHOT) (2022-06-16)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v0.2.1...v0.2.2-SNAPSHOT)
+
 ## [v0.2.1](https://github.com/NASA-PDS/registry-loader/tree/v0.2.1) (2022-05-03)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v0.3.0-SNAPSHOT...v0.2.1)
-
-## [v0.3.0-SNAPSHOT](https://github.com/NASA-PDS/registry-loader/tree/v0.3.0-SNAPSHOT) (2022-05-03)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v0.2.0...v0.3.0-SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v0.2.0...v0.2.1)
 
 ## [v0.2.0](https://github.com/NASA-PDS/registry-loader/tree/v0.2.0) (2022-04-14)
 
