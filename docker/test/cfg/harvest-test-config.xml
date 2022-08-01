@@ -4,5 +4,9 @@
     <path>/data</path>
   </directories>
   <registry url="https://elasticsearch:9200" index="registry" auth="/etc/es-auth.cfg" />
+  <fileInfo>
+    <!-- UPDATE with your own local path and base url where pds4 archive is published -->
+    <fileRef replacePrefix="/data" with="http://localhost:81/archive/test-data" />
+  </fileInfo>
   <autogenFields/>
 </harvest>
