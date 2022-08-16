@@ -1,6 +1,14 @@
 # Changelog
 
-## [v4.5.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.0-SNAPSHOT) (2022-06-27)
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2022-08-16)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.0-SNAPSHOT...«unknown»)
+
+**Requirements:**
+
+- As a user I want to search on ref\_lid\_\* [\#50](https://github.com/NASA-PDS/registry-mgr/issues/50)
+
+## [v4.5.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.0-SNAPSHOT) (2022-07-04)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.4.0...v4.5.0-SNAPSHOT)
 
