@@ -1,20 +1,16 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2022-08-25)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.0-SNAPSHOT...«unknown»)
-
-**Defects:**
-
-- bug with pagination limitations per OpenSearch config [\#53](https://github.com/NASA-PDS/registry-mgr/issues/53) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
-
-## [v4.5.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.0-SNAPSHOT) (2022-08-16)
+## [v4.5.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.0-SNAPSHOT) (2022-08-25)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.4.0...v4.5.0-SNAPSHOT)
 
 **Requirements:**
 
 - As a user I want to search on ref\_lid\_\* [\#50](https://github.com/NASA-PDS/registry-mgr/issues/50)
+
+**Defects:**
+
+- bug with pagination limitations per OpenSearch config [\#53](https://github.com/NASA-PDS/registry-mgr/issues/53) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
 
 ## [v4.4.0](https://github.com/NASA-PDS/registry-mgr/tree/v4.4.0) (2022-04-13)
 
