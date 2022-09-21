@@ -1,8 +1,12 @@
 # Changelog
 
-## [v4.5.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.0-SNAPSHOT) (2022-08-25)
+## [v4.5.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.0-SNAPSHOT) (2022-09-06)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.4.0...v4.5.0-SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/4.5.0...v4.5.0-SNAPSHOT)
+
+## [release/4.5.0](https://github.com/NASA-PDS/registry-mgr/tree/release/4.5.0) (2022-09-06)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.4.0...release/4.5.0)
 
 **Requirements:**
 
