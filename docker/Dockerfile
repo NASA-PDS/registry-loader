@@ -31,8 +31,8 @@
 FROM openjdk:11-slim
 
 # Set following arguments with compatible versions
-ARG harvest_version=3.6.0
-ARG reg_manager_version=4.4.0
+ARG harvest_version=3.7.2
+ARG reg_manager_version=4.5.0
 ARG test_data_url=https://pds-gamma.jpl.nasa.gov/data/pds4/test-data/registry/urn-nasa-pds-insight_rad.tar.gz
 
 
