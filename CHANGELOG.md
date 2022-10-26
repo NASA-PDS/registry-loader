@@ -1,8 +1,12 @@
 # Changelog
 
-## [v4.5.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.0-SNAPSHOT) (2022-09-06)
+## [release/4.5.1](https://github.com/NASA-PDS/registry-mgr/tree/release/4.5.1) (2022-10-26)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/4.5.0...v4.5.0-SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.0...release/4.5.1)
+
+## [v4.5.0](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.0) (2022-09-21)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/4.5.0...v4.5.0)
 
 ## [release/4.5.0](https://github.com/NASA-PDS/registry-mgr/tree/release/4.5.0) (2022-09-06)
 
@@ -10,7 +14,7 @@
 
 **Requirements:**
 
-- As a user I want to search on ref\_lid\_\* [\#50](https://github.com/NASA-PDS/registry-mgr/issues/50)
+- As a registry user, I want to search on ref\_lid\_\* from the registry metadata [\#50](https://github.com/NASA-PDS/registry-mgr/issues/50)
 
 **Defects:**
 
