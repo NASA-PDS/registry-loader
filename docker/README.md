@@ -13,8 +13,8 @@ The Registry Loader is a docker image which contains both Harvest and the Regist
 
 ```    
 # Set following arguments with compatible versions
-ARG harvest_version=3.6.0-SNAPSHOT
-ARG reg_manager_version=4.4.0-SNAPSHOT
+ARG harvest_version=3.7.2
+ARG reg_manager_version=4.5.0
 ```
 
 #### 2. Open a terminal and change the current working directory to `registry-loader/docker`.
