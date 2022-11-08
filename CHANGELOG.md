@@ -1,6 +1,10 @@
 # Changelog
 
-## [v1.3.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.3.0-SNAPSHOT) (2022-06-30)
+## [release/1.3.0](https://github.com/NASA-PDS/registry-common/tree/release/1.3.0) (2022-09-06)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.3.0-SNAPSHOT...release/1.3.0)
+
+## [v1.3.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.3.0-SNAPSHOT) (2022-09-06)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.2.0...v1.3.0-SNAPSHOT)
 
