@@ -8,7 +8,7 @@ import com.google.gson.stream.JsonWriter;
 
 /**
  * Utility class to write NJSON (new-line delimited JSON) documents.
- *  
+ *
  * @author karpenko
  *
  */
@@ -27,22 +27,22 @@ public class NJsonDocUtils
     {
         StringWriter sw = new StringWriter();
         JsonWriter jw = new JsonWriter(sw);
-        
+
         jw.beginObject();
-        
+
         jw.name("index");
         jw.beginObject();
         jw.name("_id").value(id);
         jw.endObject();
-        
+
         jw.endObject();
-        
+
         jw.close();
-        
+
         return sw.getBuffer().toString();
     }
 
-    
+
     /**
      * Write primary key (first line in NJSON record)
      * @param writer Generic writer
@@ -54,7 +54,7 @@ public class NJsonDocUtils
         writer.write(createPKJson(id));
     }
 
-    
+
     /**
      * Write a field.
      * @param jw JSON writer
@@ -65,7 +65,7 @@ public class NJsonDocUtils
     public static void writeField(JsonWriter jw, String key, String value) throws Exception
     {
         if(value == null) return;
-        
+
         key = toEsFieldName(key);
         jw.name(key).value(value);
     }
@@ -84,7 +84,7 @@ public class NJsonDocUtils
         jw.name(key).value(value);
     }
 
-    
+
     /**
      * Write a field.
      * @param jw JSON writer
@@ -98,7 +98,7 @@ public class NJsonDocUtils
         jw.name(key).value(value);
     }
 
-    
+
     /**
      * Write a field.
      * @param jw JSON writer
@@ -113,19 +113,12 @@ public class NJsonDocUtils
         key = toEsFieldName(key);
         jw.name(key);
 
-        if(values.size() == 1)
+        jw.beginArray();
+        for(String value: values)
         {
-            jw.value(values.iterator().next());
+            jw.value(value);
         }
-        else
-        {
-            jw.beginArray();
-            for(String value: values)
-            {
-                jw.value(value);
-            }
-            jw.endArray();
-        }
+        jw.endArray();
     }
 
 
@@ -151,9 +144,9 @@ public class NJsonDocUtils
         jw.endArray();
     }
 
-        
+
     /**
-     * Convert registry field name to the valid Elasticsearch field name. 
+     * Convert registry field name to the valid Elasticsearch field name.
      * (Replace '.' with '/').
      * @param fieldName a field name
      * @return valid Elasticsearch field name
