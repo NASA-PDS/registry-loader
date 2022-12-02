@@ -1,12 +1,16 @@
 # Changelog
 
-## [release/4.5.3](https://github.com/NASA-PDS/registry-mgr/tree/release/4.5.3) (2022-11-09)
+## [4.5.2](https://github.com/NASA-PDS/registry-mgr/tree/4.5.2) (2022-12-02)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.0-SNAPSHOT...release/4.5.3)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.3...4.5.2)
 
-## [v4.6.0-SNAPSHOT](https://github.com/NASA-PDS/registry-mgr/tree/v4.6.0-SNAPSHOT) (2022-11-04)
+**Defects:**
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.2...v4.6.0-SNAPSHOT)
+- ref\_lid\_collection error when ingesting data sets [\#57](https://github.com/NASA-PDS/registry-mgr/issues/57) [[s.medium](https://github.com/NASA-PDS/registry-mgr/labels/s.medium)]
+
+## [v4.5.3](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.3) (2022-11-09)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.2...v4.5.3)
 
 ## [v4.5.2](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.2) (2022-10-26)
 
