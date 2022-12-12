@@ -1,20 +1,24 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2022-11-30)
+## [release/1.3.1](https://github.com/NASA-PDS/registry-common/tree/release/1.3.1) (2022-11-30)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.4.0-SNAPSHOT...«unknown»)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.4.0-SNAPSHOT...release/1.3.1)
+
+## [v1.4.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.4.0-SNAPSHOT) (2022-11-30)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.3.0...v1.4.0-SNAPSHOT)
 
 **Defects:**
 
 - NJsonDocUtils.writeField\(\) converts single-element-valued collection to String [\#29](https://github.com/NASA-PDS/registry-common/issues/29) [[s.medium](https://github.com/NASA-PDS/registry-common/labels/s.medium)]
 
-## [v1.4.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.4.0-SNAPSHOT) (2022-11-21)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.3.0...v1.4.0-SNAPSHOT)
-
 ## [v1.3.0](https://github.com/NASA-PDS/registry-common/tree/v1.3.0) (2022-11-08)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.2.0...v1.3.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.3.0-SNAPSHOT...v1.3.0)
+
+## [v1.3.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.3.0-SNAPSHOT) (2022-09-06)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.2.0...v1.3.0-SNAPSHOT)
 
 ## [v1.2.0](https://github.com/NASA-PDS/registry-common/tree/v1.2.0) (2022-04-13)
 
