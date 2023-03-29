@@ -240,7 +240,7 @@ public class FileMetadataExtractor
         try
         {
             source = new FileReader(file);
-            JSONObject json = XML.toJSONObject(source);
+            JSONObject json = XML.toJSONObject(source, true);
             String strJson = json.toString();
             dest.write(strJson);
             dest.close();
