@@ -1,12 +1,17 @@
 # Changelog
 
-## [release/1.3.1](https://github.com/NASA-PDS/registry-common/tree/release/1.3.1) (2022-11-30)
+## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2023-03-29)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.4.0-SNAPSHOT...release/1.3.1)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.3.1...«unknown»)
 
-## [v1.4.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.4.0-SNAPSHOT) (2022-11-30)
+**Defects:**
 
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.3.0...v1.4.0-SNAPSHOT)
+- JSON BLOB performs undesirable conversion of floating-point types with int-like values [\#32](https://github.com/NASA-PDS/registry-common/issues/32) [[s.high](https://github.com/NASA-PDS/registry-common/labels/s.high)]
+- Registry manager fails with updates to LDDTool to support ISO Formatted dates [\#31](https://github.com/NASA-PDS/registry-common/issues/31) [[s.high](https://github.com/NASA-PDS/registry-common/labels/s.high)]
+
+## [v1.3.1](https://github.com/NASA-PDS/registry-common/tree/v1.3.1) (2022-12-12)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.3.0...v1.3.1)
 
 **Defects:**
 
@@ -14,11 +19,7 @@
 
 ## [v1.3.0](https://github.com/NASA-PDS/registry-common/tree/v1.3.0) (2022-11-08)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.3.0-SNAPSHOT...v1.3.0)
-
-## [v1.3.0-SNAPSHOT](https://github.com/NASA-PDS/registry-common/tree/v1.3.0-SNAPSHOT) (2022-09-06)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.2.0...v1.3.0-SNAPSHOT)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.2.0...v1.3.0)
 
 ## [v1.2.0](https://github.com/NASA-PDS/registry-common/tree/v1.2.0) (2022-04-13)
 
