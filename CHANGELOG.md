@@ -1,5 +1,13 @@
 # Changelog
 
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2023-03-30)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.4...«unknown»)
+
+**Requirements:**
+
+- As a user, I want to query OpenSearch for staged data via a CLI command  [\#59](https://github.com/NASA-PDS/registry-mgr/issues/59)
+
 ## [v4.5.4](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.4) (2022-12-12)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.3...v4.5.4)
