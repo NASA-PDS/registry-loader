@@ -1,8 +1,16 @@
 # Changelog
 
-## [release/0.3.9](https://github.com/NASA-PDS/registry-loader/tree/release/0.3.9) (2023-03-31)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2023-03-31)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v0.3.7...release/0.3.9)
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v0.3.9...«unknown»)
+
+**Defects:**
+
+- Stable Roundup can no longer trigger Imaging workflow [\#26](https://github.com/NASA-PDS/registry-loader/issues/26)
+
+## [v0.3.9](https://github.com/NASA-PDS/registry-loader/tree/v0.3.9) (2023-03-31)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v0.3.7...v0.3.9)
 
 ## [v0.3.7](https://github.com/NASA-PDS/registry-loader/tree/v0.3.7) (2022-12-12)
 
