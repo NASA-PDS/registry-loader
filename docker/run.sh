@@ -55,10 +55,10 @@ HARVEST_DATA_DIR=/tmp/data
 ES_AUTH_CONFIG_FILE=/tmp/cfg/es-auth.cfg
 
 # URL to download the test data to Harvest (only required, if executing with test data)
-TEST_DATA_URL=https://pds-gamma.jpl.nasa.gov/data/pds4/test-data/registry/urn-nasa-pds-insight_rad.tar.gz
+TEST_DATA_URL=https://pds.nasa.gov/data/pds4/test-data/registry/custom-datasets.tar.gz
 
 # The lidvid of the test data, which is used to set the archive status (only required, if executing with test data)
-TEST_DATA_LIDVID=urn:nasa:pds:insight_rad::2.1
+TEST_DATA_LIDVID=urn:nasa:pds:mars2020.spice::1.0 urn:nasa:pds:mars2020.spice::2.0 urn:nasa:pds:mars2020.spice::3.0
 
 
 # Check if the ES_URL environment variable is set
