@@ -44,7 +44,7 @@ fi
 if [ "$RUN_TESTS" = "true" ]; then
   echo "Downloading Harvest test data ..." 1>&2
   curl -o /tmp/data.tar.gz "$TEST_DATA_URL"
-  mkdir /data && tar xzf /tmp/data.tar.gz -C /data --strip-components 1
+  mkdir -p /data && tar xzf /tmp/data.tar.gz -C /data --strip-components 1
   rm -f /tmp/data.tar.gz
   HARVEST_CFG_FILE=/test/cfg/harvest-config.xml
 else
@@ -60,5 +60,5 @@ if [ "$RUN_TESTS" = "true" ]; then
   do
       registry-manager set-archive-status -status archived -lidvid "$lid" -es "$ES_URL" -auth /etc/es-auth.cfg
   done
-  registry-manager set-archive-status -status staged -lidvid "urn:nasa:pds:mars2020.spice:document" -es "$ES_URL" -auth /etc/es-auth.cfg
+  registry-manager set-archive-status -status staged -lidvid "urn:nasa:pds:mars2020.spice:document::1.0" -es "$ES_URL" -auth /etc/es-auth.cfg
 fi
