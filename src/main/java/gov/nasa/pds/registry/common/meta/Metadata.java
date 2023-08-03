@@ -86,4 +86,17 @@ public class Metadata
         fields.setValue(FLD_ARCHIVE_STATUS, status);
     }
 
+    /**
+     * terrible hack to set the harvest version from something that depends
+     * on this module.
+     */
+    private static String harvest_version = "not set by harvest";
+    public static String getReportedHarvestVersion() {
+      return Metadata.harvest_version;
+    }
+    public static void reportHarvestVersion (String value) {
+      if (value != null) {
+        Metadata.harvest_version = value;
+      }
+    }
 }
