@@ -18,6 +18,7 @@ public class Metadata
     public static final String FLD_ALTERNATE_IDS = "alternate_ids";
     public static final String FLD_NODE_NAME = "ops:Harvest_Info/ops:node_name";
     public static final String FLD_HARVEST_DATE_TIME = "ops:Harvest_Info/ops:harvest_date_time";    
+    public static final String FLD_HARVEST_VERSION = "ops:Harvest_Info/ops:harvest_version";    
     public static final String FLD_ARCHIVE_STATUS = "ops:Tracking_Meta/ops:archive_status";
 
 
@@ -67,6 +68,16 @@ public class Metadata
 
 
     /**
+     * Set harvest version
+     * @param val version
+     */
+    public void setHarvestVersion(String val)
+    {
+        fields.setValue(FLD_HARVEST_DATE_TIME, val);
+    }
+
+
+   /**
      * Set archive status
      * @param status archive status
      */

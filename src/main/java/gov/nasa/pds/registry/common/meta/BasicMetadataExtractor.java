@@ -59,6 +59,7 @@ public class BasicMetadataExtractor
         // Set default fields
         md.setHarvestTimestamp(Instant.now());
         md.setArchiveStatus("staged");
+        md.setHarvestVersion("FIXME");
         
         // Product class
         md.prodClass = doc.getDocumentElement().getNodeName();
