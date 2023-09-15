@@ -61,4 +61,5 @@ if [ "$RUN_TESTS" = "true" ]; then
       registry-manager set-archive-status -status archived -lidvid "$lid" -es "$ES_URL" -auth /etc/es-auth.cfg
   done
   registry-manager set-archive-status -status staged -lidvid "urn:nasa:pds:mars2020.spice:document::1.0" -es "$ES_URL" -auth /etc/es-auth.cfg
+  registry-manager set-archive-status -status staged -lidvid "urn:nasa:pds:insight_rad::2.1" -es "$ES_URL" -auth /etc/es-auth.cfg
 fi
