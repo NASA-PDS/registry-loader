@@ -52,7 +52,7 @@ else
 fi
 
 echo "Harvesting data based on the configuration file: $HARVEST_CFG_FILE ..." 1>&2
-harvest -c "$HARVEST_CFG_FILE"
+harvest -c "$HARVEST_CFG_FILE" --overwrite
 
 if [ "$RUN_TESTS" = "true" ]; then
   echo "Setting archive status ..." 1>&2
@@ -61,5 +61,5 @@ if [ "$RUN_TESTS" = "true" ]; then
       registry-manager set-archive-status -status archived -lidvid "$lid" -es "$ES_URL" -auth /etc/es-auth.cfg
   done
   registry-manager set-archive-status -status staged -lidvid "urn:nasa:pds:mars2020.spice:document::1.0" -es "$ES_URL" -auth /etc/es-auth.cfg
-  registry-manager set-archive-status -status staged -lidvid "urn:nasa:pds:insight_rad::2.1" -es "$ES_URL" -auth /etc/es-auth.cfg
+  registry-manager set-archive-status -status archived -lidvid "urn:nasa:pds:insight_rad::2.1" -es "$ES_URL" -auth /etc/es-auth.cfg
 fi
