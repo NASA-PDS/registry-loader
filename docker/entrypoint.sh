@@ -44,6 +44,7 @@ fi
 if [ "$RUN_TESTS" = "true" ]; then
   echo "Downloading Harvest test data ..." 1>&2
   curl -L -o /tmp/data.tar.gz "$TEST_DATA_URL"
+  rm -fr /data/*
   mkdir -p /data && tar xzf /tmp/data.tar.gz -C /data --strip-components 1
   rm -f /tmp/data.tar.gz
   HARVEST_CFG_FILE=/test/cfg/harvest-config.xml
