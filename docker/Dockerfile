@@ -32,7 +32,7 @@ FROM openjdk:11-slim
 
 # Set following arguments with compatible versions
 ARG harvest_version=3.8.0-SNAPSHOT
-ARG reg_manager_version=4.5.5
+ARG reg_manager_version=4.6.0-SNAPSHOT
 ARG test_data_url=https://pds.nasa.gov/data/pds4/test-data/registry/custom-datasets.tar.gz
 
 
