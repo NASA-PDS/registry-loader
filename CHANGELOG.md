@@ -1,5 +1,9 @@
 # Changelog
 
+## [release/4.6.0](https://github.com/NASA-PDS/registry-mgr/tree/release/4.6.0) (2023-09-29)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.5...release/4.6.0)
+
 ## [v4.5.5](https://github.com/NASA-PDS/registry-mgr/tree/v4.5.5) (2023-03-31)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.5.4...v4.5.5)
