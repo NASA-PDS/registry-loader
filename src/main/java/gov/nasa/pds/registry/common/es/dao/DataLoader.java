@@ -30,24 +30,24 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  * NJSON file has 2 lines per record: 1 - primary key, 2 - data record.
  * This is the standard file format used by Elasticsearch bulk load API.
  * Data are loaded in batches.
- * 
+ *
  * @author karpenko
  */
 public class DataLoader
 {
-    private int printProgressSize = 500;    
+    private int printProgressSize = 500;
     private int batchSize = 100;
     private int totalRecords;
 
     private Logger log;
-    private HttpConnectionFactory conFactory; 
+    private HttpConnectionFactory conFactory;
 
-    
+
     /**
      * Constructor
      * @param esUrl Elasticsearch URL, e.g., "http://localhost:9200"
      * @param indexName Elasticsearch index name
-     * @param authConfigFile Elasticsearch authentication configuration file 
+     * @param authConfigFile Elasticsearch authentication configuration file
      * (see Registry Manager documentation for more info)
      * @throws Exception an exception
      */
@@ -57,8 +57,8 @@ public class DataLoader
         conFactory = new HttpConnectionFactory(esUrl, indexName, "_bulk?refresh=wait_for");
         conFactory.initAuth(authConfigFile);
     }
-    
-    
+
+
     /**
      * Set data batch size
      * @param size batch size
@@ -69,7 +69,7 @@ public class DataLoader
         this.batchSize = size;
     }
 
-    
+
     /**
      * Load data from an NJSON (new-line-delimited JSON) file into Elasticsearch.
      * @param file NJSON (new-line-delimited JSON) file to load
@@ -78,12 +78,12 @@ public class DataLoader
     public void loadFile(File file) throws Exception
     {
         log.info("Loading ES data file: " + file.getAbsolutePath());
-        
+
         BufferedReader rd = new BufferedReader(new FileReader(file));
         loadData(rd);
     }
-    
-    
+
+
     /**
      * Load data from a zipped NJSON (new-line-delimited JSON) file into Elasticsearch.
      * @param zipFile Zip file with an NJSON data file.
@@ -93,17 +93,17 @@ public class DataLoader
     public void loadZippedFile(File zipFile, String fileName) throws Exception
     {
         log.info("Loading ES data file: " + zipFile.getAbsolutePath() + ":" + fileName);
-        
+
         ZipFile zip = new ZipFile(zipFile);
-        
+
         try
         {
             ZipEntry ze = zip.getEntry(fileName);
-            if(ze == null) 
+            if(ze == null)
             {
                 throw new Exception("Could not find " + fileName +  " in " + zipFile.getAbsolutePath());
             }
-            
+
             BufferedReader rd = new BufferedReader(new InputStreamReader(zip.getInputStream(ze)));
             loadData(rd);
         }
@@ -112,8 +112,8 @@ public class DataLoader
             CloseUtils.close(zip);
         }
     }
-    
-    
+
+
     /**
      * Load NJSON data from a reader.
      * @param rd reader
@@ -122,13 +122,13 @@ public class DataLoader
     private void loadData(BufferedReader rd) throws Exception
     {
         totalRecords = 0;
-        
+
         try
         {
             String firstLine = rd.readLine();
             // File is empty
             if(firstLine == null || firstLine.isEmpty()) return;
-            
+
             while((firstLine = loadBatch(rd, firstLine)) != null)
             {
                 if(totalRecords % printProgressSize == 0)
@@ -136,7 +136,7 @@ public class DataLoader
                     log.info("Loaded " + totalRecords + " document(s)");
                 }
             }
-            
+
             log.info("Loaded " + totalRecords + " document(s)");
         }
         finally
@@ -145,7 +145,7 @@ public class DataLoader
         }
     }
 
-    
+
     /**
      * Load next batch of NJSON (new-line-delimited JSON) data.
      * @param fileReader Reader object with NJSON data.
@@ -156,9 +156,9 @@ public class DataLoader
      */
     private String loadBatch(BufferedReader fileReader, String firstLine) throws Exception
     {
-        HttpURLConnection con = null;        
+        HttpURLConnection con = null;
         OutputStreamWriter writer = null;
-        
+
         try
         {
             con = conFactory.createConnection();
@@ -166,55 +166,55 @@ public class DataLoader
             con.setDoOutput(true);
             con.setRequestMethod("POST");
             con.setRequestProperty("content-type", "application/x-ndjson; charset=utf-8");
-            
+
             writer = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
-            
+
             // First record
             String line1 = firstLine;
             String line2 = fileReader.readLine();
             if(line2 == null) throw new Exception("Premature end of file");
-            
+
             writer.write(line1);
             writer.write("\n");
             writer.write(line2);
             writer.write("\n");
-            
+
             int numRecords = 1;
             while(numRecords < batchSize)
             {
                 line1 = fileReader.readLine();
                 if(line1 == null) break;
-                
+
                 line2 = fileReader.readLine();
                 if(line2 == null) throw new Exception("Premature end of file");
-                
+
                 writer.write(line1);
                 writer.write("\n");
                 writer.write(line2);
                 writer.write("\n");
-                
+
                 numRecords++;
             }
-            
+
             if(numRecords == batchSize)
             {
                 // Let's find out if there are more records
                 line1 = fileReader.readLine();
                 if(line1 != null && line1.isEmpty()) line1 = null;
             }
-            
+
             writer.flush();
             writer.close();
-        
+
             // Check for Elasticsearch errors.
             String respJson = getLastLine(con.getInputStream());
             log.debug(respJson);
-            
+
             if(responseHasErrors(respJson))
             {
                 throw new Exception("Could not load data.");
             }
-            
+
             totalRecords += numRecords;
 
             return line1;
@@ -228,15 +228,15 @@ public class DataLoader
             // Get HTTP response code
             int respCode = getResponseCode(con);
             if(respCode <= 0) throw ex;
-            
-            // Try extracting JSON from multi-line error response (last line) 
+
+            // Try extracting JSON from multi-line error response (last line)
             String json = getLastLine(con.getErrorStream());
             if(json == null) throw ex;
-            
+
             // Parse error JSON to extract reason.
             String msg = EsUtils.extractReasonFromJson(json);
             if(msg == null) msg = json;
-            
+
             throw new Exception(msg);
         }
         finally
@@ -244,8 +244,8 @@ public class DataLoader
             CloseUtils.close(writer);
         }
     }
-    
-    
+
+
     /**
      * Load data into Elasticsearch
      * @param data NJSON data. (2 lines per record)
@@ -257,10 +257,10 @@ public class DataLoader
     {
         if(data == null || data.isEmpty()) return 0;
         if(data.size() % 2 != 0) throw new Exception("Data list size should be an even number.");
-        
+
         HttpURLConnection con = null;
         OutputStreamWriter writer = null;
-        
+
         try
         {
             con = conFactory.createConnection();
@@ -268,9 +268,9 @@ public class DataLoader
             con.setDoOutput(true);
             con.setRequestMethod("POST");
             con.setRequestProperty("content-type", "application/x-ndjson; charset=utf-8");
-            
+
             writer = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
-            
+
             for(int i = 0; i < data.size(); i+=2)
             {
                 writer.write(data.get(i));
@@ -278,10 +278,10 @@ public class DataLoader
                 writer.write(data.get(i+1));
                 writer.write("\n");
             }
-            
+
             writer.flush();
             writer.close();
-        
+
             // Read Elasticsearch response.
             String respJson = DaoUtils.getLastLine(con.getInputStream());
             log.debug(respJson);
@@ -290,8 +290,8 @@ public class DataLoader
             int failedCount = processErrors(respJson, errorLidvids);
             // Calculate number of successfully saved records
             // NOTE: data list has two lines per record (primary key + data)
-            int loadedCount = data.size() / 2 - failedCount;            
-            return loadedCount; 
+            int loadedCount = data.size() / 2 - failedCount;
+            return loadedCount;
         }
         catch(UnknownHostException ex)
         {
@@ -302,15 +302,15 @@ public class DataLoader
             // Get HTTP response code
             int respCode = getResponseCode(con);
             if(respCode <= 0) throw ex;
-            
-            // Try extracting JSON from multi-line error response (last line) 
+
+            // Try extracting JSON from multi-line error response (last line)
             String json = DaoUtils.getLastLine(con.getErrorStream());
             if(json == null) throw ex;
-            
+
             // Parse error JSON to extract reason.
             String msg = EsUtils.extractReasonFromJson(json);
             if(msg == null) msg = json;
-            
+
             throw new Exception(msg);
         }
         finally
@@ -319,7 +319,7 @@ public class DataLoader
         }
     }
 
-    
+
     /**
      * Load data into Elasticsearch
      * @param data data NJSON data. (2 lines per record)
@@ -330,25 +330,25 @@ public class DataLoader
     {
         return loadBatch(data, null);
     }
-    
-    
+
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private int processErrors(String resp, Set<String> errorLidvids)
     {
         int numErrors = 0;
-        
+
         try
         {
             // TODO: Use streaming parser. Stop parsing if there are no errors.
             // Parse JSON response
             Gson gson = new Gson();
             Map json = (Map)gson.fromJson(resp, Object.class);
-            
+
             Boolean hasErrors = (Boolean)json.get("errors");
             if(hasErrors)
-            {                
+            {
                 List<Object> list = (List)json.get("items");
-             
+
                 // List size = batch size (one item per document)
                 for(Object item: list)
                 {
@@ -363,9 +363,9 @@ public class DataLoader
                             // It is not an error. We use "create" action to insert records which don't exist
                             // and keep existing records as is. We do this when loading an old LDD and more
                             // recent version of the LDD is already loaded.
-                            // NOTE: Gson JSON parser stores numbers as floats. 
+                            // NOTE: Gson JSON parser stores numbers as floats.
                             // The string value is usually "409.0". Can it be something else?
-                            if(status.startsWith("409")) 
+                            if(status.startsWith("409"))
                             {
                                 // Increment to properly report number of processed records.
                                 numErrors++;
@@ -374,13 +374,15 @@ public class DataLoader
                         }
                     }
                     if(action == null) continue;
-                    
+
                     String id = (String)action.get("_id");
                     Map error = (Map)action.get("error");
                     if(error != null)
                     {
                         String message = (String)error.get("reason");
-                        log.error("LIDVID = " + id + ", Message = " + message);
+                        String sanitizedLidvid = id.replace('\r', ' ').replace('\n', ' ');  // protect vs log spoofing see code-scanning alert #37
+                        String sanitizedMessage = message.replace('\r', ' ').replace('\n', ' '); // protect vs log spoofing
+                        log.error("LIDVID = " + sanitizedLidvid + ", Message = " + sanitizedMessage);
                         numErrors++;
                         if(errorLidvids != null) errorLidvids.add(id);
                     }
@@ -395,8 +397,8 @@ public class DataLoader
         }
     }
 
-    
-    
+
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private boolean responseHasErrors(String resp)
     {
@@ -405,12 +407,12 @@ public class DataLoader
             // Parse JSON response
             Gson gson = new Gson();
             Map json = (Map)gson.fromJson(resp, Object.class);
-            
+
             Boolean hasErrors = (Boolean)json.get("errors");
             if(hasErrors)
             {
                 List<Object> list = (List)json.get("items");
-                
+
                 // List size = batch size (one item per document)
                 // NOTE: Only few items in the list could have errors
                 for(Object item: list)
@@ -433,8 +435,8 @@ public class DataLoader
             return false;
         }
     }
-    
-    
+
+
     /**
      * Get HTTP response code, e.g., 200 (OK)
      * @param con HTTP connection
@@ -443,7 +445,7 @@ public class DataLoader
     private static int getResponseCode(HttpURLConnection con)
     {
         if(con == null) return -1;
-        
+
         try
         {
             return con.getResponseCode();
@@ -454,7 +456,7 @@ public class DataLoader
         }
     }
 
-    
+
     /**
      * This method is used to parse multi-line Elasticsearch error responses.
      * JSON error response is on the last line of a message.
@@ -483,7 +485,7 @@ public class DataLoader
         {
             CloseUtils.close(is);
         }
-        
+
         return lastLine;
     }
 }
