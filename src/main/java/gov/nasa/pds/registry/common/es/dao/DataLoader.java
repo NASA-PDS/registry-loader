@@ -255,6 +255,20 @@ public class DataLoader
      */
     public int loadBatch(List<String> data, Set<String> errorLidvids) throws Exception
     {
+        int defaultRetries = 5;
+        return loadBatch(data, errorLidvids, defaultRetries);
+    }
+
+    /**
+     * Load data into Elasticsearch
+     * @param data NJSON data. (2 lines per record)
+     * @param errorLidvids output parameter. If not null, add failed LIDVIDs to this set.
+     * @param retries number of times to retry the request if an exception is thrown.
+     * @return Number of loaded documents
+     * @throws Exception an exception
+     */
+    public int loadBatch(List<String> data, Set<String> errorLidvids, int retries) throws Exception
+    {
         if(data == null || data.isEmpty()) return 0;
         if(data.size() % 2 != 0) throw new Exception("Data list size should be an even number.");
 
@@ -310,6 +324,11 @@ public class DataLoader
             // Parse error JSON to extract reason.
             String msg = EsUtils.extractReasonFromJson(json);
             if(msg == null) msg = json;
+
+            if (retries > 0) {
+                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
+                return loadBatch(data, errorLidvids, retries);
+              }
 
             throw new Exception(msg);
         }
