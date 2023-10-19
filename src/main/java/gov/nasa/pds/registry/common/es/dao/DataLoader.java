@@ -146,15 +146,21 @@ public class DataLoader
     }
 
 
+    private String loadBatch(BufferedReader fileReader, String firstLine) throws Exception {
+        int defaultRetries = 5;
+        return loadBatch(fileReader, firstLine, defaultRetries);
+    }
+
     /**
      * Load next batch of NJSON (new-line-delimited JSON) data.
      * @param fileReader Reader object with NJSON data.
      * @param firstLine NJSON file has 2 lines per record: 1 - primary key, 2 - data record.
      * This is the primary key line.
+     * @param retries number of times to retry the request if an exception is thrown.
      * @return First line of 2-line NJSON record (line 1: primary key, line 2: data)
      * @throws Exception an exception
      */
-    private String loadBatch(BufferedReader fileReader, String firstLine) throws Exception
+    private String loadBatch(BufferedReader fileReader, String firstLine, int retries) throws Exception
     {
         HttpURLConnection con = null;
         OutputStreamWriter writer = null;
@@ -236,6 +242,11 @@ public class DataLoader
             // Parse error JSON to extract reason.
             String msg = EsUtils.extractReasonFromJson(json);
             if(msg == null) msg = json;
+
+            if (retries > 0) {
+                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
+                return loadBatch(fileReader, firstLine, retries - 1);
+            }
 
             throw new Exception(msg);
         }
