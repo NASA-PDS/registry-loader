@@ -1,8 +1,16 @@
 # Changelog
 
-## [release/1.5.0](https://github.com/NASA-PDS/registry-common/tree/release/1.5.0) (2023-09-22)
+## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2023-10-23)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.4.0...release/1.5.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.5.0...«unknown»)
+
+**Defects:**
+
+- Fix code scanning alerts [\#40](https://github.com/NASA-PDS/registry-common/issues/40) [[s.high](https://github.com/NASA-PDS/registry-common/labels/s.high)]
+
+## [v1.5.0](https://github.com/NASA-PDS/registry-common/tree/v1.5.0) (2023-09-25)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.4.0...v1.5.0)
 
 ## [v1.4.0](https://github.com/NASA-PDS/registry-common/tree/v1.4.0) (2023-03-30)
 
