@@ -327,7 +327,7 @@ public class DataLoader
 
             if (retries > 0) {
                 log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
-                return loadBatch(data, errorLidvids, retries);
+                return loadBatch(data, errorLidvids, retries - 1);
               }
 
             throw new Exception(msg);
