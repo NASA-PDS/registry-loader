@@ -492,7 +492,7 @@ public class DataLoader
      * @param is input stream
      * @return Last line
      */
-    private static String getLastLine(InputStream is)
+    private String getLastLine(InputStream is)
     {
         String lastLine = null;
 
@@ -508,7 +508,7 @@ public class DataLoader
         }
         catch(Exception ex)
         {
-            // Ignore
+            log.info("Exception thrown in DataLoader.getLastLine() - please inform developer", ex);
         }
         finally
         {
