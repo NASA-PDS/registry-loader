@@ -231,6 +231,12 @@ public class DataLoader
         }
         catch(IOException ex)
         {
+            if (retries > 0) {
+                String msg = ex.getMessage();
+                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
+                return loadBatch(fileReader, firstLine, retries - 1);
+            }
+
             // Get HTTP response code
             int respCode = getResponseCode(con);
             if(respCode <= 0) throw ex;
@@ -242,11 +248,6 @@ public class DataLoader
             // Parse error JSON to extract reason.
             String msg = EsUtils.extractReasonFromJson(json);
             if(msg == null) msg = json;
-
-            if (retries > 0) {
-                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
-                return loadBatch(fileReader, firstLine, retries - 1);
-            }
 
             throw new Exception(msg);
         }
@@ -323,6 +324,12 @@ public class DataLoader
         }
         catch(IOException ex)
         {
+            if (retries > 0) {
+                String msg = ex.getMessage();
+                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
+                return loadBatch(data, errorLidvids, retries - 1);
+            }
+
             // Get HTTP response code
             int respCode = getResponseCode(con);
             if(respCode <= 0) throw ex;
@@ -334,11 +341,6 @@ public class DataLoader
             // Parse error JSON to extract reason.
             String msg = EsUtils.extractReasonFromJson(json);
             if(msg == null) msg = json;
-
-            if (retries > 0) {
-                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
-                return loadBatch(data, errorLidvids, retries - 1);
-              }
 
             throw new Exception(msg);
         }
