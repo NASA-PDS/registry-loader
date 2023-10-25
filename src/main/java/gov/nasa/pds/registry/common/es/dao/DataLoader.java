@@ -35,6 +35,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  */
 public class DataLoader
 {
+    private int defaultRequestRetries = 5;
     private int printProgressSize = 500;
     private int batchSize = 100;
     private int totalRecords;
@@ -147,8 +148,7 @@ public class DataLoader
 
 
     private String loadBatch(BufferedReader fileReader, String firstLine) throws Exception {
-        int defaultRetries = 5;
-        return loadBatch(fileReader, firstLine, defaultRetries);
+        return loadBatch(fileReader, firstLine, defaultRequestRetries);
     }
 
     /**
@@ -266,8 +266,7 @@ public class DataLoader
      */
     public int loadBatch(List<String> data, Set<String> errorLidvids) throws Exception
     {
-        int defaultRetries = 5;
-        return loadBatch(data, errorLidvids, defaultRetries);
+        return loadBatch(data, errorLidvids, defaultRequestRetries);
     }
 
     /**
