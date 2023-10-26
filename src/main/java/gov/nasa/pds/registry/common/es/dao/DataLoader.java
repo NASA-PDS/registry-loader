@@ -35,6 +35,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  */
 public class DataLoader
 {
+    private int defaultRequestRetries = 5;
     private int printProgressSize = 500;
     private int batchSize = 100;
     private int totalRecords;
@@ -146,15 +147,20 @@ public class DataLoader
     }
 
 
+    private String loadBatch(BufferedReader fileReader, String firstLine) throws Exception {
+        return loadBatch(fileReader, firstLine, defaultRequestRetries);
+    }
+
     /**
      * Load next batch of NJSON (new-line-delimited JSON) data.
      * @param fileReader Reader object with NJSON data.
      * @param firstLine NJSON file has 2 lines per record: 1 - primary key, 2 - data record.
      * This is the primary key line.
+     * @param retries number of times to retry the request if an exception is thrown.
      * @return First line of 2-line NJSON record (line 1: primary key, line 2: data)
      * @throws Exception an exception
      */
-    private String loadBatch(BufferedReader fileReader, String firstLine) throws Exception
+    private String loadBatch(BufferedReader fileReader, String firstLine, int retries) throws Exception
     {
         HttpURLConnection con = null;
         OutputStreamWriter writer = null;
@@ -225,6 +231,12 @@ public class DataLoader
         }
         catch(IOException ex)
         {
+            if (retries > 0) {
+                String msg = ex.getMessage();
+                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
+                return loadBatch(fileReader, firstLine, retries - 1);
+            }
+
             // Get HTTP response code
             int respCode = getResponseCode(con);
             if(respCode <= 0) throw ex;
@@ -255,8 +267,7 @@ public class DataLoader
      */
     public int loadBatch(List<String> data, Set<String> errorLidvids) throws Exception
     {
-        int defaultRetries = 5;
-        return loadBatch(data, errorLidvids, defaultRetries);
+        return loadBatch(data, errorLidvids, defaultRequestRetries);
     }
 
     /**
@@ -313,6 +324,12 @@ public class DataLoader
         }
         catch(IOException ex)
         {
+            if (retries > 0) {
+                String msg = ex.getMessage();
+                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
+                return loadBatch(data, errorLidvids, retries - 1);
+            }
+
             // Get HTTP response code
             int respCode = getResponseCode(con);
             if(respCode <= 0) throw ex;
@@ -324,11 +341,6 @@ public class DataLoader
             // Parse error JSON to extract reason.
             String msg = EsUtils.extractReasonFromJson(json);
             if(msg == null) msg = json;
-
-            if (retries > 0) {
-                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
-                return loadBatch(data, errorLidvids, retries - 1);
-              }
 
             throw new Exception(msg);
         }
@@ -482,7 +494,7 @@ public class DataLoader
      * @param is input stream
      * @return Last line
      */
-    private static String getLastLine(InputStream is)
+    private String getLastLine(InputStream is)
     {
         String lastLine = null;
 
@@ -498,7 +510,7 @@ public class DataLoader
         }
         catch(Exception ex)
         {
-            // Ignore
+            log.info("Exception thrown in DataLoader.getLastLine() - please inform developer", ex);
         }
         finally
         {
