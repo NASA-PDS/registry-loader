@@ -2,7 +2,7 @@ package gov.nasa.pds.registry.common.es.client;
 
 
 import org.elasticsearch.client.RestClient;
-import gov.nasa.pds.registry.common.util.JavaProps;
+import gov.nasa.pds.registry.common.ConnectionFactory;
 
 
 /**
@@ -19,16 +19,9 @@ public class EsClientFactory
      * @return Elasticsearch rest client instance.
      * @throws Exception an exception
      */
-    public static RestClient createRestClient(String esUrl, String authPath) throws Exception
+    public static RestClient createRestClient(ConnectionFactory conFact) throws Exception
     {
-        EsRestClientBld bld = new EsRestClientBld(esUrl);
-        
-        if(authPath != null)
-        {
-            JavaProps props = new JavaProps(authPath);
-            bld.configureAuth(props);
-        }
-        
+        EsRestClientBld bld = new EsRestClientBld(conFact);
         return bld.build();
     }
 

@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.zip.DeflaterOutputStream;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tika.Tika;
 import org.json.JSONObject;
 import org.json.XML;
@@ -30,9 +28,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  * @author karpenko
  */
 public class FileMetadataExtractor
-{
-    private Logger log;
-    
+{    
     private MessageDigest md5Digest;
     private byte[] buf;
     private Tika tika;
@@ -47,9 +43,7 @@ public class FileMetadataExtractor
      * @throws Exception and exception
      */
     public FileMetadataExtractor() throws Exception
-    {
-        log = LogManager.getLogger(this.getClass());
-        
+    {        
         md5Digest = MessageDigest.getInstance("MD5");
         buf = new byte[1024 * 16];
         tika = new Tika();

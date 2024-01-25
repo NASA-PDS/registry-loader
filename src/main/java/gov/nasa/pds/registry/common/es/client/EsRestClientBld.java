@@ -1,9 +1,8 @@
 package gov.nasa.pds.registry.common.es.client;
 
-import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-
+import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.util.JavaProps;
 
 
@@ -24,10 +23,9 @@ public class EsRestClientBld
      * @param url Elasticsearch URL, e.g., "http://localhost:9200"
      * @throws Exception an exception
      */
-    public EsRestClientBld(String url) throws Exception
+    public EsRestClientBld(ConnectionFactory conFact) throws Exception
     {
-        HttpHost host = EsUtils.parseEsUrl(url);
-        bld = RestClient.builder(host);
+        bld = RestClient.builder(conFact.getHost());
         
         clientCB = new ClientConfigCB();
         reqCB = new RequestConfigCB();

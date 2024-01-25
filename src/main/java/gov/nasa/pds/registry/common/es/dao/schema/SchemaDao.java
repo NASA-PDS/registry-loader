@@ -3,8 +3,6 @@ package gov.nasa.pds.registry.common.es.dao.schema;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
@@ -20,7 +18,6 @@ import gov.nasa.pds.registry.common.util.Tuple;
  */
 public class SchemaDao
 {
-    private Logger log;
     private RestClient client;
     private String indexName;
     
@@ -32,7 +29,6 @@ public class SchemaDao
      */
     public SchemaDao(RestClient client, String indexName)
     {
-        log = LogManager.getLogger(this.getClass());
         this.client = client;
         this.indexName = indexName;
     }
