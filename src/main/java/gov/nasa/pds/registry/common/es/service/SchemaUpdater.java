@@ -16,7 +16,7 @@ import gov.nasa.pds.registry.common.util.file.FileDownloader;
 import gov.nasa.pds.registry.common.util.Tuple;
 
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
-import gov.nasa.pds.registry.common.cfg.RegistryCfg;
+import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.es.dao.schema.SchemaDao;
 import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;
 
@@ -42,7 +42,7 @@ public class SchemaUpdater
      * @param cfg Registry (Elasticsearch) configuration
      * @throws Exception
      */
-    public SchemaUpdater(RegistryCfg cfg, DataDictionaryDao ddDao, SchemaDao schemaDao) throws Exception
+    public SchemaUpdater(ConnectionFactory conFact, DataDictionaryDao ddDao, SchemaDao schemaDao) throws Exception
     {
         log = LogManager.getLogger(this.getClass());
         
@@ -51,7 +51,7 @@ public class SchemaUpdater
         
         fileDownloader = new FileDownloader(true);
         
-        lddLoader = new JsonLddLoader(ddDao, cfg.url, cfg.indexName, cfg.authFile);
+        lddLoader = new JsonLddLoader(ddDao, conFact);
         lddLoader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile("HARVEST_HOME"));
     }
     

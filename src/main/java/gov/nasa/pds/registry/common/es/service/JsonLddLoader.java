@@ -7,7 +7,7 @@ import java.util.TreeMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.dd.LddEsJsonWriter;
 import gov.nasa.pds.registry.common.dd.LddUtils;
 import gov.nasa.pds.registry.common.dd.Pds2EsDataTypeMap;
@@ -41,12 +41,12 @@ public class JsonLddLoader
      * @param authFilePath authentication configuration file
      * @throws Exception an exception
      */
-    public JsonLddLoader(DataDictionaryDao dao, String esUrl, String indexName, String authFilePath) throws Exception
+    public JsonLddLoader(DataDictionaryDao dao, ConnectionFactory conFact) throws Exception
     {
         log = LogManager.getLogger(this.getClass());
         dtMap = new Pds2EsDataTypeMap();
         
-        loader = new DataLoader(esUrl, indexName + "-dd", authFilePath);
+        loader = new DataLoader(conFact.setIndexName(conFact.getIndexName() + "-dd"));
         this.dao = dao;
     }
  
