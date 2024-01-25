@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.client.RestClient;
-
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
 import gov.nasa.pds.registry.common.es.dao.dd.LddInfo;
@@ -25,7 +25,7 @@ public class TestDataDictionaryDao
 
     private static void testListBooleanFields() throws Exception
     {
-        RestClient esClient = EsClientFactory.createRestClient("http://localhost:9200", null);
+        RestClient esClient = EsClientFactory.createRestClient(EstablishConnectionFactory.directly("http://localhost:9200"));
         
         try
         {
@@ -44,7 +44,7 @@ public class TestDataDictionaryDao
 
     private static void testListDateFields() throws Exception
     {
-        RestClient esClient = EsClientFactory.createRestClient("http://localhost:9200", null);
+        RestClient esClient = EsClientFactory.createRestClient(EstablishConnectionFactory.directly("http://localhost:9200"));
         
         try
         {
@@ -63,7 +63,7 @@ public class TestDataDictionaryDao
     
     private static void testListLdds() throws Exception
     {
-        RestClient esClient = EsClientFactory.createRestClient("http://localhost:9200", null);
+        RestClient esClient = EsClientFactory.createRestClient(EstablishConnectionFactory.directly("http://localhost:9200"));
         
         try
         {
@@ -86,7 +86,7 @@ public class TestDataDictionaryDao
     
     private static void testGetLddInfo() throws Exception
     {
-        RestClient esClient = EsClientFactory.createRestClient("http://localhost:9200", null);
+        RestClient esClient = EsClientFactory.createRestClient(EstablishConnectionFactory.directly("http://localhost:9200"));
         
         try
         {

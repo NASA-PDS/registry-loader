@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.elasticsearch.client.RestClient;
-
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.dao.ProductDao;
 import gov.nasa.pds.registry.common.util.CloseUtils;
@@ -22,7 +22,7 @@ public class TestProductDao
         
         try
         {
-            esClient = EsClientFactory.createRestClient("localhost", null);
+            esClient = EsClientFactory.createRestClient(EstablishConnectionFactory.directly("localhost"));
             ProductDao dao = new ProductDao(esClient, "registry");
             
             //testUpdateArchiveStatus(dao);
