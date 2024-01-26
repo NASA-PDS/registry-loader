@@ -54,7 +54,7 @@ public class DataLoader
     public DataLoader(ConnectionFactory conFactory) throws Exception
     {
         log = LogManager.getLogger(this.getClass());
-        conFactory = conFactory.setAPI("_bulk?refresh=wait_for");
+        this.conFactory = conFactory.setAPI("_bulk?refresh=wait_for");
     }
 
 

@@ -6,10 +6,12 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import org.apache.http.HttpHost;
+import org.apache.http.client.CredentialsProvider;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.es.client.SSLUtils;
 
 public class Direct implements Cloneable, ConnectionFactory {
+  final private boolean veryTrusting;
   final private int timeout = 5000;
   final private AuthContent auth;
   final private HttpHost host;
@@ -25,17 +27,18 @@ public class Direct implements Cloneable, ConnectionFactory {
         SSLContext sslCtx = SSLUtils.createTrustAllContext();
         HttpsURLConnection.setDefaultSSLSocketFactory(sslCtx.getSocketFactory());
     }
-    return new Direct (service, auth);
+    return new Direct (service, auth, trustSelfSigned);
   }
 
-  private Direct (URL service, AuthContent auth) {
+  private Direct (URL service, AuthContent auth, boolean trustSelfSigned) {
     this.auth = auth;
     this.host = new HttpHost(service.getHost(), service.getPort(), service.getProtocol());
     this.service = service;
+    this.veryTrusting = trustSelfSigned;
   }
   @Override
   public ConnectionFactory clone() {
-    return new Direct(this.service, this.auth).setAPI(this.api).setIndexName(this.index);
+    return new Direct(this.service, this.auth, this.veryTrusting).setAPI(this.api).setIndexName(this.index);
   }
   @Override
   public HttpURLConnection createConnection() throws IOException {
@@ -49,32 +52,42 @@ public class Direct implements Cloneable, ConnectionFactory {
     con.setRequestProperty("Authorization", this.auth.getHeader());
     return con;
   }
-
   @Override
   public HttpHost getHost() {
     return this.host;
   }
-
   @Override
   public String getHostName() {
     return this.host.getHostName();
   }
-
   @Override
   public String getIndexName() {
     return this.index;
   }
-
   @Override
   public ConnectionFactory setAPI(String api) {
     this.api = api;
     return this;
   }
-
   @Override
   public ConnectionFactory setIndexName(String idxName) {
     this.index =  idxName;
     return this;
   }
-
+  @Override
+  public String toString() {
+    String me = "Direct to " + this.service.getProtocol() + "://" + this.service.getHost();
+    if (0 <= this.service.getPort()) me += ":" + this.service.getPort();
+    me += " using index '" + String.valueOf(this.index) + "'";
+    me += " to call API '" + String.valueOf(this.api) + "'";
+    return me;
+  }
+  @Override
+  public CredentialsProvider getCredentials() {
+    return this.auth.getCredentials();
+  }
+  @Override
+  public boolean isTrustingSelfSigned() {
+    return this.veryTrusting;
+  }
 }

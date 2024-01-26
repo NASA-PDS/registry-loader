@@ -2,11 +2,8 @@ package gov.nasa.pds.registry.common.es.client;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
@@ -25,6 +22,11 @@ public class ClientConfigCB implements RestClientBuilder.HttpClientConfigCallbac
     private CredentialsProvider credProvider;
 
     
+    public void setCredProvider(CredentialsProvider credProvider) {
+      this.credProvider = credProvider;
+    }
+
+
     /**
      * Constructor
      */
@@ -42,20 +44,6 @@ public class ClientConfigCB implements RestClientBuilder.HttpClientConfigCallbac
         this.trustSelfSignedCert = b;
     }
 
-    
-    /**
-     * Set user name and password for basic authentication.
-     * @param user user name
-     * @param pass password
-     */
-    public void setUserPass(String user, String pass)
-    {
-        if(user == null || pass == null) return;
-        
-        credProvider = new BasicCredentialsProvider();
-        credProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user, pass));
-    }
-    
     
     @Override
     public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder)

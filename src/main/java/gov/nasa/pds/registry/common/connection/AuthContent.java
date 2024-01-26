@@ -2,6 +2,10 @@ package gov.nasa.pds.registry.common.connection;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.common.es.client.ClientConstants;
@@ -47,6 +51,12 @@ public class AuthContent {
       this.header = "Basic " + Base64.getEncoder().encodeToString((this.getUser() + ":" + this.getPassword()).getBytes(StandardCharsets.UTF_8));
     }
     return this.header;
+  }
+  public CredentialsProvider getCredentials() {
+    CredentialsProvider creds;
+    creds = new BasicCredentialsProvider();
+    creds.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(this.getUser(), this.getPassword()));
+    return creds;
   }
   public String getPassword() {
     return password;
