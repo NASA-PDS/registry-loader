@@ -1,4 +1,4 @@
-package gov.nasa.pds.registry.common.es.client;
+package gov.nasa.pds.registry.common.connection.es;
 
 
 import java.security.cert.CertificateException;

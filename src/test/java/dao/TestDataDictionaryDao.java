@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.elasticsearch.client.RestClient;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.connection.es.EsClientFactory;
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
 import gov.nasa.pds.registry.common.es.dao.dd.LddInfo;
 import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;

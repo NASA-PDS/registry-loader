@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import gov.nasa.pds.registry.common.ConnectionFactory;
-import gov.nasa.pds.registry.common.es.client.EsUtils;
+import gov.nasa.pds.registry.common.connection.es.EsUtils;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 
 

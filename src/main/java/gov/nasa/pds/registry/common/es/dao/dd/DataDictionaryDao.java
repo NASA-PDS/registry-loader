@@ -13,8 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.SearchResponseParser;
+import gov.nasa.pds.registry.common.connection.es.SearchResponseParser;
 import gov.nasa.pds.registry.common.es.dao.schema.SchemaRequestBuilder;
 import gov.nasa.pds.registry.common.util.Tuple;
 
