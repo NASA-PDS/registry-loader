@@ -16,7 +16,9 @@ final class RequestWrapper implements Request {
   }
   private static String methodToString (Request.Method method) {
     switch (method) {
+      case DELETE: return "DELETE";
       case GET: return "GET";
+      case HEAD: return "HEAD";
       case POST: return "POST";
       case PUT: return "PUT";
     }

@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.ResponseException;
+import gov.nasa.pds.registry.common.util.SearchResponseParser;
 
 final class ResponseExceptionWrapper extends ResponseException {
   private static final long serialVersionUID = -5116172984798822803L;
@@ -59,5 +60,17 @@ final class ResponseExceptionWrapper extends ResponseException {
   public Response getResponse() {
     return new ResponseWrapper(this.real_exception.getResponse());
   }
-
+  @Override
+  public String extractErrorMessage() {
+    String msg = this.real_exception.getMessage();
+    if(msg == null) return "Unknown error";
+    
+    String lines[] = msg.split("\n");
+    if(lines.length < 2) return msg;
+    
+    String reason = SearchResponseParser.extractReasonFromJson(lines[1]);
+    if(reason == null) return msg;
+    
+    return reason;
+  }
 }

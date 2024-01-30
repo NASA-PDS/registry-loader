@@ -1,5 +1,6 @@
 package gov.nasa.pds.registry.common.connection.es;
 
+import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import gov.nasa.pds.registry.common.Response;
@@ -16,5 +17,16 @@ class ResponseWrapper implements Response {
   @Override
   public StatusLine getStatusLine() {
     return this.real_response.getStatusLine();
+  }
+  @Override
+  public void printWarnings() {
+    List<String> warnings = this.real_response.getWarnings();
+    if(warnings != null)
+    {
+      for(String warn: warnings)
+      {
+        System.out.println("[WARN] " + warn);
+      }
+    }
   }
 }
