@@ -1,4 +1,4 @@
-package gov.nasa.pds.registry.common.connection.es;
+package gov.nasa.pds.registry.common.connection;
 
 
 import java.security.cert.CertificateException;
@@ -12,7 +12,7 @@ import javax.net.ssl.X509TrustManager;
  * 
  * @author karpenko
  */
-public class TrustAllManager implements X509TrustManager
+class TrustAllManager implements X509TrustManager
 {
     private X509Certificate[] certs;
     

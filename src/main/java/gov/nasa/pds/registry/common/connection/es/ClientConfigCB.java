@@ -16,7 +16,7 @@ import org.elasticsearch.client.RestClientBuilder;
  * 
  * @author karpenko
  */
-public class ClientConfigCB implements RestClientBuilder.HttpClientConfigCallback
+class ClientConfigCB implements RestClientBuilder.HttpClientConfigCallback
 {
     private boolean trustSelfSignedCert = false;
     private CredentialsProvider credProvider;

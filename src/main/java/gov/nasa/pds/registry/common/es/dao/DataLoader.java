@@ -20,8 +20,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import gov.nasa.pds.registry.common.ConnectionFactory;
-import gov.nasa.pds.registry.common.connection.es.EsUtils;
 import gov.nasa.pds.registry.common.util.CloseUtils;
+import gov.nasa.pds.registry.common.util.SearchResponseParser;
 
 
 /**
@@ -244,7 +244,7 @@ public class DataLoader
             if(json == null) throw ex;
 
             // Parse error JSON to extract reason.
-            String msg = EsUtils.extractReasonFromJson(json);
+            String msg = SearchResponseParser.extractReasonFromJson(json);
             if(msg == null) msg = json;
 
             throw new Exception(msg);
@@ -337,7 +337,7 @@ public class DataLoader
             if(json == null) throw ex;
 
             // Parse error JSON to extract reason.
-            String msg = EsUtils.extractReasonFromJson(json);
+            String msg = SearchResponseParser.extractReasonFromJson(json);
             if(msg == null) msg = json;
 
             throw new Exception(msg);

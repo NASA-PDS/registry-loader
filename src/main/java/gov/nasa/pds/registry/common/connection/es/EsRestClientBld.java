@@ -10,7 +10,7 @@ import gov.nasa.pds.registry.common.ConnectionFactory;
  * 
  * @author karpenko
  */
-public class EsRestClientBld
+class EsRestClientBld
 {
     private RestClientBuilder bld;
     private ClientConfigCB clientCB;

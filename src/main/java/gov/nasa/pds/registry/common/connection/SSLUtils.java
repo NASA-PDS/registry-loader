@@ -1,4 +1,4 @@
-package gov.nasa.pds.registry.common.connection.es;
+package gov.nasa.pds.registry.common.connection;
 
 
 import java.security.SecureRandom;
@@ -12,7 +12,7 @@ import javax.net.ssl.TrustManager;
  * 
  * @author karpenko
  */
-public class SSLUtils
+class SSLUtils
 {
     /**
      * Create "trust all" SSL context to support self-signed certificates.

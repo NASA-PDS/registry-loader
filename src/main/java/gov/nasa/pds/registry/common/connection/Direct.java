@@ -8,7 +8,6 @@ import javax.net.ssl.SSLContext;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 import gov.nasa.pds.registry.common.ConnectionFactory;
-import gov.nasa.pds.registry.common.connection.es.SSLUtils;
 
 public class Direct implements Cloneable, ConnectionFactory {
   final private boolean veryTrusting;

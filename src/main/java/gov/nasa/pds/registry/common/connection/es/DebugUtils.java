@@ -13,7 +13,7 @@ import org.elasticsearch.client.Response;
  * 
  * @author karpenko
  */
-public class DebugUtils
+class DebugUtils
 {
     /**
      * Print Elasticsearch API response.

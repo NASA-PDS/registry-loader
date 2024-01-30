@@ -8,7 +8,6 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import gov.nasa.pds.registry.common.connection.es.ClientConstants;
 import gov.nasa.pds.registry.common.util.JavaProps;
 
 public class AuthContent {

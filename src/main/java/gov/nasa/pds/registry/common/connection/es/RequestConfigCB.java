@@ -11,7 +11,7 @@ import org.elasticsearch.client.RestClientBuilder;
  * 
  * @author karpenko
  */
-public class RequestConfigCB implements RestClientBuilder.RequestConfigCallback
+class RequestConfigCB implements RestClientBuilder.RequestConfigCallback
 {
     private int connectTimeoutSec = 5;
     private int socketTimeoutSec = 10;
