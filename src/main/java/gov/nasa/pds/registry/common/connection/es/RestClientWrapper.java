@@ -44,7 +44,7 @@ public class RestClientWrapper implements RestClient
     @Override
     public Response performRequest(Request request) throws IOException {
       try {
-        return this.performRequest((RequestWrapper)request);
+        return new ResponseWrapper(this.real_client.performRequest(((RequestWrapper)request).real_request));
       } catch (org.elasticsearch.client.ResponseException e) {
         throw new ResponseExceptionWrapper(e);
       }
