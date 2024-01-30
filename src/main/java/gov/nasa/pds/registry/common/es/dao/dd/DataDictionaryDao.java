@@ -10,9 +10,9 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
+import gov.nasa.pds.registry.common.Request;
+import gov.nasa.pds.registry.common.Response;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.schema.SchemaRequestBuilder;
 import gov.nasa.pds.registry.common.util.SearchResponseParser;
 import gov.nasa.pds.registry.common.util.Tuple;
@@ -87,7 +87,7 @@ public class DataDictionaryDao
         DDRequestBuilder bld = new DDRequestBuilder();
         String json = bld.createListLddsRequest(namespace);
 
-        Request req = new Request("GET", "/" + indexName + "-dd/_search");
+        Request req = client.createRequest(Request.Method.GET, "/" + indexName + "-dd/_search");
         req.setJsonEntity(json);
         Response resp = client.performRequest(req);
         
@@ -153,7 +153,7 @@ public class DataDictionaryDao
         DDRequestBuilder bld = new DDRequestBuilder();
         String json = bld.createListLddsRequest(namespace);
 
-        Request req = new Request("GET", "/" + indexName + "-dd/_search");
+        Request req = client.createRequest(Request.Method.GET, "/" + indexName + "-dd/_search");
         req.setJsonEntity(json);
         Response resp = client.performRequest(req);
 
@@ -202,7 +202,7 @@ public class DataDictionaryDao
         DDRequestBuilder bld = new DDRequestBuilder();
         String json = bld.createListFieldsRequest(esType);
 
-        Request req = new Request("GET", "/" + indexName + "-dd/_search");
+        Request req = client.createRequest(Request.Method.GET, "/" + indexName + "-dd/_search");
         req.setJsonEntity(json);
         Response resp = client.performRequest(req);
 
@@ -229,7 +229,7 @@ public class DataDictionaryDao
         List<Tuple> dtInfo = new ArrayList<Tuple>();
         
         // Create request
-        Request req = new Request("GET", "/" + indexName + "-dd/_mget?_source=es_data_type");
+        Request req = client.createRequest(Request.Method.GET, "/" + indexName + "-dd/_mget?_source=es_data_type");
         
         // Create request body
         SchemaRequestBuilder bld = new SchemaRequestBuilder();

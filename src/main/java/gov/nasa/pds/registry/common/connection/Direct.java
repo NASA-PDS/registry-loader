@@ -8,6 +8,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 import gov.nasa.pds.registry.common.ConnectionFactory;
+import gov.nasa.pds.registry.common.RestClient;
 
 public class Direct implements Cloneable, ConnectionFactory {
   final private boolean veryTrusting;
@@ -50,6 +51,11 @@ public class Direct implements Cloneable, ConnectionFactory {
     con.setAllowUserInteraction(false);
     con.setRequestProperty("Authorization", this.auth.getHeader());
     return con;
+  }
+  @Override
+  public RestClient createRestClient() {
+    // FIXME: need an implementation
+    return null;
   }
   @Override
   public HttpHost getHost() {

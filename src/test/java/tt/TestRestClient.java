@@ -1,8 +1,7 @@
 package tt;
 
-import org.elasticsearch.client.RestClient;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
-import gov.nasa.pds.registry.common.connection.es.EsClientFactory;
+import gov.nasa.pds.registry.common.RestClient;
 
 
 public class TestRestClient
@@ -10,7 +9,7 @@ public class TestRestClient
 
     public static void main(String[] args) throws Exception
     {
-        RestClient client = EsClientFactory.createRestClient(EstablishConnectionFactory.directly("localhost"));
+        RestClient client = EstablishConnectionFactory.directly("localhost").createRestClient();
         client.close();
     }
 

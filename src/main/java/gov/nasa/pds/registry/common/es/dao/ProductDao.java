@@ -8,14 +8,13 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
-
+import gov.nasa.pds.registry.common.Request;
+import gov.nasa.pds.registry.common.Response;
+import gov.nasa.pds.registry.common.ResponseException;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.common.util.LidVidUtils;
 
@@ -56,7 +55,7 @@ public class ProductDao
         if(lidvid == null) return null;
         
         String reqUrl = "/" + indexName + "/_doc/" + lidvid + "?_source=product_class";
-        Request req = new Request("GET", reqUrl);
+        Request req = client.createRequest(Request.Method.GET, reqUrl);
         Response resp = null;
         
         try
@@ -142,7 +141,7 @@ public class ProductDao
         
         // Request URL
         String reqUrl = "/" + indexName + "-refs/_count?q=" + query;
-        Request req = new Request("GET", reqUrl);
+        Request req = client.createRequest(Request.Method.GET, reqUrl);
         Response resp = null;
 
         try
@@ -212,7 +211,7 @@ public class ProductDao
         
         String docId = collectionLidVid + "::" + type + page;
         String reqUrl = "/" + indexName + "-refs/_doc/" + docId + "?_source=product_lidvid";
-        Request req = new Request("GET", reqUrl);
+        Request req = client.createRequest(Request.Method.GET, reqUrl);
         Response resp = null;
         
         try
@@ -281,7 +280,7 @@ public class ProductDao
         log.debug("Request:\n" + json);
         
         String reqUrl = "/" + indexName + "/_bulk"; //?refresh=wait_for";
-        Request req = new Request("POST", reqUrl);
+        Request req = client.createRequest(Request.Method.POST, reqUrl);
         req.setJsonEntity(json);
         
         Response resp = client.performRequest(req);
@@ -362,7 +361,7 @@ public class ProductDao
         if(bundleLidvid == null) return null;
         
         String reqUrl = "/" + indexName + "/_doc/" + bundleLidvid + "?_source=ref_lidvid_collection,ref_lid_collection";
-        Request req = new Request("GET", reqUrl);
+        Request req = client.createRequest(Request.Method.GET, reqUrl);
         Response resp = null;
         
         try
@@ -477,7 +476,7 @@ public class ProductDao
         if(json == null) return null;
         
         String reqUrl = "/" + indexName + "/_search/";
-        Request req = new Request("GET", reqUrl);
+        Request req = client.createRequest(Request.Method.GET, reqUrl);
         req.setJsonEntity(json);
         
         Response resp = null;
