@@ -9,6 +9,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
+import gov.nasa.pds.registry.common.connection.es.RestClientWrapper;
 
 public class Direct implements Cloneable, ConnectionFactory {
   final private boolean veryTrusting;
@@ -53,9 +54,8 @@ public class Direct implements Cloneable, ConnectionFactory {
     return con;
   }
   @Override
-  public RestClient createRestClient() {
-    // FIXME: need an implementation
-    return null;
+  public RestClient createRestClient() throws Exception {
+    return new RestClientWrapper(this);
   }
   @Override
   public HttpHost getHost() {
