@@ -1,5 +1,13 @@
 # Changelog
 
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-02-07)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...«unknown»)
+
+**Improvements:**
+
+- As a node person, I want to know all possible values for archive status [\#71](https://github.com/NASA-PDS/registry-mgr/issues/71)
+
 ## [v4.6.3](https://github.com/NASA-PDS/registry-mgr/tree/v4.6.3) (2023-11-16)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.1...v4.6.3)
