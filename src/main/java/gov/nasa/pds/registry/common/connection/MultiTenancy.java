@@ -14,9 +14,9 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import gov.nasa.pds.registry.common.CognitoContent;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
+import gov.nasa.pds.registry.common.connection.config.CognitoType;
 
 public final class MultiTenancy implements ConnectionFactory {
   final private AuthContent auth;
@@ -24,7 +24,7 @@ public final class MultiTenancy implements ConnectionFactory {
   final private URL signed;
   private String api = null;
   private String index = null;
-  public static MultiTenancy build (CognitoContent cog, AuthContent auth) throws IOException, InterruptedException {
+  public static MultiTenancy build (CognitoType cog, AuthContent auth) throws IOException, InterruptedException {
     boolean expectedContent = true;
     Gson gson = new Gson();
     HttpClient client = HttpClient.newHttpClient();
@@ -33,7 +33,7 @@ public final class MultiTenancy implements ConnectionFactory {
         .POST(BodyPublishers.ofString("{\"AuthFlow\":\"USER_PASSWORD_AUTH\",\"AuthParameters\":{"
             + "\"USERNAME\":\"" + auth.getUser() + "\","
             + "\"PASSWORD\":\"" + auth.getPassword() + "\""
-            + "},\"ClientId\":\"" + cog.getClientID() + "\""
+            + "},\"ClientId\":\"" + cog.getValue() + "\""
             + "}"))
         .setHeader("X-Amz-Target", "AWSCognitoIdentityProviderService.InitiateAuth")
         .setHeader("Content-Type", "application/x-amz-json-1.1")
@@ -60,7 +60,7 @@ public final class MultiTenancy implements ConnectionFactory {
     request = HttpRequest.newBuilder()
         .uri(URI.create(cog.getGateway()))
         .GET()
-        .setHeader("Authorization", content.get("AuthenticationResult").get("AccessToken"))
+        .setHeader("Authorization", content.get("AuthenticationResult").get("TokenType") + " " + content.get("AuthenticationResult").get("AccessToken"))
         .setHeader("IDToken", content.get("AuthenticationResult").get("IdToken"))
         .build();
     response = client.send(request, HttpResponse.BodyHandlers.ofString());

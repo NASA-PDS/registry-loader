@@ -9,6 +9,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
+import gov.nasa.pds.registry.common.connection.config.DirectType;
 import gov.nasa.pds.registry.common.connection.es.RestClientWrapper;
 
 public class Direct implements Cloneable, ConnectionFactory {
@@ -20,15 +21,15 @@ public class Direct implements Cloneable, ConnectionFactory {
   private String api = null;
   private String index = null;
 
-  public static Direct build (String url, AuthContent auth, boolean trustSelfSigned) throws Exception {
-    URL service = new URL(url);
+  public static Direct build (DirectType url, AuthContent auth) throws Exception {
+    URL service = new URL(url.getValue());
     // Trust self-signed certificates
-    if(trustSelfSigned)
+    if(url.isTrustSelfSigned())
     {
         SSLContext sslCtx = SSLUtils.createTrustAllContext();
         HttpsURLConnection.setDefaultSSLSocketFactory(sslCtx.getSocketFactory());
     }
-    return new Direct (service, auth, trustSelfSigned);
+    return new Direct (service, auth, url.isTrustSelfSigned());
   }
 
   private Direct (URL service, AuthContent auth, boolean trustSelfSigned) {

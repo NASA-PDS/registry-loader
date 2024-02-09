@@ -24,13 +24,13 @@ public class TestDataDictionaryDao
 
     private static void testListBooleanFields() throws Exception
     {
-        RestClient client = EstablishConnectionFactory.directly("http://localhost:9200").createRestClient();
+        RestClient client = EstablishConnectionFactory.from("http://localhost:9200").createRestClient();
         
         try
         {
             DataDictionaryDao dao = new DataDictionaryDao(client, "registry");
             Set<String> list = dao.getFieldNamesByEsType("boolean");
-            
+           
             System.out.println("Boolean fields count = " + list.size());
             list.forEach((name) -> { System.out.println(name); });
         }
@@ -43,7 +43,7 @@ public class TestDataDictionaryDao
 
     private static void testListDateFields() throws Exception
     {
-        RestClient client = EstablishConnectionFactory.directly("http://localhost:9200").createRestClient();
+        RestClient client = EstablishConnectionFactory.from("http://localhost:9200").createRestClient();
         
         try
         {
@@ -62,7 +62,7 @@ public class TestDataDictionaryDao
     
     private static void testListLdds() throws Exception
     {
-        RestClient client = EstablishConnectionFactory.directly("http://localhost:9200").createRestClient();
+        RestClient client = EstablishConnectionFactory.from("http://localhost:9200").createRestClient();
         
         try
         {
@@ -85,7 +85,7 @@ public class TestDataDictionaryDao
     
     private static void testGetLddInfo() throws Exception
     {
-        RestClient client = EstablishConnectionFactory.directly("http://localhost:9200").createRestClient();
+        RestClient client = EstablishConnectionFactory.from("http://localhost:9200").createRestClient();
         
         try
         {

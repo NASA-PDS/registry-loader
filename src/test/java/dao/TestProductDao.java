@@ -21,7 +21,7 @@ public class TestProductDao
         
         try
         {
-            client = EstablishConnectionFactory.directly("localhost").createRestClient();
+            client = EstablishConnectionFactory.from("localhost").createRestClient();
             ProductDao dao = new ProductDao(client, "registry");
             
             //testUpdateArchiveStatus(dao);
