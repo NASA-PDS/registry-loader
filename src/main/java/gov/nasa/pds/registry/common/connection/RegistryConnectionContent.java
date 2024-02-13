@@ -11,12 +11,16 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 
 public final class RegistryConnectionContent {
+  static { KnownRegistryConnections.initialzeAppHandler(); }
   public static RegistryConnectionContent from (URL registry_connection) throws IOException, JAXBException {
     JAXBContext jaxbContext = new JAXBContextFactory().createContext(new Class[]{RegistryConnection.class}, null);
     RegistryConnection xml;
-    String acceptable[] = { "app", "file", "http", "https" };
+    String acceptable[] = { "app", "file", "jar", "http", "https" };
     if (!Arrays.stream(acceptable).anyMatch(registry_connection.getProtocol()::equalsIgnoreCase)) {
       throw new IllegalArgumentException("URL protocol must be one of " + acceptable + " not the one specified: " + registry_connection);
+    }
+    if (registry_connection.getProtocol().equalsIgnoreCase("app")) {
+      registry_connection = RegistryConnectionContent.class.getResource(registry_connection.getPath());
     }
     xml = (RegistryConnection)jaxbContext.createUnmarshaller().unmarshal(registry_connection);
     return new RegistryConnectionContent(xml);
