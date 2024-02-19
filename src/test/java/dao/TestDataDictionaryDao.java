@@ -24,7 +24,7 @@ public class TestDataDictionaryDao
 
     private static void testListBooleanFields() throws Exception
     {
-        RestClient client = EstablishConnectionFactory.from("http://localhost:9200").createRestClient();
+        RestClient client = EstablishConnectionFactory.from("app:/connections/direct/localhost.xml").createRestClient();
         
         try
         {
@@ -43,7 +43,7 @@ public class TestDataDictionaryDao
 
     private static void testListDateFields() throws Exception
     {
-        RestClient client = EstablishConnectionFactory.from("http://localhost:9200").createRestClient();
+        RestClient client = EstablishConnectionFactory.from("app:/connections/direct/localhost.xml").createRestClient();
         
         try
         {
@@ -62,7 +62,7 @@ public class TestDataDictionaryDao
     
     private static void testListLdds() throws Exception
     {
-        RestClient client = EstablishConnectionFactory.from("http://localhost:9200").createRestClient();
+        RestClient client = EstablishConnectionFactory.from("app:/connections/direct/localhost.xml").createRestClient();
         
         try
         {
@@ -85,7 +85,7 @@ public class TestDataDictionaryDao
     
     private static void testGetLddInfo() throws Exception
     {
-        RestClient client = EstablishConnectionFactory.from("http://localhost:9200").createRestClient();
+        RestClient client = EstablishConnectionFactory.from("app:/connections/direct/localhost.xml").createRestClient();
         
         try
         {

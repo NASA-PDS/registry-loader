@@ -19,7 +19,7 @@ public class RestClientWrapper implements RestClient
     final org.elasticsearch.client.RestClient real_client;
     /**
      * Constructor.
-     * @param url Elasticsearch URL, e.g., "http://localhost:9200"
+     * @param url Elasticsearch URL, e.g., "app:/connections/direct/localhost.xml"
      * @throws Exception an exception
      */
     public RestClientWrapper(ConnectionFactory conFact) throws Exception

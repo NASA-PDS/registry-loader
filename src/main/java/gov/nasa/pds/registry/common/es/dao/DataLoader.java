@@ -45,7 +45,7 @@ public class DataLoader
 
     /**
      * Constructor
-     * @param esUrl Elasticsearch URL, e.g., "http://localhost:9200"
+     * @param esUrl Elasticsearch URL, e.g., "app:/connections/direct/localhost.xml"
      * @param indexName Elasticsearch index name
      * @param authConfigFile Elasticsearch authentication configuration file
      * (see Registry Manager documentation for more info)

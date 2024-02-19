@@ -17,7 +17,7 @@ class EsUtils
 {
     /**
      * Parse Elasticsearch URL
-     * @param url Elasticsearch URL, e.g., "http://localhost:9200"
+     * @param url Elasticsearch URL, e.g., "app:/connections/direct/localhost.xml"
      * @return HTTP host information
      * @throws Exception an exception
      */
