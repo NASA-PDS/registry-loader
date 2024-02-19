@@ -63,6 +63,8 @@ public final class MultiTenancy implements ConnectionFactory {
         .setHeader("Authorization", content.get("AuthenticationResult").get("TokenType") + " " + content.get("AuthenticationResult").get("AccessToken"))
         .setHeader("IDToken", content.get("AuthenticationResult").get("IdToken"))
         .build();
+    System.out.println ("Authorization : " + content.get("AuthenticationResult").get("TokenType") + " " + content.get("AuthenticationResult").get("AccessToken"));
+    System.out.println ("IDToken : " + content.get("AuthenticationResult").get("IdToken"));
     response = client.send(request, HttpResponse.BodyHandlers.ofString());
     System.out.println (response);
     System.out.println (response.body());
