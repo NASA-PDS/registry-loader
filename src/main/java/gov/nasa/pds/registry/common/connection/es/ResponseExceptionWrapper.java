@@ -14,47 +14,47 @@ final class ResponseExceptionWrapper extends ResponseException {
   }
   @Override
   public String getMessage() {
-    return this.real_exception.getMessage();
+    return this.real_exception == null ? super.getMessage() : this.real_exception.getMessage();
   }
   @Override
   public String getLocalizedMessage() {
-    return this.real_exception.getLocalizedMessage();
+    return this.real_exception == null ? super.getLocalizedMessage() : this.real_exception.getLocalizedMessage();
   }
   @Override
   public synchronized Throwable getCause() {
-    return this.real_exception.getCause();
+    return this.real_exception == null ? super.getCause() : this.real_exception.getCause();
   }
   @Override
   public synchronized Throwable initCause(Throwable cause) {
-    return this.real_exception.initCause(cause);
+    return this.real_exception == null ? super.initCause(cause) : this.real_exception.initCause(cause);
   }
   @Override
   public String toString() {
-    return this.real_exception.toString();
+    return this.real_exception == null ? super.toString() : this.real_exception.toString();
   }
   @Override
   public void printStackTrace() {
-    this.real_exception.printStackTrace();
+    if (this.real_exception == null) super.printStackTrace(); else this.real_exception.printStackTrace();
   }
   @Override
   public void printStackTrace(PrintStream s) {
-    this.real_exception.printStackTrace(s);
+    if (this.real_exception == null) super.printStackTrace(s); else this.real_exception.printStackTrace(s);
   }
   @Override
   public void printStackTrace(PrintWriter s) {
-    this.real_exception.printStackTrace(s);
+    if (this.real_exception == null) super.printStackTrace(s); else this.real_exception.printStackTrace(s);
   }
   @Override
   public synchronized Throwable fillInStackTrace() {
-    return this.real_exception.fillInStackTrace();
+    return this.real_exception == null ? super.fillInStackTrace() : this.real_exception.fillInStackTrace();
   }
   @Override
   public StackTraceElement[] getStackTrace() {
-    return this.real_exception.getStackTrace();
+    return this.real_exception == null ? super.getStackTrace() : this.real_exception.getStackTrace();
   }
   @Override
   public void setStackTrace(StackTraceElement[] stackTrace) {
-    this.real_exception.setStackTrace(stackTrace);
+    if (this.real_exception == null) super.setStackTrace(stackTrace); else this.real_exception.setStackTrace(stackTrace);
   }
   @Override
   public Response getResponse() {

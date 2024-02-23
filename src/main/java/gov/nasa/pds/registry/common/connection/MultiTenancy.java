@@ -17,8 +17,10 @@ import com.google.gson.reflect.TypeToken;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.connection.config.CognitoType;
+import gov.nasa.pds.registry.common.connection.es.RestClientWrapper;
 
 public final class MultiTenancy implements ConnectionFactory {
+  final private int timeout = 5000;
   final private AuthContent auth;
   final private HttpHost host;
   final private URL signed;
@@ -63,12 +65,11 @@ public final class MultiTenancy implements ConnectionFactory {
         .setHeader("Authorization", content.get("AuthenticationResult").get("TokenType") + " " + content.get("AuthenticationResult").get("AccessToken"))
         .setHeader("IDToken", content.get("AuthenticationResult").get("IdToken"))
         .build();
-    System.out.println ("Authorization : " + content.get("AuthenticationResult").get("TokenType") + " " + content.get("AuthenticationResult").get("AccessToken"));
-    System.out.println ("IDToken : " + content.get("AuthenticationResult").get("IdToken"));
     response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    System.out.println (response);
-    System.out.println (response.body());
-    URL signed = null;
+    if (299 < response.statusCode()) {
+      throw new IOException("Could not obtain signed URL: " + response.toString());
+    }
+    URL signed = new URL(response.body().substring(response.body().indexOf("https://")));
     return new MultiTenancy(auth, signed);
   }
 
@@ -83,13 +84,19 @@ public final class MultiTenancy implements ConnectionFactory {
   }
   @Override
   public HttpURLConnection createConnection() throws IOException {
-    // TODO Auto-generated method stub
-    return null;
+    String url = this.signed.toString();
+    if (this.index != null) url += "/" + this.index;
+    if (this.api != null) url += "/" + this.api;
+    HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
+    con.setConnectTimeout(this.timeout);
+    con.setReadTimeout(this.timeout);
+    con.setAllowUserInteraction(false);
+    con.setRequestProperty("Authorization", this.auth.getHeader());
+    return con;
   }
   @Override
   public RestClient createRestClient() throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    return new RestClientWrapper(this);
   }
   @Override
   public CredentialsProvider getCredentials() {
