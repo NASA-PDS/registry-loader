@@ -10,14 +10,15 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.util.Map;
+import java.util.Properties;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
+import gov.nasa.pds.registry.common.connection.aws.RestClientWrapper;
 import gov.nasa.pds.registry.common.connection.config.CognitoType;
-import gov.nasa.pds.registry.common.connection.es.RestClientWrapper;
 
 public final class MultiTenancy implements ConnectionFactory {
   final private int timeout = 5000;
@@ -42,6 +43,7 @@ public final class MultiTenancy implements ConnectionFactory {
         .build();
     HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     Map<String,Map<String,String>> content;
+    Properties awsCreds = new Properties(System.getProperties());
     Type contentType = new TypeToken<Map<String,Map<String,String>>>(){}.getType();
 
     expectedContent &= response.body().contains("AuthenticationResult");
@@ -69,7 +71,23 @@ public final class MultiTenancy implements ConnectionFactory {
     if (299 < response.statusCode()) {
       throw new IOException("Could not obtain signed URL: " + response.toString());
     }
-    URL signed = new URL(response.body().substring(response.body().indexOf("https://")));
+    expectedContent &= response.body().contains("IdentityId");
+    expectedContent &= response.body().contains("Credentials");
+    expectedContent &= response.body().contains("AccessKeyId");
+    expectedContent &= response.body().contains("SecretKey");
+    expectedContent &= response.body().contains("SessionToken");
+    expectedContent &= response.body().contains("Expiration");
+    expectedContent &= response.body().contains("ResponseMetadata");
+    contentType = new TypeToken<Map<String,Object>>(){}.getType();
+    content = gson.fromJson(response.body(), contentType);
+    awsCreds.setProperty("aws.accessKeyId", content.get("Credentials").get("AccessKeyId"));
+    awsCreds.setProperty("aws.secretAccessKey", content.get("Credentials").get("SecretKey"));
+    awsCreds.setProperty("aws.sessionToken", content.get("Credentials").get("SessionToken"));
+    System.out.println (content.get("Credentials").get("AccessKeyId"));
+    System.out.println (content.get("Credentials").get("SecretKey"));
+    System.out.println (content.get("Credentials").get("SessionToken"));
+    System.setProperties(awsCreds);
+    URL signed = new URL("https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com"); // move to config or lambda??
     return new MultiTenancy(auth, signed);
   }
 
@@ -96,7 +114,7 @@ public final class MultiTenancy implements ConnectionFactory {
   }
   @Override
   public RestClient createRestClient() throws Exception {
-    return new RestClientWrapper(this);
+    return new RestClientWrapper();
   }
   @Override
   public CredentialsProvider getCredentials() {
