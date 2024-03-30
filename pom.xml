@@ -132,26 +132,26 @@ POSSIBILITY OF SUCH DAMAGE.
           <artifactId>jakarta.activation-api</artifactId>
           <version>2.1.2</version>
         </dependency>
-        <!-- three artifacts for opensearch serverless -->
-        <dependency>
-          <groupId>org.opensearch.client</groupId>
-          <artifactId>opensearch-java</artifactId>
-          <version>2.9.0</version>
-        </dependency>
+        <!-- four artifacts for opensearch serverless -->
         <dependency>
           <groupId>org.apache.httpcomponents.client5</groupId>
           <artifactId>httpclient5</artifactId>
           <version>5.3.1</version>
         </dependency>
         <dependency>
-          <groupId>software.amazon.awssdk</groupId>
-          <artifactId>opensearch</artifactId>
-          <version>2.25.6</version>
+          <groupId>org.opensearch.client</groupId>
+          <artifactId>opensearch-java</artifactId>
+          <version>2.9.1</version>
         </dependency>
         <dependency>
           <groupId>software.amazon.awssdk</groupId>
-          <artifactId>sts</artifactId>
-          <version>2.25.13</version>
+          <artifactId>opensearch</artifactId>
+          <version>2.25.21</version>
+        </dependency>
+        <dependency>
+          <groupId>software.amazon.awssdk</groupId>
+          <artifactId>apache-client</artifactId>
+          <version>2.25.21</version>
         </dependency>
     </dependencies>
 

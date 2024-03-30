@@ -1,12 +1,9 @@
 package gov.nasa.pds.registry.common;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 
 public interface ConnectionFactory {
-  public HttpURLConnection createConnection() throws IOException;
   public RestClient createRestClient() throws Exception;
   public CredentialsProvider getCredentials();
   public HttpHost getHost();

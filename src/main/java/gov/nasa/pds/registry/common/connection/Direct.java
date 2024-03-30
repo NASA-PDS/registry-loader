@@ -38,11 +38,6 @@ public class Direct implements Cloneable, ConnectionFactory {
     this.service = service;
     this.veryTrusting = trustSelfSigned;
   }
-  @Override
-  public ConnectionFactory clone() {
-    return new Direct(this.service, this.auth, this.veryTrusting).setAPI(this.api).setIndexName(this.index);
-  }
-  @Override
   public HttpURLConnection createConnection() throws IOException {
     String url = this.service.toString();
     if (this.index != null) url += "/" + this.index;
@@ -53,6 +48,10 @@ public class Direct implements Cloneable, ConnectionFactory {
     con.setAllowUserInteraction(false);
     con.setRequestProperty("Authorization", this.auth.getHeader());
     return con;
+  }
+  @Override
+  public ConnectionFactory clone() {
+    return new Direct(this.service, this.auth, this.veryTrusting).setAPI(this.api).setIndexName(this.index);
   }
   @Override
   public RestClient createRestClient() throws Exception {

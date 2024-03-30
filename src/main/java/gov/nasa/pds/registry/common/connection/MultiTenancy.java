@@ -2,7 +2,6 @@ package gov.nasa.pds.registry.common.connection;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -21,10 +20,9 @@ import gov.nasa.pds.registry.common.connection.aws.RestClientWrapper;
 import gov.nasa.pds.registry.common.connection.config.CognitoType;
 
 public final class MultiTenancy implements ConnectionFactory {
-  final private int timeout = 5000;
   final private AuthContent auth;
   final private HttpHost host;
-  final private URL signed;
+  final private URL endpoint;
   private String api = null;
   private String index = null;
   public static MultiTenancy build (CognitoType cog, AuthContent auth) throws IOException, InterruptedException {
@@ -43,7 +41,7 @@ public final class MultiTenancy implements ConnectionFactory {
         .build();
     HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     Map<String,Map<String,String>> content;
-    Properties awsCreds = new Properties(System.getProperties());
+    Properties awsCreds = new Properties(System.getProperties()); // initialize properties as oracle suggests
     Type contentType = new TypeToken<Map<String,Map<String,String>>>(){}.getType();
 
     expectedContent &= response.body().contains("AuthenticationResult");
@@ -80,41 +78,27 @@ public final class MultiTenancy implements ConnectionFactory {
     expectedContent &= response.body().contains("ResponseMetadata");
     contentType = new TypeToken<Map<String,Object>>(){}.getType();
     content = gson.fromJson(response.body(), contentType);
+    // fill then set system properties as oracle suggests (init happened above)
     awsCreds.setProperty("aws.accessKeyId", content.get("Credentials").get("AccessKeyId"));
     awsCreds.setProperty("aws.secretAccessKey", content.get("Credentials").get("SecretKey"));
     awsCreds.setProperty("aws.sessionToken", content.get("Credentials").get("SessionToken"));
-    System.out.println (content.get("Credentials").get("AccessKeyId"));
-    System.out.println (content.get("Credentials").get("SecretKey"));
-    System.out.println (content.get("Credentials").get("SessionToken"));
     System.setProperties(awsCreds);
     URL signed = new URL("https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com"); // move to config or lambda??
     return new MultiTenancy(auth, signed);
   }
 
-  private MultiTenancy (AuthContent auth, URL signed) {
+  private MultiTenancy (AuthContent auth, URL opensearchEndpoint) {
     this.auth = auth;
-    this.host = new HttpHost(signed.getHost(), signed.getPort(), signed.getProtocol());
-    this.signed = signed;
+    this.endpoint = opensearchEndpoint;
+    this.host = new HttpHost(this.endpoint.getHost(), this.endpoint.getPort(), this.endpoint.getProtocol());
   }
   @Override
   public ConnectionFactory clone() {
-    return new MultiTenancy(this.auth, this.signed).setAPI(this.api).setIndexName(this.index);
-  }
-  @Override
-  public HttpURLConnection createConnection() throws IOException {
-    String url = this.signed.toString();
-    if (this.index != null) url += "/" + this.index;
-    if (this.api != null) url += "/" + this.api;
-    HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
-    con.setConnectTimeout(this.timeout);
-    con.setReadTimeout(this.timeout);
-    con.setAllowUserInteraction(false);
-    con.setRequestProperty("Authorization", this.auth.getHeader());
-    return con;
+    return new MultiTenancy(this.auth, this.endpoint).setAPI(this.api).setIndexName(this.index);
   }
   @Override
   public RestClient createRestClient() throws Exception {
-    return new RestClientWrapper();
+    return new RestClientWrapper(this);
   }
   @Override
   public CredentialsProvider getCredentials() {
