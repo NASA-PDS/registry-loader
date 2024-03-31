@@ -39,7 +39,7 @@ public class SchemaDao
      */
     public Set<String> getFieldNames() throws Exception
     {
-        Request req = client.createRequest(Request.Method.GET, "/" + indexName + "/_mappings");
+        Request.Mapping req = client.createMappingRequest().setIndex(indexName);
         Response resp = client.performRequest(req);
         
         MappingsParser parser = new MappingsParser(indexName);
@@ -56,11 +56,9 @@ public class SchemaDao
     {
         if(fields == null || fields.isEmpty()) return;
         
-        SchemaRequestBuilder bld = new SchemaRequestBuilder();
-        String json = bld.createUpdateSchemaRequest(fields);
-        
-        Request req = client.createRequest(Request.Method.PUT, "/" + indexName + "/_mapping");
-        req.setJsonEntity(json);
+        Request.Mapping req = client.createMappingRequest()
+            .buildUpdateFieldSchema(fields)
+            .setIndex(this.indexName);
         client.performRequest(req);
     }
 

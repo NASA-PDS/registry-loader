@@ -53,7 +53,7 @@ public class DataLoader
     public DataLoader(ConnectionFactory conFactory) throws Exception
     {
         log = LogManager.getLogger(this.getClass());
-        this.conFactory = conFactory.setAPI("_bulk?refresh=wait_for");
+        this.conFactory = conFactory;
     }
 
 
@@ -231,10 +231,11 @@ public class DataLoader
 
         try
         {
-          bulk = this.conFactory.createRestClient().createBulkRequest();
-          for (String statement : data) {
-            bulk.add(statement);
+          bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh("wait_for");
+          for (int index = 0 ; index < data.size() ; index++) {
+            bulk.add(data.get(index), data.get(++index));
           }
+          // FIXME: response has changed so need to debug this
           Response response = this.conFactory.createRestClient().performRequest(bulk);
           // Read Elasticsearch response.
           String respJson = response.toString();

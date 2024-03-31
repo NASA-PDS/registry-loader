@@ -10,6 +10,5 @@ public interface ConnectionFactory {
   public String getHostName();
   public String getIndexName();
   public boolean isTrustingSelfSigned();
-  public ConnectionFactory setAPI (String api);
   public ConnectionFactory setIndexName (String idxName);
 }

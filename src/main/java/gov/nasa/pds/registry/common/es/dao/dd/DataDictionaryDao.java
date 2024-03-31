@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.RestClient;
-import gov.nasa.pds.registry.common.es.dao.schema.SchemaRequestBuilder;
 import gov.nasa.pds.registry.common.util.SearchResponseParser;
 import gov.nasa.pds.registry.common.util.Tuple;
 
@@ -84,11 +83,9 @@ public class DataDictionaryDao
      */
     public LddVersions getLddInfo(String namespace) throws Exception
     {
-        DDRequestBuilder bld = new DDRequestBuilder();
-        String json = bld.createListLddsRequest(namespace);
-
-        Request req = client.createRequest(Request.Method.GET, "/" + indexName + "-dd/_search");
-        req.setJsonEntity(json);
+        Request.Search req = client.createSearchRequest()
+            .buildListLdds(namespace)
+            .setIndex(indexName + "-dd");
         Response resp = client.performRequest(req);
         
         GetLddInfoRespParser parser = new GetLddInfoRespParser();
@@ -150,11 +147,9 @@ public class DataDictionaryDao
      */
     public List<LddInfo> listLdds(String namespace) throws Exception
     {
-        DDRequestBuilder bld = new DDRequestBuilder();
-        String json = bld.createListLddsRequest(namespace);
-
-        Request req = client.createRequest(Request.Method.GET, "/" + indexName + "-dd/_search");
-        req.setJsonEntity(json);
+        Request.Search req = client.createSearchRequest()
+            .buildListLdds(namespace)
+            .setIndex(this.indexName + "-dd");
         Response resp = client.performRequest(req);
 
         ListLddsParser parser = new ListLddsParser();
@@ -199,11 +194,9 @@ public class DataDictionaryDao
      */
     public Set<String> getFieldNamesByEsType(String esType) throws Exception
     {
-        DDRequestBuilder bld = new DDRequestBuilder();
-        String json = bld.createListFieldsRequest(esType);
-
-        Request req = client.createRequest(Request.Method.GET, "/" + indexName + "-dd/_search");
-        req.setJsonEntity(json);
+        Request.Search req = client.createSearchRequest()
+            .buildListFields(esType)
+            .setIndex(this.indexName + "-dd");
         Response resp = client.performRequest(req);
 
         ListFieldsParser parser = new ListFieldsParser();
@@ -229,12 +222,10 @@ public class DataDictionaryDao
         List<Tuple> dtInfo = new ArrayList<Tuple>();
         
         // Create request
-        Request req = client.createRequest(Request.Method.GET, "/" + indexName + "-dd/_mget?_source=es_data_type");
-        
-        // Create request body
-        SchemaRequestBuilder bld = new SchemaRequestBuilder();
-        String json = bld.createMgetRequest(ids);
-        req.setJsonEntity(json);
+        Request.Get req = client.createMGetRequest()
+            .setIds(ids)
+            .includeField("es_data_type")
+            .setIndex(this.indexName + "-dd");
         
         // Call ES
         Response resp = client.performRequest(req);

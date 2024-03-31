@@ -5,10 +5,6 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import gov.nasa.pds.registry.common.Request;
@@ -24,9 +20,7 @@ import gov.nasa.pds.registry.common.util.LidVidUtils;
  * @author karpenko
  */
 public class ProductDao
-{
-    private Logger log;
-    
+{    
     private RestClient client;
     private String indexName;
         
@@ -37,8 +31,6 @@ public class ProductDao
      */
     public ProductDao(RestClient client, String indexName)
     {
-        log = LogManager.getLogger(this.getClass());
-        
         this.client = client;
         this.indexName = indexName;
     }
@@ -54,8 +46,10 @@ public class ProductDao
     {
         if(lidvid == null) return null;
         
-        String reqUrl = "/" + indexName + "/_doc/" + lidvid + "?_source=product_class";
-        Request req = client.createRequest(Request.Method.GET, reqUrl);
+        Request.Get req = client.createGetRequest()
+            .includeField("product_class")
+            .setId(lidvid)
+            .setIndex(this.indexName);
         Response resp = null;
         
         try
@@ -140,8 +134,9 @@ public class ProductDao
         query = URLEncoder.encode(query, "UTF-8");
         
         // Request URL
-        String reqUrl = "/" + indexName + "-refs/_count?q=" + query;
-        Request req = client.createRequest(Request.Method.GET, reqUrl);
+        Request.Count req = client.createCountRequest()
+            .setIndex(this.indexName + "-refs")
+            .setQuery(query);
         Response resp = null;
 
         try
@@ -210,8 +205,10 @@ public class ProductDao
         if(collectionLidVid == null) return null;
         
         String docId = collectionLidVid + "::" + type + page;
-        String reqUrl = "/" + indexName + "-refs/_doc/" + docId + "?_source=product_lidvid";
-        Request req = client.createRequest(Request.Method.GET, reqUrl);
+        Request.Get req = client.createGetRequest()
+            .includeField("product_lidvid")
+            .setId(docId)
+            .setIndex(this.indexName + "-refs");
         Response resp = null;
         
         try
@@ -276,12 +273,9 @@ public class ProductDao
     {
         if(lidvids == null || status == null) return;
         
-        String json = ProductRequestBuilder.buildUpdateStatusJson(lidvids, status);
-        log.debug("Request:\n" + json);
-        
-        String reqUrl = "/" + indexName + "/_bulk"; //?refresh=wait_for";
-        Request req = client.createRequest(Request.Method.POST, reqUrl);
-        req.setJsonEntity(json);
+        Request.Bulk req = client.createBulkRequest()
+            .buildUpdateStatus(lidvids, status)
+            .setIndex(this.indexName);
         
         Response resp = client.performRequest(req);
         
@@ -360,8 +354,11 @@ public class ProductDao
     {
         if(bundleLidvid == null) return null;
         
-        String reqUrl = "/" + indexName + "/_doc/" + bundleLidvid + "?_source=ref_lidvid_collection,ref_lid_collection";
-        Request req = client.createRequest(Request.Method.GET, reqUrl);
+        Request.Get req = client.createGetRequest()
+            .includeField("ref_lidvid_collection")
+            .includeField("ref_lid_collection")
+            .setId(bundleLidvid)
+            .setIndex(this.indexName);
         Response resp = null;
         
         try
@@ -470,15 +467,9 @@ public class ProductDao
     {
         if(lids == null || lids.isEmpty()) return null;
         
-        String json = ProductRequestBuilder.buildGetLatestLidVidsJson(lids);
-        log.debug("getGetLatestLidVids() request: " + json);
-        
-        if(json == null) return null;
-        
-        String reqUrl = "/" + indexName + "/_search/";
-        Request req = client.createRequest(Request.Method.GET, reqUrl);
-        req.setJsonEntity(json);
-        
+        Request.Search req = client.createSearchRequest()
+            .setIndex(this.indexName)
+            .buildLatestLidVids(lids);        
         Response resp = null;
         
         try

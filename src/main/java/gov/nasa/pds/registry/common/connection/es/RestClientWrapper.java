@@ -1,14 +1,19 @@
 package gov.nasa.pds.registry.common.connection.es;
 
 import java.io.IOException;
+import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestClientBuilder;
-import gov.nasa.pds.registry.common.Request;
+import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request.Bulk;
-import gov.nasa.pds.registry.common.Request.Method;
+import gov.nasa.pds.registry.common.Request.Count;
+import gov.nasa.pds.registry.common.Request.Get;
+import gov.nasa.pds.registry.common.Request.Mapping;
+import gov.nasa.pds.registry.common.Request.MGet;
+import gov.nasa.pds.registry.common.Request.Search;
+import gov.nasa.pds.registry.common.Request.Setting;
 import gov.nasa.pds.registry.common.Response;
+import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
-import gov.nasa.pds.registry.common.connection.Direct;
-import gov.nasa.pds.registry.common.es.dao.DaoUtils;
 
 
 /**
@@ -18,13 +23,12 @@ import gov.nasa.pds.registry.common.es.dao.DaoUtils;
  */
 public class RestClientWrapper implements RestClient
 {
-    final Direct conFactory;
     final org.elasticsearch.client.RestClient real_client;
     /**
      * Constructor.
      * @throws Exception an exception
      */
-    public RestClientWrapper(Direct conFact) throws Exception
+    public RestClientWrapper(ConnectionFactory conFact) throws Exception
     {
       ClientConfigCB clientCB = new ClientConfigCB();
       RequestConfigCB reqCB = new RequestConfigCB();
@@ -33,33 +37,84 @@ public class RestClientWrapper implements RestClient
       clientCB.setTrustSelfSignedCert(conFact.isTrustingSelfSigned());
       bld.setHttpClientConfigCallback(clientCB);
       bld.setRequestConfigCallback(reqCB);
-      this.conFactory = conFact;
       this.real_client = bld.build();
+    }
+    private Response performRequest(String endpoint, String json, String method) throws IOException,ResponseException {
+      try {
+        Request request = new Request(method, endpoint);
+        if (json != null) request.setJsonEntity(json);
+        return new ResponseWrapper(this.real_client.performRequest(request));
+      } catch (org.elasticsearch.client.ResponseException e) {
+        throw new ResponseExceptionWrapper(e);
+      }
     }
     @Override
     public void close() throws IOException {
       this.real_client.close();
     }
     @Override
-    public Request createRequest(Method method, String endpoint) {
-      return new RequestWrapper(method, endpoint);
+    public Bulk createBulkRequest() {
+      return new BulkImpl();
     }
     @Override
-    public Response performRequest(Request request) throws IOException {
-      try {
-        return new ResponseWrapper(this.real_client.performRequest(((RequestWrapper)request).real_request));
-      } catch (org.elasticsearch.client.ResponseException e) {
-        throw new ResponseExceptionWrapper(e);
-      }
+    public Count createCountRequest() {
+      return new CountImpl();
     }
     @Override
-    public Bulk createBulkRequest() throws IOException {
-      return new BulkWrapper(this.conFactory);
+    public Get createGetRequest() {
+      return new GetImpl();
     }
     @Override
-    public Response performRequest(Bulk request) throws IOException {
-      ((BulkWrapper)request).writer.close();
-      DaoUtils.getLastLine(((BulkWrapper)request).con.getInputStream());
-      return null;
-    }    
+    public Mapping createMappingRequest() {
+      return new MappingImpl();
+    }
+    @Override
+    public MGet createMGetRequest() {
+      return new GetImpl();
+    }
+    @Override
+    public Search createSearchRequest() {
+      return new SearchImpl();
+    }
+    @Override
+    public Setting createSettingRequest() {
+      return new SettingImpl();
+    }
+    @Override
+    public Response create (String indexName, String configAsJSON) throws IOException,ResponseException {
+      return this.performRequest("/" + indexName, configAsJSON, "PUT");
+    }
+    @Override
+    public Response delete (String indexName) throws IOException,ResponseException {
+      return this.performRequest(indexName, null, "DELETE");
+    }
+    @Override
+    public Response exists (String indexName) throws IOException,ResponseException {
+      return this.performRequest ("/" + indexName, null, "HEAD");
+    }
+    @Override
+    public Response performRequest(Bulk request) throws IOException,ResponseException {
+      return this.performRequest(request.toString(), ((BulkImpl)request).json, "POST");
+    }
+    @Override
+    public Response performRequest(Count request) throws IOException,ResponseException {
+      return this.performRequest(request.toString(), null, "GET");
+    }
+    @Override
+    public Response performRequest(Get request) throws IOException,ResponseException {
+      return this.performRequest(request.toString(), ((GetImpl)request).json, "GET");
+    }
+    @Override
+    public Response performRequest(Mapping request) throws IOException,ResponseException {
+      String json = ((MappingImpl)request).json;
+      return this.performRequest(request.toString(), json, json == null ? "GET" : "PUT");
+    }
+    @Override
+    public Response performRequest(Search request) throws IOException,ResponseException {
+      return this.performRequest(request.toString(), ((SearchImpl)request).json, "GET");
+    }
+    @Override
+    public Response performRequest(Setting request) throws IOException,ResponseException {
+      return this.performRequest(request.toString(), null, "GET");
+    }
 }

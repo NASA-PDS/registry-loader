@@ -23,7 +23,6 @@ public final class MultiTenancy implements ConnectionFactory {
   final private AuthContent auth;
   final private HttpHost host;
   final private URL endpoint;
-  private String api = null;
   private String index = null;
   public static MultiTenancy build (CognitoType cog, AuthContent auth) throws IOException, InterruptedException {
     boolean expectedContent = true;
@@ -94,7 +93,7 @@ public final class MultiTenancy implements ConnectionFactory {
   }
   @Override
   public ConnectionFactory clone() {
-    return new MultiTenancy(this.auth, this.endpoint).setAPI(this.api).setIndexName(this.index);
+    return new MultiTenancy(this.auth, this.endpoint).setIndexName(this.index);
   }
   @Override
   public RestClient createRestClient() throws Exception {
@@ -119,11 +118,6 @@ public final class MultiTenancy implements ConnectionFactory {
   @Override
   public boolean isTrustingSelfSigned() {
     return false;
-  }
-  @Override
-  public ConnectionFactory setAPI(String api) {
-    this.api = api;
-    return this;
   }
   @Override
   public ConnectionFactory setIndexName(String idxName) {

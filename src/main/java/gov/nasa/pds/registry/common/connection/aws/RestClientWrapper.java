@@ -35,17 +35,17 @@ public class RestClientWrapper implements RestClient {
     this.httpClient.close();
   }
   @Override
+  public Bulk createBulkRequest() throws IOException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
   public Request createRequest(Method method, String endpoint) {
     // TODO Auto-generated method stub
     return null;
   }
   @Override
   public Response performRequest(Request request) throws IOException {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  @Override
-  public Bulk createBulkRequest() throws IOException {
     // TODO Auto-generated method stub
     return null;
   }
