@@ -29,8 +29,18 @@ class BulkImpl implements Request.Bulk {
     return this;
   }
   @Override
-  public Bulk setRefresh(String type) {
-    this.refresh = type;
+  public Bulk setRefresh(Refresh type) {
+    switch (type) {
+      case False:
+        this.refresh = "false";
+        break;
+      case True:
+        this.refresh = "true";
+        break;
+      case WaitFor:
+        this.refresh = "wait_for";
+        break;
+    }
     return this;
   }
   @Override

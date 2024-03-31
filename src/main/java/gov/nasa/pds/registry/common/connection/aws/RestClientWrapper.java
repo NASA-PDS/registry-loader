@@ -5,13 +5,18 @@ import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.transport.aws.AwsSdk2Transport;
 import org.opensearch.client.transport.aws.AwsSdk2TransportOptions;
 import gov.nasa.pds.registry.common.ConnectionFactory;
-import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.Request.Bulk;
-import gov.nasa.pds.registry.common.Request.Method;
+import gov.nasa.pds.registry.common.Request.Count;
+import gov.nasa.pds.registry.common.Request.Get;
+import gov.nasa.pds.registry.common.Request.MGet;
+import gov.nasa.pds.registry.common.Request.Mapping;
+import gov.nasa.pds.registry.common.Request.Search;
+import gov.nasa.pds.registry.common.Request.Setting;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import gov.nasa.pds.registry.common.Response;
+import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
 
 public class RestClientWrapper implements RestClient {
@@ -35,24 +40,84 @@ public class RestClientWrapper implements RestClient {
     this.httpClient.close();
   }
   @Override
-  public Bulk createBulkRequest() throws IOException {
+  public Bulk createBulkRequest() {
     // TODO Auto-generated method stub
     return null;
   }
   @Override
-  public Request createRequest(Method method, String endpoint) {
+  public Count createCountRequest() {
     // TODO Auto-generated method stub
     return null;
   }
   @Override
-  public Response performRequest(Request request) throws IOException {
+  public Get createGetRequest() {
     // TODO Auto-generated method stub
     return null;
   }
   @Override
-  public Response performRequest(Bulk request) throws IOException {
+  public Mapping createMappingRequest() {
     // TODO Auto-generated method stub
     return null;
   }
-
+  @Override
+  public MGet createMGetRequest() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Search createSearchRequest() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Setting createSettingRequest() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Response create(String indexName, String configAsJson)
+      throws IOException, ResponseException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Response delete(String indexName) throws IOException, ResponseException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Response exists(String indexName) throws IOException, ResponseException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Response performRequest(Bulk request) throws IOException, ResponseException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Response performRequest(Count request) throws IOException, ResponseException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Response performRequest(Get request) throws IOException, ResponseException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Response performRequest(Mapping request) throws IOException, ResponseException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Response performRequest(Search request) throws IOException, ResponseException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  @Override
+  public Response performRequest(Setting request) throws IOException, ResponseException {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

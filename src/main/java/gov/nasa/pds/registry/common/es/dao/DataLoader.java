@@ -231,7 +231,7 @@ public class DataLoader
 
         try
         {
-          bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh("wait_for");
+          bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor);
           for (int index = 0 ; index < data.size() ; index++) {
             bulk.add(data.get(index), data.get(++index));
           }

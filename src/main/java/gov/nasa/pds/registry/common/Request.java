@@ -6,11 +6,11 @@ import gov.nasa.pds.registry.common.util.Tuple;
 
 public interface Request {
   public interface Bulk { // _bulk
-    //public void add (String statement); // delete
+    enum Refresh { False, True, WaitFor };
     public void add (String statement, String document); // create, index, update
     public Bulk buildUpdateStatus(Collection<String> lidvids, String status);
     public Bulk setIndex(String name);
-    public Bulk setRefresh(String type);
+    public Bulk setRefresh(Refresh type);
   }
   public interface Count { // _count
     public Count setIndex (String name);
