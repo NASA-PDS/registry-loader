@@ -10,14 +10,14 @@ import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.connection.config.DirectType;
 import gov.nasa.pds.registry.common.connection.es.RestClientWrapper;
 
-public class Direct implements Cloneable, ConnectionFactory {
+public class UseOpensearchSDK1 implements Cloneable, ConnectionFactory {
   final private boolean veryTrusting;
   final private AuthContent auth;
   final private HttpHost host;
   final private URL service;
   private String index = null;
 
-  public static Direct build (DirectType url, AuthContent auth) throws Exception {
+  public static UseOpensearchSDK1 build (DirectType url, AuthContent auth) throws Exception {
     URL service = new URL(url.getValue());
     // Trust self-signed certificates
     if(url.isTrustSelfSigned())
@@ -25,10 +25,10 @@ public class Direct implements Cloneable, ConnectionFactory {
         SSLContext sslCtx = SSLUtils.createTrustAllContext();
         HttpsURLConnection.setDefaultSSLSocketFactory(sslCtx.getSocketFactory());
     }
-    return new Direct (service, auth, url.isTrustSelfSigned());
+    return new UseOpensearchSDK1 (service, auth, url.isTrustSelfSigned());
   }
 
-  private Direct (URL service, AuthContent auth, boolean trustSelfSigned) {
+  private UseOpensearchSDK1 (URL service, AuthContent auth, boolean trustSelfSigned) {
     this.auth = auth;
     this.host = new HttpHost(service.getHost(), service.getPort(), service.getProtocol());
     this.service = service;
@@ -36,7 +36,7 @@ public class Direct implements Cloneable, ConnectionFactory {
   }
   @Override
   public ConnectionFactory clone() {
-    return new Direct(this.service, this.auth, this.veryTrusting).setIndexName(this.index);
+    return new UseOpensearchSDK1(this.service, this.auth, this.veryTrusting).setIndexName(this.index);
   }
   @Override
   public RestClient createRestClient() throws Exception {

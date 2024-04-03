@@ -18,13 +18,15 @@ import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.connection.aws.RestClientWrapper;
 import gov.nasa.pds.registry.common.connection.config.CognitoType;
+import gov.nasa.pds.registry.common.connection.config.DirectType;
 
-public final class MultiTenancy implements ConnectionFactory {
+public final class UseOpensearchSDK2 implements ConnectionFactory {
+  final private boolean isServerless;
   final private AuthContent auth;
   final private HttpHost host;
   final private URL endpoint;
   private String index = null;
-  public static MultiTenancy build (CognitoType cog, AuthContent auth) throws IOException, InterruptedException {
+  public static UseOpensearchSDK2 build (CognitoType cog, AuthContent auth) throws IOException, InterruptedException {
     boolean expectedContent = true;
     Gson gson = new Gson();
     HttpClient client = HttpClient.newHttpClient();
@@ -83,21 +85,24 @@ public final class MultiTenancy implements ConnectionFactory {
     awsCreds.setProperty("aws.sessionToken", content.get("Credentials").get("SessionToken"));
     System.setProperties(awsCreds);
     URL signed = new URL("https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com"); // move to config or lambda??
-    return new MultiTenancy(auth, signed);
+    return new UseOpensearchSDK2(auth, signed, true);
   }
-
-  private MultiTenancy (AuthContent auth, URL opensearchEndpoint) {
+  public static UseOpensearchSDK2 build (DirectType url, AuthContent auth) throws Exception {
+    return null;
+  }
+  private UseOpensearchSDK2 (AuthContent auth, URL opensearchEndpoint, boolean isServerless) {
     this.auth = auth;
     this.endpoint = opensearchEndpoint;
     this.host = new HttpHost(this.endpoint.getHost(), this.endpoint.getPort(), this.endpoint.getProtocol());
+    this.isServerless = isServerless;
   }
   @Override
   public ConnectionFactory clone() {
-    return new MultiTenancy(this.auth, this.endpoint).setIndexName(this.index);
+    return new UseOpensearchSDK2(this.auth, this.endpoint, this.isServerless).setIndexName(this.index);
   }
   @Override
   public RestClient createRestClient() throws Exception {
-    return new RestClientWrapper(this);
+    return new RestClientWrapper(this, this.isServerless);
   }
   @Override
   public CredentialsProvider getCredentials() {

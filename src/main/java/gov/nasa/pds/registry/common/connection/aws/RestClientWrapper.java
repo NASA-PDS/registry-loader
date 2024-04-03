@@ -2,6 +2,10 @@ package gov.nasa.pds.registry.common.connection.aws;
 
 import java.io.IOException;
 import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch.core.BulkResponse;
+import org.opensearch.client.opensearch.indices.CreateIndexRequest;
+import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
+import org.opensearch.client.opensearch.indices.ExistsRequest;
 import org.opensearch.client.transport.aws.AwsSdk2Transport;
 import org.opensearch.client.transport.aws.AwsSdk2TransportOptions;
 import gov.nasa.pds.registry.common.ConnectionFactory;
@@ -22,17 +26,21 @@ import gov.nasa.pds.registry.common.RestClient;
 public class RestClientWrapper implements RestClient {
   final private OpenSearchClient client;
   final private SdkHttpClient httpClient;
-  public RestClientWrapper(ConnectionFactory conFact) {
+  public RestClientWrapper(ConnectionFactory conFact, boolean isServerless) {
     this.httpClient = ApacheHttpClient.builder().build();
-    this.client = new OpenSearchClient(
-        new AwsSdk2Transport(
-            httpClient,
-            conFact.getHostName(),
-            "aoss",
-            Region.US_WEST_2, // signing service region that we should probably get from host name??
-            AwsSdk2TransportOptions.builder().build()
-        )
-    );    
+    if (isServerless) {
+      this.client = new OpenSearchClient(
+          new AwsSdk2Transport(
+              httpClient,
+              conFact.getHostName(),
+              "aoss",
+              Region.US_WEST_2, // signing service region that we should probably get from host name??
+              AwsSdk2TransportOptions.builder().build()
+              )
+          );
+    } else {
+      this.client = null;
+    }
   }
   @Override
   public void close() throws IOException {
@@ -41,58 +49,51 @@ public class RestClientWrapper implements RestClient {
   }
   @Override
   public Bulk createBulkRequest() {
-    // TODO Auto-generated method stub
-    return null;
+    return new BulkImpl();
   }
   @Override
   public Count createCountRequest() {
-    // TODO Auto-generated method stub
-    return null;
+    return new CountImpl();
   }
   @Override
   public Get createGetRequest() {
-    // TODO Auto-generated method stub
-    return null;
+    return new GetImpl();
   }
   @Override
   public Mapping createMappingRequest() {
-    // TODO Auto-generated method stub
-    return null;
+    return new MappingImpl();
   }
   @Override
   public MGet createMGetRequest() {
-    // TODO Auto-generated method stub
-    return null;
+    return new MGetImpl();
   }
   @Override
   public Search createSearchRequest() {
-    // TODO Auto-generated method stub
-    return null;
+    return new SearchImpl();
   }
   @Override
   public Setting createSettingRequest() {
-    // TODO Auto-generated method stub
-    return null;
+    return new SettingImpl();
   }
   @Override
-  public Response create(String indexName, String configAsJson)
-      throws IOException, ResponseException {
-    // TODO Auto-generated method stub
+  public Response create(String indexName, String configAsJson) throws IOException, ResponseException {
+    // FIXME: need to change JSON into V2 mapping
+    this.client.indices().create(new CreateIndexRequest.Builder().index(indexName).build());
     return null;
   }
   @Override
   public Response delete(String indexName) throws IOException, ResponseException {
-    // TODO Auto-generated method stub
+    this.client.indices().delete(new DeleteIndexRequest.Builder().index(indexName).build());
     return null;
   }
   @Override
   public Response exists(String indexName) throws IOException, ResponseException {
-    // TODO Auto-generated method stub
+    this.client.indices().exists(new ExistsRequest.Builder().index(indexName).build());
     return null;
   }
   @Override
   public Response performRequest(Bulk request) throws IOException, ResponseException {
-    // TODO Auto-generated method stub
+    BulkResponse resp = this.client.bulk(((BulkImpl)request).craftsman.build());
     return null;
   }
   @Override

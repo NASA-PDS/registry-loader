@@ -2,8 +2,8 @@ package gov.nasa.pds.registry.common;
 
 import java.net.URL;
 import gov.nasa.pds.registry.common.connection.AuthContent;
-import gov.nasa.pds.registry.common.connection.Direct;
-import gov.nasa.pds.registry.common.connection.MultiTenancy;
+import gov.nasa.pds.registry.common.connection.UseOpensearchSDK1;
+import gov.nasa.pds.registry.common.connection.UseOpensearchSDK2;
 import gov.nasa.pds.registry.common.connection.RegistryConnectionContent;
 
 public class EstablishConnectionFactory {
@@ -21,8 +21,12 @@ public class EstablishConnectionFactory {
     System.setProperty(key, providers);
     RegistryConnectionContent conn = RegistryConnectionContent.from (new URL(urlToRegistryConnection));
     
-    if (conn.isDirectConnection()) return Direct.build(conn.getServerUrl(), auth);
-    if (conn.isCognitoConnection()) return MultiTenancy.build(conn.getCognitoClientId(), auth);
+    if (conn.isDirectConnection()) {
+      if (conn.getServerUrl().getSdk().intValue() == 1) UseOpensearchSDK1.build(conn.getServerUrl(), auth).setIndexName(conn.getIndex());
+      if (conn.getServerUrl().getSdk().intValue() == 2) UseOpensearchSDK2.build(conn.getServerUrl(), auth).setIndexName(conn.getIndex());
+      throw new RuntimeException("The SDK version '" + String.valueOf(conn.getServerUrl().getSdk()) + "is not supported");
+    }
+    if (conn.isCognitoConnection()) return UseOpensearchSDK2.build(conn.getCognitoClientId(), auth).setIndexName(conn.getIndex());
     throw new RuntimeException("New XML/Java choices in src/main/resources/registry_connection.xsd that are not handled.");
   }
 }
