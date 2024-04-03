@@ -13,7 +13,12 @@ public class EstablishConnectionFactory {
   public static ConnectionFactory from (String urlToRegistryConnection, String authFile) throws Exception {
     return EstablishConnectionFactory.from (urlToRegistryConnection, AuthContent.from(authFile));
   }
-  private static ConnectionFactory from (String urlToRegistryConnection, AuthContent auth) throws Exception {
+  private static synchronized ConnectionFactory from (String urlToRegistryConnection, AuthContent auth) throws Exception {
+    final String key = "java.protocol.handler.pkgs", me = "gov.nasa.pds.registry.common";
+    String providers = System.getProperty(key, "");
+    if (providers.isEmpty()) providers = me;
+    if (!providers.contains(me)) providers += "|" + me;
+    System.setProperty(key, providers);
     RegistryConnectionContent conn = RegistryConnectionContent.from (new URL(urlToRegistryConnection));
     
     if (conn.isDirectConnection()) return Direct.build(conn.getServerUrl(), auth);
