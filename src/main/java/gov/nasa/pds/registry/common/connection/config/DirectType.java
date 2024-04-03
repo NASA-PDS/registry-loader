@@ -7,6 +7,7 @@
 
 package gov.nasa.pds.registry.common.connection.config;
 
+import java.math.BigInteger;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -27,6 +28,11 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *                                it is often necessary to use self signed
  *                                certificates. Setting this option to true
  *                                will all for self signed certificates.
+ * 
+ *         An optional 3rd piece of information @sdk is the Java SDK version to use
+ *         for the connection. The traditional SDK is 1. The newer SDK 2 was
+ *         introduced with the serverless opensearch development and beyond can
+ *         also be used. The default is 2 as we are deprecating the use of 1.
  *       
  * 
  * <p>Java class for direct_type complex type.
@@ -37,6 +43,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <complexType name="direct_type">
  *   <simpleContent>
  *     <extension base="<http://www.w3.org/2001/XMLSchema>normalizedString">
+ *       <attribute name="sdk" type="{}sdk_version_enum" default="2" />
  *       <attribute name="trust_self_signed" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     </extension>
  *   </simpleContent>
@@ -55,6 +62,8 @@ public class DirectType {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String value;
+    @XmlAttribute(name = "sdk")
+    protected BigInteger sdk;
     @XmlAttribute(name = "trust_self_signed")
     protected Boolean trustSelfSigned;
 
@@ -80,6 +89,34 @@ public class DirectType {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /**
+     * Gets the value of the sdk property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigInteger }
+     *     
+     */
+    public BigInteger getSdk() {
+        if (sdk == null) {
+            return new BigInteger("2");
+        } else {
+            return sdk;
+        }
+    }
+
+    /**
+     * Sets the value of the sdk property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigInteger }
+     *     
+     */
+    public void setSdk(BigInteger value) {
+        this.sdk = value;
     }
 
     /**
