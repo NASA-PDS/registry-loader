@@ -20,7 +20,8 @@ public final class RegistryConnectionContent {
       throw new IllegalArgumentException("URL protocol must be one of " + acceptable + " not the one specified: " + registry_connection);
     }
     if (registry_connection.getProtocol().equalsIgnoreCase("app")) {
-      registry_connection = RegistryConnectionContent.class.getResource(registry_connection.getPath());
+      String resource = "/" + registry_connection.getAuthority() + registry_connection.getPath();
+      registry_connection = RegistryConnectionContent.class.getResource(resource);
     }
     xml = (RegistryConnection)jaxbContext.createUnmarshaller().unmarshal(registry_connection);
     return new RegistryConnectionContent(xml);
