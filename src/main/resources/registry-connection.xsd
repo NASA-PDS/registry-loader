@@ -32,9 +32,10 @@
         Currently, cognito to serverless opensearh requires three bits of
         information:
           1. clientID: magic ID which must be given and is not a secret but
-                       sure looks like one
+             sure looks like one
+          3. endpoint: the endpoint for serverless opensearch
           2. @gateway: an endpoint that exchanges the cognito authentication
-                       to a signed URL that can be used for communicating with
+                       to an IAM role used for access control with serverless
                        opensearch on AWS
           3. @IDP: the cognito authentication endpoint that exchanges the
                    username/password to a set of tokens used by the gateway.
@@ -42,6 +43,7 @@
     </xs:annotation>
     <xs:simpleContent>
       <xs:extension base="xs:normalizedString">
+        <xs:attribute default="https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com" name="endpoint" type="xs:normalizedString"/>
         <xs:attribute default="https://c8u1zk30u5.execute-api.us-west-2.amazonaws.com/dev/signed-url" name="gateway" type="xs:normalizedString"/>
         <xs:attribute default="cognito-idp.us-west-2.amazonaws.com"
                       name="IDP" type="xs:normalizedString"/>

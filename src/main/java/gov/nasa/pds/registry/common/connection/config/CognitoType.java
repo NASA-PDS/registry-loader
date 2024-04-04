@@ -22,9 +22,10 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *         Currently, cognito to serverless opensearh requires three bits of
  *         information:
  *           1. clientID: magic ID which must be given and is not a secret but
- *                        sure looks like one
+ *              sure looks like one
+ *           3. endpoint: the endpoint for serverless opensearch
  *           2. @gateway: an endpoint that exchanges the cognito authentication
- *                        to a signed URL that can be used for communicating with
+ *                        to an IAM role used for access control with serverless
  *                        opensearch on AWS
  *           3. @IDP: the cognito authentication endpoint that exchanges the
  *                    username/password to a set of tokens used by the gateway.
@@ -38,6 +39,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <complexType name="cognito_type">
  *   <simpleContent>
  *     <extension base="<http://www.w3.org/2001/XMLSchema>normalizedString">
+ *       <attribute name="endpoint" type="{http://www.w3.org/2001/XMLSchema}normalizedString" default="https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com" />
  *       <attribute name="gateway" type="{http://www.w3.org/2001/XMLSchema}normalizedString" default="https://c8u1zk30u5.execute-api.us-west-2.amazonaws.com/dev/signed-url" />
  *       <attribute name="IDP" type="{http://www.w3.org/2001/XMLSchema}normalizedString" default="cognito-idp.us-west-2.amazonaws.com" />
  *     </extension>
@@ -57,6 +59,10 @@ public class CognitoType {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String value;
+    @XmlAttribute(name = "endpoint")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    protected String endpoint;
     @XmlAttribute(name = "gateway")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -88,6 +94,34 @@ public class CognitoType {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /**
+     * Gets the value of the endpoint property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEndpoint() {
+        if (endpoint == null) {
+            return "https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com";
+        } else {
+            return endpoint;
+        }
+    }
+
+    /**
+     * Sets the value of the endpoint property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEndpoint(String value) {
+        this.endpoint = value;
     }
 
     /**
