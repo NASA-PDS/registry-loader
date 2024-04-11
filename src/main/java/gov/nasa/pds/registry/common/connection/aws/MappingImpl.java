@@ -14,7 +14,7 @@ import org.opensearch.client.opensearch.indices.PutMappingRequest;
 import gov.nasa.pds.registry.common.Request.Mapping;
 import gov.nasa.pds.registry.common.util.Tuple;
 
-public class MappingImpl implements Mapping {
+class MappingImpl implements Mapping {
   boolean isGet = true;
   final GetMappingRequest.Builder craftsman_get = new GetMappingRequest.Builder();
   final PutMappingRequest.Builder craftsman_set = new PutMappingRequest.Builder();

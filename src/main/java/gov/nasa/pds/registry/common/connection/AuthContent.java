@@ -2,6 +2,7 @@ package gov.nasa.pds.registry.common.connection;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -55,6 +56,19 @@ public class AuthContent {
     CredentialsProvider creds;
     creds = new BasicCredentialsProvider();
     creds.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(this.getUser(), this.getPassword()));
+    return creds;
+  }
+  public CredentialsProvider getCredentials(HttpHost scope) {
+    CredentialsProvider creds;
+    creds = new BasicCredentialsProvider();
+    creds.setCredentials(new AuthScope(scope), new UsernamePasswordCredentials(this.getUser(), this.getPassword()));
+    return creds;
+  }
+  public org.apache.hc.client5.http.auth.CredentialsProvider getCredentials5(org.apache.hc.core5.http.HttpHost scope) {
+    org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider creds =
+        new org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider();
+    creds.setCredentials(new org.apache.hc.client5.http.auth.AuthScope(scope),
+        new org.apache.hc.client5.http.auth.UsernamePasswordCredentials(this.getUser(), this.getPassword().toCharArray()));
     return creds;
   }
   public String getPassword() {

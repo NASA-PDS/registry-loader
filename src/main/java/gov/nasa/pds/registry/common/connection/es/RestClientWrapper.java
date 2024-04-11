@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.common.connection.es;
 
 import java.io.IOException;
+import java.util.List;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestClientBuilder;
 import gov.nasa.pds.registry.common.ConnectionFactory;
@@ -39,13 +40,23 @@ public class RestClientWrapper implements RestClient
       bld.setRequestConfigCallback(reqCB);
       this.real_client = bld.build();
     }
-    private Response performRequest(String endpoint, String json, String method) throws IOException,ResponseException {
+    private org.elasticsearch.client.Response performRequest(String endpoint, String json, String method) throws IOException,ResponseException {
       try {
         Request request = new Request(method, endpoint);
         if (json != null) request.setJsonEntity(json);
-        return new ResponseWrapper(this.real_client.performRequest(request));
+        return this.real_client.performRequest(request);
       } catch (org.elasticsearch.client.ResponseException e) {
         throw new ResponseExceptionWrapper(e);
+      }
+    }
+    private void printWarnings(org.elasticsearch.client.Response resp) {
+      List<String> warnings = resp.getWarnings();
+      if(warnings != null)
+      {
+        for(String warn: warnings)
+        {
+          System.out.println("[WARN] " + warn);
+        }
       }
     }
     @Override
@@ -81,40 +92,42 @@ public class RestClientWrapper implements RestClient
       return new SettingImpl();
     }
     @Override
-    public Response create (String indexName, String configAsJSON) throws IOException,ResponseException {
-      return this.performRequest("/" + indexName, configAsJSON, "PUT");
+    public Response.CreatedIndex create (String indexName, String configAsJSON) throws IOException,ResponseException {
+      this.printWarnings(this.performRequest("/" + indexName, configAsJSON, "PUT"));
+      return new ResponseNotImplYet();
     }
     @Override
-    public Response delete (String indexName) throws IOException,ResponseException {
-      return this.performRequest(indexName, null, "DELETE");
+    public void delete (String indexName) throws IOException,ResponseException {
+      this.printWarnings(this.performRequest(indexName, null, "DELETE"));
     }
     @Override
-    public Response exists (String indexName) throws IOException,ResponseException {
-      return this.performRequest ("/" + indexName, null, "HEAD");
+    public boolean exists (String indexName) throws IOException,ResponseException {
+      return this.performRequest ("/" + indexName, null, "HEAD").getStatusLine().getStatusCode() == 200;
     }
     @Override
-    public Response performRequest(Bulk request) throws IOException,ResponseException {
-      return this.performRequest(request.toString(), ((BulkImpl)request).json, "POST");
+    public Response.Bulk performRequest(Bulk request) throws IOException,ResponseException {
+      return new BulkRespImpl(this.performRequest(request.toString(), ((BulkImpl)request).json, "POST"));
     }
     @Override
-    public Response performRequest(Count request) throws IOException,ResponseException {
-      return this.performRequest(request.toString(), null, "GET");
+    public long performRequest(Count request) throws IOException,ResponseException {
+      return JsonHelper.findCount(this.performRequest(request.toString(), null, "GET").getEntity());
     }
     @Override
     public Response performRequest(Get request) throws IOException,ResponseException {
       return this.performRequest(request.toString(), ((GetImpl)request).json, "GET");
     }
     @Override
-    public Response performRequest(Mapping request) throws IOException,ResponseException {
+    public Response.Mapping performRequest(Mapping request) throws IOException,ResponseException {
+      String index = ((MappingImpl)request).index;
       String json = ((MappingImpl)request).json;
-      return this.performRequest(request.toString(), json, json == null ? "GET" : "PUT");
+      return new MappingRespImpl(this.performRequest(request.toString(), json, json == null ? "GET" : "PUT"), index);
     }
     @Override
     public Response performRequest(Search request) throws IOException,ResponseException {
       return this.performRequest(request.toString(), ((SearchImpl)request).json, "GET");
     }
     @Override
-    public Response performRequest(Setting request) throws IOException,ResponseException {
-      return this.performRequest(request.toString(), null, "GET");
+    public Response.Settings performRequest(Setting request) throws IOException,ResponseException {
+      return new SettingsRespImpl(this.performRequest(request.toString(), null, "GET"));
     }
 }

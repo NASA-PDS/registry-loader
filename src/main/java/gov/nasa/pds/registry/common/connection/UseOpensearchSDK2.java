@@ -22,8 +22,10 @@ import gov.nasa.pds.registry.common.connection.config.DirectType;
 
 public final class UseOpensearchSDK2 implements ConnectionFactory {
   final private boolean isServerless;
+  final private boolean veryTrusting;
   final private AuthContent auth;
   final private HttpHost host;
+  final private org.apache.hc.core5.http.HttpHost host5;
   final private URL endpoint;
   private String index = null;
   public static UseOpensearchSDK2 build (CognitoType cog, AuthContent auth) throws IOException, InterruptedException {
@@ -84,21 +86,22 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
     awsCreds.setProperty("aws.secretAccessKey", content.get("Credentials").get("SecretKey"));
     awsCreds.setProperty("aws.sessionToken", content.get("Credentials").get("SessionToken"));
     System.setProperties(awsCreds);
-    URL signed = new URL("https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com"); // move to config or lambda??
-    return new UseOpensearchSDK2(auth, signed, true);
+    return new UseOpensearchSDK2(auth, new URL(cog.getEndpoint()), true, false);
   }
   public static UseOpensearchSDK2 build (DirectType url, AuthContent auth) throws Exception {
-    return null;
+    return new UseOpensearchSDK2(auth, new URL(url.getValue()), false, url.isTrustSelfSigned());
   }
-  private UseOpensearchSDK2 (AuthContent auth, URL opensearchEndpoint, boolean isServerless) {
+  private UseOpensearchSDK2 (AuthContent auth, URL opensearchEndpoint, boolean isServerless, boolean veryTrusting) {
     this.auth = auth;
     this.endpoint = opensearchEndpoint;
     this.host = new HttpHost(this.endpoint.getHost(), this.endpoint.getPort(), this.endpoint.getProtocol());
+    this.host5 = new org.apache.hc.core5.http.HttpHost(this.endpoint.getProtocol(), this.endpoint.getHost(), this.endpoint.getPort());
     this.isServerless = isServerless;
+    this.veryTrusting = veryTrusting;
   }
   @Override
   public ConnectionFactory clone() {
-    return new UseOpensearchSDK2(this.auth, this.endpoint, this.isServerless).setIndexName(this.index);
+    return new UseOpensearchSDK2(this.auth, this.endpoint, this.isServerless, this.veryTrusting).setIndexName(this.index);
   }
   @Override
   public RestClient createRestClient() throws Exception {
@@ -106,11 +109,19 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
   }
   @Override
   public CredentialsProvider getCredentials() {
-    return this.auth.getCredentials();
+    return this.auth.getCredentials(this.getHost());
+  }
+  @Override
+  public org.apache.hc.client5.http.auth.CredentialsProvider getCredentials5() {
+   return this.auth.getCredentials5(this.getHost5()); 
   }
   @Override
   public HttpHost getHost() {
     return this.host;
+  }
+  @Override
+  public org.apache.hc.core5.http.HttpHost getHost5() {
+    return this.host5;
   }
   @Override
   public String getHostName() {
@@ -122,7 +133,7 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
   }
   @Override
   public boolean isTrustingSelfSigned() {
-    return false;
+    return this.veryTrusting;
   }
   @Override
   public ConnectionFactory setIndexName(String idxName) {

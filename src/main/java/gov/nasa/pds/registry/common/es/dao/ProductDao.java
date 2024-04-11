@@ -141,7 +141,7 @@ public class ProductDao
 
         try
         {
-            resp = client.performRequest(req);
+            return (int)client.performRequest(req);
         }
         catch(ResponseException ex)
         {
@@ -157,37 +157,6 @@ public class ProductDao
                 throw ex;
             }
         }
-
-        InputStream is = null;
-
-        try
-        {
-            is = resp.getEntity().getContent();
-            JsonReader rd = new JsonReader(new InputStreamReader(is));
-            
-            rd.beginObject();
-            
-            while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
-            {
-                String name = rd.nextName();
-                if("count".equals(name))
-                {
-                    return rd.nextInt();
-                }
-                else
-                {
-                    rd.skipValue();
-                }
-            }
-            
-            rd.endObject();
-        }
-        finally
-        {
-            CloseUtils.close(is);
-        }
-        
-        return 0;
     }
     
     
@@ -277,24 +246,8 @@ public class ProductDao
             .buildUpdateStatus(lidvids, status)
             .setIndex(this.indexName);
         
-        Response resp = client.performRequest(req);
-        
-        // Check for Elasticsearch errors.
-        InputStream is = null;
-        InputStreamReader rd = null;
-        try
-        {
-            is = resp.getEntity().getContent();
-            rd = new InputStreamReader(is);
-            
-            BulkResponseParser parser = new BulkResponseParser();
-            parser.parse(rd);
-        }
-        finally
-        {
-            CloseUtils.close(rd);
-            CloseUtils.close(is);
-        }
+        Response .Bulk resp = client.performRequest(req);
+        new BulkResponseParser().parse(resp);
     }
     
     

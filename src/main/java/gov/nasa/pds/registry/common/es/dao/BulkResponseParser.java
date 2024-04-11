@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.common.es.dao;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.apache.logging.log4j.LogManager;
@@ -8,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
-
+import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 
 /**
@@ -27,13 +28,30 @@ public class BulkResponseParser
         log = LogManager.getLogger(this.getClass());    
     }
     
+    public void parse(Response.Bulk response) {
+      /* FIXME
+       * This should log erros as parse(Reader reader) does.
+       * Just put this empty implementation in place to move
+       * forward with SDK v2 but leave this compile without
+       * doing any actual work.
+       * 
+       * old invocations was like this:
+       * 
+            is = resp.getEntity().getContent();
+            rd = new InputStreamReader(is);
+            
+            BulkResponseParser parser = new BulkResponseParser();
+            parser.parse(rd);
+
+       */
+    }
     
     /**
      * Parse JSON string
      * @param reader bulk API response stream
      * @throws IOException an exception
      */
-    public void parse(Reader reader) throws IOException
+    protected void parse(Reader reader) throws IOException
     {
         if(reader == null) return;
         

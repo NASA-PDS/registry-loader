@@ -3,7 +3,6 @@ package gov.nasa.pds.registry.common.es.dao.schema;
 import java.util.List;
 import java.util.Set;
 import gov.nasa.pds.registry.common.Request;
-import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.util.Tuple;
 
@@ -40,10 +39,7 @@ public class SchemaDao
     public Set<String> getFieldNames() throws Exception
     {
         Request.Mapping req = client.createMappingRequest().setIndex(indexName);
-        Response resp = client.performRequest(req);
-        
-        MappingsParser parser = new MappingsParser(indexName);
-        return parser.parse(resp.getEntity());
+        return client.performRequest(req).fieldNames();
     }
     
     

@@ -15,7 +15,7 @@ import org.opensearch.client.opensearch.core.search.SourceConfig;
 import org.opensearch.client.opensearch.core.search.SourceFilter;
 import gov.nasa.pds.registry.common.Request.Search;
 
-public class SearchImpl implements Search {
+class SearchImpl implements Search {
   final SearchRequest.Builder craftsman = new SearchRequest.Builder();
   private void buildIds (Collection<String> lids, boolean alt) {
     SourceConfig.Builder journeyman = new SourceConfig.Builder();

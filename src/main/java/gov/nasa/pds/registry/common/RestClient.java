@@ -11,13 +11,13 @@ public interface RestClient extends Closeable {
   public Request.MGet createMGetRequest();
   public Request.Search createSearchRequest();
   public Request.Setting createSettingRequest();
-  public Response create (String indexName, String configAsJson) throws IOException,ResponseException;
-  public Response delete (String indexName) throws IOException,ResponseException;
-  public Response exists (String indexName) throws IOException,ResponseException;
-  public Response performRequest(Request.Bulk request) throws IOException,ResponseException;
-  public Response performRequest(Request.Count request) throws IOException,ResponseException;
+  public Response.CreatedIndex create (String indexName, String configAsJson) throws IOException,ResponseException;
+  public void delete (String indexName) throws IOException,ResponseException;
+  public boolean exists (String indexName) throws IOException,ResponseException;
+  public Response.Bulk performRequest(Request.Bulk request) throws IOException,ResponseException;
+  public long performRequest(Request.Count request) throws IOException,ResponseException;
   public Response performRequest(Request.Get request) throws IOException,ResponseException;
-  public Response performRequest(Request.Mapping request) throws IOException,ResponseException;
+  public Response.Mapping performRequest(Request.Mapping request) throws IOException,ResponseException;
   public Response performRequest(Request.Search request) throws IOException,ResponseException;
-  public Response performRequest(Request.Setting request) throws IOException,ResponseException;
+  public Response.Settings performRequest(Request.Setting request) throws IOException,ResponseException;
 }

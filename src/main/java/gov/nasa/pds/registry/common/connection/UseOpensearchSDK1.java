@@ -14,6 +14,7 @@ public class UseOpensearchSDK1 implements Cloneable, ConnectionFactory {
   final private boolean veryTrusting;
   final private AuthContent auth;
   final private HttpHost host;
+  final private org.apache.hc.core5.http.HttpHost host5;
   final private URL service;
   private String index = null;
 
@@ -31,6 +32,7 @@ public class UseOpensearchSDK1 implements Cloneable, ConnectionFactory {
   private UseOpensearchSDK1 (URL service, AuthContent auth, boolean trustSelfSigned) {
     this.auth = auth;
     this.host = new HttpHost(service.getHost(), service.getPort(), service.getProtocol());
+    this.host5 = new org.apache.hc.core5.http.HttpHost(service.getProtocol(), service.getHost(), service.getPort());
     this.service = service;
     this.veryTrusting = trustSelfSigned;
   }
@@ -43,12 +45,20 @@ public class UseOpensearchSDK1 implements Cloneable, ConnectionFactory {
     return new RestClientWrapper(this);
   }
   @Override
+  public org.apache.hc.client5.http.auth.CredentialsProvider getCredentials5() {
+   return this.auth.getCredentials5(this.getHost5()); 
+  }
+  @Override
   public HttpHost getHost() {
     return this.host;
   }
   @Override
   public String getHostName() {
     return this.host.getHostName();
+  }
+  @Override
+  public org.apache.hc.core5.http.HttpHost getHost5() {
+    return this.host5;
   }
   @Override
   public String getIndexName() {

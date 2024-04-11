@@ -1,8 +1,13 @@
 package gov.nasa.pds.registry.common.connection.es;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Collection;
+import org.apache.http.HttpEntity;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.Tuple;
@@ -360,4 +365,24 @@ class JsonHelper {
     return strWriter.toString();
   }
 
+  static long findCount (HttpEntity entity) {
+    long count = 0;
+    try (InputStream is = entity.getContent()) {
+      JsonReader rd = new JsonReader(new InputStreamReader(is));  
+      rd.beginObject();
+      while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT) {
+        String name = rd.nextName();
+        if("count".equals(name)) {
+          count = rd.nextInt();
+          break;
+        } else {
+          rd.skipValue();
+        }
+      }
+      rd.endObject();
+    } catch (UnsupportedOperationException | IOException e) {
+      throw new RuntimeException("some weird JSON serialization problem that should not be happening");
+    }
+    return count;
+  }
 }

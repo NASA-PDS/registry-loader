@@ -1,13 +1,24 @@
 package gov.nasa.pds.registry.common.connection.aws;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import javax.net.ssl.SSLContext;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
+import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.opensearch.client.opensearch.OpenSearchClient;
-import org.opensearch.client.opensearch.core.BulkResponse;
+import org.opensearch.client.opensearch.core.GetResponse;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
 import org.opensearch.client.opensearch.indices.ExistsRequest;
+import org.opensearch.client.transport.OpenSearchTransport;
 import org.opensearch.client.transport.aws.AwsSdk2Transport;
 import org.opensearch.client.transport.aws.AwsSdk2TransportOptions;
+import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request.Bulk;
 import gov.nasa.pds.registry.common.Request.Count;
@@ -39,7 +50,34 @@ public class RestClientWrapper implements RestClient {
               )
           );
     } else {
-      this.client = null;
+      OpenSearchClient localClient = null;
+      try {
+        SSLContext sslcontext = SSLContextBuilder
+            .create()
+            .loadTrustMaterial((chains, authType) -> true)
+            .build();
+        final ApacheHttpClient5TransportBuilder builder = ApacheHttpClient5TransportBuilder.builder(conFact.getHost5());
+        builder.setHttpClientConfigCallback(httpClientBuilder -> {
+          final TlsStrategy tlsStrategy = ClientTlsStrategyBuilder.create()
+            .setSslContext(sslcontext)
+            .build();
+          final PoolingAsyncClientConnectionManager connectionManager = PoolingAsyncClientConnectionManagerBuilder
+            .create()
+            .setTlsStrategy(tlsStrategy)
+            .build();
+          return httpClientBuilder
+            .setDefaultCredentialsProvider(conFact.getCredentials5())
+            .setConnectionManager(connectionManager);
+        });
+        final OpenSearchTransport transport = ApacheHttpClient5TransportBuilder.builder(conFact.getHost5()).build();
+        localClient = new OpenSearchClient(transport);
+      } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      finally {
+        this.client = localClient;
+      }
     }
   }
   @Override
@@ -76,40 +114,35 @@ public class RestClientWrapper implements RestClient {
     return new SettingImpl();
   }
   @Override
-  public Response create(String indexName, String configAsJson) throws IOException, ResponseException {
-    // FIXME: need to change JSON into V2 mapping
-    this.client.indices().create(new CreateIndexRequest.Builder().index(indexName).build());
-    return null;
+  public Response.CreatedIndex create(String indexName, String configAsJson) throws IOException, ResponseException {
+    return new CreateIndexRespWrap(this.client.indices().create(new CreateIndexRequest.Builder().index(indexName).build()));
   }
   @Override
-  public Response delete(String indexName) throws IOException, ResponseException {
+  public void delete(String indexName) throws IOException, ResponseException {
     this.client.indices().delete(new DeleteIndexRequest.Builder().index(indexName).build());
-    return null;
   }
   @Override
-  public Response exists(String indexName) throws IOException, ResponseException {
-    this.client.indices().exists(new ExistsRequest.Builder().index(indexName).build());
-    return null;
+  public boolean exists(String indexName) throws IOException, ResponseException {
+    return this.client.indices().exists(new ExistsRequest.Builder().index(indexName).build()).value();
   }
   @Override
-  public Response performRequest(Bulk request) throws IOException, ResponseException {
-    BulkResponse resp = this.client.bulk(((BulkImpl)request).craftsman.build());
-    return null;
+  public Response.Bulk performRequest(Bulk request) throws IOException, ResponseException {
+     return new BulkRespWrap(this.client.bulk(((BulkImpl)request).craftsman.build()));
   }
   @Override
-  public Response performRequest(Count request) throws IOException, ResponseException {
-    // TODO Auto-generated method stub
-    return null;
+  public long performRequest(Count request) throws IOException, ResponseException {
+    return this.client.count(((CountImpl)request).craftsman.build()).count();
   }
   @Override
   public Response performRequest(Get request) throws IOException, ResponseException {
-    // TODO Auto-generated method stub
+    GetResponse x = this.client.get(((GetImpl)request).craftsman.build(), Object.class);
     return null;
   }
   @Override
-  public Response performRequest(Mapping request) throws IOException, ResponseException {
-    // TODO Auto-generated method stub
-    return null;
+  public Response.Mapping performRequest(Mapping request) throws IOException, ResponseException {
+    MappingImpl req = (MappingImpl)request;
+    return req.isGet ? new MappingRespImpl(this.client.indices().getMapping(req.craftsman_get.build())) :
+      new MappingRespImpl(this.client.indices().putMapping(req.craftsman_set.build()));
   }
   @Override
   public Response performRequest(Search request) throws IOException, ResponseException {
@@ -117,8 +150,7 @@ public class RestClientWrapper implements RestClient {
     return null;
   }
   @Override
-  public Response performRequest(Setting request) throws IOException, ResponseException {
-    // TODO Auto-generated method stub
-    return null;
+  public Response.Settings performRequest(Setting request) throws IOException, ResponseException {
+    return new SettingRespImpl(this.client.indices().getSettings(((SettingImpl)request).craftsman.build()));
   }
 }

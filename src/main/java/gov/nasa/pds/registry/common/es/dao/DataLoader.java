@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -16,7 +15,6 @@ import java.util.zip.ZipFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.Gson;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.Response;
@@ -236,13 +234,9 @@ public class DataLoader
             bulk.add(data.get(index), data.get(++index));
           }
           // FIXME: response has changed so need to debug this
-          Response response = this.conFactory.createRestClient().performRequest(bulk);
-          // Read Elasticsearch response.
-          String respJson = response.toString();
-          log.debug(respJson);
-
+          Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
           // Check for Elasticsearch errors.
-          int failedCount = processErrors(respJson, errorLidvids);
+          int failedCount = processErrors(response, errorLidvids);
           // Calculate number of successfully saved records
           // NOTE: data list has two lines per record (primary key + data)
           int loadedCount = data.size() / 2 - failedCount;
@@ -290,69 +284,24 @@ public class DataLoader
         return loadBatch(data, null);
     }
 
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private int processErrors(String resp, Set<String> errorLidvids)
-    {
-        int numErrors = 0;
-
-        try
-        {
-            // TODO: Use streaming parser. Stop parsing if there are no errors.
-            // Parse JSON response
-            Gson gson = new Gson();
-            Map json = (Map)gson.fromJson(resp, Object.class);
-
-            Boolean hasErrors = (Boolean)json.get("errors");
-            if(hasErrors)
-            {
-                List<Object> list = (List)json.get("items");
-
-                // List size = batch size (one item per document)
-                for(Object item: list)
-                {
-                    Map action = (Map)((Map)item).get("index");
-                    if(action == null)
-                    {
-                        action = (Map)((Map)item).get("create");
-                        if(action != null)
-                        {
-                            String status = String.valueOf(action.get("status"));
-                            // For "create" requests status=409 means that the record already exists.
-                            // It is not an error. We use "create" action to insert records which don't exist
-                            // and keep existing records as is. We do this when loading an old LDD and more
-                            // recent version of the LDD is already loaded.
-                            // NOTE: Gson JSON parser stores numbers as floats.
-                            // The string value is usually "409.0". Can it be something else?
-                            if(status.startsWith("409"))
-                            {
-                                // Increment to properly report number of processed records.
-                                numErrors++;
-                                continue;
-                            }
-                        }
-                    }
-                    if(action == null) continue;
-
-                    String id = (String)action.get("_id");
-                    Map error = (Map)action.get("error");
-                    if(error != null)
-                    {
-                        String message = (String)error.get("reason");
-                        String sanitizedLidvid = id.replace('\r', ' ').replace('\n', ' ');  // protect vs log spoofing see code-scanning alert #37
-                        String sanitizedMessage = message.replace('\r', ' ').replace('\n', ' '); // protect vs log spoofing
-                        log.error("LIDVID = " + sanitizedLidvid + ", Message = " + sanitizedMessage);
-                        numErrors++;
-                        if(errorLidvids != null) errorLidvids.add(id);
-                    }
-                }
+    private int processErrors(Response.Bulk resp, Set<String> errorLidvids) {
+      int numErrors = 0;
+      if (resp.errors()) {
+        for (Response.Bulk.Item item : resp.items()) {
+          if (item.error()) {
+            if (item.operation() == "create" && item.status() == 409) {
+              numErrors++;
+            } else {
+              String message = item.reason();
+              String sanitizedLidvid = item.id().replace('\r', ' ').replace('\n', ' ');  // protect vs log spoofing see code-scanning alert #37
+              String sanitizedMessage = message.replace('\r', ' ').replace('\n', ' '); // protect vs log spoofing
+              log.error("LIDVID = " + sanitizedLidvid + ", Message = " + sanitizedMessage);
+              numErrors++;
+              if(errorLidvids != null) errorLidvids.add(item.id());              
             }
-
-            return numErrors;
+          }
         }
-        catch(Exception ex)
-        {
-            return 0;
-        }
+      }
+      return numErrors;
     }
 }

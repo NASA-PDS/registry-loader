@@ -1,4 +1,4 @@
-package gov.nasa.pds.registry.common.es.dao.schema;
+package gov.nasa.pds.registry.common.connection.es;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import com.google.gson.stream.JsonToken;
  * 
  * @author karpenko
  */
-public class MappingsParser
+class MappingsParser
 {
     private String indexName;
     private JsonReader rd;
@@ -41,35 +41,27 @@ public class MappingsParser
      * @return a collection of field names from a given Elasticsearch index.
      * @throws IOException an exception
      */
-    public Set<String> parse(HttpEntity entity) throws IOException
+    public Set<String> parse(HttpEntity entity)
     {
-        InputStream is = entity.getContent();
+      fields = new TreeSet<>();
+      try (InputStream is = entity.getContent()) {
         rd = new JsonReader(new InputStreamReader(is));
-        
-        fields = new TreeSet<>();
-        
         rd.beginObject();
-        
-        while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
-        {
-            // Usually there is only one root element = index name.
-            String name = rd.nextName();
-            if(indexName.equals(name))
-            {
-                parseMappings();
-            }
-            // Usually we should not go here.
-            else
-            {
-                rd.skipValue();
-            }
+        while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT) {
+          // Usually there is only one root element = index name.
+          String name = rd.nextName();
+          if(indexName.equals(name)) {
+            parseMappings();
+          } else {
+            rd.skipValue();
+          }
         }
-        
         rd.endObject();
-        
         rd.close();
-        
-        return fields;
+      } catch (UnsupportedOperationException | IOException e) {
+        throw new RuntimeException("some strange exception because we should never get here");
+      }
+      return fields;
     }
     
 

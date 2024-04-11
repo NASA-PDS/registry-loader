@@ -5,7 +5,7 @@ import gov.nasa.pds.registry.common.Request.Mapping;
 import gov.nasa.pds.registry.common.util.Tuple;
 
 class MappingImpl implements Mapping {
-  private String index;
+  String index;
   String json = null;
   @Override
   public Mapping buildUpdateFieldSchema(Collection<Tuple> pairs) {
