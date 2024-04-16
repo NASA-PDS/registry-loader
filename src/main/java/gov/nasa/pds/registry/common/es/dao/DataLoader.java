@@ -225,11 +225,9 @@ public class DataLoader
         if(data == null || data.isEmpty()) return 0;
         if(data.size() % 2 != 0) throw new Exception("Data list size should be an even number.");
 
-        Request.Bulk bulk = null;
-
         try
         {
-          bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor);
+          Request.Bulk bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
           for (int index = 0 ; index < data.size() ; index++) {
             bulk.add(data.get(index), data.get(++index));
           }

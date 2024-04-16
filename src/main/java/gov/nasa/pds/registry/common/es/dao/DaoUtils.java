@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.common.es.dao;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class DaoUtils
 
 
     
-    public static List<String> parseList(JsonReader rd) throws Exception
+    public static List<String> parseList(JsonReader rd) throws IOException
     {
         List<String> list = new ArrayList<>();
         
@@ -71,7 +72,7 @@ public class DaoUtils
     }
 
     
-    public static Set<String> parseSet(JsonReader rd) throws Exception
+    public static Set<String> parseSet(JsonReader rd) throws IOException
     {
         Set<String> set = new TreeSet<>();
         

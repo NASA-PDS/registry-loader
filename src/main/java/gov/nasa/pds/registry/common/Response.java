@@ -1,9 +1,14 @@
 package gov.nasa.pds.registry.common;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
+import gov.nasa.pds.registry.common.es.dao.dd.DataTypeNotFoundException;
+import gov.nasa.pds.registry.common.es.dao.dd.LddInfo;
+import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;
+import gov.nasa.pds.registry.common.util.Tuple;
 
 public interface Response {
   public interface Bulk {
@@ -25,14 +30,29 @@ public interface Response {
     public boolean acknowledgeShards();
     public String getIndex();
   }
+  public interface Get {
+    public interface IdSets {
+      public Set<String> lids();
+      public Set<String> lidvids();
+    }
+    public List<Tuple> dataTypes(boolean stringForMissing) throws IOException, DataTypeNotFoundException;
+    public IdSets ids(); // returns null if nothing is found in returned content
+    public String productClass(); // returns null if product class not in returned content
+    public List<String> refs(); // returns null if nothing is found in returned content
+  }
   public interface Mapping {
     public Set<String> fieldNames();
+  }
+  public interface Search {
+    public Map<String,Set<String>> altIds() throws UnsupportedOperationException, IOException;
+    public Set<String> fields() throws UnsupportedOperationException, IOException;
+    public List<String> latestLidvids(); // returns null if nothing is found in returned content
+    public LddVersions lddInfo() throws UnsupportedOperationException, IOException;
+    public List<LddInfo> ldds() throws UnsupportedOperationException, IOException;
+    public Set<String> nonExistingIds(Collection<String> from_ids) throws UnsupportedOperationException, IOException;
   }
   public interface Settings {
     public int replicas();
     public int shards();
   }
-  public HttpEntity getEntity();
-  public StatusLine getStatusLine();
-  public void printWarnings();
 }

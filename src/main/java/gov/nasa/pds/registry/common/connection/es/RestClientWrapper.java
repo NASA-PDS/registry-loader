@@ -113,8 +113,8 @@ public class RestClientWrapper implements RestClient
       return JsonHelper.findCount(this.performRequest(request.toString(), null, "GET").getEntity());
     }
     @Override
-    public Response performRequest(Get request) throws IOException,ResponseException {
-      return this.performRequest(request.toString(), ((GetImpl)request).json, "GET");
+    public Response.Get performRequest(Get request) throws IOException,ResponseException {
+      return new GetRespImpl(this.performRequest(request.toString(), ((GetImpl)request).json, "GET"));
     }
     @Override
     public Response.Mapping performRequest(Mapping request) throws IOException,ResponseException {
@@ -123,8 +123,8 @@ public class RestClientWrapper implements RestClient
       return new MappingRespImpl(this.performRequest(request.toString(), json, json == null ? "GET" : "PUT"), index);
     }
     @Override
-    public Response performRequest(Search request) throws IOException,ResponseException {
-      return this.performRequest(request.toString(), ((SearchImpl)request).json, "GET");
+    public Response.Search performRequest(Search request) throws IOException,ResponseException {
+      return new SearchRespImpl(this.performRequest(request.toString(), ((SearchImpl)request).json, "GET"));
     }
     @Override
     public Response.Settings performRequest(Setting request) throws IOException,ResponseException {

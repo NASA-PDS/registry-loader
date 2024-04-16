@@ -22,9 +22,9 @@ public class EstablishConnectionFactory {
     RegistryConnectionContent conn = RegistryConnectionContent.from (new URL(urlToRegistryConnection));
     
     if (conn.isDirectConnection()) {
-      if (conn.getServerUrl().getSdk().intValue() == 1) UseOpensearchSDK1.build(conn.getServerUrl(), auth).setIndexName(conn.getIndex());
-      if (conn.getServerUrl().getSdk().intValue() == 2) UseOpensearchSDK2.build(conn.getServerUrl(), auth).setIndexName(conn.getIndex());
-      throw new RuntimeException("The SDK version '" + String.valueOf(conn.getServerUrl().getSdk()) + "is not supported");
+      if (conn.getServerUrl().getSdk().intValue() == 1) return UseOpensearchSDK1.build(conn.getServerUrl(), auth).setIndexName(conn.getIndex());
+      if (conn.getServerUrl().getSdk().intValue() == 2) return UseOpensearchSDK2.build(conn.getServerUrl(), auth).setIndexName(conn.getIndex());
+      throw new RuntimeException("The SDK version '" + String.valueOf(conn.getServerUrl().getSdk().intValue()) + "' is not supported");
     }
     if (conn.isCognitoConnection()) return UseOpensearchSDK2.build(conn.getCognitoClientId(), auth).setIndexName(conn.getIndex());
     throw new RuntimeException("New XML/Java choices in src/main/resources/registry_connection.xsd that are not handled.");

@@ -1,14 +1,16 @@
-package gov.nasa.pds.registry.common.util;
+package gov.nasa.pds.registry.common.connection.es;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
-
+import org.elasticsearch.client.Response;
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
-import gov.nasa.pds.registry.common.Response;
 
 
 /**
@@ -16,7 +18,7 @@ import gov.nasa.pds.registry.common.Response;
  * 
  * @author karpenko
  */
-public class SearchResponseParser
+class SearchResponseParser
 {
     /**
      * Inner callback interface
@@ -30,7 +32,7 @@ public class SearchResponseParser
          * @param rec Parsed content of "_source" field. Usually it is a field name-value map.
          * @throws Exception an exception
          */
-        public void onRecord(String id, Object rec) throws Exception;
+        public void onRecord(String id, Object rec);
     }
     
     
@@ -43,7 +45,7 @@ public class SearchResponseParser
     /**
      * Constructor
      */
-    public SearchResponseParser()
+    SearchResponseParser()
     {
     }
 
@@ -72,9 +74,11 @@ public class SearchResponseParser
      * Parse response. Callback.onRecord() will be called for each record.
      * @param resp Elasticsearch rest client's response object.
      * @param cb Callback interface.
+     * @throws IOException 
+     * @throws UnsupportedOperationException 
      * @throws Exception an exception
      */
-    public void parseResponse(Response resp, Callback cb) throws Exception
+    public void parseResponse(Response resp, Callback cb) throws UnsupportedOperationException, IOException
     {
         if(cb == null) throw new IllegalArgumentException("Callback is null");
         this.cb = cb;
@@ -109,9 +113,10 @@ public class SearchResponseParser
     /**
      * Parse "hits" array in JSON response.
      * @param rd JSON reader
+     * @throws IOException 
      * @throws Exception an exception
      */
-    private void parseHits(JsonReader rd) throws Exception
+    private void parseHits(JsonReader rd) throws IOException
     {
         rd.beginObject();
         
@@ -140,9 +145,12 @@ public class SearchResponseParser
     /**
      * Parse a hit from "hits" array in JSON response.
      * @param rd JSON reader
+     * @throws IOException 
+     * @throws JsonSyntaxException 
+     * @throws JsonIOException 
      * @throws Exception an exception
      */
-    private void parseHit(JsonReader rd) throws Exception
+    private void parseHit(JsonReader rd) throws JsonIOException, JsonSyntaxException, IOException
     {
         Object src = null;
         

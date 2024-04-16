@@ -16,8 +16,8 @@ public interface RestClient extends Closeable {
   public boolean exists (String indexName) throws IOException,ResponseException;
   public Response.Bulk performRequest(Request.Bulk request) throws IOException,ResponseException;
   public long performRequest(Request.Count request) throws IOException,ResponseException;
-  public Response performRequest(Request.Get request) throws IOException,ResponseException;
+  public Response.Get performRequest(Request.Get request) throws IOException,ResponseException;
   public Response.Mapping performRequest(Request.Mapping request) throws IOException,ResponseException;
-  public Response performRequest(Request.Search request) throws IOException,ResponseException;
+  public Response.Search performRequest(Request.Search request) throws IOException,ResponseException;
   public Response.Settings performRequest(Request.Setting request) throws IOException,ResponseException;
 }

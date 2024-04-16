@@ -10,7 +10,7 @@ import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.connection.config.DirectType;
 import gov.nasa.pds.registry.common.connection.es.RestClientWrapper;
 
-public class UseOpensearchSDK1 implements Cloneable, ConnectionFactory {
+public class UseOpensearchSDK1 implements ConnectionFactory {
   final private boolean veryTrusting;
   final private AuthContent auth;
   final private HttpHost host;

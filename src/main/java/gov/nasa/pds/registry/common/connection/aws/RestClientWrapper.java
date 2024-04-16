@@ -11,11 +11,9 @@ import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.opensearch.client.opensearch.OpenSearchClient;
-import org.opensearch.client.opensearch.core.GetResponse;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
 import org.opensearch.client.opensearch.indices.ExistsRequest;
-import org.opensearch.client.transport.OpenSearchTransport;
 import org.opensearch.client.transport.aws.AwsSdk2Transport;
 import org.opensearch.client.transport.aws.AwsSdk2TransportOptions;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
@@ -69,8 +67,7 @@ public class RestClientWrapper implements RestClient {
             .setDefaultCredentialsProvider(conFact.getCredentials5())
             .setConnectionManager(connectionManager);
         });
-        final OpenSearchTransport transport = ApacheHttpClient5TransportBuilder.builder(conFact.getHost5()).build();
-        localClient = new OpenSearchClient(transport);
+        localClient = new OpenSearchClient(builder.build());
       } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -115,7 +112,7 @@ public class RestClientWrapper implements RestClient {
   }
   @Override
   public Response.CreatedIndex create(String indexName, String configAsJson) throws IOException, ResponseException {
-    return new CreateIndexRespWrap(this.client.indices().create(new CreateIndexRequest.Builder().index(indexName).build()));
+    return new CreateIndexRespWrap(this.client.indices().create(CreateIndexConfigWrap.update(new CreateIndexRequest.Builder(), configAsJson).index(indexName).build()));
   }
   @Override
   public void delete(String indexName) throws IOException, ResponseException {
@@ -134,9 +131,8 @@ public class RestClientWrapper implements RestClient {
     return this.client.count(((CountImpl)request).craftsman.build()).count();
   }
   @Override
-  public Response performRequest(Get request) throws IOException, ResponseException {
-    GetResponse x = this.client.get(((GetImpl)request).craftsman.build(), Object.class);
-    return null;
+  public Response.Get performRequest(Get request) throws IOException, ResponseException {
+    return new GetRespWrap(this.client.get(((GetImpl)request).craftsman.build(), Object.class));
   }
   @Override
   public Response.Mapping performRequest(Mapping request) throws IOException, ResponseException {
@@ -145,9 +141,8 @@ public class RestClientWrapper implements RestClient {
       new MappingRespImpl(this.client.indices().putMapping(req.craftsman_set.build()));
   }
   @Override
-  public Response performRequest(Search request) throws IOException, ResponseException {
-    // TODO Auto-generated method stub
-    return null;
+  public Response.Search performRequest(Search request) throws IOException, ResponseException {
+    return new SearchRespWrap(this.client.search(((SearchImpl)request).craftsman.build(), Object.class));
   }
   @Override
   public Response.Settings performRequest(Setting request) throws IOException, ResponseException {

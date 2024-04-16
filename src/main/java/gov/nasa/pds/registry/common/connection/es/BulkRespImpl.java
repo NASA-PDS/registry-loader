@@ -13,6 +13,7 @@ class BulkRespImpl implements Response.Bulk {
     this.log = LogManager.getLogger(this.getClass());    
     this.parse(response.toString());
   }
+  @SuppressWarnings("rawtypes") // necessary evil to manipulate heterogenous structures
   private int parse (String resp) {
     int numErrors = 0;
     try
@@ -24,6 +25,7 @@ class BulkRespImpl implements Response.Bulk {
       Boolean hasErrors = (Boolean)json.get("errors");
       if(hasErrors)
       {
+        @SuppressWarnings("unchecked")
         List<Object> list = (List)json.get("items");
 
         // List size = batch size (one item per document)

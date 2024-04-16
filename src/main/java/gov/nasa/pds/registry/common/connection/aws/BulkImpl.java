@@ -17,6 +17,7 @@ import gov.nasa.pds.registry.common.meta.Metadata;
 
 class BulkImpl implements Bulk {
   final BulkRequest.Builder craftsman = new BulkRequest.Builder();
+  @SuppressWarnings("unchecked")
   @Override
   public void add(String statement, String document) {
     BulkOperation.Builder journeyman = new BulkOperation.Builder();
@@ -48,7 +49,7 @@ class BulkImpl implements Bulk {
       }
       journeyman.index(apprentice.build());
     } else if (cmd.containsKey("update")) {
-      doc = ((Map)doc).get("doc");
+      doc = ((Map<String,Object>)doc).get("doc");
       UpdateOperation.Builder<Object> apprentice = new UpdateOperation.Builder<Object>().document(doc);
       params = cmd.get("update");
       if (params.containsKey("_id")) {

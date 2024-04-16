@@ -1,7 +1,6 @@
 package gov.nasa.pds.registry.common.es.dao;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.apache.logging.log4j.LogManager;
@@ -51,7 +50,7 @@ public class BulkResponseParser
      * @param reader bulk API response stream
      * @throws IOException an exception
      */
-    protected void parse(Reader reader) throws IOException
+    public void parse(Reader reader) throws IOException // needs to be public for testing
     {
         if(reader == null) return;
         

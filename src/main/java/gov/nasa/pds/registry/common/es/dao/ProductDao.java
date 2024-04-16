@@ -1,18 +1,12 @@
 package gov.nasa.pds.registry.common.es.dao;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
-import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.common.util.LidVidUtils;
 
 /**
  * Product data access object. 
@@ -50,16 +44,16 @@ public class ProductDao
             .includeField("product_class")
             .setId(lidvid)
             .setIndex(this.indexName);
-        Response resp = null;
+        Response.Get resp = null;
         
         try
         {
             resp = client.performRequest(req);
+            return resp.productClass();
         }
         catch(ResponseException ex)
         {
-            resp = ex.getResponse();
-            int code = resp.getStatusLine().getStatusCode();
+            int code = ex.statusCode();
             // Invalid LIDVID
             if(code == 404 || code == 405) 
             {
@@ -70,37 +64,6 @@ public class ProductDao
                 throw ex;
             }
         }
-
-        InputStream is = null;
-        
-        try
-        {
-            is = resp.getEntity().getContent();
-            JsonReader rd = new JsonReader(new InputStreamReader(is));
-            
-            rd.beginObject();
-            
-            while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
-            {
-                String name = rd.nextName();
-                if("_source".equals(name))
-                {
-                    return parseProductClassSource(rd);
-                }
-                else
-                {
-                    rd.skipValue();
-                }
-            }
-            
-            rd.endObject();
-        }
-        finally
-        {
-            CloseUtils.close(is);
-        }
-        
-        return null;
     }
     
     
@@ -137,16 +100,13 @@ public class ProductDao
         Request.Count req = client.createCountRequest()
             .setIndex(this.indexName + "-refs")
             .setQuery(query);
-        Response resp = null;
-
         try
         {
             return (int)client.performRequest(req);
         }
         catch(ResponseException ex)
         {
-            resp = ex.getResponse();
-            int code = resp.getStatusLine().getStatusCode();
+            int code = ex.statusCode();
             // Invalid LIDVID
             if(code == 404 || code == 405) 
             {
@@ -177,17 +137,14 @@ public class ProductDao
         Request.Get req = client.createGetRequest()
             .includeField("product_lidvid")
             .setId(docId)
-            .setIndex(this.indexName + "-refs");
-        Response resp = null;
-        
+            .setIndex(this.indexName + "-refs");        
         try
         {
-            resp = client.performRequest(req);
+            return client.performRequest(req).refs();
         }
         catch(ResponseException ex)
         {
-            resp = ex.getResponse();
-            int code = resp.getStatusLine().getStatusCode();
+            int code = ex.statusCode();
             // Invalid LIDVID
             if(code == 404 || code == 405) 
             {
@@ -198,37 +155,6 @@ public class ProductDao
                 throw ex;
             }
         }
-
-        InputStream is = null;
-        
-        try
-        {
-            is = resp.getEntity().getContent();
-            JsonReader rd = new JsonReader(new InputStreamReader(is));
-            
-            rd.beginObject();
-            
-            while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
-            {
-                String name = rd.nextName();
-                if("_source".equals(name))
-                {
-                    return parseRefs(rd);
-                }
-                else
-                {
-                    rd.skipValue();
-                }
-            }
-            
-            rd.endObject();
-        }
-        finally
-        {
-            CloseUtils.close(is);
-        }
-        
-        return null;
     }
     
     
@@ -250,53 +176,6 @@ public class ProductDao
         new BulkResponseParser().parse(resp);
     }
     
-    
-    private static String parseProductClassSource(JsonReader rd) throws Exception
-    {
-        rd.beginObject();
-
-        while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
-        {
-            String name = rd.nextName();
-            if("product_class".equals(name))
-            {
-                return rd.nextString();
-            }
-            else
-            {
-                rd.skipValue();
-            }
-        }
-        
-        rd.endObject();
-        
-        return null;
-    }
-    
-
-    private static List<String> parseRefs(JsonReader rd) throws Exception
-    {
-        rd.beginObject();
-
-        while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
-        {
-            String name = rd.nextName();
-            if("product_lidvid".equals(name))
-            {
-                return DaoUtils.parseList(rd);
-            }
-            else
-            {
-                rd.skipValue();
-            }
-        }
-        
-        rd.endObject();
-        
-        return null;
-    }
-
-    
     /**
      * Get collection references of a bundle. References can be either LIDs, LIDVIDs or both.
      * @param bundleLidvid bundle LIDVID
@@ -311,17 +190,14 @@ public class ProductDao
             .includeField("ref_lidvid_collection")
             .includeField("ref_lid_collection")
             .setId(bundleLidvid)
-            .setIndex(this.indexName);
-        Response resp = null;
-        
+            .setIndex(this.indexName);        
         try
         {
-            resp = client.performRequest(req);
+            return new LidvidSet(client.performRequest(req).ids());
         }
         catch(ResponseException ex)
         {
-            resp = ex.getResponse();
-            int code = resp.getStatusLine().getStatusCode();
+            int code = ex.statusCode();
             // Invalid LIDVID
             if(code == 404 || code == 405) 
             {
@@ -332,83 +208,7 @@ public class ProductDao
                 throw ex;
             }
         }
-
-        LidvidSet collectionIds = null;
-        InputStream is = null;
-        
-        try
-        {
-            is = resp.getEntity().getContent();
-            JsonReader rd = new JsonReader(new InputStreamReader(is));
-            
-            rd.beginObject();
-            
-            while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
-            {
-                String name = rd.nextName();
-                if("_source".equals(name))
-                {
-                    collectionIds = parseCollectionIdsSource(rd);
-                }
-                else
-                {
-                    rd.skipValue();
-                }
-            }
-            
-            rd.endObject();
-        }
-        finally
-        {
-            CloseUtils.close(is);
-        }
-        
-        if(collectionIds == null || collectionIds.lidvids == null 
-                || collectionIds.lids == null) return collectionIds;
-        
-        // Harvest converts LIDVIDs to LIDs, so let's delete those converted LIDs.
-        for(String lidvid: collectionIds.lidvids)
-        {
-            String lid = LidVidUtils.lidvidToLid(lidvid);
-            if(lid != null)
-            {
-                collectionIds.lids.remove(lid);
-            }
-        }
-        
-        
-        return collectionIds;
     }
-
-    
-    private static LidvidSet parseCollectionIdsSource(JsonReader rd) throws Exception
-    {
-        LidvidSet ids = new LidvidSet();
-        
-        rd.beginObject();
-
-        while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT)
-        {
-            String name = rd.nextName();
-            if("ref_lid_collection".equals(name))
-            {
-                ids.lids = DaoUtils.parseSet(rd);
-            }
-            else if("ref_lidvid_collection".equals(name))
-            {
-                ids.lidvids = DaoUtils.parseSet(rd);
-            }
-            else
-            {
-                rd.skipValue();
-            }
-        }
-        
-        rd.endObject();
-        
-        return ids;
-    }
-
     
     /**
      * Given a list of LIDs, find latest versions
@@ -422,36 +222,14 @@ public class ProductDao
         
         Request.Search req = client.createSearchRequest()
             .setIndex(this.indexName)
-            .buildLatestLidVids(lids);        
-        Response resp = null;
-        
+            .buildLatestLidVids(lids);                
         try
         {
-            resp = client.performRequest(req);
+            return client.performRequest(req).latestLidvids();
         }
         catch(ResponseException ex)
         {
             throw ex;
-        }
-        
-        //DebugUtils.dumpResponseBody(resp);
-        
-        InputStream is = null;
-        InputStreamReader rd = null;
-        
-        try
-        {
-            is = resp.getEntity().getContent();
-            rd = new InputStreamReader(is);
-
-            LatestLidsResponseParser parser = new LatestLidsResponseParser();
-            parser.parse(rd);            
-            return parser.getLidvids();
-        }
-        finally
-        {
-            CloseUtils.close(rd);
-            CloseUtils.close(is);
         }
     }
 

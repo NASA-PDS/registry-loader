@@ -1,19 +1,11 @@
 package gov.nasa.pds.registry.common.es.dao.dd;
 
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.common.Request;
-import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.RestClient;
-import gov.nasa.pds.registry.common.util.SearchResponseParser;
 import gov.nasa.pds.registry.common.util.Tuple;
 
 
@@ -24,8 +16,6 @@ import gov.nasa.pds.registry.common.util.Tuple;
  */
 public class DataDictionaryDao
 {
-    private Logger log;
-
     private RestClient client;
     private String indexName;
 
@@ -37,42 +27,11 @@ public class DataDictionaryDao
      */
     public DataDictionaryDao(RestClient client, String indexName)
     {
-        log = LogManager.getLogger(this.getClass());
-
         this.client = client;
         this.indexName = indexName;
     }
 
     
-    /**
-     * Inner private class to parse LDD information response from Elasticsearch.
-     * @author karpenko
-     */
-    private static class GetLddInfoRespParser extends SearchResponseParser implements SearchResponseParser.Callback
-    {
-        public LddVersions info;
-        
-        public GetLddInfoRespParser()
-        {
-            info = new LddVersions();
-        }
-        
-        @Override
-        public void onRecord(String id, Object rec) throws Exception
-        {
-            if(rec instanceof Map)
-            {
-                @SuppressWarnings("rawtypes")
-                Map map = (Map)rec;
-                
-                String strDate = (String)map.get("date");
-                info.updateDate(strDate);
-                
-                String file = (String)map.get("attr_name");
-                info.addSchemaFile(file);
-            }
-        }
-    }
     
 
     /**
@@ -86,59 +45,10 @@ public class DataDictionaryDao
         Request.Search req = client.createSearchRequest()
             .buildListLdds(namespace)
             .setIndex(indexName + "-dd");
-        Response resp = client.performRequest(req);
-        
-        GetLddInfoRespParser parser = new GetLddInfoRespParser();
-        parser.parseResponse(resp, parser); 
-        return parser.info;
+        return client.performRequest(req).lddInfo();
     }
 
 
-    /**
-     * Inner private class to parse LDD information response from Elasticsearch.
-     * @author karpenko
-     */
-    private static class ListLddsParser extends SearchResponseParser implements SearchResponseParser.Callback
-    {
-        public List<LddInfo> list;
-        
-        public ListLddsParser()
-        {
-            list = new ArrayList<>();
-        }
-        
-        @Override
-        public void onRecord(String id, Object rec) throws Exception
-        {
-            if(rec instanceof Map)
-            {
-                @SuppressWarnings("rawtypes")
-                Map map = (Map)rec;
-                
-                LddInfo info = new LddInfo();
-                
-                // Namespace
-                info.namespace = (String)map.get("attr_ns");
-                
-                // Date
-                String str = (String)map.get("date");
-                if(str != null && !str.isEmpty())
-                {
-                    info.date = Instant.parse(str);
-                }
-                
-                // Versions
-                info.imVersion = (String)map.get("im_version");
-                
-                // File name
-                info.file = (String)map.get("attr_name");
-                
-                list.add(info);                
-            }
-        }
-    }
-
-    
     /**
      * List registered LDDs
      * @param namespace if this parameter is null list all LDDs
@@ -150,43 +60,9 @@ public class DataDictionaryDao
         Request.Search req = client.createSearchRequest()
             .buildListLdds(namespace)
             .setIndex(this.indexName + "-dd");
-        Response resp = client.performRequest(req);
-
-        ListLddsParser parser = new ListLddsParser();
-        parser.parseResponse(resp, parser); 
-        return parser.list;
+        return client.performRequest(req).ldds();
     }
 
-    
-    
-    /**
-     * Inner private class to parse LDD information response from Elasticsearch.
-     * @author karpenko
-     */
-    private static class ListFieldsParser extends SearchResponseParser implements SearchResponseParser.Callback
-    {
-        public Set<String> list;
-        
-        public ListFieldsParser()
-        {
-            list = new HashSet<>(200);
-        }
-        
-        @Override
-        public void onRecord(String id, Object rec) throws Exception
-        {
-            if(rec instanceof Map)
-            {
-                @SuppressWarnings("rawtypes")
-                Map map = (Map)rec;
-                
-                String fieldName = (String)map.get("es_field_name");
-                list.add(fieldName);                
-            }
-        }
-    }
-
-    
     /**
      * Get field names by Elasticsearch type, such as "boolean" or "date".
      * @return a set of field names
@@ -197,11 +73,7 @@ public class DataDictionaryDao
         Request.Search req = client.createSearchRequest()
             .buildListFields(esType)
             .setIndex(this.indexName + "-dd");
-        Response resp = client.performRequest(req);
-
-        ListFieldsParser parser = new ListFieldsParser();
-        parser.parseResponse(resp, parser); 
-        return parser.list;
+        return client.performRequest(req).fields();
     }
 
     
@@ -218,56 +90,12 @@ public class DataDictionaryDao
     public List<Tuple> getDataTypes(Collection<String> ids, boolean stringForMissing) throws Exception
     {
         if(ids == null || ids.isEmpty()) return null;
-        
-        List<Tuple> dtInfo = new ArrayList<Tuple>();
-        
         // Create request
         Request.Get req = client.createMGetRequest()
             .setIds(ids)
             .includeField("es_data_type")
             .setIndex(this.indexName + "-dd");
-        
-        // Call ES
-        Response resp = client.performRequest(req);
-        GetDataTypesResponseParser parser = new GetDataTypesResponseParser();
-        List<GetDataTypesResponseParser.Record> records = parser.parse(resp.getEntity());
-        
-        // Process response (list of fields)
-        boolean missing = false;
-        
-        for(GetDataTypesResponseParser.Record rec: records)
-        {
-            if(rec.found)
-            {
-                dtInfo.add(new Tuple(rec.id, rec.esDataType));
-            }
-            // There is no data type for this field in ES registry-dd index
-            else
-            {
-                // Automatically assign data type for known fields
-                if(rec.id.startsWith("ref_lid_") || rec.id.startsWith("ref_lidvid_") 
-                        || rec.id.endsWith("_Area")) 
-                {
-                    dtInfo.add(new Tuple(rec.id, "keyword"));
-                    continue;
-                }
-                
-                if(stringForMissing) 
-                {
-                    log.warn("Could not find datatype for field " + rec.id + ". Will use 'keyword'");
-                    dtInfo.add(new Tuple(rec.id, "keyword"));
-                }
-                else
-                {
-                    log.error("Could not find datatype for field " + rec.id);
-                    missing = true;
-                }
-            }
-        }
-        
-        if(stringForMissing == false && missing == true) throw new DataTypeNotFoundException();
-        
-        return dtInfo;
+        return this.client.performRequest(req).dataTypes(stringForMissing);
     }
 
 }

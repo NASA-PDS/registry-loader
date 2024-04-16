@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
-import gov.nasa.pds.registry.common.util.SearchResponseParser;
 
 /**
  * Elasticsearch utility methods.

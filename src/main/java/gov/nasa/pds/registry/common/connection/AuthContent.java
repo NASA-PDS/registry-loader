@@ -67,7 +67,8 @@ public class AuthContent {
   public org.apache.hc.client5.http.auth.CredentialsProvider getCredentials5(org.apache.hc.core5.http.HttpHost scope) {
     org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider creds =
         new org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider();
-    creds.setCredentials(new org.apache.hc.client5.http.auth.AuthScope(scope),
+    //creds.setCredentials(new org.apache.hc.client5.http.auth.AuthScope(scope),
+    creds.setCredentials(new org.apache.hc.client5.http.auth.AuthScope(null,null,-1,null,null), // ANY
         new org.apache.hc.client5.http.auth.UsernamePasswordCredentials(this.getUser(), this.getPassword().toCharArray()));
     return creds;
   }
