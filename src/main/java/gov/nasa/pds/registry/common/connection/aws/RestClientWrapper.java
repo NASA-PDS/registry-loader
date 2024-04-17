@@ -132,6 +132,8 @@ public class RestClientWrapper implements RestClient {
   }
   @Override
   public Response.Get performRequest(Get request) throws IOException, ResponseException {
+    if (request instanceof MGet)
+      return new MGetRespWrap(this.client.mget(((MGetImpl)request).craftsman.build(), Object.class));
     return new GetRespWrap(this.client.get(((GetImpl)request).craftsman.build(), Object.class));
   }
   @Override

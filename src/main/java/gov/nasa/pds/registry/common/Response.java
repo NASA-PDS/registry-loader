@@ -35,7 +35,7 @@ public interface Response {
       public Set<String> lids();
       public Set<String> lidvids();
     }
-    public List<Tuple> dataTypes(boolean stringForMissing) throws IOException, DataTypeNotFoundException;
+    public List<Tuple> dataTypes(boolean stringForMissing) throws IOException, DataTypeNotFoundException;    
     public IdSets ids(); // returns null if nothing is found in returned content
     public String productClass(); // returns null if product class not in returned content
     public List<String> refs(); // returns null if nothing is found in returned content
