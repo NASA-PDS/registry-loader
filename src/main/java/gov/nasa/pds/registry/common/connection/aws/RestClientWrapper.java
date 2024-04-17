@@ -33,10 +33,12 @@ import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
 
 public class RestClientWrapper implements RestClient {
+  final private boolean isServerless;
   final private OpenSearchClient client;
   final private SdkHttpClient httpClient;
   public RestClientWrapper(ConnectionFactory conFact, boolean isServerless) {
     this.httpClient = ApacheHttpClient.builder().build();
+    this.isServerless = isServerless;
     if (isServerless) {
       this.client = new OpenSearchClient(
           new AwsSdk2Transport(
@@ -84,7 +86,7 @@ public class RestClientWrapper implements RestClient {
   }
   @Override
   public Bulk createBulkRequest() {
-    return new BulkImpl();
+    return new BulkImpl(this.isServerless);
   }
   @Override
   public Count createCountRequest() {

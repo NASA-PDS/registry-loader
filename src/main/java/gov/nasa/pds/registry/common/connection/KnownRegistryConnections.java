@@ -46,11 +46,10 @@ public final class KnownRegistryConnections {
         String candidate = i.next().toString();
         candidate = candidate.substring(candidate.indexOf("/connections"));
         if (candidate.endsWith(".xml")) {
-          result.add(new URL("app:" + candidate));
+          result.add(new URL("app:/" + candidate));
         }
       }
     }
-    for (URL url : result) System.out.println(url.toString());
     return result;
   }
 }

@@ -23,6 +23,7 @@ public interface Response {
     }
     public boolean errors();
     public List<Item> items();
+    public void logErrors();
     public long took();
   }
   public interface CreatedIndex {

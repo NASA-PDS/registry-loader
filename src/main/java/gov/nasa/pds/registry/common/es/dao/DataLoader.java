@@ -231,7 +231,6 @@ public class DataLoader
           for (int index = 0 ; index < data.size() ; index++) {
             bulk.add(data.get(index), data.get(++index));
           }
-          // FIXME: response has changed so need to debug this
           Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
           // Check for Elasticsearch errors.
           int failedCount = processErrors(response, errorLidvids);

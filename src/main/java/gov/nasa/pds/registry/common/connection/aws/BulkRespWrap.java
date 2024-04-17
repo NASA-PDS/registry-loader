@@ -2,6 +2,8 @@ package gov.nasa.pds.registry.common.connection.aws;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import gov.nasa.pds.registry.common.Response;
@@ -43,7 +45,9 @@ class BulkRespWrap implements Response.Bulk {
   };
   final private ArrayList<Response.Bulk.Item> items = new ArrayList<Response.Bulk.Item>();
   final private BulkResponse parent;
+  final private Logger log;
   BulkRespWrap(BulkResponse parent) {
+    this.log = LogManager.getLogger(this.getClass());
     this.parent = parent;
   }
   @Override
@@ -57,10 +61,20 @@ class BulkRespWrap implements Response.Bulk {
         this.items.add(new ItemWrap(item));
       }
     }
-    return this.items();
+    return this.items;
   }
   @Override
   public long took() {
     return this.parent.took();
+  }
+  @Override
+  public void logErrors() {
+    if (this.parent.errors()) {
+      for (BulkResponseItem item : this.parent.items()) {
+        if (item.error() != null && item.error().reason() != null && !item.error().reason().isBlank()) {
+          log.error(item.error().reason());
+        }
+      }
+    }
   }
 }

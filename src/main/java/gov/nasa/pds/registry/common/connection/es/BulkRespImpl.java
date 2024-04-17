@@ -1,17 +1,24 @@
 package gov.nasa.pds.registry.common.connection.es;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import gov.nasa.pds.registry.common.Response;
 
 class BulkRespImpl implements Response.Bulk {
+  final int errorCount;
   final private Logger log;
+  final private org.elasticsearch.client.Response response;
   BulkRespImpl (org.elasticsearch.client.Response response) {
     this.log = LogManager.getLogger(this.getClass());    
-    this.parse(response.toString());
+    this.errorCount = this.parse(response.toString());
+    this.response = response;
   }
   @SuppressWarnings("rawtypes") // necessary evil to manipulate heterogenous structures
   private int parse (String resp) {
@@ -76,17 +83,24 @@ class BulkRespImpl implements Response.Bulk {
   }
   @Override
   public boolean errors() {
-    // TODO Auto-generated method stub
-    return false;
+    return errorCount != 0;
   }
   @Override
   public List<Item> items() {
-    // TODO Auto-generated method stub
-    return null;
+    throw new NotImplementedException();
   }
   @Override
   public long took() {
-    // TODO Auto-generated method stub
-    return 0;
+    throw new NotImplementedException();
+  }
+  @Override
+  public void logErrors() {
+    BulkResponseParser parser = new BulkResponseParser();
+    try (InputStream is = this.response.getEntity().getContent()) {
+      InputStreamReader reader = new InputStreamReader(is);
+      parser.parse(reader);
+    } catch (UnsupportedOperationException | IOException e) {
+      throw new RuntimeException("Some weird JSON parsing exception and should never get here.");
+    }
   }
 }

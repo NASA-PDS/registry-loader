@@ -2,6 +2,7 @@ package gov.nasa.pds.registry.common;
 
 import java.net.URL;
 import gov.nasa.pds.registry.common.connection.AuthContent;
+import gov.nasa.pds.registry.common.connection.KnownRegistryConnections;
 import gov.nasa.pds.registry.common.connection.UseOpensearchSDK1;
 import gov.nasa.pds.registry.common.connection.UseOpensearchSDK2;
 import gov.nasa.pds.registry.common.connection.RegistryConnectionContent;
@@ -14,11 +15,7 @@ public class EstablishConnectionFactory {
     return EstablishConnectionFactory.from (urlToRegistryConnection, AuthContent.from(authFile));
   }
   private static synchronized ConnectionFactory from (String urlToRegistryConnection, AuthContent auth) throws Exception {
-    final String key = "java.protocol.handler.pkgs", me = "gov.nasa.pds.registry.common";
-    String providers = System.getProperty(key, "");
-    if (providers.isEmpty()) providers = me;
-    if (!providers.contains(me)) providers += "|" + me;
-    System.setProperty(key, providers);
+    KnownRegistryConnections.initialzeAppHandler();
     RegistryConnectionContent conn = RegistryConnectionContent.from (new URL(urlToRegistryConnection));
     
     if (conn.isDirectConnection()) {

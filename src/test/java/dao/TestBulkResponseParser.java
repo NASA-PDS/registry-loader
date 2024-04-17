@@ -1,8 +1,7 @@
 package dao;
 
 import java.io.StringReader;
-
-import gov.nasa.pds.registry.common.es.dao.BulkResponseParser;
+import gov.nasa.pds.registry.common.connection.es.BulkResponseParser;
 import tt.TestLogConfigurator;
 
 public class TestBulkResponseParser

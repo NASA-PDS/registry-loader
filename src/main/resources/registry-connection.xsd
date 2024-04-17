@@ -45,7 +45,7 @@
       <xs:extension base="xs:normalizedString">
         <xs:attribute default="https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com" name="endpoint" type="xs:normalizedString"/>
         <xs:attribute default="https://c8u1zk30u5.execute-api.us-west-2.amazonaws.com/dev/signed-url" name="gateway" type="xs:normalizedString"/>
-        <xs:attribute default="cognito-idp.us-west-2.amazonaws.com"
+        <xs:attribute default="https://cognito-idp.us-west-2.amazonaws.com"
                       name="IDP" type="xs:normalizedString"/>
       </xs:extension>
     </xs:simpleContent>

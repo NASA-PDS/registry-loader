@@ -17,6 +17,10 @@ import gov.nasa.pds.registry.common.meta.Metadata;
 
 class BulkImpl implements Bulk {
   final BulkRequest.Builder craftsman = new BulkRequest.Builder();
+  final private boolean isServerless;
+  BulkImpl (boolean isServerless) {
+    this.isServerless = isServerless;
+  }
   @SuppressWarnings("unchecked")
   @Override
   public void add(String statement, String document) {
@@ -91,7 +95,12 @@ class BulkImpl implements Bulk {
         this.craftsman.refresh(org.opensearch.client.opensearch._types.Refresh.True);
         break;
       case WaitFor:
-        this.craftsman.refresh(org.opensearch.client.opensearch._types.Refresh.WaitFor);
+        if (this.isServerless) {
+          // No OP because not supported in serverless realm
+        }
+        else {
+          this.craftsman.refresh(org.opensearch.client.opensearch._types.Refresh.WaitFor);
+        }
         break;
     }
     return this;

@@ -172,8 +172,7 @@ public class ProductDao
             .buildUpdateStatus(lidvids, status)
             .setIndex(this.indexName);
         
-        Response .Bulk resp = client.performRequest(req);
-        new BulkResponseParser().parse(resp);
+        client.performRequest(req).logErrors();;
     }
     
     /**
