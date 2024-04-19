@@ -259,6 +259,10 @@ public class FileMetadataExtractor
                 if(filePath.startsWith(rule.prefix))
                 {
                     filePath = rule.replacement + filePath.substring(rule.prefix.length());
+                    String protocol = filePath.substring(0, filePath.indexOf(':')+3); // include :// as part of protocol
+                    String body = filePath.substring(protocol.length());
+                    while (body.contains("//")) body = body.replace("//", "/");
+                    filePath = protocol + body;
                     break;
                 }
             }
