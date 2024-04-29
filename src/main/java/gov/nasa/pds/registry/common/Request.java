@@ -16,6 +16,12 @@ public interface Request {
     public Count setIndex (String name);
     public Count setQuery (String q);
   }
+  public interface DeleteByQuery { // delete_by_query
+    public DeleteByQuery createFilterQuery(String key, String value);
+    public DeleteByQuery createMatchAllQuery();
+    public DeleteByQuery setIndex (String name);
+    public DeleteByQuery setRefresh(boolean state);
+  }
   public interface Get { // _doc
     public Get excludeField (String field);
     public Get excludeFields (List<String> fields);
@@ -32,7 +38,10 @@ public interface Request {
     public MGet setIds (Collection<String> ids);
   }
   public interface Search { // _search
+    public Search all(String sortField, int size, String searchAfter);
+    public Search all(String filterField, String filterValue, String sortField, int size, String searchAfter);
     public Search buildAlternativeIds(Collection<String> lids);
+    public Search buildGetField(String field_name, String lidvid);
     public Search buildLatestLidVids(Collection<String> lids);
     public Search buildListFields(String dataType);
     public Search buildListLdds (String namespace);

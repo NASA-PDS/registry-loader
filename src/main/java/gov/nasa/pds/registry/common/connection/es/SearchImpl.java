@@ -9,7 +9,7 @@ class SearchImpl implements Search {
   String json = null;
   @Override
   public Search buildAlternativeIds(Collection<String> lids) {
-    JsonHelper.buildSearchIdsRequest(lids, lids.size(), true);
+    this.json = JsonHelper.buildSearchIdsRequest(lids, lids.size(), true);
     return this;
   }
   @Override
@@ -29,7 +29,7 @@ class SearchImpl implements Search {
   }
   @Override
   public Search buildTheseIds(Collection<String> lids) {
-    JsonHelper.buildSearchIdsRequest(lids, lids.size(), true);
+    this.json = JsonHelper.buildSearchIdsRequest(lids, lids.size(), true);
     return this;
   }
   @Override
@@ -44,6 +44,21 @@ class SearchImpl implements Search {
   @Override
   public Search setPretty(boolean pretty) {
     this.pretty = pretty;
+    return this;
+  }
+  @Override
+  public Search buildGetField(String field_name, String lidvid) {
+    this.json = new RegistryRequestBuilder().createGetBlobRequest(field_name, lidvid);
+    return this;
+  }
+  @Override
+  public Search all(String sortField, int size, String searchAfter) {
+    this.json = new RegistryRequestBuilder().createExportAllDataRequest(sortField, size, searchAfter);
+    return this;
+  }
+  @Override
+  public Search all(String filterField, String filterValue, String sortField, int size, String searchAfter) {
+    this.json = new RegistryRequestBuilder().createExportDataRequest(filterField, filterValue, sortField, size, searchAfter);
     return this;
   }
 }

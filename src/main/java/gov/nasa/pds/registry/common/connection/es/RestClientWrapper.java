@@ -7,6 +7,7 @@ import org.elasticsearch.client.RestClientBuilder;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request.Bulk;
 import gov.nasa.pds.registry.common.Request.Count;
+import gov.nasa.pds.registry.common.Request.DeleteByQuery;
 import gov.nasa.pds.registry.common.Request.Get;
 import gov.nasa.pds.registry.common.Request.Mapping;
 import gov.nasa.pds.registry.common.Request.MGet;
@@ -129,5 +130,14 @@ public class RestClientWrapper implements RestClient
     @Override
     public Response.Settings performRequest(Setting request) throws IOException,ResponseException {
       return new SettingsRespImpl(this.performRequest(request.toString(), null, "GET"));
+    }
+    @Override
+    public DeleteByQuery createDeleteByQuery() {
+      return null;
+    }
+    @Override
+    public long performRequest(DeleteByQuery request) throws IOException,ResponseException {
+      return ((DeleteByQueryImpl)request).extractNumDeleted(
+          this.performRequest(request.toString(), ((DeleteByQueryImpl)request).query, "POST"));
     }
 }

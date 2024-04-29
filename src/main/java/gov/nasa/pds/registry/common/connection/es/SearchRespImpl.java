@@ -16,6 +16,28 @@ import gov.nasa.pds.registry.common.es.dao.dd.LddInfo;
 import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;
 
 class SearchRespImpl implements Response.Search {
+  private static class BatchObjects implements SearchResponseParser.Callback {
+    final ArrayList<Object> content = new ArrayList<Object>();
+    public void onRecord(String id, Object rec) {
+      content.add(rec);
+    }
+  }
+  private static class FieldNameFinder implements SearchResponseParser.Callback {
+    final private String fieldName;
+    boolean found = false;
+    String blob = null;
+    @Override
+    @SuppressWarnings("rawtypes")
+    public void onRecord(String id, Object rec) {
+      found = true;
+      this.blob = ((Map) rec).get(this.fieldName).toString();
+    }
+    public FieldNameFinder(String fieldName) {
+      super();
+      this.fieldName = fieldName;
+    }
+  }
+
   /**
    * Inner private class to parse LDD information response from Elasticsearch.
    * 
@@ -138,5 +160,18 @@ class SearchRespImpl implements Response.Search {
     SearchResponseParser parser = new SearchResponseParser();
     parser.parseResponse(this.response, idsResp);
     return idsResp.getIds();
+  }
+  @Override
+  public String field(String name) throws NoSuchFieldException {
+    FieldNameFinder fnf = new FieldNameFinder(name);
+    if (!fnf.found) throw new NoSuchFieldException();
+    return fnf.blob;
+  }
+  @Override
+  public List<Object> batch() throws UnsupportedOperationException, IOException {
+    BatchObjects content = new BatchObjects();
+    SearchResponseParser parser = new SearchResponseParser();
+    parser.parseResponse(this.response, content);
+    return content.content;
   }
 }
