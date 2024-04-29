@@ -2,12 +2,16 @@ package gov.nasa.pds.registry.common.connection.aws;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.opensearch.client.opensearch._types.FieldSort;
 import org.opensearch.client.opensearch._types.FieldValue;
+import org.opensearch.client.opensearch._types.SortOptions;
+import org.opensearch.client.opensearch._types.SortOrder;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
 import org.opensearch.client.opensearch._types.query_dsl.IdsQuery;
 import org.opensearch.client.opensearch._types.query_dsl.MatchQuery;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch._types.query_dsl.Query.Builder;
+import org.opensearch.client.opensearch._types.query_dsl.TermQuery;
 import org.opensearch.client.opensearch._types.query_dsl.TermsQuery;
 import org.opensearch.client.opensearch._types.query_dsl.TermsQueryField;
 import org.opensearch.client.opensearch.core.SearchRequest;
@@ -78,6 +82,31 @@ class SearchImpl implements Search {
   @Override
   public Search setPretty(boolean pretty) {
     // ignored because Java v2 returns a document not JSON
+    return this;
+  }
+  @Override
+  public Search all(String sortField, int size, String searchAfter) {
+    this.craftsman.searchAfter(searchAfter);
+    this.craftsman.sort(new SortOptions.Builder()
+        .field(new FieldSort.Builder().field(sortField).order(SortOrder.Asc).build())
+        .build());
+    return this;
+  }
+  @Override
+  public Search all(String filterField, String filterValue, String sortField, int size,
+      String searchAfter) {
+    this.all(sortField, size, searchAfter);
+    this.buildGetField(filterField, filterValue);
+    return this;
+  }
+  @Override
+  public Search buildGetField(String field_name, String field_value) {
+    BoolQuery.Builder journeyman = new BoolQuery.Builder()
+        .filter(new Query.Builder().term(new TermQuery.Builder()
+            .field(field_name)
+            .value(new FieldValue.Builder().stringValue(field_value).build())
+            .build()).build());
+    this.craftsman.query(new Query.Builder().bool(journeyman.build()).build());
     return this;
   }
 }

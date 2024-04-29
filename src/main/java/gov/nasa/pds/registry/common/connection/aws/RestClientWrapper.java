@@ -20,6 +20,7 @@ import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBui
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request.Bulk;
 import gov.nasa.pds.registry.common.Request.Count;
+import gov.nasa.pds.registry.common.Request.DeleteByQuery;
 import gov.nasa.pds.registry.common.Request.Get;
 import gov.nasa.pds.registry.common.Request.MGet;
 import gov.nasa.pds.registry.common.Request.Mapping;
@@ -151,5 +152,13 @@ public class RestClientWrapper implements RestClient {
   @Override
   public Response.Settings performRequest(Setting request) throws IOException, ResponseException {
     return new SettingRespImpl(this.client.indices().getSettings(((SettingImpl)request).craftsman.build()));
+  }
+  @Override
+  public DeleteByQuery createDeleteByQuery() {
+    return new DBQImpl();
+  }
+  @Override
+  public long performRequest(DeleteByQuery request) throws IOException, ResponseException {
+    return this.client.deleteByQuery(((DBQImpl)request).craftsman.build()).deleted();
   }
 }

@@ -72,4 +72,12 @@ class SearchRespWrap implements Response.Search {
     }
     return results;
   }
+  @Override
+  public List<Object> batch() throws UnsupportedOperationException, IOException {
+    return this.parent.documents();
+  }
+  @Override
+  public String field(String name) throws NoSuchFieldException {
+    return ((Map<String,Object>)this.parent.documents().get(0)).get(name).toString();
+  }
 }
