@@ -80,4 +80,12 @@ class SearchRespWrap implements Response.Search {
   public String field(String name) throws NoSuchFieldException {
     return ((Map<String,Object>)this.parent.documents().get(0)).get(name).toString();
   }
+  @Override
+  public List<Map<String, Object>> documents() {
+    ArrayList<Map<String,Object>> docs = new ArrayList<Map<String,Object>>();
+    for (Object doc : this.parent.documents()) {
+      docs.add((Map<String,Object>)doc);
+    }
+    return docs;
+  }
 }

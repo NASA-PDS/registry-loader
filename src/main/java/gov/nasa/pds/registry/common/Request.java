@@ -45,9 +45,11 @@ public interface Request {
     public Search buildLatestLidVids(Collection<String> lids);
     public Search buildListFields(String dataType);
     public Search buildListLdds (String namespace);
+    public Search buildTermQuery (String fieldname, String value);
     public Search buildTheseIds(Collection<String> lids);
     public Search setIndex (String name);
     public Search setPretty (boolean pretty);
+    public Search setSize (int hitsperpage);
   }
   public interface Setting { // _settings
     public Setting setIndex (String name);

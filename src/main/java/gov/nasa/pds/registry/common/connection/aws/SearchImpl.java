@@ -109,4 +109,17 @@ class SearchImpl implements Search {
     this.craftsman.query(new Query.Builder().bool(journeyman.build()).build());
     return this;
   }
+  @Override
+  public Search buildTermQuery(String fieldname, String value) {
+    TermQuery.Builder journeyman = new TermQuery.Builder()
+        .field(fieldname)
+        .value(new FieldValue.Builder().stringValue(value).build());
+    this.craftsman.query(new Query.Builder().term(journeyman.build()).build());   
+    return this;
+  }
+  @Override
+  public Search setSize(int hitsperpage) {
+    this.craftsman.size(hitsperpage);
+    return this;
+  }
 }
