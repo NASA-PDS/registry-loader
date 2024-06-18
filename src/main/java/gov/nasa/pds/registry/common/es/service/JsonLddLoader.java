@@ -46,7 +46,7 @@ public class JsonLddLoader
         log = LogManager.getLogger(this.getClass());
         dtMap = new Pds2EsDataTypeMap();
         
-        loader = new DataLoader(conFact.setIndexName(conFact.getIndexName() + "-dd"));
+        loader = new DataLoader(conFact.clone().setIndexName(conFact.getIndexName() + "-dd"));
         this.dao = dao;
     }
  
