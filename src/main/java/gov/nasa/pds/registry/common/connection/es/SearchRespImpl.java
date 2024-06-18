@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.NotImplementedException;
 import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.es.dao.LatestLidsResponseParser;
 import gov.nasa.pds.registry.common.es.dao.dd.LddInfo;
@@ -173,5 +174,9 @@ class SearchRespImpl implements Response.Search {
     SearchResponseParser parser = new SearchResponseParser();
     parser.parseResponse(this.response, content);
     return content.content;
+  }
+  @Override
+  public List<Map<String, Object>> documents() {
+    throw new NotImplementedException();
   }
 }

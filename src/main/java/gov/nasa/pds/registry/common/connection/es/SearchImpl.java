@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.common.connection.es;
 
 import java.util.Collection;
+import org.apache.commons.lang3.NotImplementedException;
 import gov.nasa.pds.registry.common.Request.Search;
 
 class SearchImpl implements Search {
@@ -60,5 +61,13 @@ class SearchImpl implements Search {
   public Search all(String filterField, String filterValue, String sortField, int size, String searchAfter) {
     this.json = new RegistryRequestBuilder().createExportDataRequest(filterField, filterValue, sortField, size, searchAfter);
     return this;
+  }
+  @Override
+  public Search buildTermQuery(String fieldname, String value) {
+    throw new NotImplementedException();
+  }
+  @Override
+  public Search setSize(int hitsperpage) {
+    throw new NotImplementedException();
   }
 }
