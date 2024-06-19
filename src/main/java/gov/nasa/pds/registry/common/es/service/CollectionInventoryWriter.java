@@ -46,7 +46,7 @@ public class CollectionInventoryWriter
     public CollectionInventoryWriter(ConnectionFactory conFact) throws Exception
     {
         log = LogManager.getLogger(this.getClass());
-        loader = new DataLoader(conFact);
+        loader = new DataLoader(conFact.clone().setIndexName(conFact.getIndexName()+"-refs"));
     }
     
     
