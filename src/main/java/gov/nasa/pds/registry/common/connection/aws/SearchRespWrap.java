@@ -68,7 +68,7 @@ class SearchRespWrap implements Response.Search {
       throws UnsupportedOperationException, IOException {
     HashSet<String> results = new HashSet<String>(from_ids);
     for (Hit<Object> hit : this.parent.hits().hits()) {
-      if (true) throw new NotImplementedException("Need to fill this out when have a return value");
+      if (from_ids.contains(hit.id())) from_ids.remove(hit.id());
     }
     return results;
   }
