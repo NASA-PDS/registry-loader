@@ -1,12 +1,20 @@
 # Changelog
 
-## [v1.5.1](https://github.com/NASA-PDS/registry-common/tree/v1.5.1) (2023-11-16)
+## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2024-06-20)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.5.0...v1.5.1)
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.5.1...«unknown»)
 
 **Defects:**
 
 - Fix code scanning alerts [\#40](https://github.com/NASA-PDS/registry-common/issues/40) [[s.high](https://github.com/NASA-PDS/registry-common/labels/s.high)]
+
+**Other closed issues:**
+
+- Augment authentication behaviour to support Cognito credential set [\#36](https://github.com/NASA-PDS/registry-common/issues/36)
+
+## [v1.5.1](https://github.com/NASA-PDS/registry-common/tree/v1.5.1) (2023-11-16)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.5.0...v1.5.1)
 
 ## [v1.5.0](https://github.com/NASA-PDS/registry-common/tree/v1.5.0) (2023-09-25)
 
