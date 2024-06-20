@@ -6,8 +6,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import gov.nasa.pds.registry.common.cfg.RegistryCfg;
+import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.meta.InventoryBatchReader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
@@ -44,10 +43,10 @@ public class CollectionInventoryWriter
     /**
      * Constructor
      */
-    public CollectionInventoryWriter(RegistryCfg cfg) throws Exception
+    public CollectionInventoryWriter(ConnectionFactory conFact) throws Exception
     {
         log = LogManager.getLogger(this.getClass());
-        loader = new DataLoader(cfg.url, cfg.indexName + "-refs", cfg.authFile);
+        loader = new DataLoader(conFact.clone().setIndexName(conFact.getIndexName()+"-refs"));
     }
     
     

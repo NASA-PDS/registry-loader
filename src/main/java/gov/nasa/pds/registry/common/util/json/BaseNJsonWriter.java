@@ -18,6 +18,7 @@ import com.google.gson.stream.JsonWriter;
  *
  * @param <Record> A data record to write.
  */
+@SuppressWarnings("hiding")
 public abstract class BaseNJsonWriter<Record> implements Closeable
 {
     protected FileWriter writer;

@@ -3,9 +3,8 @@ package dao;
 import java.util.Arrays;
 import java.util.List;
 
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.ProductDao;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import tt.TestLogConfigurator;
@@ -18,19 +17,19 @@ public class TestProductDao
         TestLogConfigurator.configureLogger();
         
         
-        RestClient esClient = null;
+        RestClient client = null;
         
         try
         {
-            esClient = EsClientFactory.createRestClient("localhost", null);
-            ProductDao dao = new ProductDao(esClient, "registry");
+            client = EstablishConnectionFactory.from("localhost").createRestClient();
+            ProductDao dao = new ProductDao(client, "registry");
             
             //testUpdateArchiveStatus(dao);
             testGetLatestLidVids(dao);
         }
         finally
         {
-            CloseUtils.close(esClient);
+            CloseUtils.close(client);
         }
 
     }

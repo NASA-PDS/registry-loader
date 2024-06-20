@@ -9,8 +9,8 @@ public class Tuple
 {
     public String item1;
     public String item2;
-
-    
+    public Tuple() {
+    }
     /**
      * Constructor
      * @param item1 value 1

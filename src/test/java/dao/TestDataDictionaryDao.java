@@ -4,9 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
 import gov.nasa.pds.registry.common.es.dao.dd.LddInfo;
 import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;
@@ -25,30 +24,30 @@ public class TestDataDictionaryDao
 
     private static void testListBooleanFields() throws Exception
     {
-        RestClient esClient = EsClientFactory.createRestClient("http://localhost:9200", null);
+        RestClient client = EstablishConnectionFactory.from("app:/connections/direct/localhost.xml").createRestClient();
         
         try
         {
-            DataDictionaryDao dao = new DataDictionaryDao(esClient, "registry");
+            DataDictionaryDao dao = new DataDictionaryDao(client, "registry");
             Set<String> list = dao.getFieldNamesByEsType("boolean");
-            
+           
             System.out.println("Boolean fields count = " + list.size());
             list.forEach((name) -> { System.out.println(name); });
         }
         finally
         {
-            esClient.close();
+            client.close();
         }
     }
 
 
     private static void testListDateFields() throws Exception
     {
-        RestClient esClient = EsClientFactory.createRestClient("http://localhost:9200", null);
+        RestClient client = EstablishConnectionFactory.from("app:/connections/direct/localhost.xml").createRestClient();
         
         try
         {
-            DataDictionaryDao dao = new DataDictionaryDao(esClient, "registry");
+            DataDictionaryDao dao = new DataDictionaryDao(client, "registry");
             Set<String> list = dao.getFieldNamesByEsType("date");
             
             System.out.println("Date fields count = " + list.size());
@@ -56,18 +55,18 @@ public class TestDataDictionaryDao
         }
         finally
         {
-            esClient.close();
+            client.close();
         }
     }
 
     
     private static void testListLdds() throws Exception
     {
-        RestClient esClient = EsClientFactory.createRestClient("http://localhost:9200", null);
+        RestClient client = EstablishConnectionFactory.from("app:/connections/direct/localhost.xml").createRestClient();
         
         try
         {
-            DataDictionaryDao dao = new DataDictionaryDao(esClient, "registry");
+            DataDictionaryDao dao = new DataDictionaryDao(client, "registry");
             List<LddInfo> list = dao.listLdds(null);
             Collections.sort(list);
             
@@ -79,24 +78,24 @@ public class TestDataDictionaryDao
         }
         finally
         {
-            esClient.close();
+            client.close();
         }
     }
 
     
     private static void testGetLddInfo() throws Exception
     {
-        RestClient esClient = EsClientFactory.createRestClient("http://localhost:9200", null);
+        RestClient client = EstablishConnectionFactory.from("app:/connections/direct/localhost.xml").createRestClient();
         
         try
         {
-            DataDictionaryDao dao = new DataDictionaryDao(esClient, "registry");
+            DataDictionaryDao dao = new DataDictionaryDao(client, "registry");
             LddVersions info = dao.getLddInfo("pds");
             info.debug();
         }
         finally
         {
-            esClient.close();
+            client.close();
         }
     }
 
