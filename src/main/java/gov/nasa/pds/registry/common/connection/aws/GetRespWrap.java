@@ -2,6 +2,7 @@ package gov.nasa.pds.registry.common.connection.aws;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +34,10 @@ class GetRespWrap implements Response.Get {
   @Override
   public String productClass() {
     String result = "";
-    if (true) throw new NotImplementedException("Need to fill this out when have a return value");
+    if (this.parent.source() != null) {
+      HashMap<String,String> src = (HashMap<String,String>)this.parent.source();
+      if (src.containsValue("product_class")) result = src.get("product_class");
+    }
     return result;
   }
   @Override
