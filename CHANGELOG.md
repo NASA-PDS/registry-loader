@@ -1,12 +1,16 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-03-02)
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-07-05)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...«unknown»)
 
 **Improvements:**
 
 - As a node person, I want to know all possible values for archive status [\#71](https://github.com/NASA-PDS/registry-mgr/issues/71)
+
+**Other closed issues:**
+
+- Update to utilize new multi-tenancy approach [\#66](https://github.com/NASA-PDS/registry-mgr/issues/66)
 
 ## [v4.6.3](https://github.com/NASA-PDS/registry-mgr/tree/v4.6.3) (2023-11-16)
 
