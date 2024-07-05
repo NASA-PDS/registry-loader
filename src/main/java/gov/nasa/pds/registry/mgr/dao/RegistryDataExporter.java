@@ -1,5 +1,7 @@
 package gov.nasa.pds.registry.mgr.dao;
 
+import gov.nasa.pds.registry.common.Request.Search;
+
 /**
  * Exports data records from Elasticsearch "registry" index into a file.
  * 
@@ -35,20 +37,10 @@ public class RegistryDataExporter extends DataExporter
         this.filterFieldValue = value;
     }
     
-    
-    /**
-     * Create Elasticsearch JSON query.
-     */
-    @Override
-    protected String createRequest(int batchSize, String searchAfter) throws Exception
-    {
-        RegistryRequestBuilder reqBld = new RegistryRequestBuilder();
-        
-        String json = (filterFieldName == null) ? 
-                reqBld.createExportAllDataRequest("lidvid", batchSize, searchAfter) :
-                reqBld.createExportDataRequest(filterFieldName, filterFieldValue, "lidvid", batchSize, searchAfter);
-
-        return json;
+   @Override
+    protected Search createRequest(Search req, int batchSize, String searchAfter) {
+      return filterFieldName == null ? req.all("lidvid", batchSize, searchAfter) :
+        req.all(this.filterFieldName, this.filterFieldValue, "lidvid", batchSize, searchAfter);
     }
 
 }

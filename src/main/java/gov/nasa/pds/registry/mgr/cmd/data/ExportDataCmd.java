@@ -47,7 +47,7 @@ public class ExportDataCmd implements CliCommand
             throw new Exception("Missing required parameter '-file'");
         }
         
-        String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
+        String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
 
@@ -138,7 +138,7 @@ public class ExportDataCmd implements CliCommand
         System.out.println("  -all              Export all data");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -es <url>         Elasticsearch URL. Default is http://localhost:9200");
+        System.out.println("  -es <url>         Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -index <name>     Elasticsearch index name. Default is 'registry'");
         System.out.println();
     }

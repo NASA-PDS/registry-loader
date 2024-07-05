@@ -3,10 +3,8 @@ package tt;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
-
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.mgr.dao.RegistryDao;
 
 
@@ -15,7 +13,7 @@ public class TestRegistryDao
 
     public static void main(String[] args) throws Exception
     {
-        RestClient client = EsClientFactory.createRestClient("localhost", null);
+        RestClient client = EstablishConnectionFactory.from("localhost").createRestClient();
         
         try
         {

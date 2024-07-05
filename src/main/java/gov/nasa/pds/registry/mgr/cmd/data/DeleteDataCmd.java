@@ -1,24 +1,14 @@
 package gov.nasa.pds.registry.mgr.cmd.data;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
-
-import com.google.gson.Gson;
-
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
-import gov.nasa.pds.registry.common.es.client.EsUtils;
-import gov.nasa.pds.registry.common.util.CloseUtils;
+import gov.nasa.pds.registry.common.ConnectionFactory;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.Request;
+import gov.nasa.pds.registry.common.ResponseException;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
-import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 
 
 /**
@@ -30,8 +20,6 @@ import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 public class DeleteDataCmd implements CliCommand
 {
     private String filterMessage;
-    private String regQuery;
-    private String refsQuery;
 
     
     /**
@@ -51,71 +39,37 @@ public class DeleteDataCmd implements CliCommand
             return;
         }
 
-        String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
+        String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
 
-        buildEsQuery(cmdLine);
 
         System.out.println("Elasticsearch URL: " + esUrl);
         System.out.println("            Index: " + indexName);
         System.out.println(filterMessage);
         System.out.println();
-        
-        RestClient client = null;
-        
-        try
-        {
-            client = EsClientFactory.createRestClient(esUrl, authPath);
+                
+        ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
+        try (RestClient client = conFact.createRestClient()) {
+          Request.DeleteByQuery regQuery = client.createDeleteByQuery().setIndex(indexName),
+                                refQuery = client.createDeleteByQuery().setIndex(indexName + "-refs");
+          buildEsQuery(cmdLine, regQuery, refQuery);
             // Delete from registry index
-            deleteByQuery(client, indexName, regQuery);
+            deleteByQuery(indexName, client.performRequest(regQuery));
             // Delete from product references index
-            deleteByQuery(client, indexName + "-refs", refsQuery);
+            deleteByQuery(indexName + "-refs", client.performRequest(refQuery));
         }
         catch(ResponseException ex)
         {
-            throw new Exception(EsUtils.extractErrorMessage(ex));
-        }
-        finally
-        {
-            CloseUtils.close(client);
+            throw new Exception(ex.extractErrorMessage());
         }
     }
 
     
-    private static void deleteByQuery(RestClient client, String indexName, String query) throws Exception
+    private static void deleteByQuery(String indexName, long numDeleted) throws Exception
     {
-        Request req = new Request("POST", "/" + indexName + "/_delete_by_query");
-        req.setJsonEntity(query);
-        
-        Response resp = client.performRequest(req);
-        double numDeleted = extractNumDeleted(resp); 
-        
-        System.out.format("Deleted %.0f document(s) from %s index\n", numDeleted, indexName);
+        System.out.format("Deleted %d document(s) from %s index\n", numDeleted, indexName);
     }
-    
-    
-    @SuppressWarnings("rawtypes")
-    private static double extractNumDeleted(Response resp)
-    {
-        try
-        {
-            InputStream is = resp.getEntity().getContent();
-            Reader rd = new InputStreamReader(is);
-            
-            Gson gson = new Gson();
-            Object obj = gson.fromJson(rd, Object.class);
-            rd.close();
-            
-            obj = ((Map)obj).get("deleted");
-            return (Double)obj;
-        }
-        catch(Exception ex)
-        {
-            return 0;
-        }
-    }
-    
     
     /**
      * Build Elasticsearch query to delete records.
@@ -123,20 +77,14 @@ public class DeleteDataCmd implements CliCommand
      * @param cmdLine
      * @throws Exception
      */
-    private void buildEsQuery(CommandLine cmdLine) throws Exception
-    {
-        // Registry index
-        RegistryRequestBuilder regBld = new RegistryRequestBuilder();
-        // Product references index
-        RegistryRequestBuilder refsBld = new RegistryRequestBuilder();
-        
+    private void buildEsQuery(CommandLine cmdLine, Request.DeleteByQuery regQuery, Request.DeleteByQuery refsQuery) throws Exception
+    {       
         String id = cmdLine.getOptionValue("lidvid");
         if(id != null)
         {
             this.filterMessage = "           LIDVID: " + id;
-            this.regQuery = regBld.createFilterQuery("lidvid", id);
-            this.refsQuery = refsBld.createFilterQuery("collection_lidvid", id);
-            
+            regQuery.createFilterQuery("lidvid", id);
+            refsQuery.createFilterQuery("collection_lidvid", id);
             return;
         }
         
@@ -144,9 +92,8 @@ public class DeleteDataCmd implements CliCommand
         if(id != null)
         {
             this.filterMessage = "              LID: " + id;
-            this.regQuery = regBld.createFilterQuery("lid", id);
-            this.refsQuery = refsBld.createFilterQuery("collection_lid", id);
-            
+            regQuery.createFilterQuery("lid", id);
+            refsQuery.createFilterQuery("collection_lid", id);
             return;
         }
 
@@ -154,8 +101,8 @@ public class DeleteDataCmd implements CliCommand
         if(id != null)
         {
             this.filterMessage = "       Package ID: " + id;
-            this.regQuery = regBld.createFilterQuery("_package_id", id);
-            this.refsQuery = refsBld.createFilterQuery("_package_id", id);
+            regQuery.createFilterQuery("_package_id", id);
+            refsQuery.createFilterQuery("_package_id", id);
             
             return;
         }
@@ -163,8 +110,8 @@ public class DeleteDataCmd implements CliCommand
         if(cmdLine.hasOption("all"))
         {
             this.filterMessage = "Delete all documents ";
-            this.regQuery = regBld.createMatchAllQuery();
-            this.refsQuery = refsBld.createMatchAllQuery();
+            regQuery.createMatchAllQuery();
+            refsQuery.createMatchAllQuery();
             
             return;
         }
@@ -187,7 +134,7 @@ public class DeleteDataCmd implements CliCommand
         System.out.println("  -all              Delete all data");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -es <url>         Elasticsearch URL. Default is http://localhost:9200");
+        System.out.println("  -es <url>         Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -index <name>     Elasticsearch index name. Default is 'registry'");
         System.out.println();
     }

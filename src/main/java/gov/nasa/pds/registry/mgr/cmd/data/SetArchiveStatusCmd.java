@@ -4,11 +4,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.cli.CommandLine;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
-import gov.nasa.pds.registry.common.es.client.EsUtils;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.ResponseException;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.ProductDao;
 import gov.nasa.pds.registry.common.es.service.ProductService;
 import gov.nasa.pds.registry.common.util.CloseUtils;
@@ -36,39 +34,44 @@ public class SetArchiveStatusCmd implements CliCommand {
     statusNames.add("restricted");
   }
 
+    @Override
+    public void run(CommandLine cmdLine) throws Exception
+    {
+        if(cmdLine.hasOption("help"))
+        {
+            printHelp();
+            return;
+        }
 
-  @Override
-  public void run(CommandLine cmdLine) throws Exception {
-    if (cmdLine.hasOption("help")) {
-      printHelp();
-      return;
+        String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
+        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        String authPath = cmdLine.getOptionValue("auth");
+        
+        String status = getStatus(cmdLine);
+
+        String lidvid = cmdLine.getOptionValue("lidvid");
+        if(lidvid == null) throw new Exception("Missing required parameter '-lidvid'");
+        
+        RestClient client = null;
+        
+        try
+        {
+            // Call Elasticsearch
+            client = EstablishConnectionFactory.from(esUrl, authPath).createRestClient();
+            ProductDao dao = new ProductDao(client, indexName);
+            ProductService srv = new ProductService(dao);
+            
+            srv.updateArchveStatus(lidvid, status);
+        }
+        catch(ResponseException ex)
+        {
+            throw new Exception(ex.extractErrorMessage());
+        }
+        finally
+        {
+            CloseUtils.close(client);
+        }
     }
-
-    String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
-    String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
-    String authPath = cmdLine.getOptionValue("auth");
-
-    String status = getStatus(cmdLine);
-
-    String lidvid = cmdLine.getOptionValue("lidvid");
-    if (lidvid == null)
-      throw new Exception("Missing required parameter '-lidvid'");
-
-    RestClient client = null;
-
-    try {
-      // Call Elasticsearch
-      client = EsClientFactory.createRestClient(esUrl, authPath);
-      ProductDao dao = new ProductDao(client, indexName);
-      ProductService srv = new ProductService(dao);
-
-      srv.updateArchveStatus(lidvid, status);
-    } catch (ResponseException ex) {
-      throw new Exception(EsUtils.extractErrorMessage(ex));
-    } finally {
-      CloseUtils.close(client);
-    }
-  }
 
 
   /**
@@ -90,8 +93,6 @@ public class SetArchiveStatusCmd implements CliCommand {
       throw new Exception("Invalid '-status' parameter value: '" + tmp + "'. Authorized values are "
           + authorized_status + ".");
     }
-    // Authorized values are " + String.join(", ", this.statusNames)
-
     return status;
   }
 

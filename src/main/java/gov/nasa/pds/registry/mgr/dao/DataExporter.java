@@ -4,16 +4,12 @@ import java.io.File;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
-import gov.nasa.pds.registry.common.es.client.EsUtils;
-import gov.nasa.pds.registry.common.es.client.SearchResponseParser;
-import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.util.es.EsDocWriter;
+import gov.nasa.pds.registry.common.ConnectionFactory;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.Request;
+import gov.nasa.pds.registry.common.Response;
+import gov.nasa.pds.registry.common.ResponseException;
+import gov.nasa.pds.registry.common.RestClient;
 
 
 /**
@@ -37,7 +33,7 @@ public abstract class DataExporter
    
     /**
      * Constructor
-     * @param esUrl Elasticsearch URL, e.g., "http://localhost:9200"
+     * @param esUrl Elasticsearch URL, e.g., "app:/connections/direct/localhost.xml"
      * @param indexName Elasticsearch index name
      * @param authConfigFile Elasticsearch authentication configuration file 
      * (see Registry Manager documentation for more info) 
@@ -59,7 +55,7 @@ public abstract class DataExporter
      * @return JSON 
      * @throws Exception an exception
      */
-    protected abstract String createRequest(int batchSize, String searchAfter) throws Exception;
+    protected abstract Request.Search createRequest(Request.Search req, int batchSize, String searchAfter);
     
     
     /**
@@ -67,60 +63,32 @@ public abstract class DataExporter
      * @param file a file
      * @throws Exception an exception
      */
-    public void export(File file) throws Exception
-    {
-        EsDocWriter writer = null; 
-        RestClient client = null;
-        
-        try
-        {
-            writer = new EsDocWriter(file);
-            client = EsClientFactory.createRestClient(esUrl, authConfigFile);
-            SearchResponseParser parser = new SearchResponseParser();
-            
-            String searchAfter = null;
-            int numDocs = 0;
-            
-            do
-            {
-                Request req = new Request("GET", "/" + indexName + "/_search");
-                // Call abstract method to get JSON query
-                String json = createRequest(BATCH_SIZE, searchAfter);
-                req.setJsonEntity(json);
-                
-                Response resp = client.performRequest(req);
-                parser.parseResponse(resp, writer);
-                
-                numDocs += parser.getNumDocs();
-                searchAfter = parser.getLastId();
-                
-                if(numDocs % PRINT_STATUS_SIZE == 0)
-                {
-                    log.info("Exported " + numDocs + " document(s)");
-                }
-            }
-            while(parser.getNumDocs() == BATCH_SIZE);
-
-            if(numDocs == 0)
-            {
-                log.info("No documents found");
-            }
-            else
-            {
-                log.info("Exported " + numDocs + " document(s)");
-            }
-            
-            log.info("Done");
+    public void export(File file) throws Exception {
+      ConnectionFactory conFact = EstablishConnectionFactory.from(this.esUrl, this.authConfigFile)
+          .setIndexName(this.indexName);
+      try (RestClient client = conFact.createRestClient();
+           EsDocWriter writer = new EsDocWriter(file)) {
+        String searchAfter = null;
+        int numDocs = 0, thisBatchSize;
+        do {
+          Request.Search req = client.createSearchRequest().setIndex(indexName);
+          req = createRequest(req, BATCH_SIZE, searchAfter);
+          Response.Search resp = client.performRequest(req);
+          thisBatchSize = resp.batch().size();
+          numDocs += resp.batch().size();
+          searchAfter = ""; // FIXME: needs to be the last ID from the batch()
+          if (numDocs % PRINT_STATUS_SIZE == 0) {
+            log.info("Exported " + numDocs + " document(s)");
+          }
+        } while (thisBatchSize == BATCH_SIZE);
+        if (numDocs == 0) {
+          log.info("No documents found");
+        } else {
+          log.info("Exported " + numDocs + " document(s)");
         }
-        catch(ResponseException ex)
-        {
-            throw new Exception(EsUtils.extractErrorMessage(ex));
-        }
-        finally
-        {
-            CloseUtils.close(client);
-            CloseUtils.close(writer);
-        }
-
+        log.info("Done");
+      } catch (ResponseException ex) {
+        throw new Exception(ex.extractErrorMessage());
+      }
     }
-}
+  }

@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
 import gov.nasa.pds.registry.common.es.dao.schema.*;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.dd.*;
 import gov.nasa.pds.registry.common.util.*;
 import gov.nasa.pds.registry.mgr.dao.IndexDao;
@@ -25,7 +24,7 @@ public class TestSchemaDao
 
     private static void testIndexExists() throws Exception
     {
-        RestClient client = EsClientFactory.createRestClient("localhost", null);
+        RestClient client = EstablishConnectionFactory.from("localhost").createRestClient();
         IndexDao dao = new IndexDao(client);
         
         boolean b = dao.indexExists("t123");
@@ -37,7 +36,7 @@ public class TestSchemaDao
     
     private static void testGetFieldNames() throws Exception
     {
-        RestClient client = EsClientFactory.createRestClient("localhost", null);
+        RestClient client = EstablishConnectionFactory.from("localhost").createRestClient();
         SchemaDao dao = new SchemaDao(client, "t1");
         
         Set<String> names = dao.getFieldNames();
@@ -52,7 +51,7 @@ public class TestSchemaDao
     
     private static void testGetDataTypes() throws Exception
     {
-        RestClient client = EsClientFactory.createRestClient("localhost", null);
+        RestClient client = EstablishConnectionFactory.from("localhost").createRestClient();
         
         try
         {

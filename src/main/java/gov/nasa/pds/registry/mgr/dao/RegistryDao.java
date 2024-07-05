@@ -1,30 +1,22 @@
 package gov.nasa.pds.registry.mgr.dao;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.SearchResponseParser;
-import gov.nasa.pds.registry.common.es.dao.BulkResponseParser;
-import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.dao.resp.GetAltIdsParser;
+import com.google.gson.stream.JsonWriter;
+import gov.nasa.pds.registry.common.Request;
+import gov.nasa.pds.registry.common.RestClient;
+import gov.nasa.pds.registry.common.util.Tuple;
 
 /**
  * Data access object
  * @author karpenko
  */
 public class RegistryDao
-{
-    private Logger log;
-    
+{    
     private RestClient client;
     private String indexName;
 
@@ -36,9 +28,7 @@ public class RegistryDao
      * @param indexName Elasticsearch index
      */
     public RegistryDao(RestClient client, String indexName)
-    {
-        log = LogManager.getLogger(this.getClass());
-        
+    {        
         this.client = client;
         this.indexName = indexName;
     }
@@ -63,24 +53,12 @@ public class RegistryDao
     public Map<String, Set<String>> getAlternateIds(Collection<String> ids) throws Exception
     {
         if(ids == null || ids.isEmpty()) return null;
-        
-        RegistryRequestBuilder bld = new RegistryRequestBuilder();
-        String jsonReq = bld.createGetAlternateIdsRequest(ids);
-        
-        String reqUrl = "/" + indexName + "/_search";
-        if(pretty) reqUrl += "?pretty";
-        
-        Request req = new Request("GET", reqUrl);
-        req.setJsonEntity(jsonReq);
-        Response resp = client.performRequest(req);
-
-        //DebugUtils.dumpResponseBody(resp);
-        
-        GetAltIdsParser cb = new GetAltIdsParser();
-        SearchResponseParser parser = new SearchResponseParser();
-        parser.parseResponse(resp, cb);
-        
-        return cb.getIdMap();
+                
+        Request.Search req = client.createSearchRequest()
+            .buildAlternativeIds(ids)
+            .setIndex(this.indexName)
+            .setPretty(pretty);
+        return client.performRequest(req).altIds();
     }
     
     
@@ -94,32 +72,54 @@ public class RegistryDao
     {
         if(newIds == null || newIds.isEmpty()) return;
         
-        RegistryRequestBuilder bld = new RegistryRequestBuilder();
-        String json = bld.createUpdateAltIdsRequest(newIds);
-        log.debug("Request:\n" + json);
-        
-        String reqUrl = "/" + indexName + "/_bulk"; //?refresh=wait_for";
-        Request req = new Request("POST", reqUrl);
-        req.setJsonEntity(json);
-        
-        Response resp = client.performRequest(req);
-        
-        // Check for Elasticsearch errors.
-        InputStream is = null;
-        InputStreamReader rd = null;
-        try
-        {
-            is = resp.getEntity().getContent();
-            rd = new InputStreamReader(is);
-            
-            BulkResponseParser parser = new BulkResponseParser();
-            parser.parse(rd);
+        Request.Bulk req = client.createBulkRequest()
+            .setIndex(this.indexName)
+            .setRefresh(Request.Bulk.Refresh.WaitFor);
+        for (Tuple t : this.createUpdateAltIdsRequest(newIds)) {
+          req.add(t.item1, t.item2);
         }
-        finally
-        {
-            CloseUtils.close(rd);
-            CloseUtils.close(is);
-        }
+        client.performRequest(req).logErrors();
     }
 
+    private List<Tuple> createUpdateAltIdsRequest(Map<String, Set<String>> newIds) throws Exception
+    {
+        if(newIds == null || newIds.isEmpty()) throw new IllegalArgumentException("Missing ids");
+        ArrayList<Tuple> updates = new ArrayList<Tuple>();
+        // Build NJSON (new-line delimited JSON)
+        for(Map.Entry<String, Set<String>> entry: newIds.entrySet())
+        {
+          Tuple statement = new Tuple();
+          // Line 1: Elasticsearch document ID
+          statement.item1 = "{ \"update\" : {\"_id\" : \"" + entry.getKey() + "\" } }";
+          // Line 2: Data
+          statement.item2 = buildUpdateDocJson("alternate_ids", entry.getValue());
+          updates.add(statement);
+        }
+        return updates;
+    }
+    private String buildUpdateDocJson(String field, Collection<String> values) throws Exception
+    {
+        StringWriter out = new StringWriter();
+        JsonWriter writer = new JsonWriter(out);;
+
+        writer.beginObject();
+
+        writer.name("doc");
+        writer.beginObject();
+        
+        writer.name(field);
+        
+        writer.beginArray();        
+        for(String value: values)
+        {
+            writer.value(value);
+        }
+        writer.endArray();
+        
+        writer.endObject();        
+        writer.endObject();
+        
+        writer.close();
+        return out.toString();
+    }
 }

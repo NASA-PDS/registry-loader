@@ -4,15 +4,10 @@ import java.io.File;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.EsUtils;
+import gov.nasa.pds.registry.common.ResponseException;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.mgr.dao.IndexDao;
 import gov.nasa.pds.registry.mgr.dao.IndexSettings;
-import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 
 /**
  * A service to work with Elasticsearch indices
@@ -61,19 +56,12 @@ public class IndexService
             log.info("Shards: " + shards);
             log.info("Replicas: " + replicas);
             
-            // Create request
-            Request req = new Request("PUT", "/" + indexName);
-            RegistryRequestBuilder bld = new RegistryRequestBuilder();
-            String jsonReq = bld.createCreateIndexRequest(schemaFile, shards, replicas);
-            req.setJsonEntity(jsonReq);
-
-            // Execute request
-            Response resp = client.performRequest(req);
-            EsUtils.printWarnings(resp);
+           // Execute request
+            this.client.create(indexName, RestClient.createCreateIndexRequest(schemaFile, shards, replicas));
         }
         catch(ResponseException ex)
         {
-            throw new Exception(EsUtils.extractErrorMessage(ex));
+            throw new Exception(ex.extractErrorMessage());
         }
     }
 
@@ -165,17 +153,12 @@ public class IndexService
             {
                 return;
             }
-
-            // Create request
-            Request req = new Request("DELETE", "/" + indexName);
-
             // Execute request
-            Response resp = client.performRequest(req);
-            EsUtils.printWarnings(resp);
+            this.client.delete(indexName);
         }
         catch(ResponseException ex)
         {
-            throw new Exception(EsUtils.extractErrorMessage(ex));
+            throw new Exception(ex.extractErrorMessage());
         }
     }
 

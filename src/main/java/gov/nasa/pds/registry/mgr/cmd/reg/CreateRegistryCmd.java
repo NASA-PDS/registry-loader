@@ -3,9 +3,9 @@ package gov.nasa.pds.registry.mgr.cmd.reg;
 import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.ConnectionFactory;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
@@ -39,7 +39,7 @@ public class CreateRegistryCmd implements CliCommand
             return;
         }
 
-        String esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
+        String esUrl = cmdLine.getOptionValue("es", "app://connections/direct/localhost.xml");
         String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
         
@@ -50,7 +50,8 @@ public class CreateRegistryCmd implements CliCommand
 
         try
         {
-            client = EsClientFactory.createRestClient(esUrl, authPath);
+          ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
+            client = conFact.createRestClient();
             IndexService srv = new IndexService(client);
             
             // Registry
@@ -62,7 +63,7 @@ public class CreateRegistryCmd implements CliCommand
             // Data dictionary
             srv.createIndex("elastic/data-dic.json", indexName + "-dd", 1, replicas);
             // Load data
-            DataLoader dl = new DataLoader(esUrl, indexName + "-dd", authPath);
+            DataLoader dl = new DataLoader(conFact.clone().setIndexName(indexName + "-dd"));
             File zipFile = IndexService.getDataDicFile();
             dl.loadZippedFile(zipFile, "dd.json");
         }
@@ -135,7 +136,7 @@ public class CreateRegistryCmd implements CliCommand
         System.out.println();
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>         Authentication config file");
-        System.out.println("  -es <url>            Elasticsearch URL. Default is http://localhost:9200");
+        System.out.println("  -es <url>            Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -index <name>        Elasticsearch index name. Default is 'registry'");
         System.out.println("  -shards <number>     Number of shards (partitions) for registry index. Default is 1");
         System.out.println("  -replicas <number>   Number of replicas (extra copies) of registry index. Default is 0");

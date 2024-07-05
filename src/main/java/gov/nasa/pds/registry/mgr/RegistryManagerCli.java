@@ -25,6 +25,8 @@ import gov.nasa.pds.registry.mgr.cmd.dd.LoadDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.UpgradeDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
+import gov.nasa.pds.registry.mgr.cmd.reg.FetchRegistryCmd;
+import gov.nasa.pds.registry.mgr.cmd.reg.KnownRegistryCmd;
 import gov.nasa.pds.registry.mgr.util.log.Log4jConfigurator;
 
 
@@ -73,7 +75,8 @@ public class RegistryManagerCli
         System.out.println("Registry:");
         System.out.println("  create-registry      Create registry and data dictionary indices");
         System.out.println("  delete-registry      Delete registry and data dictionary indices and all its data");        
-        
+        System.out.println("  fetch-registry       Fetch a registry connection URL and output it to stdout");        
+        System.out.println("  known-registries     List all known registry XML connections contained in this artifact");
         System.out.println();
         System.out.println("Data Dictionary:");
         System.out.println("  list-dd              List data dictionaries");
@@ -239,6 +242,8 @@ public class RegistryManagerCli
         // Registry
         commands.put("create-registry", new CreateRegistryCmd());
         commands.put("delete-registry", new DeleteRegistryCmd());
+        commands.put("known-registries", new KnownRegistryCmd());
+        commands.put("fetch-registry", new FetchRegistryCmd());
 
         // Data dictionary
         commands.put("list-dd", new ListDDCmd());
@@ -312,6 +317,9 @@ public class RegistryManagerCli
         options.addOption(bld.build());
 
         bld = Option.builder("packageId").hasArg().argName("id");
+        options.addOption(bld.build());
+        
+        bld = Option.builder("rc").hasArg().argName("rc");
         options.addOption(bld.build());
         
         bld = Option.builder("status").hasArg().argName("status");

@@ -1,7 +1,7 @@
 package gov.nasa.pds.registry.mgr.dao.dd;
 
+import gov.nasa.pds.registry.common.Request.Search;
 import gov.nasa.pds.registry.mgr.dao.DataExporter;
-import gov.nasa.pds.registry.mgr.dao.RegistryRequestBuilder;
 
 /**
  * Exports data dictionary records from Elasticsearch into a file.
@@ -20,17 +20,9 @@ public class DDDataExporter extends DataExporter
     {
         super(esUrl, indexName + "-dd", authConfigFile);
     }
-
-    
-    /**
-     * Creates Elasticsearch JSON query.
-     */
     @Override
-    protected String createRequest(int batchSize, String searchAfter) throws Exception
-    {
-        RegistryRequestBuilder reqBld = new RegistryRequestBuilder();
-        String json = reqBld.createExportAllDataRequest("es_field_name", batchSize, searchAfter);
-        return json;
+    protected Search createRequest(Search req, int batchSize, String searchAfter) {
+      return req.all("es_field_name", batchSize, searchAfter);
     }
 
 }

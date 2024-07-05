@@ -4,8 +4,7 @@ import java.io.File;
 import org.apache.commons.cli.CommandLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import gov.nasa.pds.registry.common.cfg.RegistryCfg;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.dd.LddUtils;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
@@ -27,9 +26,9 @@ import gov.nasa.pds.registry.mgr.dd.CsvLddLoader;
  */
 public class LoadDDCmd implements CliCommand
 {
-    private RegistryCfg cfg;
-    
-    
+  private String url;
+  private String indexName;
+  private String authFile ;
     /**
      * Constructor
      */
@@ -54,7 +53,7 @@ public class LoadDDCmd implements CliCommand
         System.out.println("  -csv <path>        Custom data dictionary file in CSV format");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>       Authentication config file");
-        System.out.println("  -es <url>          Elasticsearch URL. Default is http://localhost:9200");
+        System.out.println("  -es <url>          Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -index <name>      Elasticsearch index name. Default is 'registry'");        
         System.out.println("  -ns <namespace>    LDD namespace. Can be used with -dd parameter.");
         System.out.println();
@@ -70,12 +69,11 @@ public class LoadDDCmd implements CliCommand
             return;
         }
 
-        cfg = new RegistryCfg();
-        cfg.url = cmdLine.getOptionValue("es", "http://localhost:9200");
-        cfg.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
-        cfg.authFile = cmdLine.getOptionValue("auth");
+        this.url = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
+        this.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        this.authFile = cmdLine.getOptionValue("auth");
         
-        RegistryManager.init(cfg);
+        RegistryManager.init(url, authFile, indexName);
 
         try
         {
@@ -131,7 +129,7 @@ public class LoadDDCmd implements CliCommand
 
         // Init LDD loader
         DataDictionaryDao ddDao = RegistryManager.getInstance().getDataDictionaryDao();
-        JsonLddLoader loader = new JsonLddLoader(ddDao, cfg.url, cfg.indexName, cfg.authFile);
+        JsonLddLoader loader = new JsonLddLoader(ddDao, EstablishConnectionFactory.from(this.url, this.authFile).setIndexName(this.indexName));
         loader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile("REGISTRY_MANAGER_HOME"));
 
         //Load LDD
@@ -150,7 +148,7 @@ public class LoadDDCmd implements CliCommand
         Logger log = LogManager.getLogger(this.getClass());
         log.info("Data dump: " + path);
         
-        DataLoader loader = new DataLoader(cfg.url, cfg.indexName + "-dd", cfg.authFile);
+        DataLoader loader = new DataLoader(EstablishConnectionFactory.from(this.url, this.authFile).setIndexName(this.indexName + "-dd"));
         loader.loadFile(new File(path));
     }
     
@@ -165,7 +163,7 @@ public class LoadDDCmd implements CliCommand
         Logger log = LogManager.getLogger(this.getClass());
         log.info("CSV file: " + path);
         
-        CsvLddLoader loader = new CsvLddLoader(cfg.url, cfg.indexName, cfg.authFile);
+        CsvLddLoader loader = new CsvLddLoader(this.url, this.indexName, this.authFile);
         File lddFile = new File(path);
         loader.load(lddFile);
     }

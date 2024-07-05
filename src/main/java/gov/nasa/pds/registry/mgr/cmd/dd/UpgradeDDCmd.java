@@ -3,9 +3,9 @@ package gov.nasa.pds.registry.mgr.cmd.dd;
 import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
-import org.elasticsearch.client.RestClient;
-
-import gov.nasa.pds.registry.common.es.client.EsClientFactory;
+import gov.nasa.pds.registry.common.ConnectionFactory;
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
@@ -41,7 +41,7 @@ public class UpgradeDDCmd implements CliCommand
             return;
         }
 
-        esUrl = cmdLine.getOptionValue("es", "http://localhost:9200");
+        esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
         indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         authPath = cmdLine.getOptionValue("auth");
         
@@ -51,7 +51,8 @@ public class UpgradeDDCmd implements CliCommand
         
         try
         {
-            client = EsClientFactory.createRestClient(esUrl, authPath);
+          ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
+            client = conFact.createRestClient();
             
             if(replace)
             {
@@ -61,7 +62,7 @@ public class UpgradeDDCmd implements CliCommand
             }
             
             // Load data
-            DataLoader dl = new DataLoader(esUrl, indexName + "-dd", authPath);
+            DataLoader dl = new DataLoader(conFact.setIndexName(indexName + "-dd"));
             File zipFile = IndexService.getDataDicFile();
             dl.loadZippedFile(zipFile, "dd.json");
         }
@@ -86,7 +87,7 @@ public class UpgradeDDCmd implements CliCommand
         System.out.println("Optional parameters:");
         System.out.println("  -r              Recreate data dictionary index (replace old data dictionary)");
         System.out.println("  -auth <file>    Authentication config file");
-        System.out.println("  -es <url>       Elasticsearch URL. Default is http://localhost:9200");
+        System.out.println("  -es <url>       Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -index <name>   Elasticsearch index name. Default is 'registry'");
         System.out.println();
     }

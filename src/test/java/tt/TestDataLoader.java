@@ -3,7 +3,7 @@ package tt;
 
 import java.io.File;
 import java.net.HttpURLConnection;
-
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 
 
@@ -14,7 +14,7 @@ public class TestDataLoader
     {
         HttpURLConnection.setFollowRedirects(true);
         
-        DataLoader dl = new DataLoader("localhost", "t1", null);
+        DataLoader dl = new DataLoader(EstablishConnectionFactory.from("localhost").setIndexName("t1"));
         //dl.setBatchSize(10);
         
         try

@@ -14,10 +14,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.ResponseException;
-
-import gov.nasa.pds.registry.common.cfg.RegistryCfg;
-import gov.nasa.pds.registry.common.es.client.EsUtils;
+import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
@@ -51,12 +48,9 @@ public class UpdateAltIdsCmd implements CliCommand
             printHelp();
             return;
         }
-
-        RegistryCfg cfg = new RegistryCfg();
-        cfg.url = cmdLine.getOptionValue("es", "http://localhost:9200");
-        cfg.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
-        cfg.authFile = cmdLine.getOptionValue("auth");
-
+        String url = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
+        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
+        String authFile = cmdLine.getOptionValue("auth");
         String filePath = cmdLine.getOptionValue("file");
         if(filePath == null) throw new Exception("Missing required parameter '-file'");
         File file = new File(filePath);
@@ -64,12 +58,12 @@ public class UpdateAltIdsCmd implements CliCommand
         
         try
         {
-            RegistryManager.init(cfg);
+            RegistryManager.init(url, authFile, indexName);
             updateIds(file);
         }
         catch(ResponseException ex)
         {
-            throw new Exception(EsUtils.extractErrorMessage(ex));
+            throw new Exception(ex.extractErrorMessage());
         }
         finally
         {
@@ -175,7 +169,7 @@ public class UpdateAltIdsCmd implements CliCommand
         System.out.println("  -file <path>      CSV file with the list of IDs");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -es <url>         Elasticsearch URL. Default is http://localhost:9200");
+        System.out.println("  -es <url>         Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -index <name>     Elasticsearch index name. Default is 'registry'");
         System.out.println();
     }

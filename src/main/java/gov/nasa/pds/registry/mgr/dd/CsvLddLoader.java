@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.opencsv.CSVReader;
-
+import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.dd.DDNJsonWriter;
 import gov.nasa.pds.registry.common.dd.DDRecord;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
@@ -34,7 +34,7 @@ public class CsvLddLoader
     public CsvLddLoader(String esUrl, String indexName, String authFilePath) throws Exception
     {
         log = LogManager.getLogger(this.getClass());
-        loader = new DataLoader(esUrl, indexName + "-dd", authFilePath);
+        loader = new DataLoader(EstablishConnectionFactory.from(esUrl, authFilePath).setIndexName(indexName + "-dd"));
     }
     
     
