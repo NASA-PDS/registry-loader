@@ -70,20 +70,20 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
         .build();
     response = client.send(request, HttpResponse.BodyHandlers.ofString());
     if (299 < response.statusCode()) {
-      throw new IOException("Could not obtain signed URL: " + response.toString());
+      throw new IOException("Could not obtain credentials: " + response.toString());
     }
-    expectedContent &= response.body().contains("IdentityId");
-    expectedContent &= response.body().contains("Credentials");
+    expectedContent &= response.body().contains("body");
     expectedContent &= response.body().contains("AccessKeyId");
-    expectedContent &= response.body().contains("SecretKey");
+    expectedContent &= response.body().contains("SecretAccessKey");
     expectedContent &= response.body().contains("SessionToken");
-    expectedContent &= response.body().contains("Expiration");
-    expectedContent &= response.body().contains("ResponseMetadata");
-    contentType = new TypeToken<Map<String,Object>>(){}.getType();
-    content = gson.fromJson(response.body(), contentType);
+    if (!expectedContent) {
+      throw new IOException("Did not find expected credential response from: " + response.toString());
+    }
+    content = gson.fromJson(response.body(), new TypeToken<Map<String,Object>>(){}.getType());
+    content = gson.fromJson("{\"Credentials\":" + content.get("body") + "}", contentType);    
     // fill then set system properties as oracle suggests (init happened above)
     awsCreds.setProperty("aws.accessKeyId", content.get("Credentials").get("AccessKeyId"));
-    awsCreds.setProperty("aws.secretAccessKey", content.get("Credentials").get("SecretKey"));
+    awsCreds.setProperty("aws.secretAccessKey", content.get("Credentials").get("SecretAccessKey"));
     awsCreds.setProperty("aws.sessionToken", content.get("Credentials").get("SessionToken"));
     System.setProperties(awsCreds);
     return new UseOpensearchSDK2(auth, new URL(cog.getEndpoint()), true, false);
