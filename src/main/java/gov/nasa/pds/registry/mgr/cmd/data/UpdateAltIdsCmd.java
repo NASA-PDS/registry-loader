@@ -16,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.RegistryDao;
 import gov.nasa.pds.registry.mgr.dao.RegistryManager;
@@ -49,7 +48,6 @@ public class UpdateAltIdsCmd implements CliCommand
             return;
         }
         String url = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authFile = cmdLine.getOptionValue("auth");
         String filePath = cmdLine.getOptionValue("file");
         if(filePath == null) throw new Exception("Missing required parameter '-file'");
@@ -58,7 +56,7 @@ public class UpdateAltIdsCmd implements CliCommand
         
         try
         {
-            RegistryManager.init(url, authFile, indexName);
+            RegistryManager.init(url, authFile);
             updateIds(file);
         }
         catch(ResponseException ex)

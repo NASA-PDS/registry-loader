@@ -8,7 +8,6 @@ import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.srv.IndexService;
 
@@ -40,9 +39,7 @@ public class CreateRegistryCmd implements CliCommand
         }
 
         String esUrl = cmdLine.getOptionValue("es", "app://connections/direct/localhost.xml");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
-        
         int shards = parseShards(cmdLine.getOptionValue("shards", "1"));
         int replicas = parseReplicas(cmdLine.getOptionValue("replicas", "0"));
         
@@ -53,6 +50,7 @@ public class CreateRegistryCmd implements CliCommand
           ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
             client = conFact.createRestClient();
             IndexService srv = new IndexService(client);
+            String indexName = conFact.getIndexName();
             
             // Registry
             srv.createIndex("elastic/registry.json", indexName, shards, replicas);

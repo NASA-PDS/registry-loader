@@ -7,7 +7,6 @@ import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 
 
@@ -40,24 +39,22 @@ public class DeleteDataCmd implements CliCommand
         }
 
         String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
 
 
         System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println("            Index: " + indexName);
         System.out.println(filterMessage);
         System.out.println();
                 
         ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
         try (RestClient client = conFact.createRestClient()) {
-          Request.DeleteByQuery regQuery = client.createDeleteByQuery().setIndex(indexName),
-                                refQuery = client.createDeleteByQuery().setIndex(indexName + "-refs");
+          Request.DeleteByQuery regQuery = client.createDeleteByQuery().setIndex(conFact.getIndexName()),
+                                refQuery = client.createDeleteByQuery().setIndex(conFact.getIndexName() + "-refs");
           buildEsQuery(cmdLine, regQuery, refQuery);
             // Delete from registry index
-            deleteByQuery(indexName, client.performRequest(regQuery));
+            deleteByQuery(conFact.getIndexName(), client.performRequest(regQuery));
             // Delete from product references index
-            deleteByQuery(indexName + "-refs", client.performRequest(refQuery));
+            deleteByQuery(conFact.getIndexName() + "-refs", client.performRequest(refQuery));
         }
         catch(ResponseException ex)
         {

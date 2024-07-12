@@ -7,9 +7,6 @@ package gov.nasa.pds.registry.mgr;
  */
 public interface Constants
 {
-    // Indices
-    public static final String DEFAULT_REGISTRY_INDEX = "registry";
-
     // Fields
     public static final String NS_SEPARATOR = ":";
     public static final String ATTR_SEPARATOR = "/";

@@ -27,7 +27,7 @@ public abstract class DataExporter
     protected Logger log;
 
     private String esUrl;
-    private String indexName;
+    private String suffix;
     private String authConfigFile;
     
    
@@ -38,10 +38,10 @@ public abstract class DataExporter
      * @param authConfigFile Elasticsearch authentication configuration file 
      * (see Registry Manager documentation for more info) 
      */
-    public DataExporter(String esUrl, String indexName, String authConfigFile)
+    public DataExporter(String esUrl, String suffix, String authConfigFile)
     {
         this.esUrl = esUrl;
-        this.indexName = indexName;
+        this.suffix = suffix;
         this.authConfigFile = authConfigFile;
 
         log = LogManager.getLogger(this.getClass());
@@ -64,14 +64,14 @@ public abstract class DataExporter
      * @throws Exception an exception
      */
     public void export(File file) throws Exception {
-      ConnectionFactory conFact = EstablishConnectionFactory.from(this.esUrl, this.authConfigFile)
-          .setIndexName(this.indexName);
+      ConnectionFactory conFact = EstablishConnectionFactory.from(this.esUrl, this.authConfigFile);
+      conFact = conFact.clone().setIndexName(conFact.getIndexName() + this.suffix);
       try (RestClient client = conFact.createRestClient();
            EsDocWriter writer = new EsDocWriter(file)) {
         String searchAfter = null;
         int numDocs = 0, thisBatchSize;
         do {
-          Request.Search req = client.createSearchRequest().setIndex(indexName);
+          Request.Search req = client.createSearchRequest().setIndex(conFact.getIndexName());
           req = createRequest(req, BATCH_SIZE, searchAfter);
           Response.Search resp = client.performRequest(req);
           thisBatchSize = resp.batch().size();

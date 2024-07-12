@@ -2,6 +2,7 @@ package gov.nasa.pds.registry.mgr.dao;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
@@ -29,25 +30,19 @@ public class RegistryManager
      * @param cfg Registry (Elasticsearch) configuration parameters.
      * @throws Exception Generic exception
      */
-    private RegistryManager(String connURL, String authFile, String index) throws Exception
+    private RegistryManager(String connURL, String authFile) throws Exception
     {
         if(connURL == null || connURL.isEmpty()) throw new IllegalArgumentException("Missing Registry URL");
         
-        client = EstablishConnectionFactory.from(connURL, authFile).createRestClient();
+        ConnectionFactory conFact = EstablishConnectionFactory.from(connURL, authFile);
+        client = conFact.createRestClient();
         
-        String indexName = index;
-        if(indexName == null || indexName.isEmpty()) 
-        {
-            indexName = "registry";
-        }
-
         Logger log = LogManager.getLogger(this.getClass());
         log.info("Registry URL: " + connURL);
-        log.info("Registry index: " + indexName);
         
-        schemaDao = new SchemaDao(client, indexName);
-        dataDictionaryDao = new DataDictionaryDao(client, indexName);
-        registryDao = new RegistryDao(client, indexName);
+        schemaDao = new SchemaDao(client, conFact.getIndexName());
+        dataDictionaryDao = new DataDictionaryDao(client, conFact.getIndexName());
+        registryDao = new RegistryDao(client, conFact.getIndexName());
     }
     
     
@@ -56,9 +51,9 @@ public class RegistryManager
      * @param cfg Registry (Elasticsearch) configuration parameters.
      * @throws Exception Generic exception
      */
-    public static void init(String connURL, String authFile, String index) throws Exception
+    public static void init(String connURL, String authFile) throws Exception
     {
-        instance = new RegistryManager(connURL, authFile, index);
+        instance = new RegistryManager(connURL, authFile);
     }
     
     

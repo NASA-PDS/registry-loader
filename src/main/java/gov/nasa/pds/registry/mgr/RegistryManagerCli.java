@@ -326,9 +326,6 @@ public class RegistryManagerCli
         options.addOption(bld.build());
         
         // Registry
-        bld = Option.builder("index").hasArg().argName("name");
-        options.addOption(bld.build());
-
         bld = Option.builder("schema").hasArg().argName("path");
         options.addOption(bld.build());
 

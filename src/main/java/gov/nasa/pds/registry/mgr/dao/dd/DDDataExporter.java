@@ -16,9 +16,9 @@ public class DDDataExporter extends DataExporter
      * @param indexName Elasticsearch index name
      * @param authConfigFile authentication configuration file
      */
-    public DDDataExporter(String esUrl, String indexName, String authConfigFile)
+    public DDDataExporter(String esUrl, String authConfigFile)
     {
-        super(esUrl, indexName + "-dd", authConfigFile);
+        super(esUrl, "-dd", authConfigFile);
     }
     @Override
     protected Search createRequest(Search req, int batchSize, String searchAfter) {

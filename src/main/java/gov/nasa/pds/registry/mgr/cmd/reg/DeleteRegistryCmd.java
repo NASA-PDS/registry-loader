@@ -1,10 +1,10 @@
 package gov.nasa.pds.registry.mgr.cmd.reg;
 
 import org.apache.commons.cli.CommandLine;
+import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.srv.IndexService;
 
@@ -35,15 +35,16 @@ public class DeleteRegistryCmd implements CliCommand
         }
         
         String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
 
         RestClient client = null;
         
         try
         {
-            client = EstablishConnectionFactory.from(esUrl, authPath).createRestClient();
+          ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
+            client = conFact.createRestClient();
             IndexService srv = new IndexService(client);
+            String indexName = conFact.getIndexName();
 
             srv.deleteIndex(indexName);
             srv.deleteIndex(indexName + "-refs");

@@ -7,7 +7,6 @@ import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 
 
@@ -21,7 +20,6 @@ public class DeleteDDCmd implements CliCommand
 {
   private ConnectionFactory conFact;
     private String esUrl;
-    private String indexName;
     private String authPath;
 
     /**
@@ -42,9 +40,8 @@ public class DeleteDDCmd implements CliCommand
         }
 
         esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         authPath = cmdLine.getOptionValue("auth");
-        this.conFact = EstablishConnectionFactory.from(esUrl, authPath).setIndexName(indexName);
+        this.conFact = EstablishConnectionFactory.from(esUrl, authPath);
         String id = cmdLine.getOptionValue("id");
         if(id != null)
         {
