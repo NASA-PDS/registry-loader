@@ -4,13 +4,13 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.cli.CommandLine;
+import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.ProductDao;
 import gov.nasa.pds.registry.common.es.service.ProductService;
 import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 
 
@@ -44,7 +44,6 @@ public class SetArchiveStatusCmd implements CliCommand {
         }
 
         String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
         
         String status = getStatus(cmdLine);
@@ -57,8 +56,9 @@ public class SetArchiveStatusCmd implements CliCommand {
         try
         {
             // Call Elasticsearch
-            client = EstablishConnectionFactory.from(esUrl, authPath).createRestClient();
-            ProductDao dao = new ProductDao(client, indexName);
+            ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
+            client = conFact.createRestClient();
+            ProductDao dao = new ProductDao(client, conFact.getIndexName());
             ProductService srv = new ProductService(dao);
             
             srv.updateArchveStatus(lidvid, status);

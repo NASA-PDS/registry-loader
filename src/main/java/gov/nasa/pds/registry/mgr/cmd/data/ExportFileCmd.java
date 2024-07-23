@@ -42,7 +42,6 @@ public class ExportFileCmd implements CliCommand
         }
         
         String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
         
         // Lidvid
@@ -60,7 +59,6 @@ public class ExportFileCmd implements CliCommand
         }
 
         System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println("            Index: " + indexName);
         System.out.println("           LIDVID: " + lidvid);
         System.out.println("      Output file: " + filePath);
         System.out.println();
@@ -68,7 +66,7 @@ public class ExportFileCmd implements CliCommand
         ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);        
         try (RestClient client = conFact.createRestClient())
         {
-          Request.Search req = client.createSearchRequest().setIndex(indexName).buildGetField(Constants.BLOB_FIELD, lidvid);
+          Request.Search req = client.createSearchRequest().buildGetField(Constants.BLOB_FIELD, lidvid);
           String blob = client.performRequest(req).field(Constants.BLOB_FIELD);
           if(blob == null)
           {

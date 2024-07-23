@@ -13,11 +13,10 @@ public class TestLddLoader
     public static void main(String[] args) throws Exception
     {
         String url = "app:/connections/direct/localhost.xml";
-        String indexName = "registry";
         
         try
         {
-            RegistryManager.init(url, null, indexName);
+            RegistryManager.init(url, null);
             
             DataDictionaryDao ddDao = RegistryManager.getInstance().getDataDictionaryDao();
             JsonLddLoader loader = new JsonLddLoader(ddDao, EstablishConnectionFactory.from("app:/connections/direct/localhost.xml").setIndexName("t1"));

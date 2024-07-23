@@ -9,7 +9,6 @@ import gov.nasa.pds.registry.common.dd.LddUtils;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
 import gov.nasa.pds.registry.common.es.service.JsonLddLoader;
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 import gov.nasa.pds.registry.mgr.dd.CsvLddLoader;
@@ -70,10 +69,9 @@ public class LoadDDCmd implements CliCommand
         }
 
         this.url = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        this.indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         this.authFile = cmdLine.getOptionValue("auth");
         
-        RegistryManager.init(url, authFile, indexName);
+        RegistryManager.init(url, authFile);
 
         try
         {

@@ -8,7 +8,6 @@ import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.srv.IndexService;
 
@@ -21,7 +20,6 @@ import gov.nasa.pds.registry.mgr.srv.IndexService;
 public class UpgradeDDCmd implements CliCommand
 {
     private String esUrl;
-    private String indexName;
     private String authPath;
 
     /**
@@ -42,7 +40,6 @@ public class UpgradeDDCmd implements CliCommand
         }
 
         esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         authPath = cmdLine.getOptionValue("auth");
         
         boolean replace= cmdLine.hasOption("r");
@@ -58,11 +55,11 @@ public class UpgradeDDCmd implements CliCommand
             {
                 // Recreate data dictionary index
                 IndexService srv = new IndexService(client);
-                srv.reCreateIndex("elastic/data-dic.json", indexName + "-dd");
+                srv.reCreateIndex("elastic/data-dic.json", conFact.getIndexName() + "-dd");
             }
             
             // Load data
-            DataLoader dl = new DataLoader(conFact.setIndexName(indexName + "-dd"));
+            DataLoader dl = new DataLoader(conFact.setIndexName(conFact.getIndexName() + "-dd"));
             File zipFile = IndexService.getDataDicFile();
             dl.loadZippedFile(zipFile, "dd.json");
         }

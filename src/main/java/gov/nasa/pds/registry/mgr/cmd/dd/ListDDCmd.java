@@ -7,7 +7,6 @@ import org.apache.commons.cli.CommandLine;
 
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
 import gov.nasa.pds.registry.common.es.dao.dd.LddInfo;
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.RegistryManager;
 
@@ -36,14 +35,13 @@ public class ListDDCmd implements CliCommand
         }
 
         String url = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authFile = cmdLine.getOptionValue("auth");
         
         String namespace = cmdLine.getOptionValue("ns");
         
         try
         {
-            RegistryManager.init(url, authFile, indexName);
+            RegistryManager.init(url, authFile);
             
             DataDictionaryDao dao = RegistryManager.getInstance().getDataDictionaryDao();
             List<LddInfo> list = dao.listLdds(namespace);

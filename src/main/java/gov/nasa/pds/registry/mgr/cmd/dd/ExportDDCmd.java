@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 
-import gov.nasa.pds.registry.mgr.Constants;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.dao.dd.DDDataExporter;
 
@@ -41,14 +40,12 @@ public class ExportDDCmd implements CliCommand
         }
         
         String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
-        String indexName = cmdLine.getOptionValue("index", Constants.DEFAULT_REGISTRY_INDEX);
         String authPath = cmdLine.getOptionValue("auth");
 
         System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println("            Index: " + indexName);
         System.out.println();
         
-        DDDataExporter exp = new DDDataExporter(esUrl, indexName, authPath);
+        DDDataExporter exp = new DDDataExporter(esUrl, authPath);
         exp.export(new File(filePath));
     }
 
