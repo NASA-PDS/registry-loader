@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.common.connection.aws;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import org.opensearch.client.opensearch._types.FieldSort;
 import org.opensearch.client.opensearch._types.FieldValue;
@@ -86,7 +87,8 @@ class SearchImpl implements Search {
   }
   @Override
   public Search all(String sortField, int size, String searchAfter) {
-    this.craftsman.searchAfter(searchAfter);
+    FieldValue fv = new FieldValue.Builder().stringValue(searchAfter).build();
+    this.craftsman.searchAfter(Arrays.asList(fv));
     this.craftsman.sort(new SortOptions.Builder()
         .field(new FieldSort.Builder().field(sortField).order(SortOrder.Asc).build())
         .build());
