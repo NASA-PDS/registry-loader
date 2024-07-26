@@ -2,11 +2,13 @@ package gov.nasa.pds.registry.common.connection.es;
 
 import java.io.IOException;
 import java.util.List;
+import org.apache.commons.lang3.NotImplementedException;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestClientBuilder;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request.Bulk;
 import gov.nasa.pds.registry.common.Request.Count;
+import gov.nasa.pds.registry.common.Request.Delete;
 import gov.nasa.pds.registry.common.Request.DeleteByQuery;
 import gov.nasa.pds.registry.common.Request.Get;
 import gov.nasa.pds.registry.common.Request.Mapping;
@@ -139,5 +141,13 @@ public class RestClientWrapper implements RestClient
     public long performRequest(DeleteByQuery request) throws IOException,ResponseException {
       return ((DeleteByQueryImpl)request).extractNumDeleted(
           this.performRequest(request.toString(), ((DeleteByQueryImpl)request).query, "POST"));
+    }
+    @Override
+    public Delete createDelete() {
+      throw new NotImplementedException();
+    }
+    @Override
+    public long performRequest(Delete request) throws IOException, ResponseException {
+      throw new NotImplementedException();
     }
 }

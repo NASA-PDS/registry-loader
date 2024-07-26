@@ -16,7 +16,11 @@ public interface Request {
     public Count setIndex (String name);
     public Count setQuery (String q);
   }
-  public interface DeleteByQuery { // delete_by_query
+  public interface Delete { // -X DELETE _doc
+    public Delete setDocId(String id);
+    public Delete setIndex (String name);
+  }
+  public interface DeleteByQuery { // _delete_by_query is not directly supported in AOSS
     public DeleteByQuery createFilterQuery(String key, String value);
     public DeleteByQuery createMatchAllQuery();
     public DeleteByQuery setIndex (String name);

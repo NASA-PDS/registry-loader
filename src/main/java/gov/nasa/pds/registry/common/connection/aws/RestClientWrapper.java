@@ -11,6 +11,8 @@ import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch.core.SearchResponse;
+import org.opensearch.client.opensearch.core.search.Hit;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
 import org.opensearch.client.opensearch.indices.ExistsRequest;
@@ -20,6 +22,7 @@ import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBui
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request.Bulk;
 import gov.nasa.pds.registry.common.Request.Count;
+import gov.nasa.pds.registry.common.Request.Delete;
 import gov.nasa.pds.registry.common.Request.DeleteByQuery;
 import gov.nasa.pds.registry.common.Request.Get;
 import gov.nasa.pds.registry.common.Request.MGet;
@@ -159,6 +162,20 @@ public class RestClientWrapper implements RestClient {
   }
   @Override
   public long performRequest(DeleteByQuery request) throws IOException, ResponseException {
-    return this.client.deleteByQuery(((DBQImpl)request).craftsman.build()).deleted();
+    long total = 0;
+    SearchResponse<Object> items = this.client.search(((DBQImpl)request).craftsman.build(), Object.class);
+    for (Hit<Object> hit : items.hits().hits()) {
+      total += this.performRequest(this.createDelete().setDocId(hit.id()).setIndex(((DBQImpl)request).index));
+    }
+    return total;
+  }
+  @Override
+  public Delete createDelete() {
+    return new DeleteImpl();
+  }
+  @Override
+  public long performRequest(Delete request) throws IOException, ResponseException {
+    this.client.delete(((DeleteImpl)request).craftsman.build());
+    return 1;
   }
 }
