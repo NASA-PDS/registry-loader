@@ -85,15 +85,6 @@ public class DeleteDataCmd implements CliCommand
             return;
         }
         
-        id = cmdLine.getOptionValue("lid");
-        if(id != null)
-        {
-            this.filterMessage = "              LID: " + id;
-            regQuery.createFilterQuery("lid", id);
-            refsQuery.createFilterQuery("collection_lid", id);
-            return;
-        }
-
         id = cmdLine.getOptionValue("packageId");
         if(id != null)
         {
@@ -104,16 +95,7 @@ public class DeleteDataCmd implements CliCommand
             return;
         }
 
-        if(cmdLine.hasOption("all"))
-        {
-            this.filterMessage = "Delete all documents ";
-            regQuery.createMatchAllQuery();
-            refsQuery.createMatchAllQuery();
-            
-            return;
-        }
-
-        throw new Exception("One of the following options is required: -lidvid, -lid, -packageId, -all");
+        throw new Exception("One of the following options is required: -lidvid, -packageId");
     }
     
     
