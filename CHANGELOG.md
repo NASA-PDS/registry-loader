@@ -1,12 +1,16 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-07-23)
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-07-29)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...«unknown»)
 
 **Improvements:**
 
 - As a node person, I want to know all possible values for archive status [\#71](https://github.com/NASA-PDS/registry-mgr/issues/71)
+
+**Defects:**
+
+- set-archive-status and delete-data subcommand do not work on OpenSearch serverless Registry [\#78](https://github.com/NASA-PDS/registry-mgr/issues/78) [[s.critical](https://github.com/NASA-PDS/registry-mgr/labels/s.critical)]
 
 **Other closed issues:**
 
