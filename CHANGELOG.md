@@ -1,17 +1,18 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2024-07-23)
+## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2024-07-29)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v1.5.1...«unknown»)
 
 **Defects:**
 
+- Update OpenSearch API call to use `search()` instead of `get()` [\#53](https://github.com/NASA-PDS/registry-common/issues/53) [[s.medium](https://github.com/NASA-PDS/registry-common/labels/s.medium)]
 - Update registry-common library to support change to AWS interface [\#50](https://github.com/NASA-PDS/registry-common/issues/50) [[s.critical](https://github.com/NASA-PDS/registry-common/labels/s.critical)]
 - Fix code scanning alerts [\#40](https://github.com/NASA-PDS/registry-common/issues/40) [[s.high](https://github.com/NASA-PDS/registry-common/labels/s.high)]
 
 **Other closed issues:**
 
-- Remove index in registry connection file ?  [\#48](https://github.com/NASA-PDS/registry-common/issues/48)
+- Abstract index information from registry configuration [\#48](https://github.com/NASA-PDS/registry-common/issues/48)
 - Augment authentication behaviour to support Cognito credential set [\#36](https://github.com/NASA-PDS/registry-common/issues/36)
 - Upgrade to use OpenSearch java client [\#15](https://github.com/NASA-PDS/registry-common/issues/15)
 
