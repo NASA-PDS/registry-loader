@@ -31,7 +31,9 @@ public class ProductService
         this.dao = dao;
     }
     
-    
+    public void updateArchiveStatus(List<String> lidvids, String status) throws Exception {
+      dao.updateArchiveStatus(lidvids, status);
+    }
     /**
      * Set archive status
      * @param lidvid ID of a product to update. If it is a collection, 
@@ -39,7 +41,7 @@ public class ProductService
      * @param status new status
      * @throws Exception an exception
      */
-    public void updateArchveStatus(String lidvid, String status) throws Exception
+    public void updateArchiveStatus(String lidvid, String status) throws Exception
     {
         log.info("Setting product status. LIDVID = " + lidvid + ", status = " + status);
         

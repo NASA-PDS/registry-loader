@@ -2,8 +2,10 @@ package gov.nasa.pds.registry.common.connection.aws;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.bulk.BulkOperation;
@@ -71,11 +73,11 @@ class BulkImpl implements Bulk {
   @Override
   public Bulk buildUpdateStatus(Collection<String> lidvids, String status) {
     ArrayList<BulkOperation> updates = new ArrayList<BulkOperation>();
-    Map<String,String> doc;
+    Map<String,List<String>> doc;
     for (String lidvid : lidvids) {
-      doc = new HashMap<String,String>();
-      doc.put(Metadata.FLD_ARCHIVE_STATUS, status);
-      updates.add(new BulkOperation.Builder().update(new UpdateOperation.Builder<Map<String,String>>().document(doc).id(lidvid).build()).build());
+      doc = new HashMap<String,List<String>>();
+      doc.put(Metadata.FLD_ARCHIVE_STATUS, Arrays.asList(status));
+      updates.add(new BulkOperation.Builder().update(new UpdateOperation.Builder<Map<String,List<String>>>().document(doc).id(lidvid).build()).build());
     }
     this.craftsman.operations(updates);
     return this;

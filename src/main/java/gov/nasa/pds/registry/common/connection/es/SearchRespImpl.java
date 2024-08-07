@@ -179,4 +179,8 @@ class SearchRespImpl implements Response.Search {
   public List<Map<String, Object>> documents() {
     throw new NotImplementedException();
   }
+  @Override
+  public List<String> lidvids() {
+    throw new NotImplementedException();
+  }
 }
