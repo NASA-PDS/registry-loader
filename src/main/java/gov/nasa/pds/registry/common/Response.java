@@ -47,6 +47,7 @@ public interface Response {
   public interface Search {
     public Map<String,Set<String>> altIds() throws UnsupportedOperationException, IOException;
     public List<Object> batch() throws UnsupportedOperationException, IOException;
+    public List<String> bucketValues();
     public List<Map<String,Object>> documents();
     public String field(String name) throws NoSuchFieldException; // null means blob not in document and NoSuchFieldException document not found
     public Set<String> fields() throws UnsupportedOperationException, IOException;

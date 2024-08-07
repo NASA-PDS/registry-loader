@@ -7,7 +7,10 @@ import org.opensearch.client.opensearch._types.FieldSort;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.SortOptions;
 import org.opensearch.client.opensearch._types.SortOrder;
+import org.opensearch.client.opensearch._types.aggregations.Aggregation;
+import org.opensearch.client.opensearch._types.aggregations.TermsAggregation;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
+import org.opensearch.client.opensearch._types.query_dsl.FieldAndFormat;
 import org.opensearch.client.opensearch._types.query_dsl.IdsQuery;
 import org.opensearch.client.opensearch._types.query_dsl.MatchQuery;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
@@ -33,6 +36,14 @@ class SearchImpl implements Search {
   }
   private Query.Builder matchQuery (String fieldname, String fieldvalue) {
     return (Builder)new Query.Builder().match(new MatchQuery.Builder().field(fieldname).query(new FieldValue.Builder().stringValue(fieldvalue).build()).build());
+  }
+  @Override
+  public Search buildFindDuplicates(int page_size) {
+    this.craftsman.aggregations("duplicates",
+        new Aggregation.Builder().terms(
+            new TermsAggregation.Builder().field("ops:Data_File_Info/ops:file_ref").minDocCount(2).size(page_size).build())
+        .build());
+    return this;
   }
   @Override
   public Search buildAlternativeIds(Collection<String> lids) {
@@ -122,6 +133,13 @@ class SearchImpl implements Search {
   @Override
   public Search setSize(int hitsperpage) {
     this.craftsman.size(hitsperpage);
+    return this;
+  }
+  @Override
+  public Search setReturnedFields(Collection<String> names) {
+    for (String name : names) {
+      this.craftsman.fields(new FieldAndFormat.Builder().field(name).build());
+    }
     return this;
   }
 }

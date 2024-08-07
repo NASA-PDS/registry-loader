@@ -70,4 +70,12 @@ class SearchImpl implements Search {
   public Search setSize(int hitsperpage) {
     throw new NotImplementedException();
   }
+  @Override
+  public Search buildFindDuplicates(int page_size) {
+    throw new NotImplementedException();
+  }
+  @Override
+  public Search setReturnedFields(Collection<String> names) {
+    throw new NotImplementedException();
+  }
 }
