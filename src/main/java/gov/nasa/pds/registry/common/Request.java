@@ -48,6 +48,7 @@ public interface Request {
     public Search buildFindDuplicates(int page_size);
     public Search buildGetField(String field_name, String lidvid);
     public Search buildLatestLidVids(Collection<String> lids);
+    public Search buildLidvidsFromTermQuery (String fieldname, String value);
     public Search buildListFields(String dataType);
     public Search buildListLdds (String namespace);
     public Search buildTermQuery (String fieldname, String value);

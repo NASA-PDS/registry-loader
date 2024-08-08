@@ -63,6 +63,10 @@ class SearchImpl implements Search {
     return this;
   }
   @Override
+  public Search buildLidvidsFromTermQuery(String fieldname, String value) {
+    throw new NotImplementedException();
+  }
+  @Override
   public Search buildTermQuery(String fieldname, String value) {
     throw new NotImplementedException();
   }

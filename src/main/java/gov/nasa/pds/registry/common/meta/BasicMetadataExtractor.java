@@ -22,6 +22,7 @@ import gov.nasa.pds.registry.common.util.xml.XPathUtils;
  */
 public class BasicMetadataExtractor
 {
+    final public static String DEFAULT_ARCHIVE_STATUS = "staged";
     private XPathExpression xLid;
     private XPathExpression xVid;
     private XPathExpression xTitle;
@@ -53,12 +54,12 @@ public class BasicMetadataExtractor
      * @return extracted metadata
      * @throws Exception an exception
      */
-    public Metadata extract(File file, Document doc) throws Exception
+    public Metadata extract(File file, Document doc, String status) throws Exception
     {
         Metadata md = new Metadata();  
         // Set default fields
         md.setHarvestTimestamp(Instant.now());
-        md.setArchiveStatus("staged");
+        md.setArchiveStatus(status);
         md.setHarvestVersion(Metadata.getReportedHarvestVersion());
         
         // Product class

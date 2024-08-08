@@ -51,6 +51,7 @@ public interface Response {
     public List<Map<String,Object>> documents();
     public String field(String name) throws NoSuchFieldException; // null means blob not in document and NoSuchFieldException document not found
     public Set<String> fields() throws UnsupportedOperationException, IOException;
+    public List<String> lidvids(); // returns empty list if nothing is found in returned content
     public List<String> latestLidvids(); // returns null if nothing is found in returned content
     public LddVersions lddInfo() throws UnsupportedOperationException, IOException;
     public List<LddInfo> ldds() throws UnsupportedOperationException, IOException;

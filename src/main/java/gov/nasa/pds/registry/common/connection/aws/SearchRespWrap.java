@@ -39,6 +39,14 @@ class SearchRespWrap implements Response.Search {
     return results;
   }
   @Override
+  public List<String> lidvids() {
+    ArrayList<String> lidvids = new ArrayList<String>();
+    for (Hit<Object> hit : this.parent.hits().hits()) {
+      lidvids.add(((Map<String,String>)hit.source()).get("lidvid"));
+    }
+    return lidvids;
+  }
+  @Override
   public List<String> latestLidvids() {
     ArrayList<String> lidvids = new ArrayList<String>();
     if (true) throw new NotImplementedException("Need to fill this out when have a return value");

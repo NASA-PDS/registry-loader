@@ -10,6 +10,7 @@ import org.opensearch.client.opensearch._types.SortOrder;
 import org.opensearch.client.opensearch._types.aggregations.Aggregation;
 import org.opensearch.client.opensearch._types.aggregations.TermsAggregation;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
+import org.opensearch.client.opensearch._types.query_dsl.FieldAndFormat;
 import org.opensearch.client.opensearch._types.query_dsl.IdsQuery;
 import org.opensearch.client.opensearch._types.query_dsl.MatchQuery;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
@@ -123,6 +124,15 @@ class SearchImpl implements Search {
             .value(new FieldValue.Builder().stringValue(field_value).build())
             .build()).build());
     this.craftsman.query(new Query.Builder().bool(journeyman.build()).build());
+    return this;
+  }
+  @Override
+  public Search buildLidvidsFromTermQuery(String fieldname, String value) {
+    TermQuery.Builder journeyman = new TermQuery.Builder()
+        .field(fieldname)
+        .value(new FieldValue.Builder().stringValue(value).build());
+    this.craftsman.query(new Query.Builder().term(journeyman.build()).build());
+    this.craftsman.fields(new FieldAndFormat.Builder().field("lidvid").build());   
     return this;
   }
   @Override

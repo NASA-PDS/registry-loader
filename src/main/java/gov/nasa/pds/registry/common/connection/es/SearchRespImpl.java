@@ -183,4 +183,8 @@ class SearchRespImpl implements Response.Search {
   public List<String> bucketValues() {
     throw new NotImplementedException();
   }
+  @Override
+  public List<String> lidvids() {
+    throw new NotImplementedException();
+  }
 }
