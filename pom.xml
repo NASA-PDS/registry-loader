@@ -169,7 +169,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <plugin>
                 <groupId>com.ragedunicorn.tools.maven</groupId>
                 <artifactId>github-release-maven-plugin</artifactId>
-                <version>1.0.2</version>
+                <version>1.0.7</version>
                 <executions>
                   <execution>
                     <id>default-cli</id>
