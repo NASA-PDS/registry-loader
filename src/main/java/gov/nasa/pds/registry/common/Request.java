@@ -45,6 +45,7 @@ public interface Request {
     public Search all(String sortField, int size, String searchAfter);
     public Search all(String filterField, String filterValue, String sortField, int size, String searchAfter);
     public Search buildAlternativeIds(Collection<String> lids);
+    public Search buildFindDuplicates(int page_size);
     public Search buildGetField(String field_name, String lidvid);
     public Search buildLatestLidVids(Collection<String> lids);
     public Search buildLidvidsFromTermQuery (String fieldname, String value);
@@ -55,6 +56,7 @@ public interface Request {
     public Search setIndex (String name);
     public Search setPretty (boolean pretty);
     public Search setSize (int hitsperpage);
+    public Search setReturnedFields(Collection<String> names);
   }
   public interface Setting { // _settings
     public Setting setIndex (String name);

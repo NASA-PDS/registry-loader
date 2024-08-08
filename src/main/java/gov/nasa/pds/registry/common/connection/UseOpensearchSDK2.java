@@ -29,6 +29,7 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
   final private URL endpoint;
   private String index = null;
   public static UseOpensearchSDK2 build (CognitoType cog, AuthContent auth) throws IOException, InterruptedException {
+    System.setProperty("org.opensearch.path.encoding","HTTP_CLIENT_V5_EQUIV"); // opensearch-java >= 2.13 not needed >= 3.x
     boolean expectedContent = true;
     Gson gson = new Gson();
     HttpClient client = HttpClient.newHttpClient();

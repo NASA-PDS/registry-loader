@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.NotImplementedException;
+import org.opensearch.client.opensearch._types.aggregations.StringTermsBucket;
 import org.opensearch.client.opensearch.core.SearchResponse;
 import org.opensearch.client.opensearch.core.search.Hit;
 import gov.nasa.pds.registry.common.Response;
@@ -94,6 +95,19 @@ class SearchRespWrap implements Response.Search {
     for (Object doc : this.parent.documents()) {
       docs.add((Map<String,Object>)doc);
     }
+    if (docs.isEmpty()) { // try hits
+      for (Hit<Object> hit : this.parent.hits().hits()) {
+        docs.add((Map<String,Object>)hit.source());
+      }
+    }
     return docs;
+  }
+  @Override
+  public List<String> bucketValues() {
+    ArrayList<String> keys =  new ArrayList<String>();
+    for (StringTermsBucket bucket : this.parent.aggregations().get("duplicates").sterms().buckets().array()) {
+      keys.add(bucket.key());
+    }
+    return keys;
   }
 }
