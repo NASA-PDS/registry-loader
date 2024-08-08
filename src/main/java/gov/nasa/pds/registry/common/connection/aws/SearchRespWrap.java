@@ -87,6 +87,11 @@ class SearchRespWrap implements Response.Search {
     for (Object doc : this.parent.documents()) {
       docs.add((Map<String,Object>)doc);
     }
+    if (docs.isEmpty()) { // try hits
+      for (Hit<Object> hit : this.parent.hits().hits()) {
+        docs.add((Map<String,Object>)hit.source());
+      }
+    }
     return docs;
   }
   @Override
