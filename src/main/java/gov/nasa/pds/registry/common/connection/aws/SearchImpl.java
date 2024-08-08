@@ -10,7 +10,6 @@ import org.opensearch.client.opensearch._types.SortOrder;
 import org.opensearch.client.opensearch._types.aggregations.Aggregation;
 import org.opensearch.client.opensearch._types.aggregations.TermsAggregation;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
-import org.opensearch.client.opensearch._types.query_dsl.FieldAndFormat;
 import org.opensearch.client.opensearch._types.query_dsl.IdsQuery;
 import org.opensearch.client.opensearch._types.query_dsl.MatchQuery;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
@@ -141,9 +140,9 @@ class SearchImpl implements Search {
   }
   @Override
   public Search setReturnedFields(Collection<String> names) {
-    for (String name : names) {
-      this.craftsman.fields(new FieldAndFormat.Builder().field(name).build());
-    }
+    this.craftsman.source(new SourceConfig.Builder()
+        .filter(new SourceFilter.Builder()
+            .includes(new ArrayList<String>(names)).build()).build());
     return this;
   }
 }
