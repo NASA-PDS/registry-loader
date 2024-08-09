@@ -1,8 +1,12 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-07-29)
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-08-09)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...«unknown»)
+
+**Requirements:**
+
+- As a user, I want to set archive-status using packageId [\#69](https://github.com/NASA-PDS/registry-mgr/issues/69)
 
 **Improvements:**
 
