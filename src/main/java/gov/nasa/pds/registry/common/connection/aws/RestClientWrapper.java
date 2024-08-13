@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
@@ -11,6 +12,10 @@ import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch._types.Time;
+import org.opensearch.client.opensearch.core.ClearScrollRequest;
+import org.opensearch.client.opensearch.core.ScrollRequest;
+import org.opensearch.client.opensearch.core.ScrollResponse;
 import org.opensearch.client.opensearch.core.SearchResponse;
 import org.opensearch.client.opensearch.core.search.Hit;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
@@ -162,11 +167,22 @@ public class RestClientWrapper implements RestClient {
   }
   @Override
   public long performRequest(DeleteByQuery request) throws IOException, ResponseException {
-    long total = 0;
-    SearchResponse<Object> items = this.client.search(((DBQImpl)request).craftsman.build(), Object.class);
-    for (Hit<Object> hit : items.hits().hits()) {
-      total += this.performRequest(this.createDelete().setDocId(hit.id()).setIndex(((DBQImpl)request).index));
+    SearchResponse<Object> items = this.client.search(((DBQImpl)request).craftsman.size(2).build(), Object.class);
+    long deleted = 0, total = items.hits().total().value();
+    List<Hit<Object>> hits = items.hits().hits();
+    String scrollID =  items.scrollId();
+    while (deleted < total) {
+      for (Hit<Object> hit : hits) {
+        deleted += this.performRequest(this.createDelete().setDocId(hit.id()).setIndex(((DBQImpl)request).index));
+      }
+      if (deleted < total) {
+        ScrollResponse<Object> page = this.client.scroll(new ScrollRequest.Builder()
+            .scroll(new Time.Builder().time("24m").build()).scrollId(scrollID).build(), Object.class);
+        hits = page.hits().hits();
+        scrollID = page.scrollId(); // docs say it may change
+      }
     }
+    this.client.clearScroll(new ClearScrollRequest.Builder().scrollId(scrollID).build());
     return total;
   }
   @Override
