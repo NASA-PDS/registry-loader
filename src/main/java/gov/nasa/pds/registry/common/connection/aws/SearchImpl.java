@@ -7,6 +7,7 @@ import org.opensearch.client.opensearch._types.FieldSort;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.SortOptions;
 import org.opensearch.client.opensearch._types.SortOrder;
+import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch._types.aggregations.Aggregation;
 import org.opensearch.client.opensearch._types.aggregations.TermsAggregation;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
@@ -144,8 +145,9 @@ class SearchImpl implements Search {
     return this;
   }
   @Override
-  public Search setSize(int hitsperpage) {
+  public Search setScroll(int hitsperpage) {
     this.craftsman.size(hitsperpage);
+    this.craftsman.scroll(new Time.Builder().time("24m").build());
     return this;
   }
   @Override

@@ -55,7 +55,7 @@ public interface Request {
     public Search buildTheseIds(Collection<String> lids);
     public Search setIndex (String name);
     public Search setPretty (boolean pretty);
-    public Search setSize (int hitsperpage);
+    public Search setScroll (int hitsperpage);
     public Search setReturnedFields(Collection<String> names);
   }
   public interface Setting { // _settings

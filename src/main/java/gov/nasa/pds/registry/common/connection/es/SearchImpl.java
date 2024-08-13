@@ -71,7 +71,7 @@ class SearchImpl implements Search {
     throw new NotImplementedException();
   }
   @Override
-  public Search setSize(int hitsperpage) {
+  public Search setScroll(int hitsperpage) {
     throw new NotImplementedException();
   }
   @Override
