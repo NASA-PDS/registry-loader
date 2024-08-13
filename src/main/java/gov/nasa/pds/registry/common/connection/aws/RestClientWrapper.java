@@ -155,7 +155,8 @@ public class RestClientWrapper implements RestClient {
   }
   @Override
   public Response.Search performRequest(Search request) throws IOException, ResponseException {
-    return new SearchRespWrap(this.client.search(((SearchImpl)request).craftsman.build(), Object.class));
+    return new SearchRespWrap(this.client,
+        this.client.search(((SearchImpl)request).craftsman.build(), Object.class));
   }
   @Override
   public Response.Settings performRequest(Setting request) throws IOException, ResponseException {
