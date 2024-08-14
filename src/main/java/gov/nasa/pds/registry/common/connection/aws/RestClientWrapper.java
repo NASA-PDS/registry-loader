@@ -11,9 +11,11 @@ import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBu
 import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.opensearch._types.Time;
-import org.opensearch.client.opensearch.core.ClearScrollRequest;
 import org.opensearch.client.opensearch.core.ScrollRequest;
 import org.opensearch.client.opensearch.core.ScrollResponse;
 import org.opensearch.client.opensearch.core.SearchResponse;
@@ -42,30 +44,61 @@ import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
 
 public class RestClientWrapper implements RestClient {
+  private abstract class Retryable <R,T> {
+    abstract public R perform (T arg) throws IOException, ResponseException;
+    public R retry (T arg) throws IOException, ResponseException {
+      int retries = 0, retry_limit = 3;
+      while (true) {
+        try { return this.perform(arg); }
+        catch (OpenSearchException ose) {
+          if (ose.response().status() == 403) {
+            retries++;
+            if (retries < retry_limit) {
+              try { conFact.reconnect(); }
+              catch (InterruptedException ie) { throw new RuntimeException ("How did this happen??", ie); }
+              client = buildClient();
+            } else {
+              log.error ("Tried " + retry_limit + " to re-establish connection but cannot.");
+              throw ose;
+            }
+          } else {
+            throw ose;
+          }
+        }
+      }
+    }
+  }
   final private boolean isServerless;
-  final private OpenSearchClient client;
+  final private ConnectionFactory conFact;
+  final private Logger log;
   final private SdkHttpClient httpClient;
+  private OpenSearchClient client;
   public RestClientWrapper(ConnectionFactory conFact, boolean isServerless) {
+    this.conFact = conFact;
     this.httpClient = ApacheHttpClient.builder().build();
     this.isServerless = isServerless;
+    this.log = LogManager.getLogger(this.getClass());
+    this.client = this.buildClient();
+  }
+  private OpenSearchClient buildClient() {
+    OpenSearchClient client = null;
     if (isServerless) {
-      this.client = new OpenSearchClient(
+      client = new OpenSearchClient(
           new AwsSdk2Transport(
-              httpClient,
-              conFact.getHostName(),
+              this.httpClient,
+              this.conFact.getHostName(),
               "aoss",
               Region.US_WEST_2, // signing service region that we should probably get from host name??
               AwsSdk2TransportOptions.builder().build()
               )
           );
     } else {
-      OpenSearchClient localClient = null;
       try {
         SSLContext sslcontext = SSLContextBuilder
             .create()
             .loadTrustMaterial((chains, authType) -> true)
             .build();
-        final ApacheHttpClient5TransportBuilder builder = ApacheHttpClient5TransportBuilder.builder(conFact.getHost5());
+        final ApacheHttpClient5TransportBuilder builder = ApacheHttpClient5TransportBuilder.builder(this.conFact.getHost5());
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
           final TlsStrategy tlsStrategy = ClientTlsStrategyBuilder.create()
             .setSslContext(sslcontext)
@@ -78,20 +111,22 @@ public class RestClientWrapper implements RestClient {
             .setDefaultCredentialsProvider(conFact.getCredentials5())
             .setConnectionManager(connectionManager);
         });
-        localClient = new OpenSearchClient(builder.build());
+        client = new OpenSearchClient(builder.build());
       } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      finally {
-        this.client = localClient;
-      }
     }
+    return client;
   }
   @Override
   public void close() throws IOException {
     this.client.shutdown();
     this.httpClient.close();
+  }
+  @Override
+  public Response.CreatedIndex create(String indexName, String configAsJson) throws IOException, ResponseException {
+    return new CreateIndexRespWrap(this.client.indices().create(CreateIndexConfigWrap.update(new CreateIndexRequest.Builder(), configAsJson).index(indexName).build()));
   }
   @Override
   public Bulk createBulkRequest() {
@@ -100,6 +135,14 @@ public class RestClientWrapper implements RestClient {
   @Override
   public Count createCountRequest() {
     return new CountImpl();
+  }
+  @Override
+  public Delete createDelete() {
+    return new DeleteImpl();
+  }
+  @Override
+  public DeleteByQuery createDeleteByQuery() {
+    return new DBQImpl();
   }
   @Override
   public Get createGetRequest() {
@@ -122,52 +165,71 @@ public class RestClientWrapper implements RestClient {
     return new SettingImpl();
   }
   @Override
-  public Response.CreatedIndex create(String indexName, String configAsJson) throws IOException, ResponseException {
-    return new CreateIndexRespWrap(this.client.indices().create(CreateIndexConfigWrap.update(new CreateIndexRequest.Builder(), configAsJson).index(indexName).build()));
-  }
-  @Override
   public void delete(String indexName) throws IOException, ResponseException {
+    new Retryable<Object,String>() {
+      @Override
+      public Object perform (String arg) throws IOException, ResponseException {
+      _delete(arg);
+      return null;
+    }}.retry(indexName);
+  }
+  private void _delete(String indexName) throws IOException, ResponseException {
     this.client.indices().delete(new DeleteIndexRequest.Builder().index(indexName).build());
   }
   @Override
   public boolean exists(String indexName) throws IOException, ResponseException {
+    return new Retryable<Boolean,String>() {
+      @Override
+      public Boolean perform (String arg) throws IOException, ResponseException {
+      return _exists(arg);
+    }}.retry(indexName);
+  }
+  private boolean _exists(String indexName) throws IOException, ResponseException {
     return this.client.indices().exists(new ExistsRequest.Builder().index(indexName).build()).value();
   }
   @Override
   public Response.Bulk performRequest(Bulk request) throws IOException, ResponseException {
+    return new Retryable<Response.Bulk,Bulk>() {
+      @Override
+      public Response.Bulk perform (Bulk arg) throws IOException, ResponseException {
+      return _performRequest(arg);
+    }}.retry(request);
+  }
+  private Response.Bulk _performRequest(Bulk request) throws IOException, ResponseException {
      return new BulkRespWrap(this.client.bulk(((BulkImpl)request).craftsman.build()));
   }
   @Override
   public long performRequest(Count request) throws IOException, ResponseException {
+    return new Retryable<Long,Count>() {
+      @Override
+      public Long perform (Count arg) throws IOException, ResponseException {
+      return _performRequest(arg);
+    }}.retry(request);
+  }
+  private long _performRequest(Count request) throws IOException, ResponseException {
     return this.client.count(((CountImpl)request).craftsman.build()).count();
   }
   @Override
-  public Response.Get performRequest(Get request) throws IOException, ResponseException {
-    if (request instanceof MGet)
-      return new MGetRespWrap(this.client.mget(((MGetImpl)request).craftsman.build(), Object.class));
-    return new GetRespWrap(this.client.get(((GetImpl)request).craftsman.build(), Object.class));
+  public long performRequest(Delete request) throws IOException, ResponseException {
+    return new Retryable<Long,Delete>() {
+      @Override
+      public Long perform (Delete arg) throws IOException, ResponseException {
+      return _performRequest(arg);
+    }}.retry(request);
   }
-  @Override
-  public Response.Mapping performRequest(Mapping request) throws IOException, ResponseException {
-    MappingImpl req = (MappingImpl)request;
-    return req.isGet ? new MappingRespImpl(this.client.indices().getMapping(req.craftsman_get.build())) :
-      new MappingRespImpl(this.client.indices().putMapping(req.craftsman_set.build()));
-  }
-  @Override
-  public Response.Search performRequest(Search request) throws IOException, ResponseException {
-    return new SearchRespWrap(this.client,
-        this.client.search(((SearchImpl)request).craftsman.build(), Object.class));
-  }
-  @Override
-  public Response.Settings performRequest(Setting request) throws IOException, ResponseException {
-    return new SettingRespImpl(this.client.indices().getSettings(((SettingImpl)request).craftsman.build()));
-  }
-  @Override
-  public DeleteByQuery createDeleteByQuery() {
-    return new DBQImpl();
+  public long _performRequest(Delete request) throws IOException, ResponseException {
+    this.client.delete(((DeleteImpl)request).craftsman.build());
+    return 1;
   }
   @Override
   public long performRequest(DeleteByQuery request) throws IOException, ResponseException {
+    return new Retryable<Long,DeleteByQuery>() {
+      @Override
+      public Long perform (DeleteByQuery arg) throws IOException, ResponseException {
+      return _performRequest(arg);
+    }}.retry(request);
+  }
+  private long _performRequest(DeleteByQuery request) throws IOException, ResponseException {
     SearchResponse<Object> items = this.client.search(((DBQImpl)request).craftsman.size(2).build(), Object.class);
     long deleted = 0, total = items.hits().total().value();
     List<Hit<Object>> hits = items.hits().hits();
@@ -183,16 +245,55 @@ public class RestClientWrapper implements RestClient {
         scrollID = page.scrollId(); // docs say it may change
       }
     }
-    this.client.clearScroll(new ClearScrollRequest.Builder().scrollId(scrollID).build());
     return total;
   }
   @Override
-  public Delete createDelete() {
-    return new DeleteImpl();
+  public Response.Get performRequest(Get request) throws IOException, ResponseException {
+    return new Retryable<Response.Get,Get>() {
+      @Override
+      public Response.Get perform (Get arg) throws IOException, ResponseException {
+      return _performRequest(arg);
+    }}.retry(request);
+  }
+  private Response.Get _performRequest(Get request) throws IOException, ResponseException {
+    if (request instanceof MGet)
+      return new MGetRespWrap(this.client.mget(((MGetImpl)request).craftsman.build(), Object.class));
+    return new GetRespWrap(this.client.get(((GetImpl)request).craftsman.build(), Object.class));
   }
   @Override
-  public long performRequest(Delete request) throws IOException, ResponseException {
-    this.client.delete(((DeleteImpl)request).craftsman.build());
-    return 1;
+  public Response.Mapping performRequest(Mapping request) throws IOException, ResponseException {
+    return new Retryable<Response.Mapping,Mapping>() {
+      @Override
+      public Response.Mapping perform (Mapping arg) throws IOException, ResponseException {
+      return _performRequest(arg);
+    }}.retry(request);
+  }
+  private Response.Mapping _performRequest(Mapping request) throws IOException, ResponseException {
+    MappingImpl req = (MappingImpl)request;
+    return req.isGet ? new MappingRespImpl(this.client.indices().getMapping(req.craftsman_get.build())) :
+      new MappingRespImpl(this.client.indices().putMapping(req.craftsman_set.build()));
+  }
+  @Override
+  public Response.Search performRequest(Search request) throws IOException, ResponseException {
+    return new Retryable<Response.Search,Search>() {
+      @Override
+      public Response.Search perform (Search arg) throws IOException, ResponseException {
+      return _performRequest(arg);
+    }}.retry(request);
+  }
+  private Response.Search _performRequest(Search request) throws IOException, ResponseException  {
+    return new SearchRespWrap(this.client,
+        this.client.search(((SearchImpl)request).craftsman.build(), Object.class));
+  }
+  @Override
+  public Response.Settings performRequest(Setting request) throws IOException, ResponseException {
+    return new Retryable<Response.Settings,Setting>() {
+      @Override
+      public Response.Settings perform (Setting arg) throws IOException, ResponseException {
+      return _performRequest(arg);
+    }}.retry(request);
+  }
+  private Response.Settings _performRequest(Setting request) throws IOException, ResponseException {
+    return new SettingRespImpl(this.client.indices().getSettings(((SettingImpl)request).craftsman.build()));
   }
 }

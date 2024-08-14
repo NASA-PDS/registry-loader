@@ -12,7 +12,6 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch._types.aggregations.StringTermsBucket;
-import org.opensearch.client.opensearch.core.ClearScrollRequest;
 import org.opensearch.client.opensearch.core.ScrollRequest;
 import org.opensearch.client.opensearch.core.ScrollResponse;
 import org.opensearch.client.opensearch.core.SearchResponse;
@@ -63,7 +62,6 @@ class SearchRespWrap implements Response.Search {
             lidvids.add(((Map<String,String>)hit.source()).get("lidvid"));
           }
         }
-        this.client.clearScroll(new ClearScrollRequest.Builder().scrollId(scrollID).build());
       } catch (IOException ioe) {
         throw new RuntimeException("How did we get here???", ioe);
       }

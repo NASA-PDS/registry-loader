@@ -1,5 +1,6 @@
 package gov.nasa.pds.registry.common;
 
+import java.io.IOException;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 
@@ -13,5 +14,6 @@ public interface ConnectionFactory {
   public String getHostName();
   public String getIndexName();
   public boolean isTrustingSelfSigned();
+  public void reconnect() throws IOException, InterruptedException; // used when credentials time out otherwise not defined
   public ConnectionFactory setIndexName (String idxName);
 }

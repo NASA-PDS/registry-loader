@@ -3,6 +3,7 @@ package gov.nasa.pds.registry.common.connection;
 import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 import gov.nasa.pds.registry.common.ConnectionFactory;
@@ -83,5 +84,10 @@ public class UseOpensearchSDK1 implements ConnectionFactory {
   @Override
   public boolean isTrustingSelfSigned() {
     return this.veryTrusting;
+  }
+
+  @Override
+  public void reconnect() {
+    throw new NotImplementedException();
   }
 }
