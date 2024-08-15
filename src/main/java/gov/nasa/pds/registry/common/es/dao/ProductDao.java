@@ -2,7 +2,6 @@ package gov.nasa.pds.registry.common.es.dao;
 
 import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.Response;
@@ -172,9 +171,6 @@ public class ProductDao
         Request.Bulk req = client.createBulkRequest()
             .buildUpdateStatus(lidvids, status)
             .setIndex(this.indexName);
-        System.out.println("waiting: " + new Date().toString());
-        Thread.sleep((long)(1000*1.5*3600));
-        System.out.println("released: " + new Date().toString());
         client.performRequest(req).logErrors();;
     }
     
