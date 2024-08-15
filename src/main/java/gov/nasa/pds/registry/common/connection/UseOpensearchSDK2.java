@@ -181,13 +181,12 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
     if (this.isServerless) {
       boolean expectedContent = true;
       Gson gson = new Gson();
-      String cid = "47d9j6ks9un4errq6pnbu0bc1r";
       HttpClient client = HttpClient.newHttpClient();
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(this.content.idp))
           .POST(BodyPublishers.ofString("{\"AuthFlow\":\"REFRESH_TOKEN_AUTH\",\"AuthParameters\":{"
               + "\"REFRESH_TOKEN\":\"" + this.content.refreshToken + "\""
-              + "},\"ClientId\":\"" + cid + "\""
+              + "},\"ClientId\":\"" + this.content.clientid + "\""
               + "}"))
           .setHeader("X-Amz-Target", "AWSCognitoIdentityProviderService.InitiateAuth")
           .setHeader("Content-Type", "application/x-amz-json-1.1")
