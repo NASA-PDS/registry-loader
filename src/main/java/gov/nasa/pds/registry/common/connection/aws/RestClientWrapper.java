@@ -16,26 +16,27 @@ import org.apache.logging.log4j.Logger;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.opensearch._types.Time;
+import org.opensearch.client.opensearch.core.BulkRequest;
+import org.opensearch.client.opensearch.core.CountRequest;
+import org.opensearch.client.opensearch.core.DeleteRequest;
+import org.opensearch.client.opensearch.core.GetRequest;
+import org.opensearch.client.opensearch.core.MgetRequest;
 import org.opensearch.client.opensearch.core.ScrollRequest;
 import org.opensearch.client.opensearch.core.ScrollResponse;
+import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.opensearch.core.SearchResponse;
 import org.opensearch.client.opensearch.core.search.Hit;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
 import org.opensearch.client.opensearch.indices.ExistsRequest;
+import org.opensearch.client.opensearch.indices.GetIndicesSettingsRequest;
+import org.opensearch.client.opensearch.indices.GetMappingRequest;
+import org.opensearch.client.opensearch.indices.PutMappingRequest;
 import org.opensearch.client.transport.aws.AwsSdk2Transport;
 import org.opensearch.client.transport.aws.AwsSdk2TransportOptions;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
 import gov.nasa.pds.registry.common.ConnectionFactory;
-import gov.nasa.pds.registry.common.Request.Bulk;
-import gov.nasa.pds.registry.common.Request.Count;
-import gov.nasa.pds.registry.common.Request.Delete;
-import gov.nasa.pds.registry.common.Request.DeleteByQuery;
-import gov.nasa.pds.registry.common.Request.Get;
-import gov.nasa.pds.registry.common.Request.MGet;
-import gov.nasa.pds.registry.common.Request.Mapping;
-import gov.nasa.pds.registry.common.Request.Search;
-import gov.nasa.pds.registry.common.Request.Setting;
+import gov.nasa.pds.registry.common.Request;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -129,39 +130,39 @@ public class RestClientWrapper implements RestClient {
     return new CreateIndexRespWrap(this.client.indices().create(CreateIndexConfigWrap.update(new CreateIndexRequest.Builder(), configAsJson).index(indexName).build()));
   }
   @Override
-  public Bulk createBulkRequest() {
+  public Request.Bulk createBulkRequest() {
     return new BulkImpl(this.isServerless);
   }
   @Override
-  public Count createCountRequest() {
+  public Request.Count createCountRequest() {
     return new CountImpl();
   }
   @Override
-  public Delete createDelete() {
+  public Request.Delete createDelete() {
     return new DeleteImpl();
   }
   @Override
-  public DeleteByQuery createDeleteByQuery() {
+  public Request.DeleteByQuery createDeleteByQuery() {
     return new DBQImpl();
   }
   @Override
-  public Get createGetRequest() {
+  public Request.Get createGetRequest() {
     return new GetImpl();
   }
   @Override
-  public Mapping createMappingRequest() {
+  public Request.Mapping createMappingRequest() {
     return new MappingImpl();
   }
   @Override
-  public MGet createMGetRequest() {
+  public Request.MGet createMGetRequest() {
     return new MGetImpl();
   }
   @Override
-  public Search createSearchRequest() {
+  public Request.Search createSearchRequest() {
     return new SearchImpl();
   }
   @Override
-  public Setting createSettingRequest() {
+  public Request.Setting createSettingRequest() {
     return new SettingImpl();
   }
   @Override
@@ -188,55 +189,55 @@ public class RestClientWrapper implements RestClient {
     return this.client.indices().exists(new ExistsRequest.Builder().index(indexName).build()).value();
   }
   @Override
-  public Response.Bulk performRequest(Bulk request) throws IOException, ResponseException {
-    return new Retryable<Response.Bulk,Bulk>() {
+  public Response.Bulk performRequest(Request.Bulk request) throws IOException, ResponseException {
+    return new Retryable<Response.Bulk,BulkRequest>() {
       @Override
-      public Response.Bulk perform (Bulk arg) throws IOException, ResponseException {
+      public Response.Bulk perform (BulkRequest arg) throws IOException, ResponseException {
       return _performRequest(arg);
-    }}.retry(request);
+    }}.retry(((BulkImpl)request).craftsman.build());
   }
-  private Response.Bulk _performRequest(Bulk request) throws IOException, ResponseException {
-     return new BulkRespWrap(this.client.bulk(((BulkImpl)request).craftsman.build()));
+  private Response.Bulk _performRequest(BulkRequest request) throws IOException, ResponseException {
+     return new BulkRespWrap(this.client.bulk(request));
   }
   @Override
-  public long performRequest(Count request) throws IOException, ResponseException {
-    return new Retryable<Long,Count>() {
+  public long performRequest(Request.Count request) throws IOException, ResponseException {
+    return new Retryable<Long,CountRequest>() {
       @Override
-      public Long perform (Count arg) throws IOException, ResponseException {
+      public Long perform (CountRequest arg) throws IOException, ResponseException {
       return _performRequest(arg);
-    }}.retry(request);
+    }}.retry(((CountImpl)request).craftsman.build());
   }
-  private long _performRequest(Count request) throws IOException, ResponseException {
-    return this.client.count(((CountImpl)request).craftsman.build()).count();
+  private long _performRequest(CountRequest request) throws IOException, ResponseException {
+    return this.client.count(request).count();
   }
   @Override
-  public long performRequest(Delete request) throws IOException, ResponseException {
-    return new Retryable<Long,Delete>() {
+  public long performRequest(Request.Delete request) throws IOException, ResponseException {
+    return new Retryable<Long,DeleteRequest>() {
       @Override
-      public Long perform (Delete arg) throws IOException, ResponseException {
+      public Long perform (DeleteRequest arg) throws IOException, ResponseException {
       return _performRequest(arg);
-    }}.retry(request);
+    }}.retry(((DeleteImpl)request).craftsman.build());
   }
-  public long _performRequest(Delete request) throws IOException, ResponseException {
-    this.client.delete(((DeleteImpl)request).craftsman.build());
+  public long _performRequest(DeleteRequest request) throws IOException, ResponseException {
+    this.client.delete(request);
     return 1;
   }
   @Override
-  public long performRequest(DeleteByQuery request) throws IOException, ResponseException {
-    return new Retryable<Long,DeleteByQuery>() {
+  public long performRequest(Request.DeleteByQuery request) throws IOException, ResponseException {
+    return new Retryable<Long,SearchRequest>() {
       @Override
-      public Long perform (DeleteByQuery arg) throws IOException, ResponseException {
-      return _performRequest(arg);
-    }}.retry(request);
+      public Long perform (SearchRequest arg) throws IOException, ResponseException {
+      return _performDBQRequest(arg);
+    }}.retry(((DBQImpl)request).craftsman.size(2).build());
   }
-  private long _performRequest(DeleteByQuery request) throws IOException, ResponseException {
-    SearchResponse<Object> items = this.client.search(((DBQImpl)request).craftsman.size(2).build(), Object.class);
+  private long _performDBQRequest(SearchRequest request) throws IOException, ResponseException {
+    SearchResponse<Object> items = this.client.search(request, Object.class);
     long deleted = 0, total = items.hits().total().value();
     List<Hit<Object>> hits = items.hits().hits();
     String scrollID =  items.scrollId();
     while (deleted < total) {
       for (Hit<Object> hit : hits) {
-        deleted += this.performRequest(this.createDelete().setDocId(hit.id()).setIndex(((DBQImpl)request).index));
+        deleted += this.performRequest(this.createDelete().setDocId(hit.id()).setIndex(request.index().get(0)));
       }
       if (deleted < total) {
         ScrollResponse<Object> page = this.client.scroll(new ScrollRequest.Builder()
@@ -248,52 +249,56 @@ public class RestClientWrapper implements RestClient {
     return total;
   }
   @Override
-  public Response.Get performRequest(Get request) throws IOException, ResponseException {
-    return new Retryable<Response.Get,Get>() {
+  public Response.Get performRequest(Request.Get request) throws IOException, ResponseException {
+    if (request instanceof Request.MGet) {
+      return new Retryable<Response.Get,MgetRequest>() {
+        @Override
+        public Response.Get perform (MgetRequest arg) throws IOException, ResponseException {
+        return new MGetRespWrap(client.mget(arg, Object.class));
+      }}.retry(((MGetImpl)request).craftsman.build());
+    }
+    return new Retryable<Response.Get,GetRequest>() {
       @Override
-      public Response.Get perform (Get arg) throws IOException, ResponseException {
-      return _performRequest(arg);
-    }}.retry(request);
-  }
-  private Response.Get _performRequest(Get request) throws IOException, ResponseException {
-    if (request instanceof MGet)
-      return new MGetRespWrap(this.client.mget(((MGetImpl)request).craftsman.build(), Object.class));
-    return new GetRespWrap(this.client.get(((GetImpl)request).craftsman.build(), Object.class));
+      public Response.Get perform (GetRequest arg) throws IOException, ResponseException {
+        return new GetRespWrap(client.get(arg, Object.class));
+    }}.retry(((GetImpl)request).craftsman.build());
   }
   @Override
-  public Response.Mapping performRequest(Mapping request) throws IOException, ResponseException {
-    return new Retryable<Response.Mapping,Mapping>() {
-      @Override
-      public Response.Mapping perform (Mapping arg) throws IOException, ResponseException {
-      return _performRequest(arg);
-    }}.retry(request);
-  }
-  private Response.Mapping _performRequest(Mapping request) throws IOException, ResponseException {
+  public Response.Mapping performRequest(Request.Mapping request) throws IOException, ResponseException {
     MappingImpl req = (MappingImpl)request;
-    return req.isGet ? new MappingRespImpl(this.client.indices().getMapping(req.craftsman_get.build())) :
-      new MappingRespImpl(this.client.indices().putMapping(req.craftsman_set.build()));
+    if (req.isGet) {
+      return new Retryable<Response.Mapping,GetMappingRequest>() {
+        @Override
+        public Response.Mapping perform (GetMappingRequest arg) throws IOException, ResponseException {
+        return new MappingRespImpl(client.indices().getMapping(arg));
+      }}.retry(req.craftsman_get.build());      
+    }
+    return new Retryable<Response.Mapping,PutMappingRequest>() {
+      @Override
+      public Response.Mapping perform (PutMappingRequest arg) throws IOException, ResponseException {
+      return new MappingRespImpl(client.indices().putMapping(arg));
+    }}.retry(req.craftsman_set.build());      
   }
   @Override
-  public Response.Search performRequest(Search request) throws IOException, ResponseException {
-    return new Retryable<Response.Search,Search>() {
+  public Response.Search performRequest(Request.Search request) throws IOException, ResponseException {
+    return new Retryable<Response.Search,SearchRequest>() {
       @Override
-      public Response.Search perform (Search arg) throws IOException, ResponseException {
+      public Response.Search perform (SearchRequest arg) throws IOException, ResponseException {
       return _performRequest(arg);
-    }}.retry(request);
+    }}.retry(((SearchImpl)request).craftsman.build());
   }
-  private Response.Search _performRequest(Search request) throws IOException, ResponseException  {
-    return new SearchRespWrap(this.client,
-        this.client.search(((SearchImpl)request).craftsman.build(), Object.class));
+  private Response.Search _performRequest(SearchRequest request) throws IOException, ResponseException  {
+    return new SearchRespWrap(this.client, this.client.search(request, Object.class));
   }
   @Override
-  public Response.Settings performRequest(Setting request) throws IOException, ResponseException {
-    return new Retryable<Response.Settings,Setting>() {
+  public Response.Settings performRequest(Request.Setting request) throws IOException, ResponseException {
+    return new Retryable<Response.Settings,GetIndicesSettingsRequest>() {
       @Override
-      public Response.Settings perform (Setting arg) throws IOException, ResponseException {
+      public Response.Settings perform (GetIndicesSettingsRequest arg) throws IOException, ResponseException {
       return _performRequest(arg);
-    }}.retry(request);
+    }}.retry(((SettingImpl)request).craftsman.build());
   }
-  private Response.Settings _performRequest(Setting request) throws IOException, ResponseException {
-    return new SettingRespImpl(this.client.indices().getSettings(((SettingImpl)request).craftsman.build()));
+  private Response.Settings _performRequest(GetIndicesSettingsRequest request) throws IOException, ResponseException {
+    return new SettingRespImpl(this.client.indices().getSettings(request));
   }
 }
