@@ -228,7 +228,7 @@ public class RestClientWrapper implements RestClient {
       @Override
       public Long perform (SearchRequest arg) throws IOException, ResponseException {
       return _performDBQRequest(arg);
-    }}.retry(((DBQImpl)request).craftsman.size(2).build());
+    }}.retry(((DBQImpl)request).craftsman.build());
   }
   private long _performDBQRequest(SearchRequest request) throws IOException, ResponseException {
     SearchResponse<Object> items = this.client.search(request, Object.class);
