@@ -7,7 +7,6 @@ import org.opensearch.client.opensearch._types.FieldSort;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.SortOptions;
 import org.opensearch.client.opensearch._types.SortOrder;
-import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch._types.aggregations.Aggregation;
 import org.opensearch.client.opensearch._types.aggregations.TermsAggregation;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
@@ -145,9 +144,15 @@ class SearchImpl implements Search {
     return this;
   }
   @Override
-  public Search setScroll(int hitsperpage) {
-    this.craftsman.size(hitsperpage);
-    this.craftsman.scroll(new Time.Builder().time("24m").build());
+  public Search buildTermQueryWithoutTermQuery (String yesFieldname, String yesValue, String noFieldname, String noValue) {
+    BoolQuery.Builder journeyman = new BoolQuery.Builder()
+        .must(new Query.Builder().term(new TermQuery.Builder()
+            .field(yesFieldname)
+            .value(new FieldValue.Builder().stringValue(yesValue).build()).build()).build())
+        .mustNot(new Query.Builder().term(new TermQuery.Builder()
+            .field(noFieldname)
+            .value(new FieldValue.Builder().stringValue(noValue).build()).build()).build());
+    this.craftsman.query(new Query.Builder().bool(journeyman.build()).build());   
     return this;
   }
   @Override
