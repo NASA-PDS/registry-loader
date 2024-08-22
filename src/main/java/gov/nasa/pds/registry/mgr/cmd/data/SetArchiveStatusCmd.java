@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.mgr.cmd.data;
 
 import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
@@ -8,6 +9,7 @@ import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.es.dao.ProductDao;
 import gov.nasa.pds.registry.common.es.service.ProductService;
+import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.ArchiveStatus;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
@@ -56,11 +58,18 @@ public class SetArchiveStatusCmd implements CliCommand {
             
             if (pid == null) srv.updateArchiveStatus(lidvid, status);
             if (lidvid ==  null) {
-              srv.updateArchiveStatus (client.performRequest(client.createSearchRequest()
-                  .setIndex(conFact.getIndexName())
-                  .buildTermQuery("_package_id", pid)
-                  .setReturnedFields(Arrays.asList("lidvid"))
-                  .setSize(1000)).lidvids(), status); // this breaks if really huge need to use scroll
+              long total = 0;
+              List<String> lidvids;
+              do {
+                Thread.sleep(1000); // account for lack of refresh on serverless
+                lidvids = client.performRequest(client.createSearchRequest()
+                    .setIndex(conFact.getIndexName())
+                    .buildTermQueryWithoutTermQuery("_package_id", pid, Metadata.FLD_ARCHIVE_STATUS, status)
+                    .setReturnedFields(Arrays.asList("lidvid"))).lidvids();
+                total += lidvids.size();
+                srv.updateArchiveStatus (lidvids, status);
+              } while (lidvids.size() > 0);
+              System.out.println ("updated " + total + " documents associated with package ID " + pid);
             }
         }
         catch(ResponseException ex)
