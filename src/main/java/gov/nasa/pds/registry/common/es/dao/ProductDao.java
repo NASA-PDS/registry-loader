@@ -166,12 +166,11 @@ public class ProductDao
      */
     public void updateArchiveStatus(Collection<String> lidvids, String status) throws Exception
     {
-        if(lidvids == null || status == null) return;
+        if(lidvids == null || status == null || lidvids.size() == 0) return;
         
         Request.Bulk req = client.createBulkRequest()
             .buildUpdateStatus(lidvids, status)
             .setIndex(this.indexName);
-        
         client.performRequest(req).logErrors();;
     }
     

@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.NotImplementedException;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch._types.aggregations.StringTermsBucket;
+import org.opensearch.client.opensearch.core.ScrollRequest;
+import org.opensearch.client.opensearch.core.ScrollResponse;
 import org.opensearch.client.opensearch.core.SearchResponse;
 import org.opensearch.client.opensearch.core.search.Hit;
 import gov.nasa.pds.registry.common.Response;
@@ -18,8 +22,10 @@ import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;
 
 @SuppressWarnings("unchecked") // JSON heterogenous structures requires raw casting
 class SearchRespWrap implements Response.Search {
+  final private OpenSearchClient client;
   final private SearchResponse<Object> parent;
-  SearchRespWrap(SearchResponse<Object> parent) {
+  SearchRespWrap(OpenSearchClient client, SearchResponse<Object> parent) {
+    this.client = client;
     this.parent = parent;
   }
   @Override
@@ -41,8 +47,24 @@ class SearchRespWrap implements Response.Search {
   @Override
   public List<String> lidvids() {
     ArrayList<String> lidvids = new ArrayList<String>();
+    String scrollID = this.parent.scrollId();
     for (Hit<Object> hit : this.parent.hits().hits()) {
       lidvids.add(((Map<String,String>)hit.source()).get("lidvid"));
+    }
+    if (this.parent.scrollId() != null) {
+      try {
+        ScrollResponse<Object> page;
+        while (lidvids.size() < this.parent.hits().total().value()) {
+          page = this.client.scroll(new ScrollRequest.Builder()
+              .scroll(new Time.Builder().time("24m").build()).scrollId(scrollID).build(), Object.class);
+          scrollID = page.scrollId(); // docs say this can change
+          for (Hit<Object> hit : page.hits().hits()) {
+            lidvids.add(((Map<String,String>)hit.source()).get("lidvid"));
+          }
+        }
+      } catch (IOException ioe) {
+        throw new RuntimeException("How did we get here???", ioe);
+      }
     }
     return lidvids;
   }

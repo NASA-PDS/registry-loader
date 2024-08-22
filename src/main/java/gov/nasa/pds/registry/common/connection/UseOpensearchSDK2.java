@@ -24,6 +24,7 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
   final private boolean isServerless;
   final private boolean veryTrusting;
   final private AuthContent auth;
+  final private CognitoContent content;
   final private HttpHost host;
   final private org.apache.hc.core5.http.HttpHost host5;
   final private URL endpoint;
@@ -45,7 +46,6 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
         .build();
     HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     Map<String,Map<String,String>> content;
-    Properties awsCreds = new Properties(System.getProperties()); // initialize properties as oracle suggests
     Type contentType = new TypeToken<Map<String,Map<String,String>>>(){}.getType();
 
     expectedContent &= response.body().contains("AuthenticationResult");
@@ -60,16 +60,48 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
       + " ->\n" + response.body());
     }
     content = gson.fromJson(response.body(), contentType);
-    client = HttpClient.newBuilder()
+    return new UseOpensearchSDK2(auth, new URL(cog.getEndpoint()), true, false)
+        .update(content, cog.getValue(), cog.getIDP(), cog.getGateway())
+        .tokensToKeys();
+  }
+  private UseOpensearchSDK2 update (Map<String,Map<String,String>> content, String cid, String idp, String gateway) {
+    this.content.accessToken = content.get("AuthenticationResult").get("AccessToken");
+    this.content.clientid = cid;
+    this.content.gateway = gateway;
+    this.content.idp = idp;
+    this.content.idToken = content.get("AuthenticationResult").get("IdToken");
+    this.content.refreshToken = content.get("AuthenticationResult").get("RefreshToken");
+    this.content.tokenType = content.get("AuthenticationResult").get("TokenType");
+    return this;
+  }
+  private UseOpensearchSDK2 update (CognitoContent old) {
+    if (this.isServerless) {
+      this.content.accessToken = old.accessToken;
+      this.content.clientid = old.clientid;
+      this.content.gateway = old.gateway;
+      this.content.idp  = old.idp;
+      this.content.idToken = old.idToken;
+      this.content.refreshToken = old.refreshToken;
+      this.content.tokenType = old.tokenType;
+    }
+    return this;
+  }
+  private UseOpensearchSDK2 tokensToKeys() throws IOException, InterruptedException {
+    boolean expectedContent = true;
+    Gson gson = new Gson();
+    HttpClient client = HttpClient.newBuilder()
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build();
-    request = HttpRequest.newBuilder()
-        .uri(URI.create(cog.getGateway()))
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create(this.content.gateway))
         .GET()
-        .setHeader("Authorization", content.get("AuthenticationResult").get("TokenType") + " " + content.get("AuthenticationResult").get("AccessToken"))
-        .setHeader("IDToken", content.get("AuthenticationResult").get("IdToken"))
+        .setHeader("Authorization", this.content.tokenType + " " + this.content.accessToken)
+        .setHeader("IDToken", this.content.idToken)
         .build();
-    response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    Map<String,Map<String,String>> content;
+    Properties awsCreds = new Properties(System.getProperties()); // initialize properties as oracle suggests
+    Type contentType = new TypeToken<Map<String,Map<String,String>>>(){}.getType();
     if (299 < response.statusCode()) {
       throw new IOException("Could not obtain credentials: " + response.toString());
     }
@@ -87,13 +119,14 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
     awsCreds.setProperty("aws.secretAccessKey", content.get("Credentials").get("SecretAccessKey"));
     awsCreds.setProperty("aws.sessionToken", content.get("Credentials").get("SessionToken"));
     System.setProperties(awsCreds);
-    return new UseOpensearchSDK2(auth, new URL(cog.getEndpoint()), true, false);
+    return this;
   }
   public static UseOpensearchSDK2 build (DirectType url, AuthContent auth) throws Exception {
     return new UseOpensearchSDK2(auth, new URL(url.getValue()), false, url.isTrustSelfSigned());
   }
   private UseOpensearchSDK2 (AuthContent auth, URL opensearchEndpoint, boolean isServerless, boolean veryTrusting) {
     this.auth = auth;
+    this.content = new CognitoContent();
     this.endpoint = opensearchEndpoint;
     this.host = new HttpHost(this.endpoint.getHost(), this.endpoint.getPort(), this.endpoint.getProtocol());
     this.host5 = new org.apache.hc.core5.http.HttpHost(this.endpoint.getProtocol(), this.endpoint.getHost(), this.endpoint.getPort());
@@ -102,7 +135,9 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
   }
   @Override
   public ConnectionFactory clone() {
-    return new UseOpensearchSDK2(this.auth, this.endpoint, this.isServerless, this.veryTrusting).setIndexName(this.index);
+    return new UseOpensearchSDK2(this.auth, this.endpoint, this.isServerless, this.veryTrusting)
+        .update(this.content)
+        .setIndexName(this.index);
   }
   @Override
   public RestClient createRestClient() throws Exception {
@@ -140,5 +175,40 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
   public ConnectionFactory setIndexName(String idxName) {
     this.index = idxName;
     return this;
+  }
+  @Override
+  public void reconnect() throws IOException, InterruptedException {
+    if (this.isServerless) {
+      boolean expectedContent = true;
+      Gson gson = new Gson();
+      HttpClient client = HttpClient.newHttpClient();
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(URI.create(this.content.idp))
+          .POST(BodyPublishers.ofString("{\"AuthFlow\":\"REFRESH_TOKEN_AUTH\",\"AuthParameters\":{"
+              + "\"REFRESH_TOKEN\":\"" + this.content.refreshToken + "\""
+              + "},\"ClientId\":\"" + this.content.clientid + "\""
+              + "}"))
+          .setHeader("X-Amz-Target", "AWSCognitoIdentityProviderService.InitiateAuth")
+          .setHeader("Content-Type", "application/x-amz-json-1.1")
+          .build();
+      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+      Map<String,Map<String,String>> content;
+      Type contentType = new TypeToken<Map<String,Map<String,String>>>(){}.getType();
+
+      expectedContent &= response.body().contains("AuthenticationResult");
+      expectedContent &= response.body().contains("AccessToken");
+      expectedContent &= response.body().contains("ExpiresIn");
+      expectedContent &= response.body().contains("IdToken");
+      expectedContent &= response.body().contains("TokenType");
+      expectedContent &= response.body().contains("ChallengeParameters");
+      if (!expectedContent) {
+        throw new IOException("Received an unexpected response of: " + response.toString()
+        + " ->\n" + response.body());
+      }
+      content = gson.fromJson(response.body(), contentType);
+      content.get("AuthenticationResult").put("RefreshToken", this.content.refreshToken);
+      this.update(content, this.content.clientid, this.content.idp, this.content.gateway);
+      this.tokensToKeys();
+    }
   }
 }

@@ -71,7 +71,7 @@ class SearchImpl implements Search {
     throw new NotImplementedException();
   }
   @Override
-  public Search setSize(int hitsperpage) {
+  public Search buildTermQueryWithoutTermQuery(String yesField, String yesValue, String noField, String noValue) {
     throw new NotImplementedException();
   }
   @Override

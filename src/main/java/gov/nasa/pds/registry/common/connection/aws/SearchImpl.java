@@ -144,8 +144,15 @@ class SearchImpl implements Search {
     return this;
   }
   @Override
-  public Search setSize(int hitsperpage) {
-    this.craftsman.size(hitsperpage);
+  public Search buildTermQueryWithoutTermQuery (String yesFieldname, String yesValue, String noFieldname, String noValue) {
+    BoolQuery.Builder journeyman = new BoolQuery.Builder()
+        .must(new Query.Builder().term(new TermQuery.Builder()
+            .field(yesFieldname)
+            .value(new FieldValue.Builder().stringValue(yesValue).build()).build()).build())
+        .mustNot(new Query.Builder().term(new TermQuery.Builder()
+            .field(noFieldname)
+            .value(new FieldValue.Builder().stringValue(noValue).build()).build()).build());
+    this.craftsman.query(new Query.Builder().bool(journeyman.build()).build());   
     return this;
   }
   @Override
