@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.mgr.cmd.reg;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.cli.CommandLine;
 import org.apache.tika.io.IOUtils;
 import gov.nasa.pds.registry.common.connection.KnownRegistryConnections;
@@ -23,16 +24,18 @@ public class FetchRegistryCmd implements CliCommand {
 
   @Override
   public void run(CommandLine cmdLine) throws Exception {
-    if(cmdLine.hasOption("help") || !cmdLine.hasOption("rc")) {
+    if (cmdLine.hasOption("help") || !cmdLine.hasOption("rc")) {
       printHelp();
       return;
     }
     KnownRegistryConnections.initialzeAppHandler();
     URL registry_connection = new URL(cmdLine.getOptionValue("rc"));
     if (registry_connection.getProtocol().equalsIgnoreCase("app")) {
-      registry_connection = RegistryConnectionContent.class.getResource
-          ("/" + registry_connection.getAuthority() + registry_connection.getPath());
+      registry_connection = RegistryConnectionContent.class
+          .getResource("/" + registry_connection.getAuthority() + registry_connection.getPath());
     }
-    System.out.println(IOUtils.toString(registry_connection.openStream()));
+    String stdOut =
+        new String(registry_connection.openStream().readAllBytes(), StandardCharsets.UTF_8);
+    System.out.println(stdOut);
   }
 }
