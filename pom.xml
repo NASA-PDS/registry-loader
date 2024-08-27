@@ -153,6 +153,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <!-- Disable Site for now -->
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
+                <version>4.0.0-M15</version>
                 <configuration>
                     <skip>true</skip>
                     <skipDeploy>true</skipDeploy>
@@ -188,15 +189,6 @@ POSSIBILITY OF SUCH DAMAGE.
             </configuration>
           </execution>
         </executions>
-      </plugin>
-            <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>4.0.0-M15</version>
-        <configuration>
-          <skip>false</skip>  <!-- This is `true` in parent pom -->
-          <skipDeploy>false</skipDeploy>  <!-- This is `true` in parent pom -->
-        </configuration>
       </plugin>
       <!-- Add maven source for maven central deployment -->
       <plugin>
