@@ -75,7 +75,7 @@ jobs:
                     packages: openjdk11-jdk
 		    maven-build-phases: install
                     # not web site for registry-mgr, everything is under registry
-		    #maven-doc-phases: clean,site,site:stage
+		    maven-doc-phases: clean,site,site:stage
                     maven-stable-artifact-phases: clean,deploy
                 env:
                     ossrh_username: ${{secrets.OSSRH_USERNAME}}
