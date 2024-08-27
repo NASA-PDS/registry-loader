@@ -1,6 +1,6 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-08-09)
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-08-27)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...«unknown»)
 
@@ -18,6 +18,7 @@
 
 **Other closed issues:**
 
+- Issue with `delete-data` with option `-packageId` when scroll is required [\#93](https://github.com/NASA-PDS/registry-mgr/issues/93)
 - Update to utilize new multi-tenancy approach [\#66](https://github.com/NASA-PDS/registry-mgr/issues/66)
 
 ## [v4.6.3](https://github.com/NASA-PDS/registry-mgr/tree/v4.6.3) (2023-11-16)
