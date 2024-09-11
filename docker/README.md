@@ -37,7 +37,7 @@ password to match with your environment.
 
 | Variable            | Description |
 | ------------------- | ----------- |
-| ES_URL              | The Elasticsearch URL (E.g.: `https://192.168.0.1:9200`) |
+| ES_CONN_CONFIG_FILE | Absolute path of the connexion.xml file, which contains elasticsearch connection details (E.g. '/tmp/cfg/connexion.xml') |
 | HARVEST_CFG_FILE    | Absolute path of the Harvest configuration file in the host machine (E.g.: `/tmp/cfg/harvest-config.xml`) |
 | HARVEST_DATA_DIR    | Absolute path of the Harvest data directory in the host machine (E.g.: `/tmp/data/urn-nasa-pds-insight_rad`) |
 | ES_AUTH_CONFIG_FILE | Absolute path of the es-auth.cfg file, which contains elasticsearch authentication details (E.g.: `/tmp/cfg/es-auth.cfg`) |
@@ -45,8 +45,8 @@ password to match with your environment.
 ```    
 # Update the following environment variables before executing this script
 
-# Elasticsearch URL (E.g.: https://192.168.0.1:9200)
-ES_URL=https://<HOST NAME OR IP ADDRESS>:9200
+# Elasticsearch connexion configuration file, see examples in https://github.com/NASA-PDS/registry-common/tree/main/src/main/resources/connections
+ES_CONN_CONFIG_FILE=/tmp/cfg/connexion.xml
 
 # Absolute path of the Harvest job configuration file in the host machine (E.g.: /tmp/cfg/harvest-job-config.xml)
 HARVEST_CFG_FILE=/tmp/cfg/harvest-job-config.xml

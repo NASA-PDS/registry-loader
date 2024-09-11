@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<harvest nodeName="PDS_ENG">
+<harvest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://github.com/NASA-PDS/harvest/blob/main/src/main/resources/conf/configuration.xsd">
+
+  <registry auth="/etc/es-auth.cfg">file:///etc/connexion.xml</registry>
+<load>
   <directories>
     <path>/data</path>
   </directories>
-  <registry url="https://elasticsearch:9200" index="registry" auth="/etc/es-auth.cfg" />
+</load>
   <fileInfo>
     <!-- UPDATE with your own local path and base url where pds4 archive is published -->
     <fileRef replacePrefix="/data" with="http://localhost:81/archive" />

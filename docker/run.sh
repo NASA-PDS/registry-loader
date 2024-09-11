@@ -42,8 +42,8 @@
 
 # Update the following environment variables before executing this script
 
-# Elasticsearch URL (E.g.: https://192.168.0.1:9200)
-ES_URL=https://<HOST NAME OR IP ADDRESS>:9200
+# Elasticsearch connection configuration file
+ES_CONN_CONFIG_FILE=/tmp/cfg/connection.xml
 
 # Absolute path of the Harvest job configuration file in the host machine (E.g.: /tmp/cfg/harvest-job-config.xml)
 HARVEST_CFG_FILE=/tmp/cfg/harvest-job-config.xml
@@ -58,14 +58,7 @@ ES_AUTH_CONFIG_FILE=/tmp/cfg/es-auth.cfg
 TEST_DATA_URL=https://pds.nasa.gov/data/pds4/test-data/registry/custom-datasets.tar.gz
 
 # The lidvid of the test data, which is used to set the archive status (only required, if executing with test data)
-TEST_DATA_LIDVID=urn:nasa:pds:mars2020.spice::1.0 urn:nasa:pds:mars2020.spice::2.0 urn:nasa:pds:mars2020.spice::3.0
-
-
-# Check if the ES_URL environment variable is set
-if [ -z "$ES_URL" ]; then
-    echo "Error: 'ES_URL' (Elasticsearch URL) environment variable is not properly set in the $0 file." 1>&2
-    exit 1
-fi
+TEST_DATA_LIDVID="urn:nasa:pds:mars2020.spice::1.0 urn:nasa:pds:mars2020.spice::2.0 urn:nasa:pds:mars2020.spice::3.0"
 
 # Check if the Elasticsearch auth file exists
 if [ ! -f "$ES_AUTH_CONFIG_FILE" ]; then
@@ -101,10 +94,10 @@ if [ -z "$1" ]; then
       # Execute docker container run with actual data
       docker container run --name registry-loader \
                  --rm \
-                 --env ES_URL=${ES_URL} \
                  --volume "${HARVEST_CFG_FILE}":/cfg/harvest-config.xml \
                  --volume "${HARVEST_DATA_DIR}":/data \
                  --volume "${ES_AUTH_CONFIG_FILE}":/etc/es-auth.cfg \
+                 --volume "${ES_CONN_CONFIG_FILE}":/etc/connexion.xml \
                  nasapds/registry-loader
 else
 
@@ -113,11 +106,11 @@ else
       # Execute docker container run with test data
       docker container run --name registry-loader \
                  --rm \
-                 --env ES_URL="${ES_URL}" \
                  --env RUN_TESTS=true \
                  --env TEST_DATA_URL="${TEST_DATA_URL}" \
                  --env TEST_DATA_LIDVID="${TEST_DATA_LIDVID}" \
                  --volume "${ES_AUTH_CONFIG_FILE}":/etc/es-auth.cfg \
+                 --volume "${ES_CONN_CONFIG_FILE}":/etc/connexion.xml \
                  nasapds/registry-loader
 
     else

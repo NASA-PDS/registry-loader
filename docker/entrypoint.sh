@@ -34,12 +34,6 @@
 # This shell script provides an entrypoint for the registry loader docker image.
 # ------------------------------------------------------------------------------
 
-# Check if the ES_URL environment variable is set
-if [ -z "$ES_URL" ]; then
-    echo "Error: 'ES_URL' (Elasticsearch URL) environment variable is not set. Use docker's -e option." 1>&2
-    exit 1
-fi
-
 # Harvest data
 if [ "$RUN_TESTS" = "true" ]; then
   echo "Downloading Harvest test data ..." 1>&2
@@ -59,8 +53,8 @@ if [ "$RUN_TESTS" = "true" ]; then
   echo "Setting archive status ..." 1>&2
   for lid in $TEST_DATA_LIDVID
   do
-      registry-manager set-archive-status -status archived -lidvid "$lid" -es "$ES_URL" -auth /etc/es-auth.cfg
+      registry-manager set-archive-status -es file:///etc/connexion.xml -auth /etc/es-auth.cfg -status archived -lidvid "$lid"
   done
-  registry-manager set-archive-status -status staged -lidvid "urn:nasa:pds:mars2020.spice:document::1.0" -es "$ES_URL" -auth /etc/es-auth.cfg
-  registry-manager set-archive-status -status archived -lidvid "urn:nasa:pds:insight_rad::2.1" -es "$ES_URL" -auth /etc/es-auth.cfg
+  registry-manager set-archive-status -es file:///etc/connexion.xml -auth /etc/es-auth.cfg -status staged -lidvid "urn:nasa:pds:mars2020.spice:document::1.0"
+  registry-manager set-archive-status -es file:///etc/connexion.xml -auth /etc/es-auth.cfg -status archived -lidvid "urn:nasa:pds:insight_rad::2.1"
 fi
