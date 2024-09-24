@@ -110,7 +110,7 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
     expectedContent &= response.body().contains("SecretAccessKey");
     expectedContent &= response.body().contains("SessionToken");
     if (!expectedContent) {
-      throw new IOException("Did not find expected credential response from: " + response.toString());
+      throw new IOException("Did not find expected credential response from: " + response.toString() + response.body());
     }
     content = gson.fromJson(response.body(), new TypeToken<Map<String,Object>>(){}.getType());
     content = gson.fromJson("{\"Credentials\":" + content.get("body") + "}", contentType);    
