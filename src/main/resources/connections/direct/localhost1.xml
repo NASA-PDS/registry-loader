@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<registry_connection index="registry">
+<registry_connection index="dev-registry">
   <server_url sdk="1" trust_self_signed="false">https://localhost:9200</server_url>
 </registry_connection>
