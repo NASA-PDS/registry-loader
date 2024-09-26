@@ -78,6 +78,27 @@
     </xs:simpleContent>
   </xs:complexType>
 
+  <xs:complexType name="ec2_type">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        EC2 instances that have their IAM roles setup to match the cognito
+        information when instantiated can use TCP/IP to share their credentials
+        directly with their subprocess. They have no need to contact cognito
+        nor the application gateway. They need only get the credentials from the
+        EC2 instance socket.
+
+        The value of this element should be the socket; meaning the IP address
+        and port number in the form address:port. For instance if it is localhost
+        on port 54321 then the value of this string should be localhost:54321 or
+        localhost.my.domain:54321 or 127.0.0.1:54321 if localhost is the loopback.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:normalizedString">
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
   <xs:simpleType name="sdk_version_enum">
     <xs:restriction base="xs:positiveInteger">
       <xs:enumeration value="1"/>
@@ -110,6 +131,7 @@
           </xs:documentation>
         </xs:annotation>
         <xs:element name="cognitoClientId" type="cognito_type"/>
+        <xs:element name="ec2_credential_socket" type="ec2_type"/>
         <xs:element name="server_url" type="direct_type"/>
       </xs:choice>
       <xs:attribute default="registry" name="index" type="xs:normalizedString"/>
