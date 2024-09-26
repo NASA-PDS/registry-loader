@@ -23,7 +23,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *         information when instantiated can use TCP/IP to share their credentials
  *         directly with their subprocess. They have no need to contact cognito
  *         nor the application gateway. They need only get the credentials from the
- *         EC2 instance socket.
+ *         EC2 instance.
  * 
  *         The value of this element should be the URL. For instance, these two
  *         URLs would normally resolve the same:
