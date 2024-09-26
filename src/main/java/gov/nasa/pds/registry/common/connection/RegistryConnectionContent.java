@@ -35,7 +35,7 @@ public final class RegistryConnectionContent {
     return this.content.getCognitoClientId();
   }
   public Ec2Type getEc2CredentialSocket() {
-    return this.content.getEc2CredentialSocket();
+    return this.content.getEc2CredentialUrl();
   }
   public String getIndex() {
     return this.content.getIndex();
@@ -50,6 +50,6 @@ public final class RegistryConnectionContent {
     return this.content.getServerUrl() != null;
   }
   public boolean isEc2Connection() {
-    return this.content.getEc2CredentialSocket() != null;
+    return this.content.getEc2CredentialUrl() != null;
   }
 }
