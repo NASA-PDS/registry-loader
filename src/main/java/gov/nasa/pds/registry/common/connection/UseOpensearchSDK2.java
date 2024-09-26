@@ -19,6 +19,7 @@ import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.connection.aws.RestClientWrapper;
 import gov.nasa.pds.registry.common.connection.config.CognitoType;
 import gov.nasa.pds.registry.common.connection.config.DirectType;
+import gov.nasa.pds.registry.common.connection.config.Ec2Type;
 
 public final class UseOpensearchSDK2 implements ConnectionFactory {
   final private boolean isServerless;
@@ -100,7 +101,6 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
         .build();
     HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     Map<String,Map<String,String>> content;
-    Properties awsCreds = new Properties(System.getProperties()); // initialize properties as oracle suggests
     Type contentType = new TypeToken<Map<String,Map<String,String>>>(){}.getType();
     if (299 < response.statusCode()) {
       throw new IOException("Could not obtain credentials: " + response.toString());
@@ -113,16 +113,27 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
       throw new IOException("Did not find expected credential response from: " + response.toString());
     }
     content = gson.fromJson(response.body(), new TypeToken<Map<String,Object>>(){}.getType());
-    content = gson.fromJson("{\"Credentials\":" + content.get("body") + "}", contentType);    
-    // fill then set system properties as oracle suggests (init happened above)
-    awsCreds.setProperty("aws.accessKeyId", content.get("Credentials").get("AccessKeyId"));
-    awsCreds.setProperty("aws.secretAccessKey", content.get("Credentials").get("SecretAccessKey"));
-    awsCreds.setProperty("aws.sessionToken", content.get("Credentials").get("SessionToken"));
-    System.setProperties(awsCreds);
+    content = gson.fromJson("{\"Credentials\":" + content.get("body") + "}", contentType);
+    this.fillSysPropsWithCreds(
+        content.get("Credentials").get("SecretAccessKey"),
+        content.get("Credentials").get("AccessKeyId"),
+        content.get("Credentials").get("SessionToken"));
     return this;
+  }
+  private void fillSysPropsWithCreds (String access, String id, String token) {
+    Properties awsCreds = new Properties(System.getProperties()); // initialize properties as oracle suggests
+    // fill then set system properties as oracle suggests (init happened above)
+    awsCreds.setProperty("aws.accessKeyId", id);
+    awsCreds.setProperty("aws.secretAccessKey", access);
+    awsCreds.setProperty("aws.sessionToken", token);
+    System.setProperties(awsCreds);   
   }
   public static UseOpensearchSDK2 build (DirectType url, AuthContent auth) throws Exception {
     return new UseOpensearchSDK2(auth, new URL(url.getValue()), false, url.isTrustSelfSigned());
+  }
+  public static UseOpensearchSDK2 build (Ec2Type url, AuthContent auth) throws Exception {
+    return new UseOpensearchSDK2(auth, new URL(url.getEndpoint()), true, false)
+        .ec2Creds(url.getValue());
   }
   private UseOpensearchSDK2 (AuthContent auth, URL opensearchEndpoint, boolean isServerless, boolean veryTrusting) {
     this.auth = auth;
@@ -132,6 +143,11 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
     this.host5 = new org.apache.hc.core5.http.HttpHost(this.endpoint.getProtocol(), this.endpoint.getHost(), this.endpoint.getPort());
     this.isServerless = isServerless;
     this.veryTrusting = veryTrusting;
+  }
+  private UseOpensearchSDK2 ec2Creds (String url) {
+    this.content.accessToken = url;
+    this.content.refreshToken = null;
+    return this;
   }
   @Override
   public ConnectionFactory clone() {
@@ -182,33 +198,57 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
       boolean expectedContent = true;
       Gson gson = new Gson();
       HttpClient client = HttpClient.newHttpClient();
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(this.content.idp))
-          .POST(BodyPublishers.ofString("{\"AuthFlow\":\"REFRESH_TOKEN_AUTH\",\"AuthParameters\":{"
-              + "\"REFRESH_TOKEN\":\"" + this.content.refreshToken + "\""
-              + "},\"ClientId\":\"" + this.content.clientid + "\""
-              + "}"))
-          .setHeader("X-Amz-Target", "AWSCognitoIdentityProviderService.InitiateAuth")
-          .setHeader("Content-Type", "application/x-amz-json-1.1")
-          .build();
-      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-      Map<String,Map<String,String>> content;
-      Type contentType = new TypeToken<Map<String,Map<String,String>>>(){}.getType();
 
-      expectedContent &= response.body().contains("AuthenticationResult");
-      expectedContent &= response.body().contains("AccessToken");
-      expectedContent &= response.body().contains("ExpiresIn");
-      expectedContent &= response.body().contains("IdToken");
-      expectedContent &= response.body().contains("TokenType");
-      expectedContent &= response.body().contains("ChallengeParameters");
-      if (!expectedContent) {
-        throw new IOException("Received an unexpected response of: " + response.toString()
-        + " ->\n" + response.body());
+      if (this.content.refreshToken == null) {
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(this.content.accessToken))
+            .GET()
+            .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Map<String,String> content;
+        Type contentType = new TypeToken<Map<String,String>>(){}.getType();
+        
+        expectedContent &= response.body().contains("AccessKeyId");
+        expectedContent &= response.body().contains("SecretAccessKey");
+        expectedContent &= response.body().contains("Token");
+        if (!expectedContent) {
+          throw new IOException("Received an unexpected response of: " + response.toString()
+          + " ->\n" + response.body());
+        }
+        content = gson.fromJson(response.body(), contentType);
+        this.fillSysPropsWithCreds(
+            content.get("SecretAccessKey"),
+            content.get("AccessKeyId"),
+            content.get("Token"));
+      } else {
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(this.content.idp))
+            .POST(BodyPublishers.ofString("{\"AuthFlow\":\"REFRESH_TOKEN_AUTH\",\"AuthParameters\":{"
+                + "\"REFRESH_TOKEN\":\"" + this.content.refreshToken + "\""
+                + "},\"ClientId\":\"" + this.content.clientid + "\""
+                + "}"))
+            .setHeader("X-Amz-Target", "AWSCognitoIdentityProviderService.InitiateAuth")
+            .setHeader("Content-Type", "application/x-amz-json-1.1")
+            .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Map<String,Map<String,String>> content;
+        Type contentType = new TypeToken<Map<String,Map<String,String>>>(){}.getType();
+
+        expectedContent &= response.body().contains("AuthenticationResult");
+        expectedContent &= response.body().contains("AccessToken");
+        expectedContent &= response.body().contains("ExpiresIn");
+        expectedContent &= response.body().contains("IdToken");
+        expectedContent &= response.body().contains("TokenType");
+        expectedContent &= response.body().contains("ChallengeParameters");
+        if (!expectedContent) {
+          throw new IOException("Received an unexpected response of: " + response.toString()
+          + " ->\n" + response.body());
+        }
+        content = gson.fromJson(response.body(), contentType);
+        content.get("AuthenticationResult").put("RefreshToken", this.content.refreshToken);
+        this.update(content, this.content.clientid, this.content.idp, this.content.gateway);
+        this.tokensToKeys();
       }
-      content = gson.fromJson(response.body(), contentType);
-      content.get("AuthenticationResult").put("RefreshToken", this.content.refreshToken);
-      this.update(content, this.content.clientid, this.content.idp, this.content.gateway);
-      this.tokensToKeys();
     }
   }
 }

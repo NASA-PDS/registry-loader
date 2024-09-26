@@ -87,14 +87,16 @@
         nor the application gateway. They need only get the credentials from the
         EC2 instance socket.
 
-        The value of this element should be the socket; meaning the IP address
-        and port number in the form address:port. For instance if it is localhost
-        on port 54321 then the value of this string should be localhost:54321 or
-        localhost.my.domain:54321 or 127.0.0.1:54321 if localhost is the loopback.
+        The value of this element should be the URL. For instance, these two
+        URLs would normally resolve the same:
+
+        https://localhost:54321/AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
+        https://127.0.0.1:54321/AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
       </xs:documentation>
     </xs:annotation>
     <xs:simpleContent>
       <xs:extension base="xs:normalizedString">
+        <xs:attribute default="https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com" name="endpoint" type="xs:normalizedString"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

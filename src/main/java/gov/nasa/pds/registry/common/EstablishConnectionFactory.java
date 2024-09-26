@@ -24,6 +24,7 @@ public class EstablishConnectionFactory {
       throw new RuntimeException("The SDK version '" + String.valueOf(conn.getServerUrl().getSdk().intValue()) + "' is not supported");
     }
     if (conn.isCognitoConnection()) return UseOpensearchSDK2.build(conn.getCognitoClientId(), auth).setIndexName(conn.getIndex());
+    if (conn.isEc2Connection()) return UseOpensearchSDK2.build(conn.getEc2CredentialSocket(), auth).setIndexName(conn.getIndex());
     throw new RuntimeException("New XML/Java choices in src/main/resources/registry_connection.xsd that are not handled.");
   }
 }

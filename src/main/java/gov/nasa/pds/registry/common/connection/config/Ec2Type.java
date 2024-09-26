@@ -9,6 +9,7 @@ package gov.nasa.pds.registry.common.connection.config;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
@@ -24,10 +25,11 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *         nor the application gateway. They need only get the credentials from the
  *         EC2 instance socket.
  * 
- *         The value of this element should be the socket; meaning the IP address
- *         and port number in the form address:port. For instance if it is localhost
- *         on port 54321 then the value of this string should be localhost:54321 or
- *         localhost.my.domain:54321 or 127.0.0.1:54321 if localhost is the loopback.
+ *         The value of this element should be the URL. For instance, these two
+ *         URLs would normally resolve the same:
+ * 
+ *         https://localhost:54321/AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
+ *         https://127.0.0.1:54321/AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
  *       
  * 
  * <p>Java class for ec2_type complex type.
@@ -38,6 +40,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <complexType name="ec2_type">
  *   <simpleContent>
  *     <extension base="<http://www.w3.org/2001/XMLSchema>normalizedString">
+ *       <attribute name="endpoint" type="{http://www.w3.org/2001/XMLSchema}normalizedString" default="https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com" />
  *     </extension>
  *   </simpleContent>
  * </complexType>
@@ -55,6 +58,10 @@ public class Ec2Type {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String value;
+    @XmlAttribute(name = "endpoint")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    protected String endpoint;
 
     /**
      * Gets the value of the value property.
@@ -78,6 +85,34 @@ public class Ec2Type {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /**
+     * Gets the value of the endpoint property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEndpoint() {
+        if (endpoint == null) {
+            return "https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com";
+        } else {
+            return endpoint;
+        }
+    }
+
+    /**
+     * Sets the value of the endpoint property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEndpoint(String value) {
+        this.endpoint = value;
     }
 
 }

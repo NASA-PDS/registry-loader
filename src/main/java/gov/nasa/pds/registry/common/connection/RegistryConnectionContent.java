@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.glassfish.jaxb.runtime.v2.JAXBContextFactory;
 import gov.nasa.pds.registry.common.connection.config.CognitoType;
 import gov.nasa.pds.registry.common.connection.config.DirectType;
+import gov.nasa.pds.registry.common.connection.config.Ec2Type;
 import gov.nasa.pds.registry.common.connection.config.RegistryConnection;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -33,6 +34,9 @@ public final class RegistryConnectionContent {
   public CognitoType getCognitoClientId() {
     return this.content.getCognitoClientId();
   }
+  public Ec2Type getEc2CredentialSocket() {
+    return this.content.getEc2CredentialSocket();
+  }
   public String getIndex() {
     return this.content.getIndex();
   }
@@ -44,5 +48,8 @@ public final class RegistryConnectionContent {
   }
   public boolean isDirectConnection() {
     return this.content.getServerUrl() != null;
+  }
+  public boolean isEc2Connection() {
+    return this.content.getEc2CredentialSocket() != null;
   }
 }
