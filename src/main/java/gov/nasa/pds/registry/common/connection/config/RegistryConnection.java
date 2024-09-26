@@ -37,6 +37,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <choice>
  *         <element name="cognitoClientId" type="{}cognito_type"/>
+ *         <element name="ec2_credential_socket" type="{}ec2_type"/>
  *         <element name="server_url" type="{}direct_type"/>
  *       </choice>
  *       <attribute name="index" type="{http://www.w3.org/2001/XMLSchema}normalizedString" default="registry" />
@@ -50,12 +51,15 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "cognitoClientId",
+    "ec2CredentialSocket",
     "serverUrl"
 })
 @XmlRootElement(name = "registry_connection")
 public class RegistryConnection {
 
     protected CognitoType cognitoClientId;
+    @XmlElement(name = "ec2_credential_socket")
+    protected Ec2Type ec2CredentialSocket;
     @XmlElement(name = "server_url")
     protected DirectType serverUrl;
     @XmlAttribute(name = "index")
@@ -85,6 +89,30 @@ public class RegistryConnection {
      */
     public void setCognitoClientId(CognitoType value) {
         this.cognitoClientId = value;
+    }
+
+    /**
+     * Gets the value of the ec2CredentialSocket property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Ec2Type }
+     *     
+     */
+    public Ec2Type getEc2CredentialSocket() {
+        return ec2CredentialSocket;
+    }
+
+    /**
+     * Sets the value of the ec2CredentialSocket property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Ec2Type }
+     *     
+     */
+    public void setEc2CredentialSocket(Ec2Type value) {
+        this.ec2CredentialSocket = value;
     }
 
     /**

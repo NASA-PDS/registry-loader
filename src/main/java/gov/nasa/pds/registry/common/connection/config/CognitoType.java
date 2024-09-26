@@ -41,7 +41,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *     <extension base="<http://www.w3.org/2001/XMLSchema>normalizedString">
  *       <attribute name="endpoint" type="{http://www.w3.org/2001/XMLSchema}normalizedString" default="https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com" />
  *       <attribute name="gateway" type="{http://www.w3.org/2001/XMLSchema}normalizedString" default="https://c8u1zk30u5.execute-api.us-west-2.amazonaws.com/dev/signed-url" />
- *       <attribute name="IDP" type="{http://www.w3.org/2001/XMLSchema}normalizedString" default="cognito-idp.us-west-2.amazonaws.com" />
+ *       <attribute name="IDP" type="{http://www.w3.org/2001/XMLSchema}normalizedString" default="https://cognito-idp.us-west-2.amazonaws.com" />
  *     </extension>
  *   </simpleContent>
  * </complexType>
@@ -162,7 +162,7 @@ public class CognitoType {
      */
     public String getIDP() {
         if (idp == null) {
-            return "cognito-idp.us-west-2.amazonaws.com";
+            return "https://cognito-idp.us-west-2.amazonaws.com";
         } else {
             return idp;
         }
