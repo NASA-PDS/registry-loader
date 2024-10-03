@@ -189,7 +189,7 @@ public class DataLoader
             totalRecords += uploaded;
             
             if (uploaded != numRecords) {
-              throw new Exception ("failed to upload all documents");
+              throw new Exception ("Failed to upload all documents (" + uploaded + "/" + numRecords + ") to -dd");
             }
             return line1;
         }

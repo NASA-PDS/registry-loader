@@ -30,6 +30,7 @@ class MGetRespWrap extends GetRespWrap {
           t = new Tuple(doc.result().id(), "keyword");
         } else {
           log.error("Could not find datatype for field " + doc.result().id());
+          t = new Tuple(doc.result().id(), "string");
         }
       } else {
         throw new DataTypeNotFoundException();
