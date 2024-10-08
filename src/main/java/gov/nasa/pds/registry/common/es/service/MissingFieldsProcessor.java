@@ -20,8 +20,8 @@ public class MissingFieldsProcessor
     private Set<String> missingFields;
     private Map<String, String> missingXsds;
 
-    private SchemaUpdater schemaUpdater;
-    private FieldNameCache fieldNameCache;
+    final private SchemaUpdater schemaUpdater;
+    final private FieldNameCache fieldNameCache;
     
     
     /**
