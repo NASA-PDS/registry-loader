@@ -1,5 +1,13 @@
 # Changelog
 
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-10-11)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.0...«unknown»)
+
+**Defects:**
+
+- Inline help does not match CLI options [\#104](https://github.com/NASA-PDS/registry-mgr/issues/104) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
+
 ## [v5.0.0](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.0) (2024-08-27)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...v5.0.0)
