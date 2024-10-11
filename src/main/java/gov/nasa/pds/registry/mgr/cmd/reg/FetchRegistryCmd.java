@@ -3,7 +3,6 @@ package gov.nasa.pds.registry.mgr.cmd.reg;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.cli.CommandLine;
-import org.apache.tika.io.IOUtils;
 import gov.nasa.pds.registry.common.connection.KnownRegistryConnections;
 import gov.nasa.pds.registry.common.connection.RegistryConnectionContent;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;

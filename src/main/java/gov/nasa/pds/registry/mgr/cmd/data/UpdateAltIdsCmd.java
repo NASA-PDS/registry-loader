@@ -168,7 +168,6 @@ public class UpdateAltIdsCmd implements CliCommand
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>      Authentication config file");
         System.out.println("  -es <url>         Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
-        System.out.println("  -index <name>     Elasticsearch index name. Default is 'registry'");
         System.out.println();
     }
 
