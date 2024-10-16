@@ -1,8 +1,8 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-10-16)
+## [release/5.0.1](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.1) (2024-10-16)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.0...«unknown»)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.0...release/5.0.1)
 
 **Defects:**
 
@@ -10,7 +10,11 @@
 
 ## [v5.0.0](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.0) (2024-08-27)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...v5.0.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/5.0.0...v5.0.0)
+
+## [release/5.0.0](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.0) (2024-08-27)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...release/5.0.0)
 
 **Requirements:**
 
@@ -31,7 +35,11 @@
 
 ## [v4.6.3](https://github.com/NASA-PDS/registry-mgr/tree/v4.6.3) (2023-11-16)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.1...v4.6.3)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/4.6.3...v4.6.3)
+
+## [release/4.6.3](https://github.com/NASA-PDS/registry-mgr/tree/release/4.6.3) (2023-11-16)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.1...release/4.6.3)
 
 ## [v4.6.1](https://github.com/NASA-PDS/registry-mgr/tree/v4.6.1) (2023-10-02)
 
