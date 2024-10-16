@@ -1,5 +1,13 @@
 # Changelog
 
+## [release/5.0.2](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.2) (2024-10-16)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.1...release/5.0.2)
+
+## [v5.0.1](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.1) (2024-10-16)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/5.0.1...v5.0.1)
+
 ## [release/5.0.1](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.1) (2024-10-16)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.0...release/5.0.1)
