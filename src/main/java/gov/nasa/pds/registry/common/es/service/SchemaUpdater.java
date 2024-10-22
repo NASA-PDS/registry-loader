@@ -34,6 +34,8 @@ public class SchemaUpdater
     private DataDictionaryDao ddDao;
     private SchemaDao schemaDao;
     
+    final private String index;
+    
     // Use string data type for undefined fields
     private boolean stringForMissing = true;
     
@@ -53,6 +55,7 @@ public class SchemaUpdater
         
         lddLoader = new JsonLddLoader(ddDao, conFact);
         lddLoader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile("HARVEST_HOME"));
+        this.index = conFact.getIndexName();
     }
     
     
@@ -88,13 +91,11 @@ public class SchemaUpdater
         // Update schema
         if(fields != null && !fields.isEmpty())
         {
-            log.info("Updating Elasticsearch schema.");
-
             List<Tuple> newFields = ddDao.getDataTypes(fields, stringForMissing);
             if(newFields != null)
             {
                 schemaDao.updateSchema(newFields);
-                log.info("Updated " + newFields.size() + " fields");
+                log.info("Updated " + newFields.size() + " fields in OpenSearch mapping for index " + this.index);
             }
         }
     }
@@ -124,7 +125,6 @@ public class SchemaUpdater
         // LDD already loaded
         if(lddInfo.files.contains(schemaFileName)) 
         {
-            log.info("This LDD already loaded.");
             return;
         }
 
