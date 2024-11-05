@@ -2,15 +2,18 @@ package gov.nasa.pds.registry.common.dd;
 
 import java.io.File;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;import java.util.Date;
-import java.util.List;import java.util.Locale;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
-
+import java.util.regex.Pattern;
 import gov.nasa.pds.registry.common.dd.parser.ClassAttrAssociationParser;
+import gov.nasa.pds.registry.common.util.TimeFormatRegex;
 
 
 /**
@@ -20,12 +23,12 @@ import gov.nasa.pds.registry.common.dd.parser.ClassAttrAssociationParser;
  */
 public class LddUtils
 {
-    private static final List<SimpleDateFormat> Accepted_LDD_DateFormats = Arrays.asList(
-            new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US),
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.US),
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.US)
-    );
-
+    private static final Map<String, List<Pattern>> Accepted_LDD_DateFormats = new TreeMap<String,List<Pattern>>();
+    static {
+      Accepted_LDD_DateFormats.put("u[-D['T'H[:m[:s[.S]]]]]X",TimeFormatRegex.DATE_TIME_DOY_FORMATS);
+      Accepted_LDD_DateFormats.put("u[-M[-d['T'H[:m[:s[.S]]]]]]X",TimeFormatRegex.DATE_TIME_YMD_FORMATS);
+      Accepted_LDD_DateFormats.put("H[:m[:s[.S]]]X",TimeFormatRegex.TIME_FORMATS);
+    };
 
     /**
      * Get default PDS to Elasticsearch data type mapping configuration file.
@@ -50,12 +53,17 @@ public class LddUtils
    * @param dateStr LDD date from PDS LDD JSON file
    * @return Parsed Date object
    */
-  public static Date parseLddDate(String dateStr) throws Exception {
-    for (SimpleDateFormat format : Accepted_LDD_DateFormats) {
-      try {
-        return format.parse(dateStr);
-      } catch (ParseException ignored) {
-//          Individual parsing errors are ignored.  If all attempts fail, then a ParseException should be thrown
+  public static Date parseLddDate(String dateStr) throws ParseException {
+    String cleaned = dateStr.trim();
+    for (String pattern : Accepted_LDD_DateFormats.keySet()) {
+      for (Pattern regex : Accepted_LDD_DateFormats.get(pattern)) {
+        if (regex.matcher(cleaned).matches()) {
+          return Date.from(
+              ZonedDateTime.parse(
+                  (cleaned + "Z").replace("ZZ", "Z"),
+                  DateTimeFormatter.ofPattern(pattern))
+              .toInstant());
+        }
       }
     }
 
