@@ -31,6 +31,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  */
 public class DataLoader
 {
+  final private int SIZE_THRESHOLD = 30*1024*1024; // 30 MB
     private int defaultRequestRetries = 5;
     private int printProgressSize = 500;
     private int batchSize = 100;
@@ -227,16 +228,31 @@ public class DataLoader
 
         try
         {
+          int failedCount = 0;
+          int loadedCount = 0;
+          int queued = 0;
           Request.Bulk bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
           for (int index = 0 ; index < data.size() ; index++) {
+            queued += data.get(index).length() + data.get(index+1).length();
             bulk.add(data.get(index), data.get(++index));
+            if (queued > SIZE_THRESHOLD) {
+              Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
+              // Check for Elasticsearch errors.
+              failedCount += processErrors(response, errorLidvids);
+              // Calculate number of successfully saved records
+              // NOTE: data list has two lines per record (primary key + data)
+              loadedCount += data.size() / 2 - failedCount;
+              queued = 0;
+            }
           }
-          Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
-          // Check for Elasticsearch errors.
-          int failedCount = processErrors(response, errorLidvids);
-          // Calculate number of successfully saved records
-          // NOTE: data list has two lines per record (primary key + data)
-          int loadedCount = data.size() / 2 - failedCount;
+          if (queued > 0) {
+            Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
+            // Check for Elasticsearch errors.
+            failedCount += processErrors(response, errorLidvids);
+            // Calculate number of successfully saved records
+            // NOTE: data list has two lines per record (primary key + data)
+            loadedCount += data.size() / 2 - failedCount;
+          }
           return loadedCount;
         }
         catch(UnknownHostException ex)
