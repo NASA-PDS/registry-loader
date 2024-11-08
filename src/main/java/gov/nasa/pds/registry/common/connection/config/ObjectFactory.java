@@ -56,6 +56,16 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Ec2Type }
+     * 
+     * @return
+     *     the new instance of {@link Ec2Type }
+     */
+    public Ec2Type createEc2Type() {
+        return new Ec2Type();
+    }
+
+    /**
      * Create an instance of {@link DirectType }
      * 
      * @return
