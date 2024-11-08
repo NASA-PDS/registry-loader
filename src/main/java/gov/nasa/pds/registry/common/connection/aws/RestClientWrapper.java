@@ -58,6 +58,16 @@ public class RestClientWrapper implements RestClient {
               log.error ("Tried " + retry_limit + " to re-establish connection but cannot.");
               throw ose;
             }
+          } else if (ose.response().status() == 429) {
+            int secondsDelay = 10 * (2^retries) - 10 + (int)(Math.random()*5);
+            try {
+              Thread.sleep(secondsDelay*1000); // seconds to milliseconds
+            } catch (InterruptedException e) {
+              // Tried to wait but nothing to be done if cannot
+            }
+            finally {
+              retries++;
+            }
           } else {
             throw ose;
           }
