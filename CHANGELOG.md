@@ -1,5 +1,13 @@
 # Changelog
 
+## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2024-11-08)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v2.0.1...«unknown»)
+
+**Requirements:**
+
+- As a Nucleus system, I want to be able to invoke harvest and registry-mgr from within the AWS VPC [\#83](https://github.com/NASA-PDS/registry-common/issues/83)
+
 ## [v2.0.1](https://github.com/NASA-PDS/registry-common/tree/v2.0.1) (2024-10-16)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v2.0.0...v2.0.1)
