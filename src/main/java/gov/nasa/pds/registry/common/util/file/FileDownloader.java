@@ -63,7 +63,7 @@ public class FileDownloader
      * @param toFile Save to this file
      * @throws Exception an exception
      */
-    public void download(String fromUrl, File toFile) throws Exception
+    public boolean download(String fromUrl, File toFile) throws Exception
     {
         int count = 0;
         
@@ -73,7 +73,6 @@ public class FileDownloader
             {
                 count++;
                 downloadOnce(fromUrl, toFile);
-                return;
             }
             catch(Exception ex)
             {
@@ -90,6 +89,7 @@ public class FileDownloader
                 }
             }
         }
+        return ignore.contains(fromUrl);
     }
     
     

@@ -133,8 +133,9 @@ public class SchemaUpdater
         
         try
         {
-            fileDownloader.download(jsonUrl, lddFile);
-            lddLoader.load(lddFile, schemaFileName, prefix);
+            if (fileDownloader.download(jsonUrl, lddFile)) {
+              lddLoader.load(lddFile, schemaFileName, prefix);
+            }
         }
         catch(Exception ex)
         {
