@@ -86,7 +86,7 @@ public class FileDownloader
                 else
                 {
                   ignore.add(fromUrl);
-                  throw new Exception("Could not download " + fromUrl);
+                  throw new Exception("Could not download " + fromUrl + " and will not try again in this running instance.");
                 }
             }
         }
