@@ -3,7 +3,7 @@ package gov.nasa.pds.registry.common.util.file;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-
+import java.util.ArrayList;
 import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpEntity;
@@ -37,6 +37,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  */
 public class FileDownloader
 {
+  final private static ArrayList<String> ignore = new ArrayList<String>();
     private Logger log;
     private int numRetries = 3;
     
@@ -66,7 +67,7 @@ public class FileDownloader
     {
         int count = 0;
         
-        while(true)
+        while(!ignore.contains(fromUrl))
         {
             try
             {
@@ -84,7 +85,8 @@ public class FileDownloader
                 }
                 else
                 {
-                    throw new Exception("Could not download " + fromUrl);
+                  ignore.add(fromUrl);
+                  throw new Exception("Could not download " + fromUrl);
                 }
             }
         }
