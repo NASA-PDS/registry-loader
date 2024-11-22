@@ -73,6 +73,7 @@ public class FileDownloader
             {
                 count++;
                 downloadOnce(fromUrl, toFile);
+                ignore.add(fromUrl);
             }
             catch(Exception ex)
             {
