@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import gov.nasa.pds.registry.common.dd.parser.DDAttribute;
+import gov.nasa.pds.registry.common.es.dao.dd.DataTypeNotFoundException;
 
 
 /**
@@ -125,18 +126,19 @@ public class LddEsJsonWriter
         ddRec.attrName = dda.attrName;
         
         ddRec.dataType = dda.dataType;
-        ddRec.esDataType = dtMap.getEsDataType(dda.dataType);
-        
-        ddRec.description = dda.description;
-
-        // Write
-        writer.write(ddRec.esFieldNameFromComponents(), ddRec);
+        try {
+          ddRec.esDataType = dtMap.getEsDataType(dda.dataType);
+          ddRec.description = dda.description;
+          writer.write(ddRec.esFieldNameFromComponents(), ddRec);
     
-        // Fix wrong attribute namespace
-        if(!classNs.equals(dda.attrNs))
-        {
+          // Fix wrong attribute namespace
+          if(!classNs.equals(dda.attrNs))
+          {
             ddRec.attrNs = classNs;
             writer.write(ddRec.esFieldNameFromComponents(), ddRec);
+          }
+        } catch (DataTypeNotFoundException e) {
+          log.error("The field '" + dda.attrName + "' will not be searchable because LDD does not contain a type for it (see harvest#204).");
         }
     }
 

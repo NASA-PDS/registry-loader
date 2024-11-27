@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import gov.nasa.pds.registry.common.es.dao.dd.DataTypeNotFoundException;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 
 
@@ -45,7 +45,7 @@ public class Pds2EsDataTypeMap
      * @param pdsType PDS LDD data type
      * @return Elasticsearch data type
      */
-    public String getEsDataType(String pdsType)
+    public String getEsDataType(String pdsType) throws DataTypeNotFoundException
     {
         String esType = map.get(pdsType);
         if(esType != null) return esType;
@@ -64,7 +64,7 @@ public class Pds2EsDataTypeMap
      * @param pdsType PDS data type, e.g., "UTF8_Text_Preserved"
      * @return Elasticsearch data type, e.g., "text".
      */
-    private String guessEsDataType(String pdsType)
+    private String guessEsDataType(String pdsType) throws DataTypeNotFoundException
     {
         pdsType = pdsType.toLowerCase();
         if(pdsType.contains("_real")) return "double";
@@ -74,7 +74,7 @@ public class Pds2EsDataTypeMap
         if(pdsType.contains("_date")) return "date";
         if(pdsType.contains("_boolean")) return "boolean";        
         
-        return "keyword";
+        throw new DataTypeNotFoundException("Could not guess type and not more defaulting to keyword (harvest#204)");
     }
     
     
@@ -100,7 +100,8 @@ public class Pds2EsDataTypeMap
         }
         catch(Exception ex)
         {
-            throw new Exception("Could not open data type configuration file '" + file.getAbsolutePath());
+          if (rd != null) rd.close();
+          throw new Exception("Could not open data type configuration file '" + file.getAbsolutePath());
         }
         
         try
