@@ -27,8 +27,12 @@ class GetRespWrap implements Response.Get {
   }
   @Override
   public IdSets ids() {
-    LidvidSet result = new LidvidSet(null,null);
-    if (true) throw new NotImplementedException("Need to fill this out when have a return value");
+    IdSetsImpl result = new IdSetsImpl();
+    if (this.parent.source() != null) {
+      HashMap<String,List<String>> src = (HashMap<String,List<String>>)this.parent.source();
+      if (src.containsKey("ref_lid_collection")) result.lids.addAll(src.get("ref_lid_collection"));
+      if (src.containsKey("ref_lidvid_collection")) result.lids.addAll(src.get("ref_lidvid_collection"));
+    }
     return result;
   }
   @Override
