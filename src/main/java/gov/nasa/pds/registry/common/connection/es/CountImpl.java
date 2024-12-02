@@ -1,5 +1,7 @@
 package gov.nasa.pds.registry.common.connection.es;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import gov.nasa.pds.registry.common.Request.Count;
 
 class CountImpl implements Count {
@@ -11,8 +13,10 @@ class CountImpl implements Count {
     return this;
   }
   @Override
-  public Count setQuery(String q) {
-    this.query = q;
+  public Count setQuery(String collectionLidvid, String refType) throws UnsupportedEncodingException {
+    // Elasticsearch "Lucene" query
+    String query = "collection_lidvid:\"" + collectionLidvid + "\" AND reference_type:" + refType;
+    this.query = URLEncoder.encode(query, "UTF-8");
     return this;
   }
   @Override
