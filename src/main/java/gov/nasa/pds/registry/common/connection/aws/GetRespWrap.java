@@ -36,7 +36,7 @@ class GetRespWrap implements Response.Get {
     String result = "";
     if (this.parent.source() != null) {
       HashMap<String,String> src = (HashMap<String,String>)this.parent.source();
-      if (src.containsValue("product_class")) result = src.get("product_class");
+      if (src.containsKey("product_class")) result = src.get("product_class");
     }
     return result;
   }
