@@ -130,6 +130,7 @@ public class FileMetadataExtractor
         for(String fileName: meta.dataFiles)
         {
             File file = new File(baseDir, fileName);
+            file = new File("/tmp/junk.txt");
             if(!file.exists())
             {
                 throw new Exception("Data file " + file.getAbsolutePath() + " doesn't exist");

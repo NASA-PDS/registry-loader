@@ -159,7 +159,7 @@ class SearchImpl implements Search {
         .mustNot(new Query.Builder().term(new TermQuery.Builder()
             .field(noFieldname)
             .value(new FieldValue.Builder().stringValue(noValue).build()).build()).build());
-    this.craftsman.query(new Query.Builder().bool(journeyman.build()).build());   
+    this.craftsman.query(new Query.Builder().bool(journeyman.build()).build()).size(1000);   
     return this;
   }
   @Override
