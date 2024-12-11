@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.NotImplementedException;
+import org.opensearch.client.json.JsonData;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch._types.aggregations.StringTermsBucket;
@@ -71,7 +72,11 @@ class SearchRespWrap implements Response.Search {
   @Override
   public List<String> latestLidvids() {
     ArrayList<String> lidvids = new ArrayList<String>();
-    if (true) throw new NotImplementedException("Need to fill this out when have a return value");
+    if (this.parent.aggregations() != null) {
+      for (Hit<JsonData> hit : this.parent.aggregations().get("latest").topHits().hits().hits()) {
+        lidvids.add(hit.id());
+      }
+    }
     return lidvids;
   }
   @Override

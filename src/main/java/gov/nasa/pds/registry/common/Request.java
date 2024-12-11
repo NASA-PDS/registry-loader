@@ -1,5 +1,6 @@
 package gov.nasa.pds.registry.common;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 import gov.nasa.pds.registry.common.util.Tuple;
@@ -14,7 +15,7 @@ public interface Request {
   }
   public interface Count { // _count
     public Count setIndex (String name);
-    public Count setQuery (String q);
+    public Count setQuery (String collectionLidvid, String refType) throws UnsupportedEncodingException ;
   }
   public interface Delete { // -X DELETE _doc
     public Delete setDocId(String id);

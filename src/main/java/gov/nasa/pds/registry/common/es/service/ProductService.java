@@ -43,8 +43,9 @@ public class ProductService
      */
     public void updateArchiveStatus(String lidvid, String status) throws Exception
     {
-        log.info("Setting product status. LIDVID = " + lidvid + ", status = " + status);
-        
+        log.info("Setting product status and its references if bundle or collection. LIDVID = " + lidvid + ", status = " + status);
+        int total = 1;
+
         String pClass = dao.getProductClass(lidvid);
         if(pClass == null) 
         {
@@ -59,7 +60,7 @@ public class ProductService
         if("Product_Collection".equals(pClass))
         {
             log.info("Setting status of primary references from collection inventory");
-            updateCollectionInventory(lidvid, status);            
+            total += updateCollectionInventory(lidvid, status);            
         }
         else if("Product_Bundle".equals(pClass))
         {
@@ -73,35 +74,38 @@ public class ProductService
             List<String> tmp = dao.getLatestLidVids(collectionIds.lids);
             if(tmp != null) lidvids.addAll(tmp);
 
-            updateCollections(lidvids, status);
+            total += updateCollections(lidvids, status);
         }
+        log.info("Updated a total of " + total + " products.");
     }
     
     
-    private void updateCollections(Collection<String> lidvids, String status) throws Exception
+    private int updateCollections(Collection<String> lidvids, String status) throws Exception
     {
-        if(lidvids == null || lidvids.isEmpty() || status == null) return;
-        
+        if(lidvids == null || lidvids.isEmpty() || status == null) return 0;
+        int total = lidvids.size();
+
         // Update collections
         dao.updateArchiveStatus(lidvids, status);
         
         // Update products
         for(String lidvid: lidvids)
         {
-            updateCollectionInventory(lidvid, status);
+            total += updateCollectionInventory(lidvid, status);
         }
+        return total;
     }
     
     
-    private void updateCollectionInventory(String lidvid, String status) throws Exception
+    private int updateCollectionInventory(String lidvid, String status) throws Exception
     {
-        int pages = dao.getRefDocCount(lidvid, 'P');
+        int pages = dao.getRefDocCount(lidvid, 'P'), total = 0;
         log.debug("Pages: " + pages);
         
         if(pages == 0)
         {
             log.warn("Collection " + lidvid + " doesn't have primary products.");
-            return;
+            return 0;
         }
 
         // NOTE: Page numbers start from 1
@@ -111,6 +115,8 @@ public class ProductService
             log.debug("Primary refs: " + ids);
             
             dao.updateArchiveStatus(ids, status);
+            total += ids.size();
         }
+        return total;
     }
 }

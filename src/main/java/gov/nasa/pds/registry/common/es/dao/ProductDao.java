@@ -1,6 +1,5 @@
 package gov.nasa.pds.registry.common.es.dao;
 
-import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
 import gov.nasa.pds.registry.common.Request;
@@ -92,14 +91,10 @@ public class ProductDao
             throw new IllegalArgumentException("Invalid type " + type);
         }
         
-        // Elasticsearch "Lucene" query
-        String query = "collection_lidvid:\"" + collectionLidVid + "\" AND reference_type:" + strType;
-        query = URLEncoder.encode(query, "UTF-8");
-        
         // Request URL
         Request.Count req = client.createCountRequest()
             .setIndex(this.indexName + "-refs")
-            .setQuery(query);
+            .setQuery(collectionLidVid, strType);
         try
         {
             return (int)client.performRequest(req);

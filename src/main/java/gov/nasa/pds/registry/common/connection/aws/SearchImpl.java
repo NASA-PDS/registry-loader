@@ -9,6 +9,7 @@ import org.opensearch.client.opensearch._types.SortOptions;
 import org.opensearch.client.opensearch._types.SortOrder;
 import org.opensearch.client.opensearch._types.aggregations.Aggregation;
 import org.opensearch.client.opensearch._types.aggregations.TermsAggregation;
+import org.opensearch.client.opensearch._types.aggregations.TopHitsAggregation;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
 import org.opensearch.client.opensearch._types.query_dsl.FieldAndFormat;
 import org.opensearch.client.opensearch._types.query_dsl.IdsQuery;
@@ -56,10 +57,16 @@ class SearchImpl implements Search {
     for (String lid : lids) {
       terms.add(new FieldValue.Builder().stringValue(lid).build());
     }
-    // FIXME: need to work out aggregates
-    // this.craftsman.aggregations("latest", );
+    Aggregation journeyman = new Aggregation.Builder()
+        .terms(new TermsAggregation.Builder().field("lid").size(5000).build()).build(); // size is hardcoded in JsonHelper:94
+    this.craftsman.aggregations("lids", journeyman);
+    journeyman = new Aggregation.Builder()
+        .topHits(new TopHitsAggregation.Builder()
+            .sort(new SortOptions.Builder()
+                .field(new FieldSort.Builder().field("lid").order(SortOrder.Desc).build()).build()).build()).build();
+    this.craftsman.aggregations("latest", journeyman);
     this.craftsman.query(new Query.Builder().terms(new TermsQuery.Builder().field("lid").terms(new TermsQueryField.Builder().value(terms).build()).build()).build());
-    this.craftsman.size(0);
+    this.craftsman.size(1);
     this.craftsman.source(new SourceConfig.Builder().fetch(false).build());
     return this;
   }
@@ -152,7 +159,7 @@ class SearchImpl implements Search {
         .mustNot(new Query.Builder().term(new TermQuery.Builder()
             .field(noFieldname)
             .value(new FieldValue.Builder().stringValue(noValue).build()).build()).build());
-    this.craftsman.query(new Query.Builder().bool(journeyman.build()).build());   
+    this.craftsman.query(new Query.Builder().bool(journeyman.build()).build()).size(1000);   
     return this;
   }
   @Override
