@@ -226,7 +226,7 @@ public class RegistryManagerCli
         }
         catch(ParseException ex)
         {
-            System.out.println("[ERROR] " + ex.getMessage());
+            System.out.println("[ERROR] " + ExceptionUtils.getMessage(ex));
             return false;
         }
     }
