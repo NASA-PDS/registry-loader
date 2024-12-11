@@ -95,7 +95,7 @@ public class SchemaUpdater
             if(newFields != null)
             {
                 schemaDao.updateSchema(newFields);
-                log.info("Updated " + newFields.size() + " fields in OpenSearch mapping for index " + this.index);
+                log.debug("Updated " + newFields.size() + " fields in OpenSearch mapping for index " + this.index);
             }
         }
     }
