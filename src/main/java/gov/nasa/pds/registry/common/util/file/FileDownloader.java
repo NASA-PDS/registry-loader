@@ -5,9 +5,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import javax.net.ssl.SSLContext;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.config.Registry;
@@ -148,7 +149,11 @@ public class FileDownloader
 
             BasicHttpClientConnectionManager connectionManager = new BasicHttpClientConnectionManager(sfRegistry);
             
-            HttpClientBuilder clientBld = HttpClients.custom();
+            HttpClientBuilder clientBld = HttpClients
+                .custom()
+                .setDefaultRequestConfig(RequestConfig.custom()
+                    .setCookieSpec(CookieSpecs.STANDARD)
+                    .build());
             clientBld.setSSLSocketFactory(sslsf);
             clientBld.setConnectionManager(connectionManager);
             
