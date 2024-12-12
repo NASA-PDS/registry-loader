@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.common.connection.aws;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -96,7 +97,15 @@ class SearchRespWrap implements Response.Search {
   @Override
   public List<LddInfo> ldds() throws UnsupportedOperationException, IOException {
     ArrayList<LddInfo> results = new ArrayList<LddInfo>();
-    if (true) throw new NotImplementedException("Need to fill this out when have a return value");
+    if (parent.hits() != null) {
+      for (Hit<Object> hit : parent.hits().hits()) {
+        LddInfo item = new LddInfo();
+        Map<String,String> src = (Map<String,String>)hit.source();
+        item.namespace = src.get("attr_name");
+        item.date = Instant.parse(src.get("date"));
+        results.add(item);
+      }
+    }
     return results;
   }
   @Override
