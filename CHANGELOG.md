@@ -1,12 +1,19 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-12-11)
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-12-12)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.3...«unknown»)
 
+**Requirements:**
+
+- As a user, I want to update a bundle and associated collections' and products' archive status given a bundle lidvid [\#112](https://github.com/NASA-PDS/registry-mgr/issues/112)
+- As a user, I want to change the archive status for a collection and it's associated products given a collection lidvid [\#113](https://github.com/NASA-PDS/registry-mgr/issues/113)
+
 **Defects:**
 
+- `Missing required property 'FieldValue.<variant value>'` error when running with `list-dd` command [\#121](https://github.com/NASA-PDS/registry-mgr/issues/121) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
 - registry-mgr return ERROR null [\#111](https://github.com/NASA-PDS/registry-mgr/issues/111) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
+- archive status does not change for all bundle members [\#109](https://github.com/NASA-PDS/registry-mgr/issues/109) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
 
 ## [v5.0.3](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.3) (2024-11-12)
 
