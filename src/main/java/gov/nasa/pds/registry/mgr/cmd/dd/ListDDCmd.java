@@ -34,11 +34,16 @@ public class ListDDCmd implements CliCommand
             return;
         }
 
-        String url = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
         String authFile = cmdLine.getOptionValue("auth");
-        
         String namespace = cmdLine.getOptionValue("ns");
-        
+        String url = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
+
+        if (authFile == null || authFile.isBlank()) {
+          throw new IllegalArgumentException("missing argument: -auth must be given");
+        }
+        if (namespace == null || namespace.isBlank()) {
+          throw new IllegalArgumentException("missing argument: -ns must be given");         
+        }
         try
         {
             RegistryManager.init(url, authFile);
