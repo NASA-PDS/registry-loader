@@ -1,6 +1,6 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-12-12)
+## [«unknown»](https://github.com/NASA-PDS/registry-mgr/tree/«unknown») (2024-12-16)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.3...«unknown»)
 
@@ -12,6 +12,7 @@
 **Defects:**
 
 - `Missing required property 'FieldValue.<variant value>'` error when running with `list-dd` command [\#121](https://github.com/NASA-PDS/registry-mgr/issues/121) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
+- set-archive-status does not update the same number of products each time with packageId argument [\#115](https://github.com/NASA-PDS/registry-mgr/issues/115) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
 - registry-mgr return ERROR null [\#111](https://github.com/NASA-PDS/registry-mgr/issues/111) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
 - archive status does not change for all bundle members [\#109](https://github.com/NASA-PDS/registry-mgr/issues/109) [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
 
