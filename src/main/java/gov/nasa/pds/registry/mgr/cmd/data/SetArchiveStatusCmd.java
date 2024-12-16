@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.mgr.cmd.data;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import gov.nasa.pds.registry.common.ConnectionFactory;
@@ -58,18 +59,18 @@ public class SetArchiveStatusCmd implements CliCommand {
             
             if (pid == null) srv.updateArchiveStatus(lidvid, status);
             if (lidvid ==  null) {
-              long total = 0;
+              HashSet<String> total = new HashSet<String>();
               List<String> lidvids;
               do {
-                Thread.sleep(1000); // account for lack of refresh on serverless
+                if (!total.isEmpty()) Thread.sleep(1000); // account for lack of refresh on serverless
                 lidvids = client.performRequest(client.createSearchRequest()
                     .setIndex(conFact.getIndexName())
                     .buildTermQueryWithoutTermQuery("_package_id", pid, Metadata.FLD_ARCHIVE_STATUS, status)
                     .setReturnedFields(Arrays.asList("lidvid"))).lidvids();
-                total += lidvids.size();
+                total.addAll(lidvids);
                 srv.updateArchiveStatus (lidvids, status);
               } while (lidvids.size() > 0);
-              System.out.println ("updated " + total + " documents associated with package ID " + pid);
+              System.out.println ("updated " + total.size() + " documents associated with package ID " + pid);
             }
         }
         catch(ResponseException ex)
