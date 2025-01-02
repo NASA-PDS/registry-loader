@@ -1,7 +1,6 @@
 package gov.nasa.pds.registry.common.connection.es;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -367,8 +366,7 @@ class JsonHelper {
 
   static long findCount (HttpEntity entity) {
     long count = 0;
-    try (InputStream is = entity.getContent()) {
-      JsonReader rd = new JsonReader(new InputStreamReader(is));  
+    try (JsonReader rd = new JsonReader(new InputStreamReader (entity.getContent()))) {
       rd.beginObject();
       while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT) {
         String name = rd.nextName();

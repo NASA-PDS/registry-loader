@@ -1,7 +1,6 @@
 package gov.nasa.pds.registry.common.connection.es;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
@@ -96,8 +95,7 @@ class BulkRespImpl implements Response.Bulk {
   @Override
   public void logErrors() {
     BulkResponseParser parser = new BulkResponseParser();
-    try (InputStream is = this.response.getEntity().getContent()) {
-      InputStreamReader reader = new InputStreamReader(is);
+    try (InputStreamReader reader = new InputStreamReader(this.response.getEntity().getContent())) {
       parser.parse(reader);
     } catch (UnsupportedOperationException | IOException e) {
       throw new RuntimeException("Some weird JSON parsing exception and should never get here.");

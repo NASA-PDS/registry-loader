@@ -1,7 +1,6 @@
 package gov.nasa.pds.registry.common.connection.es;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -122,9 +121,9 @@ class SearchRespImpl implements Response.Search {
   }
   @Override
   public List<String> latestLidvids() {
-    try (InputStream is = this.response.getEntity().getContent()) {
+    try (InputStreamReader isr = new InputStreamReader (this.response.getEntity().getContent())) {
       LatestLidsResponseParser parser = new LatestLidsResponseParser();
-      parser.parse(new InputStreamReader(is));
+      parser.parse(isr);
       return parser.getLidvids();
     } catch (UnsupportedOperationException | IOException e) {
       throw new RuntimeException("Weird JSON parsing error and should never get here");
