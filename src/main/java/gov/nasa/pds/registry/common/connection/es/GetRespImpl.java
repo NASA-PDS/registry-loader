@@ -1,7 +1,6 @@
 package gov.nasa.pds.registry.common.connection.es;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +67,7 @@ class GetRespImpl implements Response.Get {
   }
   @Override
   public String productClass() {
-    try (InputStream is = this.response.getEntity().getContent()) {
-      JsonReader rd = new JsonReader(new InputStreamReader(is));
+    try (JsonReader rd = new JsonReader(new InputStreamReader(this.response.getEntity().getContent()))) {
       rd.beginObject();
       while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT) {
         String name = rd.nextName();
@@ -87,8 +85,7 @@ class GetRespImpl implements Response.Get {
   }
   @Override
   public List<String> refs() {
-    try (InputStream is = this.response.getEntity().getContent()) {
-      JsonReader rd = new JsonReader(new InputStreamReader(is));
+    try (JsonReader rd = new JsonReader(new InputStreamReader(this.response.getEntity().getContent()))) {
       rd.beginObject();
       while(rd.hasNext() && rd.peek() != JsonToken.END_OBJECT) {
         String name = rd.nextName();
@@ -107,8 +104,7 @@ class GetRespImpl implements Response.Get {
   @Override
   public IdSets ids() {
     LidvidSet collectionIds = null;
-    try (InputStream is = this.response.getEntity().getContent()) {
-      JsonReader rd = new JsonReader(new InputStreamReader(is));
+    try (JsonReader rd = new JsonReader(new InputStreamReader(this.response.getEntity().getContent()))) {
       rd.beginObject();
       while (rd.hasNext() && rd.peek() != JsonToken.END_OBJECT) {
         String name = rd.nextName();
