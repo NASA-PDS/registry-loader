@@ -43,7 +43,6 @@ public class DeleteDataCmd implements CliCommand
 
 
         System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println(filterMessage);
         System.out.println();
                 
         ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
