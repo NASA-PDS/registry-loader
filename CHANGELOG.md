@@ -1,8 +1,21 @@
 # Changelog
 
-## [release/5.0.4](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.4) (2024-12-19)
+## [5.0.3](https://github.com/NASA-PDS/registry-mgr/tree/5.0.3) (2025-01-10)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.3...release/5.0.4)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.4...5.0.3)
+
+**Improvements:**
+
+- Quiet SLF4J log message from end user [\#117](https://github.com/NASA-PDS/registry-mgr/issues/117)
+
+**Defects:**
+
+- Getting null message in log with option packageId [\#124](https://github.com/NASA-PDS/registry-mgr/issues/124) [[s.low](https://github.com/NASA-PDS/registry-mgr/labels/s.low)]
+- Unable to update archive status of a lidvid in the registry [\#107](https://github.com/NASA-PDS/registry-mgr/issues/107) [[s.critical](https://github.com/NASA-PDS/registry-mgr/labels/s.critical)]
+
+## [v5.0.4](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.4) (2024-12-19)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.3...v5.0.4)
 
 **Requirements:**
 
