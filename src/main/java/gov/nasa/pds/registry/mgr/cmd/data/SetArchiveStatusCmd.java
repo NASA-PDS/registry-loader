@@ -39,7 +39,7 @@ public class SetArchiveStatusCmd implements CliCommand {
             return;
         }
 
-        String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
+        String esUrl = CliCommand.getUsersRegistry(cmdLine);
         String authPath = cmdLine.getOptionValue("auth");
         
         String status = getStatus(cmdLine);
@@ -123,7 +123,8 @@ public class SetArchiveStatusCmd implements CliCommand {
         "                  For a collection also update primary references from collection inventory.");
     System.out.println("Optional parameters:");
     System.out.println("  -auth <file>    Authentication config file");
-    System.out.println("  -es <url>       Elasticsearch URL. Default is http://localhost:9200");
+    System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
+    System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
     System.out.println();
   }
 

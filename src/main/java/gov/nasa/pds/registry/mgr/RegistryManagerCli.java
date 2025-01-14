@@ -274,6 +274,8 @@ public class RegistryManagerCli
         
         bld = Option.builder("es").hasArg().argName("url");
         options.addOption(bld.build());
+        bld = Option.builder("registry").hasArg().argName("url");
+        options.addOption(bld.build());
 
         bld = Option.builder("auth").hasArg().argName("file");
         options.addOption(bld.build());

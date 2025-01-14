@@ -39,7 +39,7 @@ public class DeleteDDCmd implements CliCommand
             return;
         }
 
-        esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
+        esUrl = CliCommand.getUsersRegistry(cmdLine);
         authPath = cmdLine.getOptionValue("auth");
         this.conFact = EstablishConnectionFactory.from(esUrl, authPath);
         String id = cmdLine.getOptionValue("id");
@@ -112,7 +112,8 @@ public class DeleteDDCmd implements CliCommand
         System.out.println("  -ns <namespace>   Delete data by namespace");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -es <url>         Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
+        System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
+        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
         System.out.println();
     }
 

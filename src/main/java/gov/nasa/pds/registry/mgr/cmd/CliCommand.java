@@ -17,4 +17,13 @@ public interface CliCommand
      * @throws Exception an exception
      */
     public void run(CommandLine cmdLine) throws Exception;
+    public static String getUsersRegistry (CommandLine cmdLine) {
+      if (cmdLine.hasOption("registry")) {
+        return cmdLine.getOptionValue("registry");
+      } else if (cmdLine.hasOption("es")) {
+        return cmdLine.getOptionValue("es");
+      } else {
+        throw new RuntimeException("Must provide -registry on the command line. See usuage for more details.");
+      }
+    }
 }
