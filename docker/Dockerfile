@@ -31,8 +31,8 @@
 FROM openjdk:11-slim
 
 # Set following arguments with compatible versions
-ARG harvest_version=4.0.4
-ARG reg_manager_version=5.0.3
+ARG harvest_version=4.0.5
+ARG reg_manager_version=5.0.4
 ARG test_data_url=https://pds.nasa.gov/data/pds4/test-data/registry/custom-datasets.tar.gz
 
 
@@ -60,6 +60,8 @@ ENV PATH="$PATH:/opt/registry-manager/bin"
 # Copy test data config file \
 RUN  mkdir -p /test/cfg
 COPY ./test/cfg/harvest-test-config.xml /test/cfg/harvest-config.xml
+COPY ./test/cfg/connection.xml /test/cfg/connection.xml
+COPY ./test/cfg/es-auth.cfg /test/cfg/es-auth.cfg
 
 # Entry point
 COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh

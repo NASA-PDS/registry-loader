@@ -42,8 +42,8 @@
 
 # Update the following environment variables before executing this script
 
-# Elasticsearch URL (E.g.: https://192.168.0.1:9200)
-ES_URL=https://<HOST NAME OR IP ADDRESS>:9200
+# Elasticsearch connection file
+ES_URL=file:///test/cfg/connection.xml
 
 # Absolute path of the Harvest job configuration file in the host machine (E.g.: /tmp/cfg/harvest-job-config.xml)
 HARVEST_CFG_FILE=/tmp/cfg/harvest-job-config.xml
