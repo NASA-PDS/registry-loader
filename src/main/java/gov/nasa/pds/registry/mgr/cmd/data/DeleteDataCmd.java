@@ -18,9 +18,6 @@ import gov.nasa.pds.registry.mgr.cmd.CliCommand;
  */
 public class DeleteDataCmd implements CliCommand
 {
-    private String filterMessage;
-
-    
     /**
      * Constructor
      */
@@ -38,7 +35,7 @@ public class DeleteDataCmd implements CliCommand
             return;
         }
 
-        String esUrl = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
+        String esUrl = CliCommand.getUsersRegistry(cmdLine);
         String authPath = cmdLine.getOptionValue("auth");
 
 
@@ -89,7 +86,6 @@ public class DeleteDataCmd implements CliCommand
         String id = cmdLine.getOptionValue("lidvid");
         if(id != null)
         {
-            this.filterMessage = "           LIDVID: " + id;
             regQuery.createFilterQuery("lidvid", id);
             refsQuery.createFilterQuery("collection_lidvid", id);
             return;
@@ -98,7 +94,6 @@ public class DeleteDataCmd implements CliCommand
         id = cmdLine.getOptionValue("packageId");
         if(id != null)
         {
-            this.filterMessage = "       Package ID: " + id;
             regQuery.createFilterQuery("_package_id", id);
             refsQuery.createFilterQuery("_package_id", id);
             
@@ -122,7 +117,8 @@ public class DeleteDataCmd implements CliCommand
         System.out.println("  -all              Delete all data");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -es <url>         Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
+        System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
+        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
         System.out.println();
     }
 

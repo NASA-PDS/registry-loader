@@ -36,7 +36,7 @@ public class ListDDCmd implements CliCommand
 
         String authFile = cmdLine.getOptionValue("auth");
         String namespace = cmdLine.getOptionValue("ns");
-        String url = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
+        String url = CliCommand.getUsersRegistry(cmdLine);
 
         if (authFile == null || authFile.isBlank()) {
           throw new IllegalArgumentException("missing argument: -auth must be given");
@@ -80,7 +80,8 @@ public class ListDDCmd implements CliCommand
         System.out.println();
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -es <url>         Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
+        System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
+        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -ns <namespace>   LDD namespace. Can be used with -dd parameter.");        
         System.out.println();
     }

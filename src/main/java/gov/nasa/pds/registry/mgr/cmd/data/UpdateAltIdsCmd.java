@@ -47,7 +47,7 @@ public class UpdateAltIdsCmd implements CliCommand
             printHelp();
             return;
         }
-        String url = cmdLine.getOptionValue("es", "app:/connections/direct/localhost.xml");
+        String url = CliCommand.getUsersRegistry(cmdLine);
         String authFile = cmdLine.getOptionValue("auth");
         String filePath = cmdLine.getOptionValue("file");
         if(filePath == null) throw new Exception("Missing required parameter '-file'");
@@ -167,7 +167,8 @@ public class UpdateAltIdsCmd implements CliCommand
         System.out.println("  -file <path>      CSV file with the list of IDs");
         System.out.println("Optional parameters:");
         System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -es <url>         Elasticsearch URL. Default is app:/connections/direct/localhost.xml");
+        System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
+        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
         System.out.println();
     }
 
