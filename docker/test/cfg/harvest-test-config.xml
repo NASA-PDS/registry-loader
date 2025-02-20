@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<harvest nodeName="PDS_ENG">
-  <directories>
-    <path>/data</path>
-  </directories>
-  <registry url="https://elasticsearch:9200" index="registry" auth="/etc/es-auth.cfg" />
+<harvest>
+   <registry auth="/test/cfg/es-auth.cfg">file:///test/cfg/connection.xml</registry>
+   <load>
+    <directories>
+      <path>/data</path>
+    </directories>
+  </load>
   <fileInfo>
     <!-- UPDATE with your own local path and base url where pds4 archive is published -->
     <fileRef replacePrefix="/data" with="http://localhost:81/archive" />
