@@ -97,7 +97,7 @@ jobs:
                     context: ./docker
                     file: ./docker/Dockerfile
                     platforms: linux/amd64
-		    # ,linux/arm64
+        		    # ,linux/arm64
                     push: true
                     tags: ${{secrets.DOCKERHUB_USERNAME}}/registry-loader:latest
 
