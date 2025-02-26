@@ -95,6 +95,9 @@ jobs:
                 name: 🚢 Docker Buildx
                 uses: docker/setup-buildx-action@v2
             -
+                name: Fix issue with QEMU
+                run: docker container run --rm --privileged multiarch/qemu-user-static --reset -p yes -c yes
+            -
                 name: 🧱 Image Construction and Publication
                 uses: docker/build-push-action@v3
                 with:
