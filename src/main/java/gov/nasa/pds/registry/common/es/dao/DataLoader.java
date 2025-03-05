@@ -243,6 +243,7 @@ public class DataLoader
               // NOTE: data list has two lines per record (primary key + data)
               loadedCount += data.size() / 2 - failedCount;
               queued = 0;
+              bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
             }
           }
           if (queued > 0) {
