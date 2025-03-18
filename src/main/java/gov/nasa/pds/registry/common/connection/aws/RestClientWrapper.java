@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+
 import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
@@ -82,7 +84,7 @@ public class RestClientWrapper implements RestClient {
   private OpenSearchClient client;
   public RestClientWrapper(ConnectionFactory conFact, boolean isServerless) {
     this.conFact = conFact;
-    this.httpClient = ApacheHttpClient.builder().build();
+    this.httpClient = ApacheHttpClient.builder().socketTimeout(Duration.ofHours(2)).build();
     this.isServerless = isServerless;
     this.log = LogManager.getLogger(this.getClass());
     this.client = this.buildClient();
