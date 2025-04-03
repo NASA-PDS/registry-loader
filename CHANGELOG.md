@@ -1,8 +1,8 @@
 # Changelog
 
-## [5.0.3](https://github.com/NASA-PDS/registry-mgr/tree/5.0.3) (2025-01-10)
+## [5.0.4](https://github.com/NASA-PDS/registry-mgr/tree/5.0.4) (2025-04-03)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.4...5.0.3)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.4...5.0.4)
 
 **Improvements:**
 
@@ -13,9 +13,19 @@
 - Getting null message in log with option packageId [\#124](https://github.com/NASA-PDS/registry-mgr/issues/124) [[s.low](https://github.com/NASA-PDS/registry-mgr/labels/s.low)]
 - Unable to update archive status of a lidvid in the registry [\#107](https://github.com/NASA-PDS/registry-mgr/issues/107) [[s.critical](https://github.com/NASA-PDS/registry-mgr/labels/s.critical)]
 
+**Other closed issues:**
+
+- Cleanup registry manager command-line options that do not work [\#128](https://github.com/NASA-PDS/registry-mgr/issues/128)
+- Update description for `-es` flag to make more sense to a novice user [\#125](https://github.com/NASA-PDS/registry-mgr/issues/125)
+- Improve error handling for `document missing` response from OpenSearch [\#133](https://github.com/NASA-PDS/registry-mgr/issues/133)
+
 ## [v5.0.4](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.4) (2024-12-19)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.3...v5.0.4)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/5.0.4...v5.0.4)
+
+## [release/5.0.4](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.4) (2024-12-19)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.3...release/5.0.4)
 
 **Requirements:**
 
