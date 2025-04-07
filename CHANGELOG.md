@@ -1,5 +1,13 @@
 # Changelog
 
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2025-04-07)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.0.1...«unknown»)
+
+**Defects:**
+
+- Continuous integration fails [\#38](https://github.com/NASA-PDS/registry-loader/issues/38) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+
 ## [v1.0.1](https://github.com/NASA-PDS/registry-loader/tree/v1.0.1) (2024-11-22)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v0.4.1...v1.0.1)
