@@ -62,6 +62,7 @@ class SearchImpl implements Search {
     this.craftsman.aggregations("lids", journeyman);
     journeyman = new Aggregation.Builder()
         .topHits(new TopHitsAggregation.Builder()
+            .size(lids.size())
             .sort(new SortOptions.Builder()
                 .field(new FieldSort.Builder().field("lid").order(SortOrder.Desc).build()).build()).build()).build();
     this.craftsman.aggregations("latest", journeyman);
