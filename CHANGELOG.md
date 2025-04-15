@@ -1,8 +1,16 @@
 # Changelog
 
-## [release/5.0.5](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.5) (2025-04-03)
+## [5.0.4](https://github.com/NASA-PDS/registry-mgr/tree/5.0.4) (2025-04-15)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.4...release/5.0.5)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.5...5.0.4)
+
+**Defects:**
+
+- registry-manager does not process \_all\_ collections in a bundle [\#131](https://github.com/NASA-PDS/registry-mgr/issues/131) [[s.medium](https://github.com/NASA-PDS/registry-mgr/labels/s.medium)] [[s.high](https://github.com/NASA-PDS/registry-mgr/labels/s.high)]
+
+## [v5.0.5](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.5) (2025-04-07)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.4...v5.0.5)
 
 **Improvements:**
 
