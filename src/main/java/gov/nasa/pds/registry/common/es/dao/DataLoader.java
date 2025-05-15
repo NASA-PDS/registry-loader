@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -32,6 +34,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
 public class DataLoader
 {
   final private int SIZE_THRESHOLD = 30*1024*1024; // 30 MB
+  final private int MAX_RETRY = 75;
     private int defaultRequestRetries = 5;
     private int printProgressSize = 500;
     private int batchSize = 100;
@@ -231,25 +234,20 @@ public class DataLoader
           int failedCount = 0;
           int loadedCount = 0;
           int queued = 0;
-          Request.Bulk bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
+          HashMap<String,String> queue = new HashMap<String,String>();
           for (int index = 0 ; index < data.size() ; index++) {
             queued += data.get(index).length() + data.get(index+1).length();
-            bulk.add(data.get(index), data.get(++index));
+            queue.put(data.get(index), data.get(++index));
             if (queued > SIZE_THRESHOLD) {
-              Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
-              // Check for Elasticsearch errors.
-              failedCount += processErrors(response, errorLidvids);
+              failedCount += emptyQueue(queue, errorLidvids);
               // Calculate number of successfully saved records
               // NOTE: data list has two lines per record (primary key + data)
               loadedCount += data.size() / 2 - failedCount;
               queued = 0;
-              bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
             }
           }
           if (queued > 0) {
-            Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
-            // Check for Elasticsearch errors.
-            failedCount += processErrors(response, errorLidvids);
+            failedCount += emptyQueue(queue, errorLidvids);
             // Calculate number of successfully saved records
             // NOTE: data list has two lines per record (primary key + data)
             loadedCount += data.size() / 2 - failedCount;
@@ -268,24 +266,30 @@ public class DataLoader
                 return loadBatch(data, errorLidvids, retries - 1);
             }
             throw ex;
-/*
-            // Get HTTP response code
-            int respCode = getResponseCode(con);
-            if(respCode <= 0) throw ex;
-
-            // Try extracting JSON from multi-line error response (last line)
-            String json = DaoUtils.getLastLine(con.getErrorStream());
-            if(json == null) throw ex;
-
-            // Parse error JSON to extract reason.
-            String msg = SearchResponseParser.extractReasonFromJson(json);
-            if(msg == null) msg = json;
-
-            throw new Exception(msg);
-            */
         }
     }
 
+    private int emptyQueue (HashMap<String,String> todo, Set<String> errorLidvids) throws Exception {
+      int failed = 0, retry = 0;
+      while (!todo.isEmpty() && retry < MAX_RETRY) {
+        Request.Bulk bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
+        for (String key : todo.keySet()) {
+          bulk.add(key, todo.get(key));
+        }
+        Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
+        failed += processErrors (response, errorLidvids, todo, retry);
+        retry++;
+        
+        if (!todo.isEmpty()) {
+          try {
+            Thread.sleep((300 + (int)(Math.random()*150))*1000); // 5 to 7.5 minutes
+          } catch (InterruptedException e) {
+            // Tried to wait but nothing to be done if cannot
+          }
+        }
+      }
+      return failed;
+    }
 
     /**
      * Load data into Elasticsearch
@@ -298,23 +302,40 @@ public class DataLoader
         return loadBatch(data, null);
     }
 
-    private int processErrors(Response.Bulk resp, Set<String> errorLidvids) {
+    private int processErrors(Response.Bulk resp, Set<String> errorLidvids, HashMap<String,String> todo, int retry) {
       int numErrors = 0;
+      HashSet<String> clear = new HashSet<String>();
+
       if (resp.errors()) {
         for (Response.Bulk.Item item : resp.items()) {
           if (item.error()) {
-            if (item.operation() == "create" && item.status() == 409) {
+            if (item.operation() == "create" && item.status() == 409) { // already exists
+              clear.add(item.id());
               numErrors++;
             } else {
               String message = item.reason();
               String sanitizedLidvid = item.id().replace('\r', ' ').replace('\n', ' ');  // protect vs log spoofing see code-scanning alert #37
               String sanitizedMessage = message.replace('\r', ' ').replace('\n', ' '); // protect vs log spoofing
+              
+              if ((message.contains("[throttled]") || message.contains("[maximum OCU capacity reached]")) && retry < MAX_RETRY) continue;
+              
               log.error("LIDVID = " + sanitizedLidvid + ", Message = " + sanitizedMessage);
               numErrors++;
-              if(errorLidvids != null) errorLidvids.add(item.id());              
+              clear.add(item.id());
+              if(errorLidvids != null) errorLidvids.add(item.id());            
             }
+          } else {
+            clear.add(item.id());
           }
         }
+        HashMap<String,String> temp = new HashMap<String,String>(todo);
+        for (String id : clear) {
+          for (String key : temp.keySet()) {
+            if (key.contains(id)) todo.remove(key);
+          }
+        }
+      } else {
+        todo.clear();
       }
       return numErrors;
     }

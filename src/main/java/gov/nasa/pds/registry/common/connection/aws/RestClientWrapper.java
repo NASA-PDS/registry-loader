@@ -72,8 +72,8 @@ public class RestClientWrapper implements RestClient {
               retries++;
             }
           } else {
-            LogManager.getLogger(this.getClass()).error("OSE status code: " + ose.response.status());
-            LogManager.getLogger(this.getClass()).error("OSE message: " + ose.reason());
+            LogManager.getLogger(this.getClass()).error("OSE message: " + ose.getMessage() +
+                "{ status code = " + ose.status() + " }");
             throw ose;
           }
         }
