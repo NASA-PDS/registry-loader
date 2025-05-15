@@ -61,8 +61,9 @@ public class RestClientWrapper implements RestClient {
               throw ose;
             }
           } else if (ose.response().status() == 429) {
-            int secondsDelay = 10 * (2^retries) - 10 + (int)(new Random().nextInt(5));
-            if (secondsDelay > 300) secondsDelay = 300 + (int)(new Random().nextInt(150));
+            Random random = new Random();
+            int secondsDelay = 10 * (2^retries) - 10 + (random.nextInt(5));
+            if (secondsDelay > 300) secondsDelay = 300 + (random.nextInt(150));
             try {
               Thread.sleep(secondsDelay*1000); // seconds to milliseconds
             } catch (InterruptedException e) {
