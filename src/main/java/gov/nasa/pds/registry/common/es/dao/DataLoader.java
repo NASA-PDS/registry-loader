@@ -283,7 +283,8 @@ public class DataLoader
         
         if (!todo.isEmpty()) {
           try {
-            Thread.sleep((300 + new Random().nextInt(150))*1000); // 5 to 7.5 minutes
+            Random random = new Random();
+            Thread.sleep((300 + random.nextInt(150))*1000); // 5 to 7.5 minutes
           } catch (InterruptedException e) {
             // Tried to wait but nothing to be done if cannot
           }
