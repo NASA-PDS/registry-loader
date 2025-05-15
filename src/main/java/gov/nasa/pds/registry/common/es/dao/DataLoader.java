@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -282,7 +283,7 @@ public class DataLoader
         
         if (!todo.isEmpty()) {
           try {
-            Thread.sleep((300 + (int)(Math.random()*150))*1000); // 5 to 7.5 minutes
+            Thread.sleep((300 + new Random().nextInt(150))*1000); // 5 to 7.5 minutes
           } catch (InterruptedException e) {
             // Tried to wait but nothing to be done if cannot
           }

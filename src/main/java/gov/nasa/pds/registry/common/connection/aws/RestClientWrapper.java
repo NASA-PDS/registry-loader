@@ -5,7 +5,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
-
+import java.util.Random;
 import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
@@ -61,8 +61,8 @@ public class RestClientWrapper implements RestClient {
               throw ose;
             }
           } else if (ose.response().status() == 429) {
-            int secondsDelay = 10 * (2^retries) - 10 + (int)(Math.random()*5);
-            if (secondsDelay > 300) secondsDelay = 300 + (int)(Math.random()*150);
+            int secondsDelay = 10 * (2^retries) - 10 + (int)(new Random().nextInt(5));
+            if (secondsDelay > 300) secondsDelay = 300 + (int)(new Random().nextInt(150));
             try {
               Thread.sleep(secondsDelay*1000); // seconds to milliseconds
             } catch (InterruptedException e) {
