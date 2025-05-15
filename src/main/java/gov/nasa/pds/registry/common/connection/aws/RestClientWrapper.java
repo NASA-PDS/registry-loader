@@ -46,7 +46,7 @@ public class RestClientWrapper implements RestClient {
   private abstract class Retryable <R,T> {
     abstract public R perform (T arg) throws IOException, ResponseException;
     public R retry (T arg) throws IOException, ResponseException {
-      int retries = 0, retry_limit = 3;
+      int retries = 0, retry_limit = 75;
       while (true) {
         try { return this.perform(arg); }
         catch (OpenSearchException ose) {
@@ -62,6 +62,7 @@ public class RestClientWrapper implements RestClient {
             }
           } else if (ose.response().status() == 429) {
             int secondsDelay = 10 * (2^retries) - 10 + (int)(Math.random()*5);
+            if (secondsDelay > 300) secondsDelay = 300 + (int)(Math.random()*150);
             try {
               Thread.sleep(secondsDelay*1000); // seconds to milliseconds
             } catch (InterruptedException e) {
@@ -71,6 +72,8 @@ public class RestClientWrapper implements RestClient {
               retries++;
             }
           } else {
+            LogManager.getLogger(this.getClass()).error("OSE status code: " + ose.response.status());
+            LogManager.getLogger(this.getClass()).error("OSE message: " + ose.reason());
             throw ose;
           }
         }
