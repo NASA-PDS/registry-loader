@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -34,7 +35,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
 public class DataLoader
 {
   final private int SIZE_THRESHOLD = 30*1024*1024; // 30 MB
-  final private int MAX_RETRY = 75;
+  private static final int MAX_RETRY = 75;
     private int defaultRequestRetries = 5;
     private int printProgressSize = 500;
     private int batchSize = 100;
@@ -234,7 +235,7 @@ public class DataLoader
           int failedCount = 0;
           int loadedCount = 0;
           int queued = 0;
-          HashMap<String,String> queue = new HashMap<String,String>();
+          LinkedHashMap<String,String> queue = new LinkedHashMap<String,String>();
           for (int index = 0 ; index < data.size() ; index++) {
             queued += data.get(index).length() + data.get(index+1).length();
             queue.put(data.get(index), data.get(++index));
@@ -269,12 +270,13 @@ public class DataLoader
         }
     }
 
-    private int emptyQueue (HashMap<String,String> todo, Set<String> errorLidvids) throws Exception {
-      int failed = 0, retry = 0;
+    private int emptyQueue (LinkedHashMap<String,String> todo, Set<String> errorLidvids) throws Exception {
+      int failed = 0;
+      int retry = 0;
       while (!todo.isEmpty() && retry < MAX_RETRY) {
         Request.Bulk bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
-        for (String key : todo.keySet()) {
-          bulk.add(key, todo.get(key));
+        for (Map.Entry<String, String> item : todo.entrySet()) {
+          bulk.add(item.getKey(), item.getValue());
         }
         Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
         failed += processErrors (response, errorLidvids, todo, retry);
@@ -306,7 +308,7 @@ public class DataLoader
     private String asKey(Response.Bulk.Item item) {
       return "{\"" + item.operation()+"\":{\"_id\":\"" + item.id()+ "\"}}";
     }
-    private int processErrors(Response.Bulk resp, Set<String> errorLidvids, HashMap<String,String> todo, int retry) {
+    private int processErrors(Response.Bulk resp, Set<String> errorLidvids, LinkedHashMap<String,String> todo, int retry) {
       int numErrors = 0;
 
       if (resp.errors()) {
