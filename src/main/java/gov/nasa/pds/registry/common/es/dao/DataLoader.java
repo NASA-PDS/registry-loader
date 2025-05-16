@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -304,15 +303,17 @@ public class DataLoader
         return loadBatch(data, null);
     }
 
+    private String asKey(Response.Bulk.Item item) {
+      return "{\"" + item.operation()+"\":{\"_id\":\"" + item.id()+ "\"}}";
+    }
     private int processErrors(Response.Bulk resp, Set<String> errorLidvids, HashMap<String,String> todo, int retry) {
       int numErrors = 0;
-      HashSet<String> clear = new HashSet<String>();
 
       if (resp.errors()) {
         for (Response.Bulk.Item item : resp.items()) {
           if (item.error()) {
-            if (item.operation() == "create" && item.status() == 409) { // already exists
-              clear.add(item.id());
+            if (item.operation().equals("create") && item.status() == 409) { // already exists
+              todo.remove(asKey(item));
               numErrors++;
             } else {
               String message = item.reason();
@@ -323,17 +324,11 @@ public class DataLoader
               
               log.error("LIDVID = " + sanitizedLidvid + ", Message = " + sanitizedMessage);
               numErrors++;
-              clear.add(item.id());
+              todo.remove(asKey(item));
               if(errorLidvids != null) errorLidvids.add(item.id());            
             }
           } else {
-            clear.add(item.id());
-          }
-        }
-        HashMap<String,String> temp = new HashMap<String,String>(todo);
-        for (String id : clear) {
-          for (String key : temp.keySet()) {
-            if (key.contains(id)) todo.remove(key);
+            todo.remove(asKey(item));
           }
         }
       } else {
