@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -32,6 +35,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
 public class DataLoader
 {
   final private int SIZE_THRESHOLD = 30*1024*1024; // 30 MB
+  private static final int MAX_RETRY = 75;
     private int defaultRequestRetries = 5;
     private int printProgressSize = 500;
     private int batchSize = 100;
@@ -231,25 +235,20 @@ public class DataLoader
           int failedCount = 0;
           int loadedCount = 0;
           int queued = 0;
-          Request.Bulk bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
+          LinkedHashMap<String,String> queue = new LinkedHashMap<String,String>();
           for (int index = 0 ; index < data.size() ; index++) {
             queued += data.get(index).length() + data.get(index+1).length();
-            bulk.add(data.get(index), data.get(++index));
+            queue.put(data.get(index), data.get(++index));
             if (queued > SIZE_THRESHOLD) {
-              Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
-              // Check for Elasticsearch errors.
-              failedCount += processErrors(response, errorLidvids);
+              failedCount += emptyQueue(queue, errorLidvids);
               // Calculate number of successfully saved records
               // NOTE: data list has two lines per record (primary key + data)
               loadedCount += data.size() / 2 - failedCount;
               queued = 0;
-              bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
             }
           }
           if (queued > 0) {
-            Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
-            // Check for Elasticsearch errors.
-            failedCount += processErrors(response, errorLidvids);
+            failedCount += emptyQueue(queue, errorLidvids);
             // Calculate number of successfully saved records
             // NOTE: data list has two lines per record (primary key + data)
             loadedCount += data.size() / 2 - failedCount;
@@ -268,24 +267,32 @@ public class DataLoader
                 return loadBatch(data, errorLidvids, retries - 1);
             }
             throw ex;
-/*
-            // Get HTTP response code
-            int respCode = getResponseCode(con);
-            if(respCode <= 0) throw ex;
-
-            // Try extracting JSON from multi-line error response (last line)
-            String json = DaoUtils.getLastLine(con.getErrorStream());
-            if(json == null) throw ex;
-
-            // Parse error JSON to extract reason.
-            String msg = SearchResponseParser.extractReasonFromJson(json);
-            if(msg == null) msg = json;
-
-            throw new Exception(msg);
-            */
         }
     }
 
+    private int emptyQueue (LinkedHashMap<String,String> todo, Set<String> errorLidvids) throws Exception {
+      int failed = 0;
+      int retry = 0;
+      while (!todo.isEmpty() && retry < MAX_RETRY) {
+        Request.Bulk bulk = this.conFactory.createRestClient().createBulkRequest().setRefresh(Request.Bulk.Refresh.WaitFor).setIndex(this.conFactory.getIndexName());
+        for (Map.Entry<String, String> item : todo.entrySet()) {
+          bulk.add(item.getKey(), item.getValue());
+        }
+        Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
+        failed += processErrors (response, errorLidvids, todo, retry);
+        retry++;
+        
+        if (!todo.isEmpty()) {
+          try {
+            Random random = new Random();
+            Thread.sleep((300 + random.nextInt(150))*1000L); // 5 to 7.5 minutes
+          } catch (InterruptedException e) {
+            // Tried to wait but nothing to be done if cannot
+          }
+        }
+      }
+      return failed;
+    }
 
     /**
      * Load data into Elasticsearch
@@ -298,23 +305,36 @@ public class DataLoader
         return loadBatch(data, null);
     }
 
-    private int processErrors(Response.Bulk resp, Set<String> errorLidvids) {
+    private String asKey(Response.Bulk.Item item) {
+      return "{\"" + item.operation()+"\":{\"_id\":\"" + item.id()+ "\"}}";
+    }
+    private int processErrors(Response.Bulk resp, Set<String> errorLidvids, LinkedHashMap<String,String> todo, int retry) {
       int numErrors = 0;
+
       if (resp.errors()) {
         for (Response.Bulk.Item item : resp.items()) {
           if (item.error()) {
-            if (item.operation() == "create" && item.status() == 409) {
+            if (item.operation().equals("create") && item.status() == 409) { // already exists
+              todo.remove(asKey(item));
               numErrors++;
             } else {
               String message = item.reason();
               String sanitizedLidvid = item.id().replace('\r', ' ').replace('\n', ' ');  // protect vs log spoofing see code-scanning alert #37
               String sanitizedMessage = message.replace('\r', ' ').replace('\n', ' '); // protect vs log spoofing
+              
+              if ((message.contains("[throttled]") || message.contains("[maximum OCU capacity reached]")) && retry < MAX_RETRY) continue;
+              
               log.error("LIDVID = " + sanitizedLidvid + ", Message = " + sanitizedMessage);
               numErrors++;
-              if(errorLidvids != null) errorLidvids.add(item.id());              
+              todo.remove(asKey(item));
+              if(errorLidvids != null) errorLidvids.add(item.id());            
             }
+          } else {
+            todo.remove(asKey(item));
           }
         }
+      } else {
+        todo.clear();
       }
       return numErrors;
     }

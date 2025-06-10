@@ -5,7 +5,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
-
+import java.util.Random;
 import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
@@ -46,7 +46,7 @@ public class RestClientWrapper implements RestClient {
   private abstract class Retryable <R,T> {
     abstract public R perform (T arg) throws IOException, ResponseException;
     public R retry (T arg) throws IOException, ResponseException {
-      int retries = 0, retry_limit = 3;
+      int retries = 0, retry_limit = 75;
       while (true) {
         try { return this.perform(arg); }
         catch (OpenSearchException ose) {
@@ -61,7 +61,9 @@ public class RestClientWrapper implements RestClient {
               throw ose;
             }
           } else if (ose.response().status() == 429) {
-            int secondsDelay = 10 * (2^retries) - 10 + (int)(Math.random()*5);
+            Random random = new Random();
+            int secondsDelay = 10 * (2^retries) - 10 + (random.nextInt(5));
+            if (secondsDelay > 300) secondsDelay = 300 + (random.nextInt(150));
             try {
               Thread.sleep(secondsDelay*1000); // seconds to milliseconds
             } catch (InterruptedException e) {
@@ -71,6 +73,8 @@ public class RestClientWrapper implements RestClient {
               retries++;
             }
           } else {
+            LogManager.getLogger(this.getClass()).error("OSE message: " + ose.getMessage() +
+                "{ status code = " + ose.status() + " }");
             throw ose;
           }
         }
