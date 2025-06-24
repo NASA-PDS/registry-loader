@@ -58,9 +58,17 @@ public class LddUtils
     for (String pattern : Accepted_LDD_DateFormats.keySet()) {
       for (Pattern regex : Accepted_LDD_DateFormats.get(pattern)) {
         if (regex.matcher(cleaned).matches()) {
+          cleaned = (cleaned + "Z").replace("ZZ", "Z");
+          if (cleaned.contains(".")) {
+            String subseconds = ".";
+            for (int i = cleaned.indexOf(".")+1 ; i < cleaned.indexOf("Z") ; i++) {
+              subseconds += "S";
+            }
+            pattern = pattern.replace(".S", subseconds);
+          }
           return Date.from(
               ZonedDateTime.parse(
-                  (cleaned + "Z").replace("ZZ", "Z"),
+                  cleaned,
                   DateTimeFormatter.ofPattern(pattern))
               .toInstant());
         }
