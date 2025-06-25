@@ -3,8 +3,6 @@ package gov.nasa.pds.registry.common.util.date;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.common.dd.LddUtils;
 
 
@@ -19,10 +17,6 @@ public class PdsDateConverter
     public static final String DEFAULT_STARTTIME = "1965-01-01T00:00:00.000Z";
     public static final String DEFAULT_STOPTIME = "3000-01-01T00:00:00.000Z";
 
-    private Logger log;
-       
-    private boolean strict;
-    
     /**
      * Constructor
      * @param strict if true, throw exception if a date could not be 
@@ -30,8 +24,6 @@ public class PdsDateConverter
      */
     public PdsDateConverter(boolean strict)
     {
-        this.strict = strict;
-        log = LogManager.getLogger(this.getClass());
     }
 
 
