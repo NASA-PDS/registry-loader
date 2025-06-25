@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import gov.nasa.pds.registry.common.dd.LddUtils;
 
 
 /**
@@ -57,44 +58,22 @@ public class PdsDateConverter
         }
 
 
-        Instant inst = null;
-        try
-        {
-            inst = PdsDateParser.parse(value);
-        }
-        catch(Exception ex)
-        {
-            // Ignore
-        }
-        
-        if(inst == null) 
-        {
-            handleInvalidDate(value);
-            return value;
-        }
-        
-        return toInstantString(inst);
+        Instant inst = LddUtils.parseLddDate(value, ":50").toInstant();
+        return toInstantString(inst, value);
     }
 
     
-    private void handleInvalidDate(String value) throws Exception
+    private static String toInstantString(Instant inst, String old)
     {
-        String msg = "Could not convert date " + value;
-        
-        if(strict)
-        {
-            throw new Exception(msg);
-        }
-        else
-        {
-            log.warn(msg);
-        }
-    }
-    
-
-    private static String toInstantString(Instant inst)
-    {
-        return (inst == null) ? null : DateTimeFormatter.ISO_INSTANT.format(inst);
+      String result = DateTimeFormatter.ISO_INSTANT.format(inst);
+      if (old.contains(":60.") || old.contains(":60Z")) {
+        result = result.replace(":50.", ":60.");
+        result = result.replace(":50Z", ":60Z");
+      }
+      if (old.endsWith(":60")) {
+        result = result.substring(0, result.length()-2) + "60";
+      }
+      return result;
     }
 
     
