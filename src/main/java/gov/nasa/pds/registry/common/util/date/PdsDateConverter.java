@@ -49,23 +49,17 @@ public class PdsDateConverter
             return getDefaultValue(fieldName);
         }
 
-
         Instant inst = LddUtils.parseLddDate(value, ":50").toInstant();
-        return toInstantString(inst, value);
+        return toInstantString(inst, value, fieldName.contains("start") ? 9 : 10);
     }
 
     
-    private static String toInstantString(Instant inst, String old)
+    private static String toInstantString(Instant inst, String old, int duration)
     {
-      String result = DateTimeFormatter.ISO_INSTANT.format(inst);
-      if (old.contains(":60.") || old.contains(":60Z")) {
-        result = result.replace(":50.", ":60.");
-        result = result.replace(":50Z", ":60Z");
+      if (old.contains(":60.") || old.contains(":60Z") || old.endsWith(":60")) {
+        inst = inst.plusSeconds(duration);
       }
-      if (old.endsWith(":60")) {
-        result = result.substring(0, result.length()-2) + "60";
-      }
-      return result;
+      return DateTimeFormatter.ISO_INSTANT.format(inst);
     }
 
     
