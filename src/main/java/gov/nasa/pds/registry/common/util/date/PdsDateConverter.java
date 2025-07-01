@@ -3,8 +3,7 @@ package gov.nasa.pds.registry.common.util.date;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import gov.nasa.pds.registry.common.dd.LddUtils;
 
 
 /**
@@ -18,10 +17,6 @@ public class PdsDateConverter
     public static final String DEFAULT_STARTTIME = "1965-01-01T00:00:00.000Z";
     public static final String DEFAULT_STOPTIME = "3000-01-01T00:00:00.000Z";
 
-    private Logger log;
-       
-    private boolean strict;
-    
     /**
      * Constructor
      * @param strict if true, throw exception if a date could not be 
@@ -29,8 +24,6 @@ public class PdsDateConverter
      */
     public PdsDateConverter(boolean strict)
     {
-        this.strict = strict;
-        log = LogManager.getLogger(this.getClass());
     }
 
 
@@ -56,45 +49,17 @@ public class PdsDateConverter
             return getDefaultValue(fieldName);
         }
 
-
-        Instant inst = null;
-        try
-        {
-            inst = PdsDateParser.parse(value);
-        }
-        catch(Exception ex)
-        {
-            // Ignore
-        }
-        
-        if(inst == null) 
-        {
-            handleInvalidDate(value);
-            return value;
-        }
-        
-        return toInstantString(inst);
+        Instant inst = LddUtils.parseLddDate(value, ":50").toInstant();
+        return toInstantString(inst, value, fieldName.contains("start") ? 9 : 10);
     }
 
     
-    private void handleInvalidDate(String value) throws Exception
+    private static String toInstantString(Instant inst, String old, int duration)
     {
-        String msg = "Could not convert date " + value;
-        
-        if(strict)
-        {
-            throw new Exception(msg);
-        }
-        else
-        {
-            log.warn(msg);
-        }
-    }
-    
-
-    private static String toInstantString(Instant inst)
-    {
-        return (inst == null) ? null : DateTimeFormatter.ISO_INSTANT.format(inst);
+      if (old.contains(":60.") || old.contains(":60Z") || old.endsWith(":60")) {
+        inst = inst.plusSeconds(duration);
+      }
+      return DateTimeFormatter.ISO_INSTANT.format(inst);
     }
 
     

@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import javax.annotation.Nonnull;
 import gov.nasa.pds.registry.common.dd.parser.ClassAttrAssociationParser;
 import gov.nasa.pds.registry.common.util.TimeFormatRegex;
 
@@ -53,14 +54,32 @@ public class LddUtils
    * @param dateStr LDD date from PDS LDD JSON file
    * @return Parsed Date object
    */
-  public static Date parseLddDate(String dateStr) throws ParseException {
+    private static String subseconds (String dateStr, String pattern) {
+      if (dateStr.contains(".")) {
+        StringBuilder subseconds = new StringBuilder(".");
+        for (int i = dateStr.indexOf(".")+1 ; i < dateStr.indexOf("Z") ; i++) {
+          subseconds.append("S");
+        }
+        pattern = pattern.replace(".S", subseconds.toString());
+      }
+      return pattern;
+    }
+    public static Date parseLddDate(String dateStr) throws ParseException {
+      return parseLddDate(dateStr, "");
+    }
+    public static Date parseLddDate(String dateStr, @Nonnull String handleLeapSecondNotation) throws ParseException {
     String cleaned = dateStr.trim();
     for (String pattern : Accepted_LDD_DateFormats.keySet()) {
       for (Pattern regex : Accepted_LDD_DateFormats.get(pattern)) {
         if (regex.matcher(cleaned).matches()) {
+          cleaned = (cleaned + "Z").replace("ZZ", "Z");
+          if (!handleLeapSecondNotation.isBlank()) {
+            cleaned = cleaned.replace(":60", handleLeapSecondNotation);
+          }
+          pattern = subseconds(cleaned, pattern);
           return Date.from(
               ZonedDateTime.parse(
-                  (cleaned + "Z").replace("ZZ", "Z"),
+                  cleaned,
                   DateTimeFormatter.ofPattern(pattern))
               .toInstant());
         }
