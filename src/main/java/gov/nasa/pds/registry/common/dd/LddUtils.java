@@ -54,6 +54,16 @@ public class LddUtils
    * @param dateStr LDD date from PDS LDD JSON file
    * @return Parsed Date object
    */
+    private static String subseconds (String dateStr, String pattern) {
+      if (dateStr.contains(".")) {
+        StringBuilder subseconds = new StringBuilder(".");
+        for (int i = dateStr.indexOf(".")+1 ; i < dateStr.indexOf("Z") ; i++) {
+          subseconds.append("S");
+        }
+        pattern = pattern.replace(".S", subseconds.toString());
+      }
+      return pattern;
+    }
     public static Date parseLddDate(String dateStr) throws ParseException {
       return parseLddDate(dateStr, "");
     }
@@ -66,13 +76,7 @@ public class LddUtils
           if (!handleLeapSecondNotation.isBlank()) {
             cleaned = cleaned.replace(":60", handleLeapSecondNotation);
           }
-          if (cleaned.contains(".")) {
-            String subseconds = ".";
-            for (int i = cleaned.indexOf(".")+1 ; i < cleaned.indexOf("Z") ; i++) {
-              subseconds += "S";
-            }
-            pattern = pattern.replace(".S", subseconds);
-          }
+          pattern = subseconds(cleaned, pattern);
           return Date.from(
               ZonedDateTime.parse(
                   cleaned,
