@@ -3,7 +3,6 @@ package gov.nasa.pds.registry.common;
 import java.net.URL;
 import gov.nasa.pds.registry.common.connection.AuthContent;
 import gov.nasa.pds.registry.common.connection.KnownRegistryConnections;
-import gov.nasa.pds.registry.common.connection.UseOpensearchSDK1;
 import gov.nasa.pds.registry.common.connection.UseOpensearchSDK2;
 import gov.nasa.pds.registry.common.connection.RegistryConnectionContent;
 
@@ -19,7 +18,7 @@ public class EstablishConnectionFactory {
     RegistryConnectionContent conn = RegistryConnectionContent.from (new URL(urlToRegistryConnection));
     
     if (conn.isDirectConnection()) {
-      if (conn.getServerUrl().getSdk().intValue() == 1) return UseOpensearchSDK1.build(conn.getServerUrl(), auth).setIndexName(conn.getIndex());
+      if (conn.getServerUrl().getSdk().intValue() == 1) throw new UnsupportedOperationException("SDK 1 support has been removed.");
       if (conn.getServerUrl().getSdk().intValue() == 2) return UseOpensearchSDK2.build(conn.getServerUrl(), auth).setIndexName(conn.getIndex());
       throw new RuntimeException("The SDK version '" + String.valueOf(conn.getServerUrl().getSdk().intValue()) + "' is not supported");
     }
