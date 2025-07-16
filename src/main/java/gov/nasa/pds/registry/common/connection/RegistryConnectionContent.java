@@ -38,7 +38,7 @@ public final class RegistryConnectionContent {
     return this.content.getEc2CredentialUrl();
   }
   public String getIndex() {
-    return this.content.getIndex();
+    return this.content.getIndex() + "-structured";
   }
   public DirectType getServerUrl() {
     return this.content.getServerUrl();
