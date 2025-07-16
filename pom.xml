@@ -62,8 +62,6 @@ POSSIBILITY OF SUCH DAMAGE.
     </licenses>
 
     <properties>
-        <maven.compiler.target>11</maven.compiler.target>
-        <maven.compiler.source>11</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -173,29 +171,6 @@ POSSIBILITY OF SUCH DAMAGE.
                     <detectJavaApiLink>false</detectJavaApiLink>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.ragedunicorn.tools.maven</groupId>
-                <artifactId>github-release-maven-plugin</artifactId>
-                <version>1.0.7</version>
-                <executions>
-                  <execution>
-                    <id>default-cli</id>
-                    <configuration>
-                    <owner>nasa-pds</owner>
-                    <repository>registry-mgr</repository>
-                    <server>github-oauth</server>
-                    <tagName>${project.version}</tagName>
-                    <name>${project.version}</name>
-                    <targetCommitish>main</targetCommitish>
-                    <body>Release ${project.version} see changelog https://github.com/NASA-PDS/registry-mgr/blob/main/CHANGELOG.md</body>
-                    <assets>
-                        <asset>target/registry-manager-${project.version}-bin.zip</asset>
-                        <asset>target/registry-manager-${project.version}-bin.tar.gz</asset>
-                    </assets>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <!-- Add maven source for maven central deployment -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
