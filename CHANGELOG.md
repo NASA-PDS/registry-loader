@@ -1,8 +1,8 @@
 # Changelog
 
-## [release/5.0.6](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.6) (2025-04-15)
+## [v5.0.6](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.6) (2025-04-21)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.5...release/5.0.6)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.5...v5.0.6)
 
 **Defects:**
 
@@ -23,7 +23,6 @@
 **Defects:**
 
 - Getting null message in log with option packageId [\#124](https://github.com/NASA-PDS/registry-mgr/issues/124) [[s.low](https://github.com/NASA-PDS/registry-mgr/labels/s.low)]
-- Unable to update archive status of a lidvid in the registry [\#107](https://github.com/NASA-PDS/registry-mgr/issues/107) [[s.critical](https://github.com/NASA-PDS/registry-mgr/labels/s.critical)]
 
 **Other closed issues:**
 
