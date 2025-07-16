@@ -35,10 +35,10 @@ public class AuthContent {
     try {
       Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(Paths.get(authfile), LinkOption.NOFOLLOW_LINKS);
       if (permissions.contains(PosixFilePermission.GROUP_READ) || permissions.contains(PosixFilePermission.OTHERS_READ)) {
-        LOG.warn("The authorization file '" + authfile + "' is readable by more than the user.");
+        LOG.warn("The authorization file '{0}' is readable by more than the user.", authfile);
       }
     } catch (Exception e) {
-      LOG.warn("The authorization file '" + authfile + "' may be insecure because this platform does not support permission checking");
+      LOG.warn("The authorization file '{0}' may be insecure because this platform does not support permission checking", authfile);
     }
 
     if (props.getProperty(ClientConstants.AUTH_TRUST_SELF_SIGNED) != null) {
