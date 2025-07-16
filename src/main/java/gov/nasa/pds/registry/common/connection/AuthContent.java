@@ -1,7 +1,12 @@
 package gov.nasa.pds.registry.common.connection;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Base64;
+import java.util.Set;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -26,7 +31,16 @@ public class AuthContent {
     JavaProps props = new JavaProps(authfile);
     String user = props.getProperty("user");
     String password = props.getProperty("password");
-    
+
+    try {
+      Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(Paths.get(authfile), LinkOption.NOFOLLOW_LINKS);
+      if (permissions.contains(PosixFilePermission.GROUP_READ) || permissions.contains(PosixFilePermission.OTHERS_READ)) {
+        LOG.warn("The authorization file '" + authfile + "' is readable by more than the user.");
+      }
+    } catch (Exception e) {
+      LOG.warn("The authorization file '" + authfile + "' may be insecure because this platform does not support permission checking");
+    }
+
     if (props.getProperty(ClientConstants.AUTH_TRUST_SELF_SIGNED) != null) {
       LOG.warn("The keyword " + ClientConstants.AUTH_TRUST_SELF_SIGNED 
           + " is no longer used in the authorizaiton file and is being ignored. Please remove "
