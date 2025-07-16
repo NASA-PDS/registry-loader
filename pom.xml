@@ -200,7 +200,5 @@ POSSIBILITY OF SUCH DAMAGE.
         <connection>scm:git:git://github.com/NASA-PDS/registry-mgr.git</connection>
         <developerConnection>scm:git:git@github.com:NASA-PDS/registry-mgr.git</developerConnection>
       <tag>HEAD</tag>
-  </scm>
-</distributionManagement>   
-
+    </scm>
 </project>
