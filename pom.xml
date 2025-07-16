@@ -201,13 +201,6 @@ POSSIBILITY OF SUCH DAMAGE.
         <developerConnection>scm:git:git@github.com:NASA-PDS/registry-mgr.git</developerConnection>
       <tag>HEAD</tag>
   </scm>
-
-    <distributionManagement>
-      <repository>
-        <id>github</id>       
-        <name>Releases</name>
-        <url>https://github.com/NASA-PDS/registry-mgr</url> 
-    </repository>
 </distributionManagement>   
 
 </project>
