@@ -10,11 +10,7 @@
 
 ## [v5.0.5](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.5) (2025-04-07)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/5.0.5...v5.0.5)
-
-## [release/5.0.5](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.5) (2025-04-03)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.4...release/5.0.5)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.4...v5.0.5)
 
 **Improvements:**
 
@@ -32,11 +28,7 @@
 
 ## [v5.0.4](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.4) (2024-12-19)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/5.0.4...v5.0.4)
-
-## [release/5.0.4](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.4) (2024-12-19)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.3...release/5.0.4)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.3...v5.0.4)
 
 **Requirements:**
 
@@ -53,27 +45,15 @@
 
 ## [v5.0.3](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.3) (2024-11-12)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/5.0.3...v5.0.3)
-
-## [release/5.0.3](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.3) (2024-11-12)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.2...release/5.0.3)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.2...v5.0.3)
 
 ## [v5.0.2](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.2) (2024-10-16)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/5.0.2...v5.0.2)
-
-## [release/5.0.2](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.2) (2024-10-16)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.1...release/5.0.2)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.1...v5.0.2)
 
 ## [v5.0.1](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.1) (2024-10-16)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/5.0.1...v5.0.1)
-
-## [release/5.0.1](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.1) (2024-10-16)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.0...release/5.0.1)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v5.0.0...v5.0.1)
 
 **Defects:**
 
@@ -81,11 +61,7 @@
 
 ## [v5.0.0](https://github.com/NASA-PDS/registry-mgr/tree/v5.0.0) (2024-08-27)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/5.0.0...v5.0.0)
-
-## [release/5.0.0](https://github.com/NASA-PDS/registry-mgr/tree/release/5.0.0) (2024-08-27)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...release/5.0.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.3...v5.0.0)
 
 **Requirements:**
 
@@ -106,11 +82,7 @@
 
 ## [v4.6.3](https://github.com/NASA-PDS/registry-mgr/tree/v4.6.3) (2023-11-16)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/release/4.6.3...v4.6.3)
-
-## [release/4.6.3](https://github.com/NASA-PDS/registry-mgr/tree/release/4.6.3) (2023-11-16)
-
-[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.1...release/4.6.3)
+[Full Changelog](https://github.com/NASA-PDS/registry-mgr/compare/v4.6.1...v4.6.3)
 
 ## [v4.6.1](https://github.com/NASA-PDS/registry-mgr/tree/v4.6.1) (2023-10-02)
 
