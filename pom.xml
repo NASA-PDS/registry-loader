@@ -182,6 +182,12 @@ POSSIBILITY OF SUCH DAMAGE.
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+          <resource>
+            <directory>src/main/resources/app</directory>
+            <filtering>true</filtering>
+          </resource>
+        </resources>
     </build>
 
   <scm>
