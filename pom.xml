@@ -85,19 +85,19 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.11.0</version>
+            <version>2.13.1</version>
         </dependency>
         <!-- XML to JSON converter -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20240303</version>
+            <version>20250517</version>
         </dependency>
         <!-- Log4j logger -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.23.1</version>
+            <version>2.25.1</version>
         </dependency>
         <!-- String Utils -->
         <dependency>
@@ -131,7 +131,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
           <groupId>org.apache.httpcomponents.client5</groupId>
           <artifactId>httpclient5</artifactId>
-          <version>5.3.1</version>
+          <version>5.5</version>
         </dependency>
         <dependency>
           <groupId>org.opensearch.client</groupId>
