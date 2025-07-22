@@ -44,7 +44,8 @@ public class Version {
           version = prop.getProperty("application.version");
         }
     } catch (Exception ex) {
-        ex.printStackTrace();
+      //ex.printStackTrace();
+      System.err.println("[ERROR] Internal error that requires a developer to debug: " + ex.getMessage());
     } finally {
       VERSION = version;
     }    
