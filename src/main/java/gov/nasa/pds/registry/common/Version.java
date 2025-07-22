@@ -15,7 +15,7 @@ public class Version {
       this.minor = minor;
       this.patch = patch;
     }
-    public final boolean greater_than_or_equal_to (Semantic minimum) {
+    public final boolean greaterThanOrEqualTo (Semantic minimum) {
       boolean result = this.major > minimum.major;
       if (!result && this.major == minimum.major) {
         result = this.major > minimum.minor;
@@ -34,7 +34,7 @@ public class Version {
           ));
     }
   }
-  public final String VERSION;
+  public final String version;
   protected Version() {
     Properties prop = new Properties();
     String version = "1000000.100000.100000";
@@ -47,7 +47,7 @@ public class Version {
       //ex.printStackTrace();
       System.err.println("[ERROR] Internal error that requires a developer to debug: " + ex.getMessage());
     } finally {
-      VERSION = version;
+      this.version = version;
     }    
   }
   private static Version self = null;
@@ -62,12 +62,12 @@ public class Version {
   }
   public boolean check(Semantic needed) {
     Semantic current = this.value();
-    return current.greater_than_or_equal_to (needed);
+    return current.greaterThanOrEqualTo (needed);
   }
   public Semantic value() {
-    String version = this.VERSION.contains("-") ?
-      version = this.VERSION.split("-")[0] : this.VERSION;
-    String parts[] = version.split("\\.");
+    String version = this.version.contains("-") ?
+      this.version.split("-")[0] : this.version;
+    String[] parts = version.split("\\.");
     return new Semantic(
         Integer.valueOf(parts[0]),
         Integer.valueOf(parts[1]),
@@ -78,6 +78,6 @@ public class Version {
   }
   @Override
   public String toString() {
-    return this.VERSION;
+    return this.version;
   }
 }
