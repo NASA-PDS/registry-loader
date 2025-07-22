@@ -37,17 +37,17 @@ public class Version {
   public final String version;
   protected Version() {
     Properties prop = new Properties();
-    String version = "1000000.100000.100000";
+    String v = "1000000.100000.100000";
     try (InputStream input = Version.class.getClassLoader().getResourceAsStream(this.getName() + ".version")) {
         if (input != null) {
           prop.load(input);
-          version = prop.getProperty("application.version");
+          v = prop.getProperty("application.version");
         }
     } catch (Exception ex) {
       //ex.printStackTrace();
       System.err.println("[ERROR] Internal error that requires a developer to debug: " + ex.getMessage());
     } finally {
-      this.version = version;
+      this.version = v;
     }    
   }
   private static Version self = null;
@@ -65,9 +65,8 @@ public class Version {
     return current.greaterThanOrEqualTo (needed);
   }
   public Semantic value() {
-    String version = this.version.contains("-") ?
-      this.version.split("-")[0] : this.version;
-    String[] parts = version.split("\\.");
+    String[] parts = (this.version.contains("-") ? this.version.split("-")[0] : this.version)
+        .split("\\.");
     return new Semantic(
         Integer.valueOf(parts[0]),
         Integer.valueOf(parts[1]),
