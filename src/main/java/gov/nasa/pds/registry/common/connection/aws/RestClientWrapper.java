@@ -115,7 +115,7 @@ public class RestClientWrapper implements RestClient {
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
           final TlsStrategy tlsStrategy = ClientTlsStrategyBuilder.create()
             .setSslContext(sslcontext)
-            .build();
+            .buildAsync();
           final PoolingAsyncClientConnectionManager connectionManager = PoolingAsyncClientConnectionManagerBuilder
             .create()
             .setTlsStrategy(tlsStrategy)
@@ -134,7 +134,6 @@ public class RestClientWrapper implements RestClient {
   }
   @Override
   public void close() throws IOException {
-    this.client.shutdown();
     this.httpClient.close();
   }
   @Override

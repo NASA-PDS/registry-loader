@@ -111,7 +111,7 @@ class SearchImpl implements Search {
     this.craftsman.searchAfter(Arrays.asList(fv));
     */
     /** opensearch 2.x */
-    this.craftsman.searchAfter(Arrays.asList(searchAfter));
+    this.craftsman.searchAfter(Arrays.asList(new FieldValue.Builder().stringValue(searchAfter).build()));
     this.craftsman.sort(new SortOptions.Builder()
         .field(new FieldSort.Builder().field(sortField).order(SortOrder.Asc).build())
         .build());

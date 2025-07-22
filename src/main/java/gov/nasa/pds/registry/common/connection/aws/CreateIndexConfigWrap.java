@@ -15,7 +15,7 @@ import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
 import org.opensearch.client.opensearch.indices.IndexSettingsMapping;
-import org.opensearch.client.opensearch.indices.IndexSettingsMappingLimit;
+import org.opensearch.client.opensearch.indices.IndexSettingsMappingLimitTotalFields;
 import com.google.gson.Gson;
 
 @SuppressWarnings("unchecked") // evil but necessary because of JSON heterogeneous structures
@@ -102,13 +102,13 @@ class CreateIndexConfigWrap {
     for (String pk : settings.keySet()) {
       if (pk.equalsIgnoreCase("analysis")) updateAnalysis (craftsman, (Map<String, Object>)settings.get(pk));
       else if (pk.equalsIgnoreCase("index.mapping.total_fields.limit"))
-        journeyman.totalFields(new IndexSettingsMappingLimit.Builder().limit(Long.valueOf((String)settings.get(pk))).build());
+        journeyman.totalFields(new IndexSettingsMappingLimitTotalFields.Builder().limit(Long.valueOf((String)settings.get(pk))).build());
       else if (pk.equalsIgnoreCase("index.max_result_window"))
         craftsman.maxResultWindow(Integer.valueOf((String)settings.get(pk)));
       else if (pk.equalsIgnoreCase("number_of_replicas"))
-        craftsman.numberOfReplicas(Integer.toString(((Double)settings.get(pk)).intValue()));
+        craftsman.numberOfReplicas(((Double)settings.get(pk)).intValue());
       else if (pk.equalsIgnoreCase("number_of_shards"))
-        craftsman.numberOfShards(Integer.toString(((Double)settings.get(pk)).intValue()));
+        craftsman.numberOfShards(((Double)settings.get(pk)).intValue());
       else throw new RuntimeException("Unknown setting key '" + pk + "' requiring fix to JSON or CreateIndexConfigWrap.updateSettings()");
     }
     craftsman.mapping(journeyman.build());
