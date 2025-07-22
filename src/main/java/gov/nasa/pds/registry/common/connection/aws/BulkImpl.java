@@ -13,6 +13,8 @@ import org.opensearch.client.opensearch.core.bulk.CreateOperation;
 import org.opensearch.client.opensearch.core.bulk.IndexOperation;
 import org.opensearch.client.opensearch.core.bulk.UpdateOperation;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.ToNumberPolicy;
 import com.google.gson.reflect.TypeToken;
 import gov.nasa.pds.registry.common.Request.Bulk;
 import gov.nasa.pds.registry.common.meta.Metadata;
@@ -27,7 +29,9 @@ class BulkImpl implements Bulk {
   @Override
   public void add(String statement, String document) {
     BulkOperation.Builder journeyman = new BulkOperation.Builder();
-    Gson gson = new Gson();
+    Gson gson = new GsonBuilder()
+        .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+        .create();
     Map<String,Map<String,String>> cmd;
     Map<String,String> params;
     Object doc = gson.fromJson(document, Object.class);
