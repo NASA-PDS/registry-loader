@@ -63,7 +63,7 @@ public class Version {
     }
     return self;
   }
-  protected String getName() {
+  public String getName() {
     return "registry-common";
   }
   public boolean check(Semantic needed) {
