@@ -109,8 +109,10 @@ public class Version {
   }
 
   public Semantic value() {
-    String[] parts = (this.version.contains("-") ? this.version.split("-")[0] : this.version)
-        .split("\\.");
+    return this.value(this.version);
+  }
+  public Semantic value(String of) {
+    String[] parts = (of.contains("-") ? of.split("-")[0] : of).split("\\.");
     return new Semantic(
         Integer.valueOf(parts[0]),
         Integer.valueOf(parts[1]),
