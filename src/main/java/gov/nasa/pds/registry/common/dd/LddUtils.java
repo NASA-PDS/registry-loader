@@ -3,8 +3,12 @@ package gov.nasa.pds.registry.common.dd;
 import java.io.File;
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,8 @@ public class LddUtils
 {
     private static final Map<String, List<Pattern>> Accepted_LDD_DateFormats = new TreeMap<String,List<Pattern>>();
     static {
+      Accepted_LDD_DateFormats.put("u[-D]X",TimeFormatRegex.DOY_FORMATS);
+      Accepted_LDD_DateFormats.put("u[-M[-d]]X",TimeFormatRegex.DATE_YMD_FORMATS);
       Accepted_LDD_DateFormats.put("u[-D['T'H[:m[:s[.S]]]]]X",TimeFormatRegex.DATE_TIME_DOY_FORMATS);
       Accepted_LDD_DateFormats.put("u[-M[-d['T'H[:m[:s[.S]]]]]]X",TimeFormatRegex.DATE_TIME_YMD_FORMATS);
       Accepted_LDD_DateFormats.put("H[:m[:s[.S]]]X",TimeFormatRegex.TIME_FORMATS);
@@ -69,19 +75,36 @@ public class LddUtils
     }
     public static Date parseLddDate(String dateStr, @Nonnull String handleLeapSecondNotation) throws ParseException {
     String cleaned = dateStr.trim();
+    boolean hasTime = cleaned.contains(":");
     for (String pattern : Accepted_LDD_DateFormats.keySet()) {
       for (Pattern regex : Accepted_LDD_DateFormats.get(pattern)) {
-        if (regex.matcher(cleaned).matches()) {
+        if (regex.matcher(cleaned).matches() &&
+            !(pattern.contains(":") ^ hasTime)) {
           cleaned = (cleaned + "Z").replace("ZZ", "Z");
           if (!handleLeapSecondNotation.isBlank()) {
             cleaned = cleaned.replace(":60", handleLeapSecondNotation);
           }
           pattern = subseconds(cleaned, pattern);
-          return Date.from(
-              ZonedDateTime.parse(
-                  cleaned,
-                  DateTimeFormatter.ofPattern(pattern))
-              .toInstant());
+          if (cleaned.contains(":")) {
+            return Date.from(
+                ZonedDateTime.parse(
+                    cleaned,
+                    DateTimeFormatter.ofPattern(pattern))
+                .toInstant());
+          } else {
+            cleaned = cleaned.substring(0, cleaned.length()-1);
+            pattern = pattern.substring(0, pattern.length()-1);
+            DateTimeFormatterBuilder dtfb = new DateTimeFormatterBuilder()
+                .appendPattern(pattern);
+            if (pattern.contains("-D")) {
+              dtfb.parseDefaulting(ChronoField.DAY_OF_YEAR, 1);
+            } else {
+              dtfb.parseDefaulting(ChronoField.MONTH_OF_YEAR, 1);
+              dtfb.parseDefaulting(ChronoField.DAY_OF_MONTH, 1);
+            }
+            LocalDate when = LocalDate.parse(cleaned,dtfb.toFormatter());
+            return Date.from(when.atStartOfDay(ZoneId.of("Z")).toInstant());
+          }
         }
       }
     }
