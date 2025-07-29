@@ -72,7 +72,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.13.3</version>
+            <version>5.13.4</version>
             <scope>test</scope>
         </dependency>
         <!-- Elasticsearch client-->
@@ -141,12 +141,12 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
           <groupId>software.amazon.awssdk</groupId>
           <artifactId>opensearch</artifactId>
-          <version>2.25.31</version>
+          <version>2.32.9</version>
         </dependency>
         <dependency>
           <groupId>software.amazon.awssdk</groupId>
           <artifactId>apache-client</artifactId>
-          <version>2.32.1</version>
+          <version>2.32.9</version>
         </dependency>
     </dependencies>
 
