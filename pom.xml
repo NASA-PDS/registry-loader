@@ -184,6 +184,10 @@ POSSIBILITY OF SUCH DAMAGE.
         </plugins>
         <resources>
           <resource>
+            <directory>src/main/resources</directory>
+            <filtering>false</filtering>
+          </resource>
+          <resource>
             <directory>src/main/resources/app</directory>
             <filtering>true</filtering>
           </resource>

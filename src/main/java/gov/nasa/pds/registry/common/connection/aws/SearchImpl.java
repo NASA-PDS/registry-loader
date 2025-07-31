@@ -42,7 +42,7 @@ class SearchImpl implements Search {
   public Search buildFindDuplicates(int page_size) {
     this.craftsman.aggregations("duplicates",
         new Aggregation.Builder().terms(
-            new TermsAggregation.Builder().field("ops:Data_File_Info/ops:file_ref").minDocCount(2).size(page_size).build())
+            new TermsAggregation.Builder().field("ops:Data_File_Info.ops:file_ref").minDocCount(2).size(page_size).build())
         .build());
     return this;
   }

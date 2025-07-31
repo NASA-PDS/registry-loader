@@ -14,7 +14,7 @@ import com.google.gson.stream.JsonWriter;
  */
 public class NJsonDocUtils
 {
-    private static final String REPLACE_DOT_WITH = "/";
+    //private static final String REPLACE_DOT_WITH = "/";
 
 
     /**
@@ -151,8 +151,8 @@ public class NJsonDocUtils
      * @param fieldName a field name
      * @return valid Elasticsearch field name
      */
-    public static String toEsFieldName(String fieldName)
+    public static String toEsFieldName(String fieldName) {return fieldName; } /*
     {
         return fieldName.replaceAll("\\.", REPLACE_DOT_WITH);
-    }
+    }*/
 }
