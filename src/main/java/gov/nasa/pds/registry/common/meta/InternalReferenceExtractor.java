@@ -38,7 +38,7 @@ public class InternalReferenceExtractor
     public InternalReferenceExtractor() throws Exception
     {
         XPathFactory xpf = XPathFactory.newInstance();
-        xIntRef = XPathUtils.compileXPath(xpf, "//Internal_Reference");
+        xIntRef = XPathUtils.compileXPath(xpf, "//*[local-name() = 'Internal_Reference']");
     }
     
 

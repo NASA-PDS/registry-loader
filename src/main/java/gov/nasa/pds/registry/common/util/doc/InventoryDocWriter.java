@@ -2,15 +2,13 @@ package gov.nasa.pds.registry.common.util.doc;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gson.stream.JsonWriter;
-
 import gov.nasa.pds.registry.common.util.LidVidUtils;
-import gov.nasa.pds.registry.common.util.json.NJsonDocUtils;
+import gov.nasa.pds.registry.common.util.json.Serializer;
 
 
 /**
@@ -18,83 +16,66 @@ import gov.nasa.pds.registry.common.util.json.NJsonDocUtils;
  * 
  * @author karpenko
  */
-public class InventoryDocWriter implements Closeable
-{
-    private List<String> data;
+public class InventoryDocWriter implements Closeable {
+  private List<String> data;
 
+  public InventoryDocWriter() {
+    data = new ArrayList<>();
+  }
 
-    public InventoryDocWriter()
-    {
-        data = new ArrayList<>();
-    }
-    
-    
-    public List<String> getData()
-    {
-        return data;
-    }
-    
-    
-    public void clearData()
-    {
-        data.clear();
-    }
+  public List<String> getData() {
+    return data;
+  }
 
-    
-    public void writeBatch(String collectionLidvid, ProdRefsBatch batch, RefType refType, String jobId) throws Exception
-    {
-        if(collectionLidvid == null) return;
-        int idx = collectionLidvid.indexOf("::");
-        if(idx <= 0) return;
-        
-        String collectionLid = collectionLidvid.substring(0, idx);
-        String collectionVid = collectionLidvid.substring(idx+2);
-        
-        String docId = collectionLidvid + "::" + refType.getId() + batch.batchNum;
+  public void clearData() {
+    data.clear();
+  }
 
-        // First line: primary key 
-        String pkJson = NJsonDocUtils.createPKJson(docId);
-        data.add(pkJson);
+  public void writeBatch(String collectionLidvid, ProdRefsBatch batch, RefType refType,
+      String jobId) throws Exception {
+    if (collectionLidvid == null)
+      return;
+    int idx = collectionLidvid.indexOf("::");
+    if (idx <= 0)
+      return;
 
-        // Second line: main document
-        StringWriter sw = new StringWriter();
-        JsonWriter jw = new JsonWriter(sw);
-        
-        jw.beginObject();
-        // Batch info
-        NJsonDocUtils.writeField(jw, "batch_id", batch.batchNum);
-        NJsonDocUtils.writeField(jw, "batch_size", batch.size);
+    HashMap<String, Object> command = new HashMap<String, Object>();
+    HashMap<String, Object> document = new HashMap<String, Object>();
+    HashMap<String, String> subcommand = new HashMap<String, String>();
+    Serializer serializer = new Serializer(false);
+    String collectionLid = collectionLidvid.substring(0, idx);
+    String collectionVid = collectionLidvid.substring(idx + 2);
+    String docId = collectionLidvid + "::" + refType.getId() + batch.batchNum;
 
-        // Reference type
-        NJsonDocUtils.writeField(jw, "reference_type", refType.getLabel());
+    // First line: primary key
+    command.put("index", subcommand);
+    subcommand.put("_id", docId);
 
-        // Collection ids
-        NJsonDocUtils.writeField(jw, "collection_lidvid", collectionLidvid);
-        NJsonDocUtils.writeField(jw, "collection_lid", collectionLid);
-        NJsonDocUtils.writeField(jw, "collection_vid", collectionVid);
-        
-        // Product refs
-        NJsonDocUtils.writeArray(jw, "product_lidvid", batch.lidvids);
-        
-        // Convert lidvids to lids
-        Set<String> lids = LidVidUtils.lidvidToLid(batch.lidvids);
-        lids = LidVidUtils.add(lids, batch.lids);
-        NJsonDocUtils.writeArray(jw, "product_lid", lids);
-        
-        // Job ID
-        NJsonDocUtils.writeField(jw, "_package_id", jobId);
-        jw.endObject();
-        
-        jw.close();
-        
-        String dataJson = sw.getBuffer().toString();
-        data.add(dataJson);
-    }
+    // Batch info
+    document.put("batch_id", Integer.valueOf(batch.batchNum));
+    document.put("batch_size", Integer.valueOf(batch.size));
 
+    // Reference type
+    document.put("reference_type", refType.getLabel());
 
-    @Override
-    public void close() throws IOException
-    {
-    }
-    
+    // Collection ids
+    document.put("collection_lidvid", collectionLidvid);
+    document.put("collection_lid", collectionLid);
+    document.put("collection_vid", collectionVid);
+
+    // Product refs
+    document.put("product_lidvid", batch.lidvids);
+
+    // Convert lidvids to lids
+    Set<String> lids = LidVidUtils.lidvidToLid(batch.lidvids);
+    lids = LidVidUtils.add(lids, batch.lids);
+    document.put("product_lid", lids);
+
+    // Job ID
+    document.put("_package_id", jobId);
+    data.addAll(serializer.asBulkPair(serializer.new Pair(command, document)));
+  }
+
+  @Override
+  public void close() throws IOException {}
 }

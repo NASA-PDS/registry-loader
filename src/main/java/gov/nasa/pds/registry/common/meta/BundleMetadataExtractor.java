@@ -56,7 +56,7 @@ public class BundleMetadataExtractor
     public BundleMetadataExtractor() throws Exception
     {
         XPathFactory xpf = XPathFactory.newInstance();
-        xBme = XPathUtils.compileXPath(xpf, "/Product_Bundle/Bundle_Member_Entry");
+        xBme = XPathUtils.compileXPath(xpf, "/*[local-name() = 'Product_Bundle']/*[local-name() = 'Bundle_Member_Entry']");
     }
     
     

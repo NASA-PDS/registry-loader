@@ -1,107 +1,62 @@
 package gov.nasa.pds.registry.common.meta;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.text.ParseException;
 
-import gov.nasa.pds.registry.common.util.FieldMapList;
 import gov.nasa.pds.registry.common.util.date.PdsDateConverter;
+import jakarta.xml.bind.TypeConstraintException;
 
 
 /**
- * Normalizes (converts) date and boolean values into formats acceptable 
- * by Elasticsearch (registry). 
+ * Normalizes (converts) date and boolean values into formats acceptable by Elasticsearch
+ * (registry).
+ * 
  * @author karpenko
  */
-public class MetadataNormalizer
-{
-    private PdsDateConverter dateConverter;
-    private FieldNameCache fieldNameCache;
-    
-    /**
-     * Constructor
-     */
-    public MetadataNormalizer(FieldNameCache cache)
-    {
-        dateConverter = new PdsDateConverter(true);
-        this.fieldNameCache = cache;
-    }
+public class MetadataNormalizer {
+  private PdsDateConverter dateConverter;
+  private FieldNameCache fieldNameCache;
 
-    
-    /**
-     * Normalize field values
-     * @param fields Metadata extracted from PDS4 label
-     */
-    public void normalizeValues(FieldMapList fields) throws Exception
-    {
-        for(String key: fields.getNames())
-        {
-            // Convert date fields
-            if(fieldNameCache.isDateField(key))
-            {
-                Collection<String> oldValues = fields.getValues(key);
-                if(oldValues == null) continue; 
-                
-                List<String> newValues = convertDateValues(key, oldValues);
-                fields.setValues(key, newValues);
-            }
-            // Convert boolean fields
-            else if(fieldNameCache.isBooleanField(key))
-            {
-                Collection<String> oldValues = fields.getValues(key);
-                if(oldValues == null) continue; 
-                
-                List<String> newValues = convertBooleanValues(key, oldValues);
-                fields.setValues(key, newValues);
-            }
+  /**
+   * Constructor
+   */
+  public MetadataNormalizer(FieldNameCache cache) {
+    dateConverter = new PdsDateConverter(true);
+    this.fieldNameCache = cache;
+  }
+
+  public String normalizeValue(String key, String oldValue) {
+    String newValue = oldValue;
+    try {
+      if (oldValue != null && !oldValue.isBlank()) {
+        if (this.fieldNameCache.isDateField(key)) {
+          newValue = convertDateValue(key, oldValue);
+        } else if (this.fieldNameCache.isBooleanField(key)) {
+          newValue = convertBooleanValue(key, oldValue);
         }
+      }
+    } catch (ParseException pe) {
+      throw new TypeConstraintException("Could not parse the value from an xml file", pe);
     }
+    return newValue;
+  }
 
-    
-    private List<String> convertDateValues(String key, Collection<String> oldValues) throws Exception
-    {
-        List<String> newValues = new ArrayList<>();
-        
-        for(String oldValue: oldValues)
-        {
-            try
-            {
-                String newValue = dateConverter.toIsoInstantString(key, oldValue);
-                newValues.add(newValue);
-            }
-            catch(Exception ex)
-            {
-                throw new Exception("Could not convert date value. Field = " + key + ", value = " + oldValue); 
-            }
-        }
-        
-        return newValues;
+  private String convertDateValue(String key, String oldValue) throws ParseException {
+    return dateConverter.toIsoInstantString(key, oldValue);
+  }
+
+
+  private String convertBooleanValue(String key, String oldValue) throws ParseException {
+    String newValue = oldValue;
+    String tmp = oldValue.toLowerCase();
+
+    if ("true".equals(tmp) || "1".equals(tmp)) {
+      newValue = "true";
+    } else if ("false".equals(tmp) || "0".equals(tmp)) {
+      newValue = "false";
+    } else {
+      throw new ParseException(
+          "Could not convert boolean value. Field = " + key + ", value = " + oldValue, 0);
     }
-
-
-    private List<String> convertBooleanValues(String key, Collection<String> oldValues) throws Exception
-    {
-        List<String> newValues = new ArrayList<>();
-        
-        for(String oldValue: oldValues)
-        {
-            String tmp = oldValue.toLowerCase();
-            
-            if("true".equals(tmp) || "1".equals(tmp))
-            {
-                newValues.add("true");
-            }
-            else if("false".equals(tmp) || "0".equals(tmp))
-            {
-                newValues.add("false");
-            }
-            else
-            {
-                throw new Exception("Could not convert boolean value. Field = " + key + ", value = " + oldValue); 
-            }
-        }
-        
-        return newValues;
-    }
-
+    return newValue;
+  }
 }

@@ -3,7 +3,6 @@ package gov.nasa.pds.registry.common.dd;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import javax.annotation.Nonnull;
 import gov.nasa.pds.registry.common.util.json.Serializer;
@@ -62,7 +61,7 @@ public class DDNJsonWriter {
     command.put(this.action, new HashMap<String,String>());
     command.get(this.action).put("_id", pk);
     try (FileWriter file = new FileWriter(this.file, !this.firstWrite)) {
-      for (String line : serializer.asBulkPairs(Arrays.asList(serializer.new Pair(command, dataRecord2Doc(data))))) {
+      for (String line : serializer.asBulkPair(serializer.new Pair(command, dataRecord2Doc(data)))) {
         file.write (line);
         file.write ("\n");
       }

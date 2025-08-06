@@ -32,11 +32,16 @@ public class Serializer {
         .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
         .create();
   }
+  public List<String> asBulkPair (Pair pair) {
+    ArrayList<String> result = new ArrayList<String>();
+    result.add(this.converter.toJson(pair.command));
+    result.add(this.converter.toJson(pair.document));
+    return result;
+  }
   public List<String> asBulkPairs (Collection<Pair> pairs) {
     ArrayList<String> result = new ArrayList<String>();
     for (Pair pair : pairs) {
-      result.add(this.converter.toJson(pair.command));
-      result.add(this.converter.toJson(pair.document));
+      result.addAll(asBulkPair(pair));
     }
     return result;
   }

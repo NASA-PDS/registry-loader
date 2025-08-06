@@ -44,6 +44,9 @@ public class XPathUtils
      */
     public static XPathExpression compileXPath(XPathFactory xpf, String str) throws Exception
     {
+      if (!str.contains("*[local-name() = '")) {
+        throw new Exception("XpathUtils.compileXPath: The xpath string probably will not work because missing '*[local-name' for wildcarding namespacing: " + str);
+      }
         XPath xpath = xpf.newXPath();
         XPathExpression expr = xpath.compile(str);
         return expr;

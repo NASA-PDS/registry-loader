@@ -1,5 +1,6 @@
 package gov.nasa.pds.registry.common.util.date;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
@@ -34,9 +35,9 @@ public class PdsDateConverter
      * "start_date_time" and "stop_date_time").
      * @param value a date in one of PDS date formats
      * @return ISO instant string
-     * @throws Exception Generic exception
+     * @throws ParseException 
      */
-    public String toIsoInstantString(String fieldName, String value) throws Exception
+    public String toIsoInstantString(String fieldName, String value) throws ParseException
     {
         if(value == null) return null;
         

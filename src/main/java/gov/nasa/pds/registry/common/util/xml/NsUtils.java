@@ -24,7 +24,7 @@ public class NsUtils
      * @return mappings
      * @throws Exception an exception
      */
-    public static XmlNamespaces getNamespaces(Document doc) throws Exception
+    public static XmlNamespaces getNamespaces(Document doc)
     {
         Element root = doc.getDocumentElement();
         NamedNodeMap attrs = root.getAttributes();
@@ -66,7 +66,7 @@ public class NsUtils
      * @throws Exception an exception
      */
     private static Map<String, String> createPrefixToLocationMap(String str, 
-            Map<String, String> uriToPrefixMap) throws Exception
+            Map<String, String> uriToPrefixMap)
     {
         Map<String, String> prefixToLocationMap = new HashMap<>();
         if(str == null) return prefixToLocationMap;

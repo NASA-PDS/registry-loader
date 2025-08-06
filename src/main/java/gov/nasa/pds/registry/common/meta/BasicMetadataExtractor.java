@@ -18,155 +18,127 @@ import gov.nasa.pds.registry.common.util.xml.XPathUtils;
 
 /**
  * Extract basic metadata, such as LID, VID, title from a PDS label.
+ * 
  * @author karpenko
  */
-public class BasicMetadataExtractor
-{
-    final public static String DEFAULT_ARCHIVE_STATUS = "staged";
-    private XPathExpression xLid;
-    private XPathExpression xVid;
-    private XPathExpression xTitle;
+public class BasicMetadataExtractor {
+  final public static String DEFAULT_ARCHIVE_STATUS = "staged";
+  private final XPathExpression xLid;
+  private final XPathExpression xVid;
+  private final XPathExpression xTitle;
+  private final XPathExpression xFileName;
+  private final XPathExpression xDocFile;
 
-    private XPathExpression xFileName;
-    private XPathExpression xDocFile;
-    
-    /**
-     * Constructor
-     * @throws Exception an exception
-     */
-    public BasicMetadataExtractor() throws Exception
-    {
-        XPathFactory xpf = XPathFactory.newInstance();
-        
-        xLid = XPathUtils.compileXPath(xpf, "//Identification_Area/logical_identifier");
-        xVid = XPathUtils.compileXPath(xpf, "//Identification_Area/version_id");
-        xTitle = XPathUtils.compileXPath(xpf, "//Identification_Area/title");
-        
-        xFileName = XPathUtils.compileXPath(xpf, "//File/file_name");
-        xDocFile = XPathUtils.compileXPath(xpf, "//Document_File");
+  /**
+   * Constructor
+   * 
+   * @throws Exception an exception
+   */
+  public BasicMetadataExtractor() throws Exception {
+    XPathFactory xpf = XPathFactory.newInstance();
+
+    this.xLid = XPathUtils.compileXPath(xpf, "//*[local-name() = 'Identification_Area']/*[local-name() = 'logical_identifier']");
+    this.xVid = XPathUtils.compileXPath(xpf, "//*[local-name() = 'Identification_Area']/*[local-name() = 'version_id']");
+    this.xTitle = XPathUtils.compileXPath(xpf, "//*[local-name() = 'Identification_Area']/*[local-name() = 'title']");
+    this.xFileName = XPathUtils.compileXPath(xpf, "//*[local-name() = 'File']/*[local-name() = 'file_name']");
+    this.xDocFile = XPathUtils.compileXPath(xpf, "//*[local-name() = 'Document_File']");
+  }
+
+
+  /**
+   * Extract basic metadata from a PDS label
+   * 
+   * @param file PDS label file
+   * @param doc Parsed PDS label file (XML DOM)
+   * @return extracted metadata
+   * @throws Exception an exception
+   */
+  public Metadata extract(File file, Document doc, String status) throws Exception {
+    // Product class
+    String prodClass = doc.getDocumentElement().getNodeName();
+
+    // LID
+    String lid = trim(XPathUtils.getStringValue(doc, xLid));
+    if (lid == null || lid.isEmpty()) {
+      throw new Exception("Missing logical identifier: " + file);
     }
 
-
-    /**
-     * Extract basic metadata from a PDS label
-     * @param file PDS label file
-     * @param doc Parsed PDS label file (XML DOM)
-     * @return extracted metadata
-     * @throws Exception an exception
-     */
-    public Metadata extract(File file, Document doc, String status) throws Exception
-    {
-        Metadata md = new Metadata();  
-        // Set default fields
-        md.setHarvestTimestamp(Instant.now());
-        md.setArchiveStatus(status);
-        md.setHarvestVersion(Metadata.getReportedHarvestVersion());
-        
-        // Product class
-        md.prodClass = doc.getDocumentElement().getNodeName();
-
-        // LID
-        md.lid = trim(XPathUtils.getStringValue(doc, xLid));
-        if(md.lid == null || md.lid.isEmpty())
-        {
-            throw new Exception("Missing logical identifier: " + file);
-        }
-
-        // VID
-        md.strVid = trim(XPathUtils.getStringValue(doc, xVid));
-        if(md.strVid == null || md.strVid.isEmpty())
-        {
-            throw new Exception("Missing '//Identification_Area/version_id'");
-        }
-
-        // Float VID (to query for latest version / sorting)
-        try
-        {
-            md.vid = Float.parseFloat(md.strVid);
-        }
-        catch(Exception ex)
-        {
-            throw new Exception("Invalid '//Identification_Area/version_id': " +  md.strVid
-                    + ". Expecting M.m number, such as '1.0' or '2.5'.");
-        }
-        
-        // LIDVID
-        md.lidvid = md.lid + "::" + md.strVid;
-        
-        // Alternate IDs
-        md.fields.addValue(Metadata.FLD_ALTERNATE_IDS, md.lidvid);
-        md.fields.addValue(Metadata.FLD_ALTERNATE_IDS, md.lid);        
-        
-        // Title
-        md.title = StringUtils.normalizeSpace(XPathUtils.getStringValue(doc, xTitle));
-
-        // Files
-        if(md.prodClass.equals("Product_Document"))
-        {
-            md.dataFiles = extractDocumentFilePaths(doc);
-        }
-        else
-        {
-            md.dataFiles = XPathUtils.getStringSet(doc, xFileName);
-        }
-        
-        return md;
+    // VID
+    String vid = trim(XPathUtils.getStringValue(doc, xVid));
+    if (vid == null || vid.isEmpty()) {
+      throw new Exception("Missing '//Identification_Area/version_id'");
     }
-    
-    
-    private Set<String> extractDocumentFilePaths(Document doc) throws Exception
-    {
-        NodeList nodes = XPathUtils.getNodeList(doc, xDocFile);
-        if(nodes == null || nodes.getLength() == 0) return null;
-        
-        Set<String> files = new TreeSet<>();
-        
-        for(int i = 0; i < nodes.getLength(); i++)
-        {
-            String filePath = extractFilePath(nodes.item(i));
-            if(filePath != null) files.add(filePath);
-        }
-        
-        return files;
-    }
-    
-    
-    private String extractFilePath(Node root)
-    {
-        String fileName = null;
-        String dir = null;
-        
-        NodeList nodes = root.getChildNodes();
-        
-        for(int i = 0; i < nodes.getLength(); i++)
-        {
-            Node node = nodes.item(i);
-            String nodeName = node.getNodeName();
-            
-            if(nodeName.equals("file_name"))
-            {
-                fileName = node.getTextContent().trim();
-            }
-            else if(nodeName.equals("directory_path_name"))
-            {
-                dir = node.getTextContent().trim();
-            }
-        }
 
-        if(fileName == null) return null;
+    // Title
+    String title = StringUtils.normalizeSpace(XPathUtils.getStringValue(doc, xTitle));
 
-        if(dir == null) return fileName;
-        
-        return dir.endsWith("/") ? dir + fileName : dir + "/" + fileName;
+    // Files
+    Set<String> dataFiles;
+    if (prodClass.equals("Product_Document")) {
+      dataFiles = extractDocumentFilePaths(doc);
+    } else {
+      dataFiles = XPathUtils.getStringSet(doc, xFileName);
     }
-    
-    
-    private static String trim(String str)
-    {
-        if(str == null) return null;
-        str = str.trim();
-        
-        return str.isEmpty() ? null : str;
+
+    Metadata md = new Metadata(lid,vid,prodClass,title,dataFiles);
+    // Set default fields
+    md.setHarvestTimestamp(Instant.now());
+    md.setArchiveStatus(status);
+    md.setHarvestVersion(Metadata.getReportedHarvestVersion());
+    return md;
+  }
+
+
+  private Set<String> extractDocumentFilePaths(Document doc) throws Exception {
+    NodeList nodes = XPathUtils.getNodeList(doc, xDocFile);
+    if (nodes == null || nodes.getLength() == 0)
+      return null;
+
+    Set<String> files = new TreeSet<>();
+
+    for (int i = 0; i < nodes.getLength(); i++) {
+      String filePath = extractFilePath(nodes.item(i));
+      if (filePath != null)
+        files.add(filePath);
     }
+
+    return files;
+  }
+
+
+  private String extractFilePath(Node root) {
+    String fileName = null;
+    String dir = null;
+
+    NodeList nodes = root.getChildNodes();
+
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node node = nodes.item(i);
+      String nodeName = node.getNodeName();
+
+      if (nodeName.equals("file_name")) {
+        fileName = node.getTextContent().trim();
+      } else if (nodeName.equals("directory_path_name")) {
+        dir = node.getTextContent().trim();
+      }
+    }
+
+    if (fileName == null)
+      return null;
+
+    if (dir == null)
+      return fileName;
+
+    return dir.endsWith("/") ? dir + fileName : dir + "/" + fileName;
+  }
+
+
+  private static String trim(String str) {
+    if (str == null)
+      return null;
+    str = str.trim();
+
+    return str.isEmpty() ? null : str;
+  }
 
 }

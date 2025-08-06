@@ -27,7 +27,9 @@ public class FieldMapSet implements FieldMap
         fields = new TreeMap<>();
     }
     
-    
+    public Map<String, Set<String>> all() {
+      return new TreeMap<String, Set<String>>(this.fields);
+    }
     /**
      * Map size / number of fields.
      */

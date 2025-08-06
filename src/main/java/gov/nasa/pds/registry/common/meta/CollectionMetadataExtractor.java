@@ -26,7 +26,7 @@ public class CollectionMetadataExtractor
     public CollectionMetadataExtractor() throws Exception
     {
         XPathFactory xpf = XPathFactory.newInstance();
-        xFileName = XPathUtils.compileXPath(xpf, "//File_Area_Inventory/File/file_name");
+        xFileName = XPathUtils.compileXPath(xpf, "//*[local-name() = 'File_Area_Inventory']/*[local-name() = 'File']/*[local-name() = 'file_name']");
     }
     
 
