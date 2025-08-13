@@ -130,6 +130,7 @@ public class FileMetadataExtractor {
       locationMetadata.put(createFieldName("file_ref"), getFileRef(file, refRules));
       locationMetadata.put(createFieldName("mime_type"), getMimeType(file));
     }
+    meta.setDataFileInfo(datafiles);
   }
 
   /**
