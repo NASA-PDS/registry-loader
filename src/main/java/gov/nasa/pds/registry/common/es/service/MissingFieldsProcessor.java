@@ -50,7 +50,7 @@ public class MissingFieldsProcessor {
    */
   public void processDoc(Metadata meta) throws Exception {
     // Find fields not in opensearch "registry" schema
-    for (String key : meta.fielnames()) {
+    for (String key : meta.fieldnames()) {
       // Check if current opensearch schema has this field.
       if (!fieldNameCache.schemaContainsField(key)) {
         // Update missing fields and XSDs

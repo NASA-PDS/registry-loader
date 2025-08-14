@@ -136,7 +136,7 @@ public class Metadata {
   public void setDataFileInfo (Object datafileMetadata) {
     this.document.put("ops:Data_File_Info", datafileMetadata);
   }
-  public Set<String> fielnames() {
+  public Set<String> fieldnames() {
     return this.fieldNames;
   }
   public XmlNamespaces xmlns() {

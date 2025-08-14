@@ -23,17 +23,19 @@ class MGetRespWrap extends GetRespWrap {
       if (doc.isResult()) {
         @SuppressWarnings("unchecked")
         Map<String,String> src = (Map<String,String>)doc.result().source();
-        if (src != null && src.containsKey("es_data_type")) t = new Tuple(doc.result().id(), src.get("es_data_type"));
-      } else if (stringForMissing) {
-        if (doc.result().id().startsWith("ref_lid_") || doc.result().id().startsWith("ref_lidvid_")
-            || doc.result().id().endsWith("_Area")) {
-          t = new Tuple(doc.result().id(), "keyword");
+        if (src != null && src.containsKey("es_data_type")) {
+          t = new Tuple(doc.result().id(), src.get("es_data_type"));
+        } else if (stringForMissing) {
+          if (doc.result().id().startsWith("ref_lid_") || doc.result().id().startsWith("ref_lidvid_")
+              || doc.result().id().endsWith("_Area")) {
+            t = new Tuple(doc.result().id(), "keyword");
+          } else {
+            log.warn("Could not find datatype for field {} and defaulting to 'text'", doc.result().id());
+            t = new Tuple(doc.result().id(), "text");
+          }
         } else {
-          log.error("Could not find datatype for field " + doc.result().id());
-          t = new Tuple(doc.result().id(), "string");
+          throw new DataTypeNotFoundException();
         }
-      } else {
-        throw new DataTypeNotFoundException();
       }
       if (t != null) results.add(t);
     }

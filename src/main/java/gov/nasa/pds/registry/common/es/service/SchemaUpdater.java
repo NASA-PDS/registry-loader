@@ -37,7 +37,7 @@ public class SchemaUpdater
     final private String index;
     
     // Use string data type for undefined fields
-    private boolean stringForMissing = true;
+    private final boolean stringForMissing = true;
     
     /**
      * Constructor

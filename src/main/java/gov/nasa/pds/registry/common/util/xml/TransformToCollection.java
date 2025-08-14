@@ -42,7 +42,7 @@ public class TransformToCollection {
       for (int i = 0 ; i < attrs.getLength() ; i++) {
         String name = "@" + attrs.item(i).getNodeName();
         content.put(name, attrs.item(i).getNodeValue());
-        this.leaves.add(heritage + "." + name);
+        this.leaves.add(heritage + name);
       }
     }
     if (parent.hasChildNodes()) {

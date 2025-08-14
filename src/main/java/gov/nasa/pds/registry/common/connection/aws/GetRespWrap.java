@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opensearch.client.opensearch.core.GetResponse;
@@ -28,6 +27,7 @@ class GetRespWrap implements Response.Get {
   public IdSets ids() {
     IdSetsImpl result = new IdSetsImpl();
     if (this.parent.source() != null) {
+      @SuppressWarnings("unchecked")
       Map<String,List<String>> src = (Map<String,List<String>>)this.parent.source();
       if (src.containsKey("ref_lid_collection")) result.lids.addAll(src.get("ref_lid_collection"));
       if (src.containsKey("ref_lidvid_collection")) result.lids.addAll(src.get("ref_lidvid_collection"));
@@ -38,6 +38,7 @@ class GetRespWrap implements Response.Get {
   public String productClass() {
     String result = "";
     if (this.parent.source() != null) {
+      @SuppressWarnings("unchecked")
       Map<String,String> src = (Map<String,String>)this.parent.source();
       if (src.containsKey("product_class")) result = src.get("product_class");
     }
@@ -47,6 +48,7 @@ class GetRespWrap implements Response.Get {
   public List<String> refs() {
     ArrayList<String> results = new ArrayList<String>();
     if (this.parent.source() != null) {
+      @SuppressWarnings("unchecked")
       Map<String, List<String>> src = (Map<String,List<String>>)this.parent.source();
       if (src.containsKey("product_lidvid")) {
         results.addAll(src.get("product_lidvid"));
