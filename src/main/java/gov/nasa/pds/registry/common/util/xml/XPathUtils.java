@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
@@ -40,12 +41,13 @@ public class XPathUtils
      * @param xpf XPath factory
      * @param str XPath string value
      * @return Compiled XPath
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public static XPathExpression compileXPath(XPathFactory xpf, String str) throws Exception
+    public static XPathExpression compileXPath(XPathFactory xpf, String str) throws XPathExpressionException
     {
       if (!str.contains("*[local-name() = '")) {
-        throw new Exception("XpathUtils.compileXPath: The xpath string probably will not work because missing '*[local-name' for wildcarding namespacing: " + str);
+        throw new XPathExpressionException("XpathUtils.compileXPath: The xpath string probably will not work because missing '*[local-name' for wildcarding namespacing: " + str);
       }
         XPath xpath = xpf.newXPath();
         XPathExpression expr = xpath.compile(str);
@@ -58,9 +60,10 @@ public class XPathUtils
      * @param doc XML document
      * @param expr an XPath
      * @return a string value
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public static String getStringValue(Document doc, XPathExpression expr) throws Exception
+    public static String getStringValue(Document doc, XPathExpression expr) throws XPathExpressionException
     {
         Object res = expr.evaluate(doc, XPathConstants.STRING);
         return (res == null) ? null : res.toString();
@@ -72,9 +75,10 @@ public class XPathUtils
      * @param doc XML document
      * @param expr an XPath
      * @return a list
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public static List<String> getStringList(Document doc, XPathExpression expr) throws Exception
+    public static List<String> getStringList(Document doc, XPathExpression expr) throws XPathExpressionException
     {
         String[] values = getStringArray(doc, expr);
         return values == null ? null : Arrays.asList(values);
@@ -86,9 +90,10 @@ public class XPathUtils
      * @param doc XML document
      * @param expr an XPath
      * @return a set
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public static Set<String> getStringSet(Document doc, XPathExpression expr) throws Exception
+    public static Set<String> getStringSet(Document doc, XPathExpression expr) throws XPathExpressionException
     {
         String[] values = getStringArray(doc, expr);
         if(values == null || values.length == 0) return null;
@@ -104,9 +109,10 @@ public class XPathUtils
      * @param doc XML document
      * @param xpath an XPath
      * @return a list
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public List<String> getStringList(Document doc, String xpath) throws Exception
+    public List<String> getStringList(Document doc, String xpath) throws XPathExpressionException
     {
         XPathExpression expr = compileXPath(xpf, xpath);
         return getStringList(doc, expr);
@@ -118,9 +124,10 @@ public class XPathUtils
      * @param doc XML document
      * @param xpath an XPath
      * @return a set
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public Set<String> getStringSet(Document doc, String xpath) throws Exception
+    public Set<String> getStringSet(Document doc, String xpath) throws XPathExpressionException
     {
         XPathExpression expr = compileXPath(xpf, xpath);
         List<String> list = getStringList(doc, expr);
@@ -138,9 +145,10 @@ public class XPathUtils
      * @param doc XML document
      * @param expr an XPath
      * @return an array
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public static String[] getStringArray(Document doc, XPathExpression expr) throws Exception
+    public static String[] getStringArray(Document doc, XPathExpression expr) throws XPathExpressionException
     {
         NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
         if (nodes == null || nodes.getLength() == 0)
@@ -161,9 +169,10 @@ public class XPathUtils
      * @param item parent item
      * @param expr an XPath
      * @return Node list
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public static NodeList getNodeList(Object item, XPathExpression expr) throws Exception
+    public static NodeList getNodeList(Object item, XPathExpression expr) throws XPathExpressionException
     {
         if(item == null) return null;
         
@@ -177,9 +186,10 @@ public class XPathUtils
      * @param item parent item
      * @param xpath an XPath
      * @return Node list
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public NodeList getNodeList(Object item, String xpath) throws Exception
+    public NodeList getNodeList(Object item, String xpath) throws XPathExpressionException
     {
         if(item == null) return null;
         XPathExpression xpe = compileXPath(xpf, xpath);
@@ -193,9 +203,10 @@ public class XPathUtils
      * @param item parent item
      * @param xpath an XPath
      * @return Node count
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public int getNodeCount(Object item, String xpath) throws Exception
+    public int getNodeCount(Object item, String xpath) throws XPathExpressionException
     {
         if(item == null) return 0;
         XPathExpression xpe = compileXPath(xpf, xpath);
@@ -210,9 +221,10 @@ public class XPathUtils
      * @param item Parent item
      * @param xpath an XPath
      * @return a Node
+     * @throws XPathExpressionException 
      * @throws Exception Generic exception
      */
-    public Node getFirstNode(Object item, String xpath) throws Exception
+    public Node getFirstNode(Object item, String xpath) throws XPathExpressionException
     {
         if(item == null) return null;
         

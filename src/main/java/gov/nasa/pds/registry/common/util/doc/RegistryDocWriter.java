@@ -1,7 +1,5 @@
 package gov.nasa.pds.registry.common.util.doc;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +12,7 @@ import gov.nasa.pds.registry.common.util.json.Serializer;
  * 
  * @author karpenko
  */
-public class RegistryDocWriter implements Closeable {
+public class RegistryDocWriter {
   private List<String> jsonData;
 
   /**
@@ -48,12 +46,7 @@ public class RegistryDocWriter implements Closeable {
    * @param jobId Harvest job id
    * @throws Exception Generic exception
    */
-  public void write(Metadata meta, String jobId) throws Exception {
+  public void write(Metadata meta, String jobId) {
     this.jsonData.addAll(new Serializer(false).asBulkPair(meta.asBulkPair(jobId)));
   }
-
-
-  @Override
-  public void close() throws IOException {}
-
 }

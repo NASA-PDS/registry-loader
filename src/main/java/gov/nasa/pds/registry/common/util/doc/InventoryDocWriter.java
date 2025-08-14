@@ -1,7 +1,5 @@
 package gov.nasa.pds.registry.common.util.doc;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +14,7 @@ import gov.nasa.pds.registry.common.util.json.Serializer;
  * 
  * @author karpenko
  */
-public class InventoryDocWriter implements Closeable {
+public class InventoryDocWriter {
   private List<String> data;
 
   public InventoryDocWriter() {
@@ -32,7 +30,7 @@ public class InventoryDocWriter implements Closeable {
   }
 
   public void writeBatch(String collectionLidvid, ProdRefsBatch batch, RefType refType,
-      String jobId) throws Exception {
+      String jobId) {
     if (collectionLidvid == null)
       return;
     int idx = collectionLidvid.indexOf("::");
@@ -75,7 +73,4 @@ public class InventoryDocWriter implements Closeable {
     document.put("_package_id", jobId);
     data.addAll(serializer.asBulkPair(serializer.new Pair(command, document)));
   }
-
-  @Override
-  public void close() throws IOException {}
 }

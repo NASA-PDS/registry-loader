@@ -28,11 +28,8 @@ public class TransformToCollection {
   @SuppressWarnings("unchecked")
   public Map<String,Object> convert (Document doc, MetadataNormalizer normalizer) {
     Element root = doc.getDocumentElement();
-    //HashMap<String,Object> label = new HashMap<String,Object>();
     this.normalizer = normalizer;
     this.xmlnsInfo = NsUtils.getNamespaces(doc);
-    //label.put("label", this.convert(root, "", false));
-    //return label;
     return (Map<String,Object>)convert (root, "");
   }
   private Object convert (Node parent, String heritage) {
@@ -78,7 +75,6 @@ public class TransformToCollection {
     }
     String nsUri = node.getNamespaceURI();
     String nsPrefix = this.xmlnsInfo.uri2prefix.get(nsUri);
-    String nsName = nsPrefix + MetaConstants.NS_SEPARATOR + node.getLocalName();
-    return nsName;
+    return nsPrefix + MetaConstants.NS_SEPARATOR + node.getLocalName();
   }
 }
