@@ -59,10 +59,10 @@ public class LddEsJsonWriter {
    * @param classNs LDD class namespace
    * @param className LDD class name
    * @param attrId LDD attribute ID
+   * @throws IOException 
    * @throws Exception an exception
    */
-  public void writeFieldDefinition(String classNs, String className, String attrId)
-      throws Exception {
+  public void writeFieldDefinition(String classNs, String className, String attrId) throws IOException {
     // Apply namespace filter
     if (nsFilter != null && !nsFilter.equals(classNs))
       return;

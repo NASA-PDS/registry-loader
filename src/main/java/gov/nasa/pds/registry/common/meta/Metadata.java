@@ -21,10 +21,10 @@ import gov.nasa.pds.registry.common.util.xml.XmlNamespaces;
 public class Metadata {
   private final HashMap<String, Object> document = new HashMap<String, Object>();
   private final HashMap<String, Object> tracking = new HashMap<String, Object>();
-  private final String FLD_ALTERNATE_IDS = "alternate_ids";
-  private final String FLD_NODE_NAME = "ops:node_name";
-  private final String FLD_HARVEST_DATE_TIME = "ops:harvest_date_time";
-  private final String FLD_HARVEST_VERSION = "ops:harvest_version";
+  private static final String FLD_ALTERNATE_IDS = "alternate_ids";
+  private static final String FLD_NODE_NAME = "ops:node_name";
+  private static final String FLD_HARVEST_DATE_TIME = "ops:harvest_date_time";
+  private static final String FLD_HARVEST_VERSION = "ops:harvest_version";
   public static final String FLD_ARCHIVE_STATUS = "ops:archive_status";
   private final Set<String> dataFiles; // File names from <File_Area...> tags
   private Set<String> fieldNames = new HashSet<String>();
