@@ -91,10 +91,9 @@ public class BasicMetadataExtractor {
 
   private Set<String> extractDocumentFilePaths(Document doc) throws Exception {
     NodeList nodes = XPathUtils.getNodeList(doc, xDocFile);
-    if (nodes == null || nodes.getLength() == 0)
-      return null;
-
     Set<String> files = new TreeSet<>();
+
+    if (nodes == null) return files;
 
     for (int i = 0; i < nodes.getLength(); i++) {
       String filePath = extractFilePath(nodes.item(i));

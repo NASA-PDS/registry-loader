@@ -96,7 +96,7 @@ public class DataDictionaryDao
 
         HashMap<String,HashSet<String>> mapping = new HashMap<String,HashSet<String>>();
         for (String id : ids) {
-          String parts[] = id.split("\\.");
+          String[] parts = id.split("\\.");
           String typeId = id;
           if (parts.length > 1) {
             typeId = parts[parts.length-2] + "." +  parts[parts.length-1];

@@ -4,12 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -41,10 +44,11 @@ public class FileMetadataExtractor {
 
   /**
    * Constructor
+   * @throws NoSuchAlgorithmException 
    * 
    * @throws Exception and exception
    */
-  public FileMetadataExtractor() throws Exception {
+  public FileMetadataExtractor() throws NoSuchAlgorithmException {
     md5Digest = MessageDigest.getInstance("MD5");
     buf = new byte[1024 * 16];
     tika = new Tika();
@@ -76,9 +80,10 @@ public class FileMetadataExtractor {
    * @param file a file
    * @param meta extracted metadata is added to this object
    * @param refRules rules to create external file references
+   * @throws IOException 
    * @throws Exception an exception
    */
-  public void extract(File file, Metadata meta, List<FileRefRule> refRules) throws Exception {
+  public void extract(File file, Metadata meta, List<FileRefRule> refRules) throws IOException {
     BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
     String dt = attr.creationTime().toInstant().truncatedTo(ChronoUnit.SECONDS).toString();
     HashMap<String, Object> labelMetadata = new HashMap<String, Object>();
@@ -106,13 +111,12 @@ public class FileMetadataExtractor {
     }
   }
 
-  private void processDataFiles(File baseDir, Metadata meta, List<FileRefRule> refRules)
-      throws Exception {
+  private void processDataFiles(File baseDir, Metadata meta, List<FileRefRule> refRules) throws IOException {
     ArrayList<HashMap<String,Object>> datafiles = new ArrayList<HashMap<String,Object>>();
     for (String fileName : meta.dataFiles()) {
       File file = new File(baseDir, fileName);
       if (!file.exists()) {
-        throw new Exception("Data file " + file.getAbsolutePath() + " doesn't exist");
+        throw new NoSuchFileException("Data file " + file.getAbsolutePath() + " doesn't exist");
       }
 
       ArrayList<HashMap<String,Object>> locations =  new ArrayList<HashMap<String,Object>>();
@@ -138,9 +142,10 @@ public class FileMetadataExtractor {
    * 
    * @param file a file
    * @return HEX encoded MD5 hash
+   * @throws IOException 
    * @throws Exception an exception
    */
-  public String getMd5(File file) throws Exception {
+  public String getMd5(File file) throws IOException {
     md5Digest.reset();
     FileInputStream source = null;
 
@@ -164,9 +169,10 @@ public class FileMetadataExtractor {
    * 
    * @param file PDS XML label
    * @return Base64 encoded string
+   * @throws IOException 
    * @throws Exception an exception
    */
-  public String getBlob(File file) throws Exception {
+  public String getBlob(File file) throws IOException {
     FileInputStream source = null;
 
     // Zipped content holder
@@ -194,9 +200,10 @@ public class FileMetadataExtractor {
    * 
    * @param file PDS XML label
    * @return Base64 encoded string
+   * @throws IOException 
    * @throws Exception an exception
    */
-  public static String getJsonBlob(File file) throws Exception {
+  public static String getJsonBlob(File file) throws IOException {
     Reader source = null;
 
     // Zipped content holder
@@ -240,7 +247,7 @@ public class FileMetadataExtractor {
     return filePath;
   }
 
-  private String getMimeType(File file) throws Exception {
+  private String getMimeType(File file) throws IOException {
     InputStream is = null;
 
     try {

@@ -24,7 +24,7 @@ public class DDNJsonWriter {
    * @param file output file
    * @throws Exception an exception
    */
-  public DDNJsonWriter(File file, boolean overwrite) throws Exception {
+  public DDNJsonWriter(File file, boolean overwrite) {
     this.action = overwrite ? "index" : "create";
     this.file = file;
   }
@@ -58,14 +58,13 @@ public class DDNJsonWriter {
   public void write(@Nonnull String pk, @Nonnull DDRecord data, String action) throws IOException {
     HashMap<String,HashMap<String,String>> command = new HashMap<String,HashMap<String,String>>();
     Serializer serializer = new Serializer(false);
-    command.put(this.action, new HashMap<String,String>());
-    command.get(this.action).put("_id", pk);
-    try (FileWriter file = new FileWriter(this.file, !this.firstWrite)) {
+    command.put(action, new HashMap<String,String>());
+    command.get(action).put("_id", pk);
+    try (FileWriter fw = new FileWriter(this.file, !this.firstWrite)) {
       for (String line : serializer.asBulkPair(serializer.new Pair(command, dataRecord2Doc(data)))) {
-        file.write (line);
-        file.write ("\n");
+        fw.write (line);
+        fw.write ("\n");
       }
-      file.close();
       this.firstWrite = false;
     }
   }

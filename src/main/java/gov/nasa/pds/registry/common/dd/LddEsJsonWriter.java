@@ -1,6 +1,8 @@
 package gov.nasa.pds.registry.common.dd;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +36,7 @@ public class LddEsJsonWriter {
    * @throws Exception an exception
    */
   public LddEsJsonWriter(File outFile, Pds2EsDataTypeMap dtMap,
-      Map<String, DDAttribute> ddAttrCache, boolean overwrite) throws Exception {
+      Map<String, DDAttribute> ddAttrCache, boolean overwrite) {
     log = LogManager.getLogger(this.getClass());
     writer = new DDNJsonWriter(outFile, overwrite);
     this.dtMap = dtMap;
@@ -82,10 +84,12 @@ public class LddEsJsonWriter {
    * @param imVersion IM version
    * @param lddVersion LDD version
    * @param date date
+   * @throws IOException 
+   * @throws ParseException 
    * @throws Exception an exception
    */
   public void writeLddInfo(String namespace, String schemaFileName, String imVersion,
-      String lddVersion, String date) throws Exception {
+      String lddVersion, String date) throws IOException, ParseException {
     if (namespace == null || namespace.isBlank())
       throw new IllegalArgumentException("Missing data dictionary namespace");
     if (date == null || date.isBlank())
@@ -106,7 +110,7 @@ public class LddEsJsonWriter {
   }
 
 
-  private void writeRecord(String classNs, String className, DDAttribute dda) throws Exception {
+  private void writeRecord(String classNs, String className, DDAttribute dda) throws IOException {
     // Assign values
     ddRec.classNs = classNs;
     ddRec.className = className;
@@ -125,8 +129,7 @@ public class LddEsJsonWriter {
         writer.write(ddRec.esFieldNameFromComponents(), ddRec);
       }
     } catch (DataTypeNotFoundException e) {
-      log.error("The field '" + dda.attrName
-          + "' will not be searchable because LDD does not contain a type for it (see harvest#204).");
+      log.error("The field '{}' will not be searchable because LDD does not contain a type for it (see harvest#204).", dda.attrName);
     }
   }
 

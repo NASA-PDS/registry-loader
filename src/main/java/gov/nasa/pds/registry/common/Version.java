@@ -50,8 +50,7 @@ public class Version {
           v = prop.getProperty("application.version");
         }
     } catch (Exception ex) {
-      //ex.printStackTrace();
-      this.log.error("Internal error that requires a developer to debug: " + ex.getMessage());
+      this.log.error("Internal error that requires a developer to debug.", ex);
     } finally {
       this.version = v;
     }    

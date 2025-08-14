@@ -118,9 +118,10 @@ public class LddUtils
      * to ISO Instant format, e.g., "2020-12-23T15:16:28Z".
      * @param dateStr LDD date string from PDS LDD JSON file.
      * @return ISO Instant formatted date
+     * @throws ParseException 
      * @throws Exception an exception
      */
-    public static String lddDateToIsoInstantString(String dateStr) throws Exception
+    public static String lddDateToIsoInstantString(String dateStr) throws ParseException
     {
         Date dt = parseLddDate(dateStr);
         return DateTimeFormatter.ISO_INSTANT.format(dt.toInstant());
