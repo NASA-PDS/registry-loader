@@ -1,5 +1,6 @@
 package gov.nasa.pds.registry.common.es.dao.dd;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import gov.nasa.pds.registry.common.Request;
+import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.util.Tuple;
 
@@ -88,9 +90,12 @@ public class DataDictionaryDao
      * If false, process all missing fields in a batch to create a list of 
      * missing namespaces. Don't throw DataTypeNotFoundException.  
      * @return Data types information object
+     * @throws DataTypeNotFoundException 
+     * @throws IOException 
+     * @throws ResponseException 
      * @throws Exception DataTypeNotFoundException, IOException, etc.
      */
-    public List<Tuple> getDataTypes(Collection<String> ids) throws Exception
+    public List<Tuple> getDataTypes(Collection<String> ids) throws ResponseException, IOException, DataTypeNotFoundException
     {
         if(ids == null || ids.isEmpty()) return null;
 
