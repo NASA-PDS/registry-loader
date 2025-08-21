@@ -95,7 +95,7 @@ public class DataDictionaryDao
      * @throws ResponseException 
      * @throws Exception DataTypeNotFoundException, IOException, etc.
      */
-    public List<Tuple> getDataTypes(Collection<String> ids) throws ResponseException, IOException, DataTypeNotFoundException
+    public List<Tuple> getDataTypes(Collection<String> ids) throws IOException, DataTypeNotFoundException
     {
         if(ids == null || ids.isEmpty()) return null;
 
