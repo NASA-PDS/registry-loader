@@ -19,7 +19,7 @@ class GetRespWrap implements Response.Get {
     this.parent = parent;
   }
   @Override
-  public List<Tuple> dataTypes(boolean stringForMissing)
+  public List<Tuple> dataTypes()
       throws IOException, DataTypeNotFoundException {
     throw new RuntimeException("This method is supported via MGet and should never be called here");
   }

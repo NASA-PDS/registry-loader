@@ -90,7 +90,7 @@ public class DataDictionaryDao
      * @return Data types information object
      * @throws Exception DataTypeNotFoundException, IOException, etc.
      */
-    public List<Tuple> getDataTypes(Collection<String> ids, boolean stringForMissing) throws Exception
+    public List<Tuple> getDataTypes(Collection<String> ids) throws Exception
     {
         if(ids == null || ids.isEmpty()) return null;
 
@@ -109,7 +109,7 @@ public class DataDictionaryDao
             .includeField("es_data_type")
             .setIndex(this.indexName + "-dd");
         ArrayList<Tuple> result = new ArrayList<Tuple>(ids.size());
-        for (Tuple t : this.client.performRequest(req).dataTypes(stringForMissing)) {
+        for (Tuple t : this.client.performRequest(req).dataTypes()) {
           for (String id : mapping.get(t.item1)) {
             result.add(new Tuple(id, t.item2));
           }

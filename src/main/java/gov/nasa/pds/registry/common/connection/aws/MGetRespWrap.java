@@ -16,7 +16,8 @@ class MGetRespWrap extends GetRespWrap {
     this.parent = parent;
   }
   @Override
-  public List<Tuple> dataTypes(boolean stringForMissing) throws IOException, DataTypeNotFoundException {
+  public List<Tuple> dataTypes() throws IOException, DataTypeNotFoundException {
+    boolean stillMissing = false;
     ArrayList<Tuple> results = new ArrayList<Tuple>();
     for (MultiGetResponseItem<Object> doc : this.parent.docs()) {
       Tuple t = null;
@@ -25,20 +26,19 @@ class MGetRespWrap extends GetRespWrap {
         Map<String,String> src = (Map<String,String>)doc.result().source();
         if (src != null && src.containsKey("es_data_type")) {
           t = new Tuple(doc.result().id(), src.get("es_data_type"));
-        } else if (stringForMissing) {
-          if (doc.result().id().startsWith("ref_lid_") || doc.result().id().startsWith("ref_lidvid_")
-              || doc.result().id().endsWith("_Area")) {
+        } else if (doc.result().id().startsWith("ref_lid_") || doc.result().id().startsWith("ref_lidvid_")) {
             t = new Tuple(doc.result().id(), "keyword");
-          } else {
+        } else if (doc.result().id().contains("@")) {
             log.warn("Could not find datatype for field {} and defaulting to 'text'", doc.result().id());
             t = new Tuple(doc.result().id(), "text");
-          }
         } else {
-          throw new DataTypeNotFoundException();
+          stillMissing = true;
+          log.error("Could not find the data type for the field {}", doc.result().id());
         }
       }
       if (t != null) results.add(t);
     }
+    if (stillMissing) throw new DataTypeNotFoundException();
     return results;
   }
 }
