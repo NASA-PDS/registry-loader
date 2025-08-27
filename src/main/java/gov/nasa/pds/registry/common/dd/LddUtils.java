@@ -30,8 +30,8 @@ public class LddUtils
 {
     private static final Map<String, List<Pattern>> Accepted_LDD_DateFormats = new TreeMap<String,List<Pattern>>();
     static {
-      Accepted_LDD_DateFormats.put("u[-D]X",TimeFormatRegex.DOY_FORMATS);
-      Accepted_LDD_DateFormats.put("u[-M[-d]]X",TimeFormatRegex.DATE_YMD_FORMATS);
+      Accepted_LDD_DateFormats.put("u[-D]",TimeFormatRegex.DOY_FORMATS);
+      Accepted_LDD_DateFormats.put("u[-M[-d]]",TimeFormatRegex.DATE_YMD_FORMATS);
       Accepted_LDD_DateFormats.put("u[-D['T'H[:m[:s[.S]]]]]X",TimeFormatRegex.DATE_TIME_DOY_FORMATS);
       Accepted_LDD_DateFormats.put("u[-M[-d['T'H[:m[:s[.S]]]]]]X",TimeFormatRegex.DATE_TIME_YMD_FORMATS);
       Accepted_LDD_DateFormats.put("H[:m[:s[.S]]]X",TimeFormatRegex.TIME_FORMATS);
@@ -80,20 +80,18 @@ public class LddUtils
       for (Pattern regex : Accepted_LDD_DateFormats.get(pattern)) {
         if (regex.matcher(cleaned).matches() &&
             !(pattern.contains(":") ^ hasTime)) {
-          cleaned = (cleaned + "Z").replace("ZZ", "Z");
           if (!handleLeapSecondNotation.isBlank()) {
             cleaned = cleaned.replace(":60", handleLeapSecondNotation);
           }
-          pattern = subseconds(cleaned, pattern);
-          if (cleaned.contains(":")) {
+          if (hasTime) {
+            cleaned = (cleaned + "Z").replace("ZZ", "Z");
+            pattern = subseconds(cleaned, pattern);
             return Date.from(
                 ZonedDateTime.parse(
                     cleaned,
                     DateTimeFormatter.ofPattern(pattern))
                 .toInstant());
           } else {
-            cleaned = cleaned.substring(0, cleaned.length()-1);
-            pattern = pattern.substring(0, pattern.length()-1);
             DateTimeFormatterBuilder dtfb = new DateTimeFormatterBuilder()
                 .appendPattern(pattern);
             if (pattern.contains("-D")) {
