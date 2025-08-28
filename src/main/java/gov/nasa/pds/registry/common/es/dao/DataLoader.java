@@ -41,8 +41,8 @@ public class DataLoader
     private int batchSize = 100;
     private int totalRecords;
 
-    private Logger log;
-    private ConnectionFactory conFactory;
+    private final Logger log;
+    private final ConnectionFactory conFactory;
 
 
     /**
