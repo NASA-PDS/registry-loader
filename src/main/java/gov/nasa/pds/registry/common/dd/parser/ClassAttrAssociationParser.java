@@ -179,7 +179,7 @@ public class ClassAttrAssociationParser extends BaseLddParser
       jsonReader.endObject();
       
       if (isAttribute) {
-        if (attrIds.size() == 0)
+        if (attrIds.isEmpty())
           throw new IllegalArgumentException("Class defined an assoication with isAttribute true but without any attributeId");
         for (String attrId : attrIds) {
           cb.onAssociation(classNs, className, attrId);
