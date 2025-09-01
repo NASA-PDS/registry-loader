@@ -79,7 +79,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-client</artifactId>
-            <version>9.1.1</version>
+            <version>9.1.3</version>
         </dependency>
         <!-- JSON parser -->
         <dependency>
