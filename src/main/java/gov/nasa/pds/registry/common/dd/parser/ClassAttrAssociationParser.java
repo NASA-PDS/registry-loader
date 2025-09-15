@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.common.dd.parser;
 
 import java.io.File;
+import java.util.LinkedList;
 import com.google.gson.stream.JsonToken;
 
 
@@ -157,48 +158,46 @@ public class ClassAttrAssociationParser extends BaseLddParser
     }
 
     
-    private void parseAssoc() throws Exception
-    {
-        boolean isAttribute = false;
-        
-        jsonReader.beginObject();
-        
-        while(jsonReader.hasNext() && jsonReader.peek() != JsonToken.END_OBJECT)
-        {
-            String name = jsonReader.nextName();
-            if("isAttribute".equals(name))
-            {
-                String val = jsonReader.nextString();
-                if("true".equals(val))
-                {
-                    isAttribute = true;
-                }
-            }
-            else if("attributeId".equals(name) && isAttribute)
-            {
-                parseAttributeIds();
-            }
-            else
-            {
-                jsonReader.skipValue();
-            }
+    private void parseAssoc() throws Exception {
+      boolean isAttribute = false;
+      LinkedList<String> attrIds = new LinkedList<String>();
+
+      jsonReader.beginObject();
+      while (jsonReader.hasNext() && jsonReader.peek() != JsonToken.END_OBJECT) {
+        String name = jsonReader.nextName();
+        if ("isAttribute".equals(name)) {
+          String val = jsonReader.nextString();
+          if ("true".equals(val)) {
+            isAttribute = true;
+          }
+        } else if ("attributeId".equals(name) || "null".equals(name)) {
+          parseAttributeIds(attrIds);
+        } else {
+          jsonReader.skipValue();
         }
-        
-        jsonReader.endObject();
+      }
+      jsonReader.endObject();
+      
+      if (isAttribute) {
+        if (attrIds.isEmpty())
+          throw new IllegalArgumentException("Class defined an assoication with isAttribute true but without any attributeId");
+        for (String attrId : attrIds) {
+          cb.onAssociation(classNs, className, attrId);
+        }
+      }
     }
 
     
-    private void parseAttributeIds() throws Exception
-    {
-        jsonReader.beginArray();
-        
-        while(jsonReader.hasNext() && jsonReader.peek() != JsonToken.END_ARRAY)
-        {
-            String attrId = jsonReader.nextString();
-            cb.onAssociation(classNs, className, attrId);
+    private void parseAttributeIds(LinkedList<String> ids) throws Exception {
+      jsonReader.beginArray();
+      while (jsonReader.hasNext() && jsonReader.peek() != JsonToken.END_ARRAY) {
+        if (jsonReader.peek() == JsonToken.STRING) {
+          ids.add(jsonReader.nextString());
+        } else {
+          jsonReader.skipValue();
         }
-        
-        jsonReader.endArray();
+      }
+      jsonReader.endArray();
     }
     
 }

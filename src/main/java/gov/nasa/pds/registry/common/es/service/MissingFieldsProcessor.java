@@ -52,7 +52,7 @@ public class MissingFieldsProcessor {
     // Find fields not in opensearch "registry" schema
     for (String key : meta.fieldnames()) {
       // Check if current opensearch schema has this field.
-      if (!fieldNameCache.schemaContainsField(key)) {
+     if (!fieldNameCache.schemaContainsField(key)) {
         // Update missing fields and XSDs
         missingFields.add(key);
         updateMissingXsds(key, meta.xmlns());
@@ -73,17 +73,18 @@ public class MissingFieldsProcessor {
 
 
   protected void updateMissingXsds(String name, XmlNamespaces xmlns) {
-    int idx = name.indexOf(MetaConstants.NS_SEPARATOR);
-    if (idx <= 0)
-      return;
+    int bidx = 0;
+    int lidx;
+    while ((lidx = name.indexOf(MetaConstants.NS_SEPARATOR, bidx)) > 0) {
+      String prefix = name.substring(bidx, lidx);
+      String xsd = xmlns.prefix2location.get(prefix);
 
-    String prefix = name.substring(0, idx);
-    String xsd = xmlns.prefix2location.get(prefix);
-
-    if (xsd != null) {
-      missingXsds.put(xsd, prefix);
+      if (xsd != null) {
+        missingXsds.put(xsd, prefix);
+      }
+      bidx = name.indexOf(MetaConstants.ATTR_SEPARATOR, lidx+1);
+      if (bidx < 0) break;
+      bidx++;
     }
   }
-
-
 }
