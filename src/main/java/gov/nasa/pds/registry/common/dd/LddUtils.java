@@ -78,20 +78,19 @@ public class LddUtils
     boolean hasTime = cleaned.contains(":");
     for (String pattern : Accepted_LDD_DateFormats.keySet()) {
       for (Pattern regex : Accepted_LDD_DateFormats.get(pattern)) {
-        if (regex.matcher(cleaned).matches() &&
-            !(pattern.contains(":") ^ hasTime)) {
-          if (!handleLeapSecondNotation.isBlank()) {
-            cleaned = cleaned.replace(":60", handleLeapSecondNotation);
-          }
-          if (hasTime) {
+        if (regex.matcher(cleaned).matches()) {
+          if (pattern.contains(":") && hasTime) {
             cleaned = (cleaned + "Z").replace("ZZ", "Z");
+            if (!handleLeapSecondNotation.isBlank()) {
+              cleaned = cleaned.replace(":60", handleLeapSecondNotation);
+            }
             pattern = subseconds(cleaned, pattern);
             return Date.from(
                 ZonedDateTime.parse(
                     cleaned,
                     DateTimeFormatter.ofPattern(pattern))
                 .toInstant());
-          } else {
+          } else if (!pattern.contains(":") && !hasTime) {
             DateTimeFormatterBuilder dtfb = new DateTimeFormatterBuilder()
                 .appendPattern(pattern);
             if (pattern.contains("-D")) {
