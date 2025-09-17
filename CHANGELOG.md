@@ -1,5 +1,22 @@
 # Changelog
 
+## [«unknown»](https://github.com/NASA-PDS/registry-common/tree/«unknown») (2025-09-17)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v2.0.5...«unknown»)
+
+**Improvements:**
+
+- Default to throwing an error when an attribute is missing from a LDD [\#149](https://github.com/NASA-PDS/registry-common/issues/149)
+
+**Defects:**
+
+- Fix code scanning alert [\#107](https://github.com/NASA-PDS/registry-common/issues/107) [[s.low](https://github.com/NASA-PDS/registry-common/labels/s.low)]
+- Improvement to connections per scanning alerts [\#26](https://github.com/NASA-PDS/registry-common/issues/26) [[s.medium](https://github.com/NASA-PDS/registry-common/labels/s.medium)]
+
+**Other closed issues:**
+
+- Update Harvest\_Info attributes to use Tracking\_Meta [\#22](https://github.com/NASA-PDS/registry-common/issues/22)
+
 ## [v2.0.5](https://github.com/NASA-PDS/registry-common/tree/v2.0.5) (2025-04-15)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-common/compare/v2.0.4...v2.0.5)
