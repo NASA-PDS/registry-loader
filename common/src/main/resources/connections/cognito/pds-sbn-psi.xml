@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Planetary Data System: Small Bodies Node -->
+<registry_connection index="sbnpsi-registry">
+  <cognitoClientId endpoint="https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com"
+                   gateway="https://c8u1zk30u5.execute-api.us-west-2.amazonaws.com/dev/credentials"
+                   IDP="https://cognito-idp.us-west-2.amazonaws.com"
+                   >47d9j6ks9un4errq6pnbu0bc1r</cognitoClientId>
+</registry_connection>
