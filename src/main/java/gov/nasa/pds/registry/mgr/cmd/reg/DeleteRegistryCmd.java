@@ -47,6 +47,7 @@ public class DeleteRegistryCmd implements CliCommand
             String indexName = conFact.getIndexName();
 
             srv.deleteIndex(indexName);
+            srv.deleteIndex(indexName + "-versions");
             srv.deleteIndex(indexName + "-refs");
             srv.deleteIndex(indexName + "-dd");
         }
@@ -67,10 +68,6 @@ public class DeleteRegistryCmd implements CliCommand
         System.out.println();
         System.out.println("Delete registry index and all its data");
         System.out.println();
-        System.out.println("Optional parameters:");
-        System.out.println("  -auth <file>    Authentication config file");
-        System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
-        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
     }
 
 }

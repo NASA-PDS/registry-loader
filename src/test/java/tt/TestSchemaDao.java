@@ -61,7 +61,7 @@ public class TestSchemaDao
             ids.add("pds:Property_Map/pds:identifier");
             ids.add("abc:test");
             
-            List<Tuple> results = dao.getDataTypes(ids, false);
+            List<Tuple> results = dao.getDataTypes(ids);
             if(results == null) return;
             
             System.out.println("New fields:");

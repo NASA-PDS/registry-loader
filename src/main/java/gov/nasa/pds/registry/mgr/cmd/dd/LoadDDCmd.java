@@ -51,9 +51,6 @@ public class LoadDDCmd implements CliCommand
         System.out.println("  -dump <path>       Data dump created by 'export-dd' command (NJSON)");
         System.out.println("  -csv <path>        Custom data dictionary file in CSV format");
         System.out.println("Optional parameters:");
-        System.out.println("  -auth <file>       Authentication config file");
-        System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
-        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -ns <namespace>    LDD namespace. Can be used with -dd parameter.");
         System.out.println();
     }
@@ -70,6 +67,7 @@ public class LoadDDCmd implements CliCommand
 
         this.url = CliCommand.getUsersRegistry(cmdLine);
         this.authFile = cmdLine.getOptionValue("auth");
+        this.indexName = EstablishConnectionFactory.from(this.url, this.authFile).getIndexName();
         
         RegistryManager.init(url, authFile);
 

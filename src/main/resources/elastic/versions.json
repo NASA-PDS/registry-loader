@@ -1,0 +1,24 @@
+{
+    "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "analysis": {
+            "normalizer": {
+                "keyword_lowercase": {
+                    "type": "custom",
+                    "filter": ["lowercase"]
+                }
+            }
+        }
+    },
+
+    "mappings": {
+        "dynamic": false,
+        "properties": {
+            "tool.name": { "type": "keyword" },
+            "tool.version.major": { "type": "integer" },
+            "tool.version.minor": { "type": "integer" },
+            "tool.version.patch": { "type": "integer" }
+        }
+    }
+}

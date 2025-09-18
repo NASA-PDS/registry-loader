@@ -72,7 +72,6 @@ public class CsvLddLoader
         finally
         {
             CloseUtils.close(rd);
-            CloseUtils.close(writer);
         }
 
         // Load temporary file into data dictionary index

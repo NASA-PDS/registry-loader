@@ -79,9 +79,6 @@ public class ListDDCmd implements CliCommand
         System.out.println("List data dictionaries");
         System.out.println();
         System.out.println("Optional parameters:");
-        System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
-        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -ns <namespace>   LDD namespace. Can be used with -dd parameter.");        
         System.out.println();
     }

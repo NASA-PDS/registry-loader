@@ -5,10 +5,14 @@ import java.io.File;
 import org.apache.commons.cli.CommandLine;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
+import gov.nasa.pds.registry.common.Request.Bulk;
 import gov.nasa.pds.registry.common.RestClient;
+import gov.nasa.pds.registry.common.Version.Semantic;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
+import gov.nasa.pds.registry.mgr.Version;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
+import gov.nasa.pds.registry.mgr.cmd.Known;
 import gov.nasa.pds.registry.mgr.srv.IndexService;
 
 
@@ -45,32 +49,51 @@ public class CreateRegistryCmd implements CliCommand
         
         RestClient client = null;
 
-        try
-        {
+        try {
           ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
-            client = conFact.createRestClient();
-            IndexService srv = new IndexService(client);
-            String indexName = conFact.getIndexName();
-            
-            // Registry
-            srv.createIndex("elastic/registry.json", indexName, shards, replicas);
+          client = conFact.createRestClient();
+          IndexService srv = new IndexService(client);
+          String indexName = conFact.getIndexName();
 
-            // Collection inventory (product references)
-            srv.createIndex("elastic/refs.json", indexName + "-refs", shards, replicas);
+          // Registry
+          srv.createIndex("elastic/registry.json", indexName, shards, replicas);
+
+          // Collection inventory (product references)
+          srv.createIndex("elastic/refs.json", indexName + "-refs", shards, replicas);
             
-            // Data dictionary
-            srv.createIndex("elastic/data-dic.json", indexName + "-dd", 1, replicas);
-            // Load data
-            DataLoader dl = new DataLoader(conFact.clone().setIndexName(indexName + "-dd"));
-            File zipFile = IndexService.getDataDicFile();
-            dl.loadZippedFile(zipFile, "dd.json");
-        }
-        finally
-        {
+          // Tool version index
+          srv.createIndex("elastic/versions.json", indexName + "-versions", shards, replicas);
+          Bulk upload = client.createBulkRequest().setIndex(indexName + "-versions");
+          String create = "{\"create\": { \"_index\": \"INDEX\", \"_id\": \"ID\" }}"
+              .replace("INDEX", indexName + "-versions");
+          gov.nasa.pds.registry.common.Version v = gov.nasa.pds.registry.common.Version.instance();
+          upload.add(create.replace("ID", v.getName()), version2doc (v));
+          v = Version.instance();
+          upload.add(create.replace("ID", v.getName()), version2doc (v));
+          for (String subcommand : Known.get()) {
+            v = Version.instance().subcommand (subcommand);
+            upload.add(create.replace("ID", v.getName()), version2doc (v));
+          }
+          client.performRequest(upload).logErrors();
+          // Data dictionary
+          srv.createIndex("elastic/data-dic.json", indexName + "-dd", 1, replicas);
+          // Load data
+          DataLoader dl = new DataLoader(conFact.clone().setIndexName(indexName + "-dd"));
+          File zipFile = IndexService.getDataDicFile();
+          dl.loadZippedFile(zipFile, "dd.json");
+        } finally {
             CloseUtils.close(client);
         }
     }
 
+    private String version2doc (gov.nasa.pds.registry.common.Version version) {
+      Semantic v = version.value();
+      return "{\"tool\": { \"name\": \"NAME\", \"version\": { \"major\": MAJOR, \"minor\": MINOR, \"patch\": PATCH }}}"
+          .replace("NAME", version.getName())
+          .replace("MAJOR", Integer.toString(v.major))
+          .replace("MINOR", Integer.toString(v.minor))
+          .replace("PATCH", Integer.toString(v.patch));
+    }
 
     /**
      * Parse and validate "-shards" parameter
@@ -120,8 +143,7 @@ public class CreateRegistryCmd implements CliCommand
             return -1;
         }
     }
-    
-    
+
     /**
      * Print help screen.
      */
@@ -133,9 +155,6 @@ public class CreateRegistryCmd implements CliCommand
         System.out.println("Create registry index");
         System.out.println();
         System.out.println("Optional parameters:");
-        System.out.println("  -auth <file>         Authentication config file");
-        System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
-        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
         System.out.println("  -shards <number>     Number of shards (partitions) for direct connection only. Default is 1");
         System.out.println("  -replicas <number>   Number of replicas (extra copies) for direct connection only. Default is 0");
         System.out.println();

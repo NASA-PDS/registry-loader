@@ -40,9 +40,8 @@ POSSIBILITY OF SUCH DAMAGE.
         <version>1.20.0</version>
     </parent>
     
-    <groupId>gov.nasa.pds</groupId>
     <artifactId>registry-manager</artifactId>
-    <version>5.1.0-SNAPSHOT</version>
+    <version>6.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <name>PDS Registry Manager</name>
@@ -79,7 +78,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>gov.nasa.pds</groupId>
             <artifactId>registry-common</artifactId>
-            <version>2.0.5</version>
+            <version>3.0.0-SNAPSHOT</version>
         </dependency>
         <!-- JSON parser -->
         <dependency>
@@ -174,26 +173,36 @@ POSSIBILITY OF SUCH DAMAGE.
                     <detectJavaApiLink>false</detectJavaApiLink>
                 </configuration>
             </plugin>
-      <!-- Add maven source for maven central deployment -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>3.3.1</version>
-        <executions>
-          <execution>
-            <id>make-source-jar</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-              <goal>test-jar-no-fork</goal>
-            </goals>
-            <configuration>
-              <excludeResources>true</excludeResources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+            <!-- Add maven source for maven central deployment -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-source-plugin</artifactId>
+              <version>3.3.1</version>
+              <executions>
+                <execution>
+                  <id>make-source-jar</id>
+                  <phase>prepare-package</phase>
+                  <goals>
+                    <goal>jar-no-fork</goal>
+                    <goal>test-jar-no-fork</goal>
+                  </goals>
+                  <configuration>
+                    <excludeResources>true</excludeResources>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
         </plugins>
+        <resources>
+          <resource>
+            <directory>src/main/resources</directory>
+            <filtering>false</filtering>
+          </resource>
+          <resource>
+            <directory>src/main/resources/app</directory>
+            <filtering>true</filtering>
+          </resource>
+        </resources>
     </build>
     <scm>
         <url>https://github.com/NASA-PDS/registry-mgr/tree/master</url>

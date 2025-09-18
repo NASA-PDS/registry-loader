@@ -101,10 +101,6 @@ public class ExportFileCmd implements CliCommand
         System.out.println("Required parameters:");
         System.out.println("  -lidvid <id>    Lidvid of a file to export from blob storage");
         System.out.println("  -file <path>    Output file path");
-        System.out.println("Optional parameters:");
-        System.out.println("  -auth <file>    Authentication config file");
-        System.out.println("  -es <url>         (deprecated) File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
-        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
         System.out.println();
     }
 
