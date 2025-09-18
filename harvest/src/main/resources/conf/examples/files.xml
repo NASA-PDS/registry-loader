@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<harvest
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+  xsi:schemaLocation="https://github.com/NASA-PDS/harvest/blob/main/src/main/resources/conf/configuration.xsd">
+
+  <!-- Registry configuration -->
+  <!-- UPDATE with your registry information -->
+  <registry auth="/path/to/auth/file">app://localhost.xml</registry>
+  
+  <load>
+    <files>
+      <!-- 
+           Path to one or more manifest files with the list of full paths to PDS4 label 
+           files (one path per line). 
+        -->
+      <manifest>/path/to/manifest/file</manifest>
+    </files>
+  </load>
+
+  <!-- 
+      NOTE: By default only lid, vid, lidvid, title and product class are exported.
+      autogenFields should also be enabled for operational ingestion.
+
+      See documentation for more configuration options: https://nasa-pds.github.io/pds-registry-app/operate/harvest.html
+  -->
+  <fileInfo processDataFiles="true" storeLabels="true">
+    <!-- UPDATE with your own local path and base url where pds4 archive are published -->
+    <fileRef replacePrefix="/path/to/archive" with="https://url/to/archive/" />
+  </fileInfo>
+
+</harvest>
