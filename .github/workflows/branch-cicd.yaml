@@ -85,8 +85,8 @@ jobs:
                     context: ./
                     file: ./docker/Dockerfile
                     build-args:
-                      - HARVEST_PACKAGE_PATH=${{steps.harvest_package.outputs.harvest_package}}
-                      - REG_MANAGER_PACKAGE_PATH=${{steps.manager_package.outputs.manager_package}}
+                        HARVEST_PACKAGE_PATH: ${{ steps.harvest_package.outputs.harvest_package }}
+                        REG_MANAGER_PACKAGE_PATH: ${{ steps.manager_package.outputs.manager_package }}
                     push: false
                     load: true
                     tags: nasapds/registry-api-service:latest
