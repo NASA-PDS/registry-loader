@@ -55,7 +55,7 @@ Go through this file line-by-line and replace the template values with your own.
     <parent>
         <groupId>gov.nasa</groupId>
         <artifactId>pds</artifactId>
-        <version>1.13.0</version>
+        <version>1.18.0</version>
     </parent>
   
     <!-- My project metadata here -->
@@ -78,7 +78,7 @@ Go through this file line-by-line and replace the template values with your own.
     -->
     <artifactId>registry-loader</artifactId>
     <!-- The third part of the Maven coorindate is the version identifier of the artifact: -->
-    <version>5.1.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <!-- The final part is the kind: here we make a `jar`, but there's `war`, `ejb`, `ear`, `maven-plugin`, etc.: -->
     <packaging>pom</packaging>
 

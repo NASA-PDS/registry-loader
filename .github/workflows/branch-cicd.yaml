@@ -63,6 +63,48 @@ jobs:
             -
                 name: 🩺 Test Software
                 run: mvn test
+            -
+                name: 🫙 harvest release package path
+                id: harvest_package
+                run: echo "harvest_package=$(find ./harvest/target/ -maxdepth 1 -regextype posix-extended -regex '.*/harvest-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar.gz')" >> $GITHUB_OUTPUT
+            -
+                name: 🫙 manager release package path
+                id: manager_package
+                run: echo "manager_package=$(find ./manager/target/ -maxdepth 1 -regextype posix-extended -regex '.*/registry-manager-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar.gz')" >> $GITHUB_OUTPUT
+  -
+                name: 🎰 QEMU Multiple Machine Emulation
+                uses: docker/setup-qemu-action@v3
+            -
+                name: 🚢 Docker Buildx
+                uses: docker/setup-buildx-action@v3
+            -
+                name: 🧱 Image Construction and Publication
+                uses: docker/build-push-action@v6
+                with:
+                    context: ./
+                    file: ./docker/Dockerfile
+                    build-args:
+                      - HARVEST_PACKAGE_PATH=${{steps.harvest_package.outputs.harvest_package}}
+                      - REG_MANAGER_PACKAGE_PATH=${{steps.manager_package.outputs.manager_package}}
+                    push: false
+                    load: true
+                    tags: nasapds/registry-api-service:latest
+            -
+                name: ∫ Integration tests … hold onto your hats, pardners
+                run: |
+                    git clone --quiet https://github.com/NASA-PDS/registry.git
+                    cd registry/docker/certs
+                    ./generate-certs.sh
+                    cd ..
+                    docker image inspect nasapds/registry-api-service:latest >/dev/null
+                    docker compose \
+                        --ansi never --profile int-registry-batch-loader --project-name registry \
+                        up --detach --quiet-pull
+                    docker compose \
+                        --ansi never --profile int-registry-batch-loader --project-name registry \
+                        run --rm --no-TTY reg-api-integration-test-with-wait
+
+
 
 ...
 
