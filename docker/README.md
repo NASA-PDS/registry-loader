@@ -8,21 +8,24 @@ The Registry Loader is a docker image which contains both Harvest and the Regist
 
 | Variable            | Description |
 | ------------------- | ------------|
-| harvest_version     | The version of the Harvest release to be included in the docker image |
-| reg_manager_version | The version of the Registry Manager release to be included in the docker image |
+| HARVEST_PACKAGE_PATH     | The URL or local path where harvest release package can be found |
+| REG_MANAGER_PACKAGE_PATH | The URL or local path where registry-mgr release package can be found |
 
 ```    
 # Set following arguments with compatible versions
-ARG harvest_version=3.7.2
-ARG reg_manager_version=4.5.2
+export HARVEST_PACKAGE_PATH=./harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz
+export REG_MANAGER_PACKAGE_PATH=./manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz
 ```
 
 #### 2. Open a terminal and change the current working directory to `registry-loader/docker`.
 
 #### 3. Build the docker image as follows.
 
+From the base directory of the project:
+
+
 ```
-    docker image build -t nasapds/registry-loader .
+    docker image build -t nasapds/registry-loader -f docker/Dockerfile --build-arg HARVEST_PACKAGE_PATH=${HARVEST_PACKAGE_PAT} --build-arg REG_MANAGER_PACKAGE_PATH=${REG_MANAGER_PACKAGE_PATH} .
 ```
 
 ## 🏃 Steps to run a docker container of the Registry Loader
