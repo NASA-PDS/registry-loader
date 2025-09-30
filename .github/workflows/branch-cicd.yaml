@@ -67,11 +67,11 @@ jobs:
             -
                 name: 🫙 harvest release package path
                 id: harvest_package
-                run: echo "harvest_package=$(find ./harvest/target/ -maxdepth 1 -regextype posix-extended -regex '.*/harvest-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar.gz')" >> $GITHUB_OUTPUT
+                run: echo "harvest_package=$(find ./harvest/target/ -maxdepth 1 -regextype posix-extended -regex 'harvest-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar.gz')" >> $GITHUB_OUTPUT
             -
                 name: 🫙 manager release package path
                 id: manager_package
-                run: echo "manager_package=$(find ./manager/target/ -maxdepth 1 -regextype posix-extended -regex '.*/registry-manager-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar.gz')" >> $GITHUB_OUTPUT
+                run: echo "manager_package=$(find ./manager/target/ -maxdepth 1 -regextype posix-extended -regex 'registry-manager-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar.gz')" >> $GITHUB_OUTPUT
             -
                 name: 🎰 QEMU Multiple Machine Emulation
                 uses: docker/setup-qemu-action@v3
