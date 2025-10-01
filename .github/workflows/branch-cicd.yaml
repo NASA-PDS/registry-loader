@@ -67,7 +67,9 @@ jobs:
             -
                 name: 🫙 harvest release package path
                 id: harvest_package
-                run: echo "harvest_package=$(find ./harvest/target/ -maxdepth 1 -regex '.*/harvest-[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\(-SNAPSHOT\)\{0,1\}-bin.tar.gz')" >> $GITHUB_OUTPUT
+                run:
+                    echo "harvest_package=$(find ./harvest/target/ -maxdepth 1 -regex '.*/harvest-[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\(-SNAPSHOT\)\{0,1\}-bin.tar.gz')"
+                    echo "harvest_package=$(find ./harvest/target/ -maxdepth 1 -regex '.*/harvest-[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\(-SNAPSHOT\)\{0,1\}-bin.tar.gz')" >> $GITHUB_OUTPUT
             -
                 name: 🫙 manager release package path
                 id: manager_package
