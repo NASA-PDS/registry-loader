@@ -65,6 +65,9 @@ jobs:
                 name: 🩺 Test Software
                 run: mvn test
             -
+                name: 📦 Package construction
+                run: mvn --quiet package
+            -
                 name: 🫙 harvest release package path
                 id: harvest_package
                 run: |
