@@ -36,6 +36,7 @@
 
 ES_CONNECTION_FILE=file:///test/cfg/connection.xml
 
+
 # Harvest data
 if [ "$RUN_TESTS" = "true" ]; then
   echo "Downloading Harvest test data ..." 1>&2

@@ -78,9 +78,9 @@ Go through this file line-by-line and replace the template values with your own.
     -->
     <artifactId>registry-loader</artifactId>
     <!-- The third part of the Maven coorindate is the version identifier of the artifact: -->
-    <version>1.2.0-SNAPSHOT</version>
+    <version>5.1.0-SNAPSHOT</version>
     <!-- The final part is the kind: here we make a `jar`, but there's `war`, `ejb`, `ear`, `maven-plugin`, etc.: -->
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>${project.groupId}:${project-name}</name>
     <description>
@@ -106,6 +106,11 @@ Go through this file line-by-line and replace the template values with your own.
         <url>https://nasa-pds.github.io/registry-loader</url>
         <tag>main</tag>
     </scm>
+     <modules >
+	    <module>common</module>
+	    <module>harvest</module>
+	    <module>manager</module>
+	</modules>
 
     <!-- Put the packages your project depends on here -->
     <dependencies>

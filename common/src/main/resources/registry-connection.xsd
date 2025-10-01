@@ -1,0 +1,143 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="unqualified"
+            attributeFormDefault="unqualified">
+  <!-- How this file is written:
+
+       Each of the types are represented as either named simple types or
+       named complex types to aid with data binding (jaxb) rather than a
+       continuous stream of anonymous types.
+
+       All of the complex types are first in alphabetical order of their name.
+       The simple types follow. Normally the simnple types are used to constrain
+       a general schema type. Lastly is the root node for the document.
+
+       The annotation-documentation nodes are used to define the type. -->
+
+  <!-- Template
+  <xs:complexType name="">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute default="" name="" type="" use=""/>
+  </xs:complexType>
+
+  -->
+
+  <xs:complexType name="cognito_type">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Currently, cognito to serverless opensearh requires three bits of
+        information:
+          1. clientID: magic ID which must be given and is not a secret but
+             sure looks like one
+          3. endpoint: the endpoint for serverless opensearch
+          2. @gateway: an endpoint that exchanges the cognito authentication
+                       to an IAM role used for access control with serverless
+                       opensearch on AWS
+          3. @IDP: the cognito authentication endpoint that exchanges the
+                   username/password to a set of tokens used by the gateway.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:normalizedString">
+        <xs:attribute default="https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com" name="endpoint" type="xs:normalizedString"/>
+        <xs:attribute default="https://c8u1zk30u5.execute-api.us-west-2.amazonaws.com/dev/signed-url" name="gateway" type="xs:normalizedString"/>
+        <xs:attribute default="https://cognito-idp.us-west-2.amazonaws.com"
+                      name="IDP" type="xs:normalizedString"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="direct_type">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Currently, connecting to an opensearch service directly requires just
+        two pieces of information:
+          1. URL: the URL to directly contact an opensearch instance and its
+                  API to include authentication
+          2. @trustSelfSigned: when running locally for testing or development
+                               it is often necessary to use self signed
+                               certificates. Setting this option to true
+                               will all for self signed certificates.
+
+        An optional 3rd piece of information @sdk is the Java SDK version to use
+        for the connection. The traditional SDK is 1. The newer SDK 2 was
+        introduced with the serverless opensearch development and beyond can
+        also be used. The default is 2 as we are deprecating the use of 1.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:normalizedString">
+        <xs:attribute default="2" name="sdk" type="sdk_version_enum"/>
+        <xs:attribute default="false" name="trust_self_signed"
+                      type="xs:boolean"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="ec2_type">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        EC2 instances that have their IAM roles setup to match the cognito
+        information when instantiated can use TCP/IP to share their credentials
+        directly with their subprocess. They have no need to contact cognito
+        nor the application gateway. They need only get the credentials from the
+        EC2 instance.
+
+        The value of this element should be the URL. For instance, these two
+        URLs would normally resolve the same:
+
+        https://localhost:54321/AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
+        https://127.0.0.1:54321/AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:normalizedString">
+        <xs:attribute default="https://p5qmxrldysl1gy759hqf.us-west-2.aoss.amazonaws.com" name="endpoint" type="xs:normalizedString"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="sdk_version_enum">
+    <xs:restriction base="xs:positiveInteger">
+      <xs:enumeration value="1"/>
+      <xs:enumeration value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- root node for XML -->
+  <xs:element name="registry_connection">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          This terrible construct is so that xjc can autodetect this as the
+          root node for processing. Many things would be better but this is
+          the most workable solution especially if the making of the binding
+          code is automated in the pom. The only other real solution is to
+          modify one of the classes generated by hand.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:choice>
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Define the connection to the registry, security for the connection,
+            and the index within the registry.
+
+            @index: the index to be used by harvest whose default is registry
+
+            cognito: the cognito client ID, IDP and gateway for AWS based
+                     instances of opensearch
+            server_url: the opensearch URL when not using AWS services
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element name="cognitoClientId" type="cognito_type"/>
+        <xs:element name="ec2_credential_url" type="ec2_type"/>
+        <xs:element name="server_url" type="direct_type"/>
+      </xs:choice>
+      <xs:attribute default="registry" name="index" type="xs:normalizedString"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+
