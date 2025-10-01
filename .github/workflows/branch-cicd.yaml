@@ -72,7 +72,7 @@ jobs:
                 id: harvest_package
                 run: |
                     #harvest_package=$(find ./harvest/target/ -maxdepth 1  -regex '.*/harvest-[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\(-SNAPSHOT\)\{0,1\}-bin\.tar\.gz')
-                    harvest_package=$(find ./harvest/target/ -maxdepth 1  -regextype posix-extended -regex '.*/harvest-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT\)?-bin\.tar\.gz')
+                    harvest_package=$(find ./harvest/target/ -maxdepth 1  -regextype posix-extended -regex '.*/harvest-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar\.gz')
                     echo "harvest_package=$harvest_package"
                     echo "harvest_package=$harvest_package">> $GITHUB_OUTPUT
             -
