@@ -31,8 +31,8 @@
 FROM openjdk:11-slim
 
 # Set following arguments with compatible versions
-ARG HARVEST_PACKAGE_PATH
-ARG REG_MANAGER_PACKAGE_PATH
+ARG harvest_package_path 
+ARG reg_manager_package_path
 ARG test_data_url=https://pds.nasa.gov/data/pds4/test-data/registry/custom-datasets.tar.gz
 
 
@@ -42,7 +42,7 @@ RUN apt-get install curl -y
 
 
 # Install Harvest
-ADD $HARVEST_PACKAGE_PATH /tmp/harvest-bin.tar.gz
+ADD $harvest_package_path /tmp/harvest-bin.tar.gz
 RUN  mkdir /opt/harvest
 RUN  tar xzf /tmp/harvest-bin.tar.gz  -C /opt/harvest --strip-components 1
 RUN  rm -f /tmp/harvest-bin.tar.gz
@@ -53,7 +53,7 @@ RUN  rm -f /tmp/harvest-bin.tar.gz
 ENV PATH="$PATH:/opt/harvest/bin"
 
 # Install Registry Manager
-ADD $REG_MANAGER_PACKAGE_PATH /tmp/registry-manager-bin.tar.gz
+ADD $reg_manager_package_path /tmp/registry-manager-bin.tar.gz
 RUN  mkdir /opt/registry-manager  \
      && tar xzf /tmp/registry-manager-bin.tar.gz  -C /opt/harvest --strip-components 1 \
      && rm -f /tmp/registry-manager-bin.tar.gz
