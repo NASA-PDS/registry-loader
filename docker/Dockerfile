@@ -42,21 +42,11 @@ RUN apt-get install curl -y
 
 
 # Install Harvest
-ADD $harvest_package_path /tmp/harvest-bin.tar.gz
-RUN  mkdir /opt/harvest
-RUN  tar xzf /tmp/harvest-bin.tar.gz  -C /opt/harvest --strip-components 1
-RUN  rm -f /tmp/harvest-bin.tar.gz
-
-#RUN  mkdir /opt/harvest  \
-#     && tar xzf /tmp/harvest-bin.tar.gz  -C /opt/harvest --strip-components 1 \
-#     && rm -f /tmp/harvest-bin.tar.gz
+ADD $harvest_package_path /opt/harvest
 ENV PATH="$PATH:/opt/harvest/bin"
 
 # Install Registry Manager
-ADD $reg_manager_package_path /tmp/registry-manager-bin.tar.gz
-RUN  mkdir /opt/registry-manager  \
-     && tar xzf /tmp/registry-manager-bin.tar.gz  -C /opt/harvest --strip-components 1 \
-     && rm -f /tmp/registry-manager-bin.tar.gz
+ADD $reg_manager_package_path /opt/registry-manager
 ENV PATH="$PATH:/opt/registry-manager/bin"
 
 # Copy test data config file \
