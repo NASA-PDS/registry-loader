@@ -10,6 +10,7 @@ import org.opensearch.client.opensearch._types.SortOrder;
 import org.opensearch.client.opensearch._types.aggregations.Aggregation;
 import org.opensearch.client.opensearch._types.aggregations.TermsAggregation;
 import org.opensearch.client.opensearch._types.aggregations.TopHitsAggregation;
+import org.opensearch.client.opensearch._types.aggregations.TopMetricsAggregation;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
 import org.opensearch.client.opensearch._types.query_dsl.FieldAndFormat;
 import org.opensearch.client.opensearch._types.query_dsl.IdsQuery;
@@ -57,17 +58,16 @@ class SearchImpl implements Search {
     for (String lid : lids) {
       terms.add(new FieldValue.Builder().stringValue(lid).build());
     }
-    Aggregation journeyman = new Aggregation.Builder()
-        .terms(new TermsAggregation.Builder().field("lid").size(5000).build()).build(); // size is hardcoded in JsonHelper:94
-    this.craftsman.aggregations("lids", journeyman);
-    journeyman = new Aggregation.Builder()
+    Aggregation.Builder.ContainerBuilder journeyman = new Aggregation.Builder()
+        .terms(new TermsAggregation.Builder().field("lid").size(lids.size()).build());
+    Aggregation.Builder.ContainerBuilder apprentice = new Aggregation.Builder()
         .topHits(new TopHitsAggregation.Builder()
-            .size(lids.size())
-            .sort(new SortOptions.Builder()
-                .field(new FieldSort.Builder().field("lid").order(SortOrder.Desc).build()).build()).build()).build();
-    this.craftsman.aggregations("latest", journeyman);
+            .size(50)
+            .build());
+    journeyman.aggregations("groupbylid", apprentice.build());
+    this.craftsman.aggregations("lidvids", journeyman.build());
     this.craftsman.query(new Query.Builder().terms(new TermsQuery.Builder().field("lid").terms(new TermsQueryField.Builder().value(terms).build()).build()).build());
-    this.craftsman.size(1);
+    this.craftsman.size(lids.size());
     this.craftsman.source(new SourceConfig.Builder().fetch(false).build());
     return this;
   }

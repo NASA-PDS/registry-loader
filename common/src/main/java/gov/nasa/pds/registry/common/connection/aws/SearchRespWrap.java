@@ -13,7 +13,11 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.opensearch.client.json.JsonData;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
+import org.opensearch.client.opensearch._types.aggregations.Aggregate;
+import org.opensearch.client.opensearch._types.aggregations.Buckets;
+import org.opensearch.client.opensearch._types.aggregations.StringTermsAggregate;
 import org.opensearch.client.opensearch._types.aggregations.StringTermsBucket;
+import org.opensearch.client.opensearch._types.aggregations.TopHitsAggregate;
 import org.opensearch.client.opensearch.core.ScrollRequest;
 import org.opensearch.client.opensearch.core.ScrollResponse;
 import org.opensearch.client.opensearch.core.SearchResponse;
@@ -74,8 +78,18 @@ class SearchRespWrap implements Response.Search {
   public List<String> latestLidvids() {
     ArrayList<String> lidvids = new ArrayList<String>();
     if (this.parent.aggregations() != null) {
-      for (Hit<JsonData> hit : this.parent.aggregations().get("latest").topHits().hits().hits()) {
-        lidvids.add(hit.id());
+      for (StringTermsBucket lidGroup : this.parent.aggregations().get("lidvids").sterms().buckets().array()) {
+        String latest = "::-1.0";
+        for (Hit<JsonData> hit : lidGroup.aggregations().get("groupbylid").topHits().hits().hits()) {
+          int cmajor = Integer.parseInt(hit.id().split("::")[1].split("\\.")[0]);
+          int cminor = Integer.parseInt(hit.id().split("::")[1].split("\\.")[1]);
+          int lmajor = Integer.parseInt(latest.split("::")[1].split("\\.")[0]);
+          int lminor = Integer.parseInt(latest.split("::")[1].split("\\.")[1]);
+          if (cmajor > lmajor || (cmajor == lmajor && cminor > lminor)) {
+            latest = hit.id();
+          }
+        }
+        lidvids.add(latest);
       }
     }
     return lidvids;
