@@ -10,7 +10,6 @@ import org.opensearch.client.opensearch._types.SortOrder;
 import org.opensearch.client.opensearch._types.aggregations.Aggregation;
 import org.opensearch.client.opensearch._types.aggregations.TermsAggregation;
 import org.opensearch.client.opensearch._types.aggregations.TopHitsAggregation;
-import org.opensearch.client.opensearch._types.aggregations.TopMetricsAggregation;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
 import org.opensearch.client.opensearch._types.query_dsl.FieldAndFormat;
 import org.opensearch.client.opensearch._types.query_dsl.IdsQuery;
