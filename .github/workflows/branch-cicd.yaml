@@ -98,7 +98,7 @@ jobs:
                         reg_manager_package_path=${{steps.manager_package.outputs.manager_package}}
                     push: false
                     load: true
-                    tags: nasapds/registry-api-service:latest
+                    tags: nasapds/registry-loader:latest
             -
                 name: ∫ Integration tests … hold onto your hats, pardners
                 run: |
@@ -106,7 +106,6 @@ jobs:
                     cd registry/docker/certs
                     ./generate-certs.sh
                     cd ..
-                    docker image inspect nasapds/registry-api-service:latest >/dev/null
                     docker compose \
                         --ansi never --profile int-registry-batch-loader --project-name registry \
                         up --detach --quiet-pull
