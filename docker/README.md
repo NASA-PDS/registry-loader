@@ -25,7 +25,7 @@ From the base directory of the project:
 
 
 ```
-    docker image build -t nasapds/registry-loader -f docker/Dockerfile --build-arg HARVEST_PACKAGE_PATH=${HARVEST_PACKAGE_PAT} --build-arg REG_MANAGER_PACKAGE_PATH=${REG_MANAGER_PACKAGE_PATH} .
+    docker image build -t nasapds/registry-loader -f docker/Dockerfile --build-arg harvest_package_path=harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz --build-arg reg_manager_package_path=manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz .
 ```
 
 ## 🏃 Steps to run a docker container of the Registry Loader
