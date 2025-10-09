@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-FROM openjdk:11-slim
+FROM openjdk:17-slim
 
 # Set following arguments with compatible versions
 ARG harvest_package_path 
@@ -42,11 +42,13 @@ RUN apt-get install curl -y
 
 
 # Install Harvest
-ADD $harvest_package_path /opt/harvest
+ADD $harvest_package_path /opt
+RUN ln -s /opt/harvest-* /opt/harvest
 ENV PATH="$PATH:/opt/harvest/bin"
 
 # Install Registry Manager
-ADD $reg_manager_package_path /opt/registry-manager
+ADD $reg_manager_package_path /opt
+RUN ln -s /opt/registry-manager-* /opt/registry-manager
 ENV PATH="$PATH:/opt/registry-manager/bin"
 
 # Copy test data config file \

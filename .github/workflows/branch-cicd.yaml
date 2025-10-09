@@ -106,7 +106,6 @@ jobs:
                     cd registry/docker/certs
                     ./generate-certs.sh
                     cd ..
-                    docker image inspect nasapds/registry-api-service:latest >/dev/null
                     docker compose \
                         --ansi never --profile int-registry-batch-loader --project-name registry \
                         up --detach --quiet-pull
