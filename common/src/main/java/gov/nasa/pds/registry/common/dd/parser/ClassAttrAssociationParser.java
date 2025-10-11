@@ -172,10 +172,6 @@ public class ClassAttrAssociationParser extends BaseLddParser
           }
         } else if ("attributeId".equals(name) || "null".equals(name)) {
           parseAttributeIds(attrIds);
-        } else if ("identifier".equals(name)) {
-          if (jsonReader.peek() == JsonToken.STRING) {
-            attrIds.add(jsonReader.nextString());
-          }
         } else {
           jsonReader.skipValue();
         }
