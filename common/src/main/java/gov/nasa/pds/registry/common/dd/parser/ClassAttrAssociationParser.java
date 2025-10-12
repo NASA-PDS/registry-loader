@@ -161,6 +161,7 @@ public class ClassAttrAssociationParser extends BaseLddParser
     private void parseAssoc() throws Exception {
       boolean isAttribute = false;
       LinkedList<String> attrIds = new LinkedList<String>();
+      String identifier = "";
 
       jsonReader.beginObject();
       while (jsonReader.hasNext() && jsonReader.peek() != JsonToken.END_OBJECT) {
@@ -172,12 +173,20 @@ public class ClassAttrAssociationParser extends BaseLddParser
           }
         } else if ("attributeId".equals(name) || "null".equals(name)) {
           parseAttributeIds(attrIds);
+        } else if ("identifier".equals(name)) {
+          if (jsonReader.peek() == JsonToken.STRING) {
+            identifier = jsonReader.nextString();
+          }
         } else {
           jsonReader.skipValue();
         }
       }
       jsonReader.endObject();
       
+      if (attrIds.isEmpty() && !identifier.isBlank()) {
+        attrIds.add(identifier);
+      }
+
       if (isAttribute) {
         if (attrIds.isEmpty())
           throw new IllegalArgumentException("Class defined an assoication with isAttribute true but without any attributeId");
