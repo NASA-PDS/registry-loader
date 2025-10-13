@@ -1,14 +1,11 @@
 package gov.nasa.pds.registry.mgr.cmd.reg;
 
-import java.io.File;
-
 import org.apache.commons.cli.CommandLine;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.Request.Bulk;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.Version.Semantic;
-import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.mgr.Version;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
@@ -77,10 +74,6 @@ public class CreateRegistryCmd implements CliCommand
           client.performRequest(upload).logErrors();
           // Data dictionary
           srv.createIndex("elastic/data-dic.json", indexName + "-dd", 1, replicas);
-          // Load data
-          DataLoader dl = new DataLoader(conFact.clone().setIndexName(indexName + "-dd"));
-          File zipFile = IndexService.getDataDicFile();
-          dl.loadZippedFile(zipFile, "dd.json");
         } finally {
             CloseUtils.close(client);
         }
