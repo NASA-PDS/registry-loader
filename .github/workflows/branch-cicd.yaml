@@ -103,8 +103,9 @@ jobs:
                 name: ∫ Integration tests … hold onto your hats, pardners
                 run: |
                     git clone --quiet https://github.com/NASA-PDS/registry.git
+                    cd registry
                     git checkout structured
-                    cd registry/docker/certs
+                    cd docker/certs
                     ./generate-certs.sh
                     cd ..
                     docker compose \
