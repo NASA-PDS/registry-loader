@@ -38,7 +38,7 @@ jobs:
         steps:
             -
                 name: 💳 Checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v5
                 with:
                     lfs: true
                     fetch-depth: 0
@@ -63,10 +63,10 @@ jobs:
                     java-version: ${{matrix.java-version}}
             -
                 name: 🩺 Test Software
-                run: mvn test
+                run: mvn --quiet test
             -
                 name: 📦 Package construction
-                run: mvn package
+                run: mvn --quiet package
             -
                 name: 🫙 harvest release package path
                 id: harvest_package
@@ -110,11 +110,11 @@ jobs:
                     cd ..
                     docker compose \
                         --ansi never --profile int-registry-batch-loader --project-name registry \
-                        up --abort-on-container-exit
+                        up --detach --quiet-pull
                     # --detach --quiet-pull
                     # --abort-on-container-exit
-                    echo "===== Docker logs ====="
-                    docker compose logs --no-color
+                    # echo "===== Docker logs ====="
+                    # docker compose logs --no-color
 
                     docker compose \
                         --ansi never --profile int-registry-batch-loader --project-name registry \
