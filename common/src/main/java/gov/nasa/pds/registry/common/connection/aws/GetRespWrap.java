@@ -30,7 +30,7 @@ class GetRespWrap implements Response.Get {
       @SuppressWarnings("unchecked")
       Map<String,List<String>> src = (Map<String,List<String>>)this.parent.source();
       if (src.containsKey("ref_lid_collection")) result.lids.addAll(src.get("ref_lid_collection"));
-      if (src.containsKey("ref_lidvid_collection")) result.lids.addAll(src.get("ref_lidvid_collection"));
+      if (src.containsKey("ref_lidvid_collection")) result.lidvids.addAll(src.get("ref_lidvid_collection"));
     }
     return result;
   }
