@@ -106,6 +106,10 @@ jobs:
                     cd docker/certs
                     ./generate-certs.sh
                     cd ..
+                    # clean up before the demanding docker compose deployment
+                    docker compose down --volumes --remove-orphans || true
+                    docker system prune -af || true
+                    docker volume prune -f || true
                     docker compose \
                         --ansi never --profile int-registry-batch-loader --project-name registry \
                         up  --detach --quiet-pull
