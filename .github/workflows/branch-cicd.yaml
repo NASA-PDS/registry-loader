@@ -97,6 +97,9 @@ jobs:
                     push: false
                     load: true
                     tags: nasapds/registry-loader:latest
+            - 
+                name: Check available memory
+                run: free -h
             -
                 name: ∫ Integration tests … hold onto your hats, pardners
                 run: |
