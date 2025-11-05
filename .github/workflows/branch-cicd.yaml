@@ -108,14 +108,14 @@ jobs:
                     cd ..
                     docker compose \
                         --ansi never --profile int-registry-batch-loader --project-name registry \
-                        up --detach --quiet-pull
+                        up --abort-on-container-exit
                     # When debugging the docker compose and see detailed logs, replace 
                     # --detach --quiet-pull
                     # with 
                     # --abort-on-container-exit
                     # and un-comment the 2 following lines:
-                    # echo "===== Docker logs ====="
-                    # docker compose logs --no-color
+                    echo "===== Docker logs ====="
+                    docker compose logs --no-color
 
                     docker compose \
                         --ansi never --profile int-registry-batch-loader --project-name registry \
