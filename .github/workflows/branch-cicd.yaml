@@ -118,7 +118,7 @@ jobs:
                     docker compose logs --no-color
 
                     docker compose \
-                        --ansi never --profile int-registry-batch-loader --project-name registry \
+                        --ansi never --project-name registry \
                         run --rm --no-TTY reg-api-integration-test-with-wait
 
 
