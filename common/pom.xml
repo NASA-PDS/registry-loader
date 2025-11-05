@@ -68,13 +68,6 @@ POSSIBILITY OF SUCH DAMAGE.
     </properties>
 
     <dependencies>
-        <!-- TEST ONLY: JUnit -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.13.4</version>
-            <scope>test</scope>
-        </dependency>
         <!-- Elasticsearch client-->
         <dependency>
             <groupId>org.elasticsearch.client</groupId>

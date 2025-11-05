@@ -121,13 +121,6 @@
       <artifactId>Saxon-HE</artifactId>
       <version>12.9</version>
     </dependency>
-    <!-- unit testing module -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>5.13.4</version>
-      <scope>test</scope>
-    </dependency>
     <!-- three (3) artifacts for complete configuration parsing -->
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
