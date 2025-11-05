@@ -16,9 +16,8 @@ import gov.nasa.pds.registry.common.meta.cfg.FileRefRule;
  * 
  * @author karpenko
  */
-public class ConfigManager
-{
-  private static HashMap<String,String> indexNodeMap = new HashMap<String,String>();
+public class ConfigManager {
+  private static HashMap<String, String> indexNodeMap = new HashMap<String, String>();
   static {
     indexNodeMap.put("atm-registry", "PDS_ATM");
     indexNodeMap.put("en-registry", "PDS_ENG");
@@ -33,63 +32,79 @@ public class ConfigManager
     indexNodeMap.put("jaxa-registry", "JAXA");
     indexNodeMap.put("dev-registry-structured", "PDS_ENG_DEV");
   }
-    static public List<FileRefRule> exchangeFileRef (List<FileRefType> xml2beans) {
-      ArrayList<FileRefRule> beans = new ArrayList<FileRefRule>();
-      FileRefRule rule;
-      for (FileRefType xml : xml2beans) {
-        rule = new FileRefRule();
-        rule.prefix = xml.getReplacePrefix();
-        rule.replacement = xml.getWith();
-        beans.add (rule);
-      }
-      return beans;
-    }
-    static public List<String> exchangeLids (List<CollectionType> ids) {
-      ArrayList<String> lids = new ArrayList<String>();
-      for (CollectionType id : ids) {
-        if (0 < id.getLid().length()) lids.add (id.getLid());
-      }
-      return lids;
-    }
-    static public List<String> exchangeLidvids (List<CollectionType> ids) {
-      ArrayList<String> lidvids = new ArrayList<String>();
-      for (CollectionType id : ids) {
-        if (0 < id.getLidvid().length()) lidvids.add (id.getLidvid());
-      }
-      return lidvids;
-    }
-    static public String exchangeIndexForNode (String indexName) {
-      if (!indexNodeMap.containsKey (indexName)) {
-        throw new IllegalArgumentException("Index \"" + indexName + "\" is not one of the supported indices (\"" + String.join("\", \"", indexNodeMap.keySet()) + "\"): use a supported index name in your configuration or request that index \"" + indexName + "\" be added to harvest by submitting a ticket on https://github.com/NASA-PDS/harvest/issues");
-      }
 
-      return indexNodeMap.get(indexName);
+  static public List<FileRefRule> exchangeFileRef(List<FileRefType> xml2beans) {
+    ArrayList<FileRefRule> beans = new ArrayList<FileRefRule>();
+    FileRefRule rule;
+    for (FileRefType xml : xml2beans) {
+      rule = new FileRefRule();
+      rule.prefix = xml.getReplacePrefix();
+      rule.replacement = xml.getWith();
+      beans.add(rule);
     }
-    static public ConnectionFactory exchangeRegistry (RegistryType xml) throws Exception {
-      return EstablishConnectionFactory.from (xml.getValue(), xml.getAuth());
+    return beans;
+  }
+
+  static public List<String> exchangeLids(List<CollectionType> ids) {
+    ArrayList<String> lids = new ArrayList<String>();
+    for (CollectionType id : ids) {
+      if (0 < id.getLid().length())
+        lids.add(id.getLid());
     }
-    static public HarvestConfigurationType read(File file) throws JAXBException {
-      JAXBContext jaxbContext = new JAXBContextFactory().createContext(new Class[]{Harvest.class}, null);
-      HarvestConfigurationType result = (HarvestConfigurationType)jaxbContext.createUnmarshaller().unmarshal(file);
-      ObjectFactory forge = new ObjectFactory();
-      if (result.getAutogenFields() == null) {
-        result.setAutogenFields(forge.createAutogenFieldsType());
-      }
-      if (result.getAutogenFields().getClassFilter() == null) {
-        result.getAutogenFields().setClassFilter(forge.createFilterType());
-      }
-      if (result.getFileInfo() == null) {
-        result.setFileInfo(forge.createFileInfoType());
-      }
-      if (result.getProductFilter() == null) {
-        result.setProductFilter(forge.createFilterType());
-      }
-      if (result.getReferences() == null) {
-        result.setReferences(forge.createReferencesType());
-      }
-      if (result.getXpathMaps() == null) {
-        result.setXpathMaps(forge.createXpathMapsType());
-      }
-      return result;
+    return lids;
+  }
+
+  static public List<String> exchangeLidvids(List<CollectionType> ids) {
+    ArrayList<String> lidvids = new ArrayList<String>();
+    for (CollectionType id : ids) {
+      if (0 < id.getLidvid().length())
+        lidvids.add(id.getLidvid());
     }
+    return lidvids;
+  }
+
+  static public String exchangeIndexForNode(String indexName) {
+    if (!indexNodeMap.containsKey(indexName)
+        && !indexNodeMap.containsKey(indexName.replace("-structured", ""))) {
+      throw new IllegalArgumentException("Index \"" + indexName
+          + "\" is not one of the supported indices (\""
+          + String.join("\", \"", indexNodeMap.keySet())
+          + "\"): use a supported index name in your configuration or request that index \""
+          + indexName
+          + "\" be added to harvest by submitting a ticket on https://github.com/NASA-PDS/harvest/issues");
+    }
+
+    return indexNodeMap.get(indexName);
+  }
+
+  static public ConnectionFactory exchangeRegistry(RegistryType xml) throws Exception {
+    return EstablishConnectionFactory.from(xml.getValue(), xml.getAuth());
+  }
+
+  static public HarvestConfigurationType read(File file) throws JAXBException {
+    JAXBContext jaxbContext =
+        new JAXBContextFactory().createContext(new Class[] {Harvest.class}, null);
+    HarvestConfigurationType result =
+        (HarvestConfigurationType) jaxbContext.createUnmarshaller().unmarshal(file);
+    ObjectFactory forge = new ObjectFactory();
+    if (result.getAutogenFields() == null) {
+      result.setAutogenFields(forge.createAutogenFieldsType());
+    }
+    if (result.getAutogenFields().getClassFilter() == null) {
+      result.getAutogenFields().setClassFilter(forge.createFilterType());
+    }
+    if (result.getFileInfo() == null) {
+      result.setFileInfo(forge.createFileInfoType());
+    }
+    if (result.getProductFilter() == null) {
+      result.setProductFilter(forge.createFilterType());
+    }
+    if (result.getReferences() == null) {
+      result.setReferences(forge.createReferencesType());
+    }
+    if (result.getXpathMaps() == null) {
+      result.setXpathMaps(forge.createXpathMapsType());
+    }
+    return result;
+  }
 }

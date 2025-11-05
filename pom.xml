@@ -62,7 +62,7 @@ Go through this file line-by-line and replace the template values with your own.
     <properties>
         <!-- Obviously put in your own project name instead of `myproject` -->
         <project-name>registry-loader</project-name>
-
+		
         <!-- You'll want a Unicode-type encoding here in almost every case -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -84,7 +84,7 @@ Go through this file line-by-line and replace the template values with your own.
 
     <name>${project.groupId}:${project-name}</name>
     <description>
-        Put a short paragraph-sized summary of the project here.
+        Registry loader tools, from creation of the registry, to loading new products in it.
     </description>
     <!-- Check the calendar -->
     <inceptionYear>2021</inceptionYear>
@@ -135,65 +135,210 @@ Go through this file line-by-line and replace the template values with your own.
             <optional>false</optional>
         </dependency>
     </dependencies>
-
-    <build>
-        <!--
-        Resources (files) are non-code parts of a project that the code-parts access during run time; these
-        should be bundled in a jar (or war, or whatever) and get specified here
-        -->
-	<!--
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>example.properties</include>
-                </includes>
-                <targetPath>gov/nasa/pds/mypackage</targetPath>
-            </resource>
-        </resources>
-	-->
-
-        <!--
-        Plugins tell Maven how to operate the various lifecycle phases; include extra as needed, such
-        as for CORBA stub generation from `.idl` files, or even more modern things.
-        -->
+  <build>
         <plugins>
-            <!--
-            Other plugins get inherited, such as maven-compiler-plugin and maver-surefire-plugin,
-            so we don't need to repeat them here.
-
-            This plugin below makes this package an *executable* jar. If you want to make a plain jar, adjust
-            the parameters below; or use a different plugin to get a differnt kind of artifact.
-
-            You can find some plugins at: https://maven.apache.org/plugins/
-            Note that other plugins exist and may be published elsewhere.
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <Main-Class>gov.nasa.pds.mypackage.Main</Main-Class>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
+      <plugin>
+        <!-- See https://central.sonatype.org/publish/publish-portal-maven/ for more details -->
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.7.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
+          <waitUntil>published</waitUntil>
+        </configuration>
+      </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>4.0.0-M13</version>
+        </plugin>
+	<!--
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-scm-publish-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+            <pubScmUrl>${project.scm.developerConnection}</pubScmUrl>
+            <scmBranch>gh-pages</scmBranch>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.github.github</groupId>
+          <artifactId>site-maven-plugin</artifactId>
+          <version>0.11</version>
+          <configuration>
+             <message>Creating site for ${project.version}</message>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>site</goal>
+              </goals>
+              <phase>site</phase>
+            </execution>
+          </executions>
+        </plugin>
+	-->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>3.1.1</version>
+            <configuration>
+                <tagNameFormat>v@{project.version}</tagNameFormat>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>3.0.0-M1</version>
+            <executions>
+                <execution>
+                    <id>default-install</id>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>install</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M3</version>
+        </plugin>
+        <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>3.0.0-M3</version>
+        </plugin>
         </plugins>
     </build>
 
-    <!-- Other handy items get inherited from the parent POM, but you can override these here -->
-    <developers/>
-    <profiles/>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                    <goal>test-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <configuration>
+                            <source>1.8</source>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <distributionManagement/>
-    <reporting/>
-    <licenses/>
-    <organization/>  <!-- ← Might not be implemented in parent pom yet -->
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.1.2</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependencies</report>
+                            <report>issue-management</report>
+                            <report>licenses</report>
+                            <report>mailing-lists</report>
+                            <report>team</report>
+                            <report>summary</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.12.1</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>changes-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-linkcheck-plugin</artifactId>
+                <version>1.2</version>
+            </plugin>
+        </plugins>
+    </reporting>
+        <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>Planetary Data System</name>
+        <url>https://pds.nasa.gov/</url>
+    </organization>
 </project>
