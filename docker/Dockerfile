@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-FROM openjdk:17-slim
+FROM eclipse-temurin:17-jdk-jammy
 
 # Set following arguments with compatible versions
 ARG harvest_package_path 
