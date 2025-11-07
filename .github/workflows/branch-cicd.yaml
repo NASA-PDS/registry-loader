@@ -1,7 +1,6 @@
 # 🏃‍♀️ Continuous Integration and Delivery: Branch Testing
 # ======================================================
 
-
 ---
 
 name: 🔁 Branch integration testing
@@ -18,11 +17,11 @@ on:
             -   '**'
             -   '!main'
 
+    workflow_dispatch:
 
 # What to Do
 # ----------
 #
-# Test the software with mvn test
 
 jobs:
     branch-testing:
@@ -32,12 +31,12 @@ jobs:
 
         strategy:
             matrix:
-                java-version: [8, 11]
+                java-version: [17]
 
         steps:
             -
                 name: 💳 Checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v5
                 with:
                     lfs: true
                     fetch-depth: 0
@@ -56,14 +55,78 @@ jobs:
                     restore-keys: pds-${{runner.os}}-mvn-
             -
                 name: ☕️ Set up OpenJDK
-                uses: actions/setup-java@v2
+                uses: actions/setup-java@v5
                 with:
                     distribution: 'adopt'
                     java-version: ${{matrix.java-version}}
             -
                 name: 🩺 Test Software
-                run: mvn test
+                run: mvn --quiet install test
+            -
+                name: 📦 Package construction
+                run: mvn --quiet package
+            -
+                name: 🫙 harvest release package path
+                id: harvest_package
+                run: |
+                    harvest_package=$(find ./harvest/target/ -maxdepth 1  -regextype posix-extended -regex '.*/harvest-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar\.gz')
+                    echo "harvest_package=$harvest_package"
+                    echo "harvest_package=$harvest_package">> $GITHUB_OUTPUT
+            -
+                name: 🫙 manager release package path
+                id: manager_package
+                run: |
+                    manager_package=$(find ./manager/target/ -maxdepth 1 -regextype posix-extended -regex '.*/registry-manager-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar\.gz')
+                    echo "manager_package=$manager_package"
+                    echo "manager_package=$manager_package" >> $GITHUB_OUTPUT
+            -
+                name: 🎰 QEMU Multiple Machine Emulation
+                uses: docker/setup-qemu-action@v3
+            -
+                name: 🚢 Docker Buildx
+                uses: docker/setup-buildx-action@v3
+            -
+                name: 🧱 Image Construction and Publication
+                uses: docker/build-push-action@v6
+                with:
+                    context: ./
+                    file: ./docker/Dockerfile
+                    build-args: |
+                        harvest_package_path=${{steps.harvest_package.outputs.harvest_package}}
+                        reg_manager_package_path=${{steps.manager_package.outputs.manager_package}}
+                    push: false
+                    load: true
+                    tags: nasapds/registry-loader:latest
+            - 
+                name: Check available memory
+                run: free -h
+            -
+                name: ∫ Integration tests … hold onto your hats, pardners
+                run: |
+                    git clone --quiet https://github.com/NASA-PDS/registry.git
+                    cd registry
+                    git checkout structured
+                    cd docker/certs
+                    ./generate-certs.sh
+                    cd ..
+                    # clean up before the demanding docker compose deployment
+                    docker compose down --volumes --remove-orphans || true
+                    docker system prune -af || true
+                    docker volume prune -f || true
+                    docker compose \
+                        --ansi never --profile int-registry-batch-loader --project-name registry \
+                        up  --detach --quiet-pull
+                    # When debugging the docker compose and see detailed logs, replace 
+                    # --detach --quiet-pull
+                    # with 
+                    # --abort-on-container-exit
+                    # and un-comment the 2 following lines:
+                    # echo "===== Docker logs ====="
+                    # docker compose logs --no-color
 
-...
+                    docker compose \
+                        --ansi never --project-name registry \
+                        run --rm --no-TTY reg-api-integration-test-with-wait
+
 
 # -*- mode: yaml; indent: 4; fill-column: 120; coding: utf-8 -*-

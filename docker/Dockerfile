@@ -28,11 +28,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-FROM openjdk:11-slim
+FROM eclipse-temurin:17-jdk-jammy
 
 # Set following arguments with compatible versions
-ARG harvest_version=4.0.7
-ARG reg_manager_version=5.0.6
+ARG harvest_package_path 
+ARG reg_manager_package_path
 ARG test_data_url=https://pds.nasa.gov/data/pds4/test-data/registry/custom-datasets.tar.gz
 
 
@@ -40,29 +40,23 @@ ARG test_data_url=https://pds.nasa.gov/data/pds4/test-data/registry/custom-datas
 RUN apt-get update -y
 RUN apt-get install curl -y
 
-ENV HARVEST_IMAGE_PATH=https://github.com/NASA-PDS/harvest/releases/download/v${harvest_version}/harvest-${harvest_version}-bin.tar.gz
-ENV REG_MANAGER_IMAGE_PATH=https://github.com/NASA-PDS/registry-mgr/releases/download/v${reg_manager_version}/registry-manager-${reg_manager_version}-bin.tar.gz
 
 # Install Harvest
-ADD $HARVEST_IMAGE_PATH /tmp/harvest-bin.tar.gz
-RUN  mkdir /opt/harvest  \
-     && tar xzf /tmp/harvest-bin.tar.gz  -C /opt/harvest --strip-components 1 \
-     && rm -f /tmp/harvest-bin.tar.gz
+ADD $harvest_package_path /opt
+RUN ln -s /opt/harvest-* /opt/harvest
 ENV PATH="$PATH:/opt/harvest/bin"
 
 # Install Registry Manager
-ADD $REG_MANAGER_IMAGE_PATH /tmp/registry-manager-bin.tar.gz
-RUN  mkdir /opt/registry-manager  \
-     && tar xzf /tmp/registry-manager-bin.tar.gz  -C /opt/harvest --strip-components 1 \
-     && rm -f /tmp/registry-manager-bin.tar.gz
+ADD $reg_manager_package_path /opt
+RUN ln -s /opt/registry-manager-* /opt/registry-manager
 ENV PATH="$PATH:/opt/registry-manager/bin"
 
 # Copy test data config file \
 RUN  mkdir -p /test/cfg
-COPY ./test/cfg/harvest-test-config.xml /test/cfg/harvest-config.xml
-COPY ./test/cfg/connection.xml /test/cfg/connection.xml
-COPY ./test/cfg/es-auth.cfg /test/cfg/es-auth.cfg
+COPY ./src/test/resources//harvest-test-config.xml /test/cfg/harvest-config.xml
+COPY ./src/test/resources//connection.xml /test/cfg/connection.xml
+COPY ./src/test/resources/es-auth.cfg /test/cfg/es-auth.cfg
 
 # Entry point
-COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["bash", "/usr/local/bin/entrypoint.sh"]
