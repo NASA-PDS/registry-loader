@@ -35,7 +35,7 @@
 
    <groupId>gov.nasa.pds.registry-loader</groupId>
   <artifactId>harvest</artifactId>
-  <version>5.0.0-SNAPSHOT</version>
+  <version>6.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Harvest Tool</name>

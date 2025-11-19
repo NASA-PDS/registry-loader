@@ -42,7 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
    <groupId>gov.nasa.pds.registry-loader</groupId>
     <artifactId>registry-manager</artifactId>
-    <version>6.0.0-SNAPSHOT</version>
+    <version>7.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <name>PDS Registry Manager</name>
