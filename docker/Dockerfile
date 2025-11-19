@@ -31,8 +31,8 @@
 FROM eclipse-temurin:17-jdk-jammy
 
 # Set following arguments with compatible versions
-ARG harvest_package_path 
-ARG reg_manager_package_path
+ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.0.0/harvest-5.0.0-bin.tar.gz
+ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.0.0/registry-manager-6.0.0-bin.tar.gz
 ARG test_data_url=https://pds.nasa.gov/data/pds4/test-data/registry/custom-datasets.tar.gz
 
 
