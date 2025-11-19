@@ -141,6 +141,11 @@ POSSIBILITY OF SUCH DAMAGE.
           <artifactId>apache-client</artifactId>
           <version>2.33.9</version>
         </dependency>
+        <dependency>
+        	<groupId>gov.nasa.pds</groupId>
+        	<artifactId>registry-common</artifactId>
+        	<version>2.1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
