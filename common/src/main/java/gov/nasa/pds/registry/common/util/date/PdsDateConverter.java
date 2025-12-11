@@ -15,9 +15,6 @@ import gov.nasa.pds.registry.common.dd.LddUtils;
  */
 public class PdsDateConverter
 {
-    public static final String DEFAULT_STARTTIME = "1965-01-01T00:00:00.000Z";
-    public static final String DEFAULT_STOPTIME = "3000-01-01T00:00:00.000Z";
-
     /**
      * Constructor
      * @param strict if true, throw exception if a date could not be 
@@ -39,17 +36,8 @@ public class PdsDateConverter
      */
     public String toIsoInstantString(String fieldName, String value) throws ParseException
     {
-        if(value == null) return null;
+        if(value == null || value.isEmpty()) return null;
         
-        if(value.isEmpty() 
-                || value.equalsIgnoreCase("N/A") 
-                || value.equalsIgnoreCase("UNK") 
-                || value.equalsIgnoreCase("NULL")
-                || value.equalsIgnoreCase("UNKNOWN"))
-        {
-            return getDefaultValue(fieldName);
-        }
-
         Instant inst = LddUtils.parseLddDate(value, ":50").toInstant();
         return toInstantString(inst, value, fieldName.contains("start") ? 9 : 10);
     }
@@ -62,20 +50,4 @@ public class PdsDateConverter
       }
       return DateTimeFormatter.ISO_INSTANT.format(inst);
     }
-
-    
-    public static String getDefaultValue(String fieldName)
-    {
-        if(fieldName == null) return null;
-        
-        if(fieldName.toLowerCase().contains("start"))
-        {
-            return DEFAULT_STARTTIME;
-        }
-        else
-        {
-            return DEFAULT_STOPTIME;
-        }
-    }
-
 }
