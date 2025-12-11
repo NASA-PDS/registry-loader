@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-FROM eclipse-temurin:17-jdk-jammy
+FROM eclipse-temurin:25-jdk-jammy
 
 # Set following arguments with compatible versions
 ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.0.0/harvest-5.0.0-bin.tar.gz
@@ -41,15 +41,22 @@ RUN apt-get update -y
 RUN apt-get install curl -y
 
 
-# Install Harvest
-ADD $harvest_package_path /opt
-RUN ln -s /opt/harvest-* /opt/harvest
-ENV PATH="$PATH:/opt/harvest/bin"
+# Add and untar application packages
+ADD $harvest_package_path /tmp
+ADD $reg_manager_package_path /tmp
+# One extraction step for all archives
+RUN mkdir /app && for f in /tmp/*.tar.gz; do \
+      tar -xzf "$f" -C /app; \
+    done \
+    && rm /tmp/*.tar.gz
 
-# Install Registry Manager
-ADD $reg_manager_package_path /opt
-RUN ln -s /opt/registry-manager-* /opt/registry-manager
-ENV PATH="$PATH:/opt/registry-manager/bin"
+# Harvest in path
+RUN ln -s /app/harvest-* /app/harvest
+ENV PATH="$PATH:/app/harvest/bin"
+
+# Registry Manager in path
+RUN ln -s /app/registry-manager-* /app/registry-manager
+ENV PATH="$PATH:/app/registry-manager/bin"
 
 # Copy test data config file \
 RUN  mkdir -p /test/cfg
