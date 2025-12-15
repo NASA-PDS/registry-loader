@@ -211,6 +211,20 @@ Go through this file line-by-line and replace the template values with your own.
             <id>release</id>
             <build>
                 <plugins>
+					      <plugin>
+				        <!-- See https://central.sonatype.org/publish/publish-portal-maven/ for more details -->
+				        <groupId>org.sonatype.central</groupId>
+				        <artifactId>central-publishing-maven-plugin</artifactId>
+				        <version>0.9.0</version>
+				        <extensions>true</extensions>
+				        <configuration>
+				          <publishingServerId>central</publishingServerId>
+				          <autoPublish>true</autoPublish>
+				          <waitUntil>published</waitUntil>
+				          <waitMaxTime>5400</waitMaxTime>
+						  <pollTimeoutSeconds>7200</pollTimeoutSeconds>
+				        </configuration>
+				      </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
