@@ -1,5 +1,29 @@
 # Changelog
 
+## [v1.2.0](https://github.com/NASA-PDS/registry-loader/tree/v1.2.0) (2025-12-15)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/release/1.2.0...v1.2.0)
+
+## [release/1.2.0](https://github.com/NASA-PDS/registry-loader/tree/release/1.2.0) (2025-12-11)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/release/1.6.0...release/1.2.0)
+
+## [release/1.6.0](https://github.com/NASA-PDS/registry-loader/tree/release/1.6.0) (2025-12-11)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.1.1...release/1.6.0)
+
+**Requirements:**
+
+- As a Harvest user, I want both the file path and the lidvid included in log messages [\#42](https://github.com/NASA-PDS/registry-loader/issues/42)
+
+**Defects:**
+
+- Remove error from log [\#44](https://github.com/NASA-PDS/registry-loader/issues/44) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
+
+## [v1.1.1](https://github.com/NASA-PDS/registry-loader/tree/v1.1.1) (2025-05-06)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/release/1.1.1...v1.1.1)
+
 ## [release/1.1.1](https://github.com/NASA-PDS/registry-loader/tree/release/1.1.1) (2025-04-21)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.1.0...release/1.1.1)
@@ -78,7 +102,7 @@
 
 ## [v0.1.0](https://github.com/NASA-PDS/registry-loader/tree/v0.1.0) (2022-01-11)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/94da5387d0ac1d151b09f809652131d407c950de...v0.1.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/1f0366f2e342eeef510c2a20a9d7959880203400...v0.1.0)
 
 
 
