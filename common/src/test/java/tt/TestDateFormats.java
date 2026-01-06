@@ -39,7 +39,11 @@ public class TestDateFormats {
     assertNotNull(testPdsDate("2013-03-02"));
     assertNotNull(testPdsDate("2013-12"));
     assertNotNull(testPdsDate("2013"));
-    assertNotNull(testPdsDate("2015Z"));
+    
+    assertThrows(DateTimeParseException.class, () -> {
+      testPdsDate("2015Z");
+    });
+    
     assertNotNull(testPdsDate("2013-001"));
 
     assertThrows(ParseException.class, () -> {
