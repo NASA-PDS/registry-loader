@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.text.ParseException;
-import java.time.format.DateTimeParseException;
 import org.junit.jupiter.api.Test;
 import gov.nasa.pds.registry.common.util.date.PdsDateConverter;
 
@@ -15,7 +14,7 @@ public class TestDateFormats {
   }
 
   @Test
-  public void testPdsDates() throws Exception {
+  void testPdsDates() throws Exception {
 assertNull(testPdsDate(null));
     assertNull(testPdsDate(""));
     assertNotNull(testPdsDate("2013-10-24T00:00:00Z"));
