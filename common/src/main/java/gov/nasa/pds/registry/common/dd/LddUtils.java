@@ -100,7 +100,8 @@ public class LddUtils
               dtfb.parseDefaulting(ChronoField.MONTH_OF_YEAR, 1);
               dtfb.parseDefaulting(ChronoField.DAY_OF_MONTH, 1);
             }
-            LocalDate when = LocalDate.parse(cleaned.replace("Z",""),dtfb.toFormatter());
+            LocalDate when = LocalDate.parse(cleaned,dtfb.toFormatter());
+            //LocalDate when = LocalDate.parse(cleaned.replace("Z",""),dtfb.toFormatter());
             return Date.from(when.atStartOfDay(ZoneId.of("Z")).toInstant());
           }
         }
