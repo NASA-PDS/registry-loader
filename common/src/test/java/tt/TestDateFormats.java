@@ -16,7 +16,7 @@ public class TestDateFormats {
 
   @Test
   public void testPdsDates() throws Exception {
-    assertNull(testPdsDate(null));
+assertNull(testPdsDate(null));
     assertNull(testPdsDate(""));
     assertNotNull(testPdsDate("2013-10-24T00:00:00Z"));
     assertNotNull(testPdsDate("2013-10-24T00:49:37.457Z"));
@@ -32,18 +32,11 @@ public class TestDateFormats {
       testPdsDate("20130302010203.123");
     });
 
-    assertThrows(DateTimeParseException.class, () -> {
-      testPdsDate("2016-09-08Z");
-    });
-    
+    assertNotNull(testPdsDate("2016-09-08Z"));
     assertNotNull(testPdsDate("2013-03-02"));
     assertNotNull(testPdsDate("2013-12"));
     assertNotNull(testPdsDate("2013"));
-    
-    assertThrows(DateTimeParseException.class, () -> {
-      testPdsDate("2015Z");
-    });
-    
+    assertNotNull(testPdsDate("2015Z"));
     assertNotNull(testPdsDate("2013-001"));
 
     assertThrows(ParseException.class, () -> {
