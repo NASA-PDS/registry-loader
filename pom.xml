@@ -52,11 +52,6 @@ Go through this file line-by-line and replace the template values with your own.
     Maven (and other compatible build tools) resolve this automatically, but you can find the source of this
     parent at https://github.com/NASA-PDS/pdsen-maven-parent
     -->
-    <parent>
-        <groupId>gov.nasa.pds</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.20.0</version>
-    </parent>
   
     <!-- My project metadata here -->
     <properties>

@@ -42,13 +42,11 @@ RUN apt-get install curl -y
 
 
 # Add and untar application packages
-ADD $harvest_package_path /tmp
-ADD $reg_manager_package_path /tmp
+ADD $harvest_package_path /app
+ADD $reg_manager_package_path /app
 # One extraction step for all archives
-RUN mkdir /app && for f in /tmp/*.tar.gz; do \
-      tar -xzf "$f" -C /app; \
-    done \
-    && rm /tmp/*.tar.gz
+RUN sh -c 'ls /app/*.tar.gz 2>/dev/null | grep -q . && for f in /app/*.tar.gz; do tar -xzf "$f" -C /app; done || echo "No .tar.gz files to extract"' \
+    && rm -f /app/*.tar.gz
 
 # Harvest in path
 RUN ln -s /app/harvest-* /app/harvest
