@@ -144,19 +144,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
     <build>
         <plugins>
-            <!-- Create source JAR (We need this to debug Harvest and Registry Manager) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-               </executions>
-	   </plugin>
             <!-- Disable Site for now -->
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
