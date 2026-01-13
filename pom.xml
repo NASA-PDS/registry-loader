@@ -111,7 +111,13 @@ Go through this file line-by-line and replace the template values with your own.
 	    <module>harvest</module>
 	    <module>manager</module>
 	</modules>
-
+  <repositories>
+    <repository>
+      <id>OSGeo</id>
+      <name>OSGeo</name>
+      <url>	https://repo.osgeo.org/repository/release/</url>
+    </repository>
+  </repositories>
     <!-- Put the packages your project depends on here -->
     <dependencies>
         <!-- If you do any kind of testing—and you should—use Junit, which is the gold standard for Java -->
