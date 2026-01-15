@@ -43,8 +43,9 @@ RUN apt-get install curl -y
 
 # Add and untar application packages
 # TODO change when we switch to using the package found in the same repository
-ADD $harvest_package_path /app/harvest-5.0.0
-ADD $reg_manager_package_path /app/registry-manager-6.0.0
+RUN mkdir /app
+ADD $harvest_package_path /app/
+ADD $reg_manager_package_path /app/
 # One extraction step for all archives
 RUN sh -c 'ls /app/*.tar.gz 2>/dev/null | grep -q . && for f in /app/*.tar.gz; do tar -xzf "$f" -C /app; done || echo "No .tar.gz files to extract"' \    
     && rm -f /app/*.tar.gz
@@ -65,4 +66,4 @@ COPY ./src/test/resources/es-auth.cfg /test/cfg/es-auth.cfg
 
 # Entry point
 COPY ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["bash", "/usr/local/bin/entrypoint.sh"]
+#ENTRYPOINT ["bash", "/usr/local/bin/entrypoint.sh"]
