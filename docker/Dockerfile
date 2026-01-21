@@ -66,4 +66,4 @@ COPY ./src/test/resources/es-auth.cfg /test/cfg/es-auth.cfg
 
 # Entry point
 COPY ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-#ENTRYPOINT ["bash", "/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["bash", "/usr/local/bin/entrypoint.sh"]
