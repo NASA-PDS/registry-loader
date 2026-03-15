@@ -103,6 +103,14 @@ jobs:
                     platforms: linux/amd64,linux/arm64
                     push: true
                     tags: ${{secrets.DOCKERHUB_USERNAME}}/registry-loader:latest
+            - name: 🧱 Image Construction and Publication
+              uses: docker/build-push-action@v3
+              with:
+                  context: .
+                  file: ./docker/DockerfileLite
+                  platforms: linux/amd64,linux/arm64
+                  push: true
+                  tags: ${{secrets.DOCKERHUB_USERNAME}}/registry-loader-lite:latest
 
 ...
 
