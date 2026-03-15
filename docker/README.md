@@ -36,6 +36,19 @@ Alternatively you can create a simplified docker image without the integration t
 
 ## 🏃 Steps to run a docker container of the Registry Loader
 
+### Registry-loader-lite image
+
+Configuration files are required to run the registry-loader-lite image. You can use the configuration files from the registry-loader image, which can be found in `registry-loader/docker/default-config` directory:
+- authentication file
+- registry connection file
+- harvest job configuration file
+
+Call one of the registry-loader tools (registry-manager or harvest) using the following command. Below is an example to create a registry using the registry-manager tool:
+
+    docker run --rm -it -v {where your configuration files are}:/config nasapds/registry-loader-lite registry-manager create-registry -auth /config/es-admin-auth.cfg -registry file:///config/registry-connection.xml
+
+### Registry-loader image
+
 #### 1. Update the following environment variables in the `run.sh`.
 
 Note: 
