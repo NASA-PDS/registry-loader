@@ -28,6 +28,12 @@ From the base directory of the project:
     docker image build -t nasapds/registry-loader -f docker/Dockerfile --build-arg harvest_package_path=harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz --build-arg reg_manager_package_path=manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz .
 ```
 
+Alternatively you can create a simplified docker image without the integration test logic which is preferred to be handled in the registry overarching repository.
+
+```
+    docker image build -t nasapds/registry-loader-lite -f docker/DockerfileLite --build-arg harvest_package_path=harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz --build-arg reg_manager_package_path=manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz .
+```
+
 ## 🏃 Steps to run a docker container of the Registry Loader
 
 #### 1. Update the following environment variables in the `run.sh`.
