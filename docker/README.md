@@ -25,13 +25,13 @@ From the base directory of the project:
 
 
 ```
-    docker image build -t nasapds/registry-loader -f docker/Dockerfile --build-arg harvest_package_path=harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz --build-arg reg_manager_package_path=manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz .
+    docker image build --tag nasapds/registry-loader --file docker/Dockerfile --build-arg harvest_package_path=harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz --build-arg reg_manager_package_path=manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz .
 ```
 
 Alternatively you can create a simplified docker image without the integration test logic which is preferred to be handled in the registry overarching repository.
 
 ```
-    docker image build -t nasapds/registry-loader-lite -f docker/DockerfileLite --build-arg harvest_package_path=harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz --build-arg reg_manager_package_path=manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz .
+    docker image build --tag nasapds/registry-loader-lite --file docker/DockerfileLite --build-arg harvest_package_path=harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz --build-arg reg_manager_package_path=manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz .
 ```
 
 ## 🏃 Steps to run a docker container of the Registry Loader
@@ -45,7 +45,7 @@ Configuration files are required to run the registry-loader-lite image. You can 
 
 Call one of the registry-loader tools (registry-manager or harvest) using the following command. Below is an example to create a registry using the registry-manager tool:
 
-    docker run --rm -it -v {where your configuration files are}:/config nasapds/registry-loader-lite registry-manager create-registry -auth /config/es-admin-auth.cfg -registry file:///config/registry-connection.xml
+    docker run --rm --interactive -tty --volume {where your configuration files are}:/config nasapds/registry-loader-lite registry-manager create-registry -auth /config/es-admin-auth.cfg -registry file:///config/registry-connection.xml
 
 ### Registry-loader image
 
