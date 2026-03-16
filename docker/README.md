@@ -45,7 +45,7 @@ Configuration files are required to run the registry-loader-lite image. You can 
 
 Call one of the registry-loader tools (registry-manager or harvest) using the following command. Below is an example to create a registry using the registry-manager tool:
 
-    docker run --rm --interactive -tty --volume {where your configuration files are}:/config nasapds/registry-loader-lite registry-manager create-registry -auth /config/es-admin-auth.cfg -registry file:///config/registry-connection.xml
+    docker run --rm --volume {where your configuration files are}:/config nasapds/registry-loader-lite registry-manager create-registry -auth /config/es-admin-auth.cfg -registry file:///config/registry-connection.xml
 
 ### Registry-loader image
 
