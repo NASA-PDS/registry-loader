@@ -1,8 +1,16 @@
 # Changelog
 
-## [release/1.2.4](https://github.com/NASA-PDS/registry-loader/tree/release/1.2.4) (2026-01-21)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-03-18)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.3...release/1.2.4)
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...«unknown»)
+
+**Improvements:**
+
+- Merge registry-common, registry-mgr, harvest into one uber repo [\#41](https://github.com/NASA-PDS/registry-loader/issues/41)
+
+## [v1.2.4](https://github.com/NASA-PDS/registry-loader/tree/v1.2.4) (2026-01-21)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.3...v1.2.4)
 
 ## [v1.2.3](https://github.com/NASA-PDS/registry-loader/tree/v1.2.3) (2026-01-14)
 
