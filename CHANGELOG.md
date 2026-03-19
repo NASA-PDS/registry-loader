@@ -1,12 +1,16 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-03-18)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-03-19)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...«unknown»)
 
 **Improvements:**
 
 - Merge registry-common, registry-mgr, harvest into one uber repo [\#41](https://github.com/NASA-PDS/registry-loader/issues/41)
+
+**Defects:**
+
+- Harvest does not detect uppercase file extensions for labels, nor report errors for those missing products [\#52](https://github.com/NASA-PDS/registry-loader/issues/52) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 
 ## [v1.2.4](https://github.com/NASA-PDS/registry-loader/tree/v1.2.4) (2026-01-21)
 
