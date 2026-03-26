@@ -13,6 +13,7 @@ import gov.nasa.pds.registry.common.es.service.ProductService;
 import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.ArchiveStatus;
 import gov.nasa.pds.registry.common.util.CloseUtils;
+import gov.nasa.pds.registry.mgr.RegistryUpdateException;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 
 
@@ -67,8 +68,13 @@ public class SetArchiveStatusCmd implements CliCommand {
                     .setIndex(conFact.getIndexName())
                     .buildTermQueryWithoutTermQuery("_package_id", pid, Metadata.FLD_ARCHIVE_STATUS, status)
                     .setReturnedFields(Arrays.asList("lidvid"))).lidvids();
+                int sizeBefore = total.size();
                 total.addAll(lidvids);
                 srv.updateArchiveStatus (lidvids, status);
+                if (!lidvids.isEmpty() && total.size() == sizeBefore) {
+                  throw new RegistryUpdateException("set-archive-status failed: " + lidvids.size()
+                      + " document(s) could not be updated. Check server logs for errors (e.g. throttling).");
+                }
               } while (lidvids.size() > 0);
               System.out.println ("updated " + total.size() + " documents associated with package ID " + pid);
             }
