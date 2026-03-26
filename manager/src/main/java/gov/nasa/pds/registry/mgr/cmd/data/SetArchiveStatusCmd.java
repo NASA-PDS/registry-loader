@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.ResponseException;
@@ -24,6 +26,7 @@ import gov.nasa.pds.registry.mgr.cmd.CliCommand;
  * @author karpenko
  */
 public class SetArchiveStatusCmd implements CliCommand {
+  private static final Logger log = LogManager.getLogger(SetArchiveStatusCmd.class);
   private ArchiveStatus archiveStatusUtils = new ArchiveStatus();
   /**
    * Constructor
@@ -76,7 +79,7 @@ public class SetArchiveStatusCmd implements CliCommand {
                       + " document(s) could not be updated. Check server logs for errors (e.g. throttling).");
                 }
               } while (lidvids.size() > 0);
-              System.out.println ("updated " + total.size() + " documents associated with package ID " + pid);
+              log.info("updated {} documents associated with package ID {}", total.size(), pid);
             }
         }
         catch(ResponseException ex)
