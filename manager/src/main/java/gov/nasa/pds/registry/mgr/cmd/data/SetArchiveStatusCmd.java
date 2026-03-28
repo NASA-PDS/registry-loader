@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.ResponseException;
@@ -13,6 +15,7 @@ import gov.nasa.pds.registry.common.es.service.ProductService;
 import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.ArchiveStatus;
 import gov.nasa.pds.registry.common.util.CloseUtils;
+import gov.nasa.pds.registry.mgr.RegistryUpdateException;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 
 
@@ -23,6 +26,7 @@ import gov.nasa.pds.registry.mgr.cmd.CliCommand;
  * @author karpenko
  */
 public class SetArchiveStatusCmd implements CliCommand {
+  private static final Logger log = LogManager.getLogger(SetArchiveStatusCmd.class);
   private ArchiveStatus archiveStatusUtils = new ArchiveStatus();
   /**
    * Constructor
@@ -67,10 +71,15 @@ public class SetArchiveStatusCmd implements CliCommand {
                     .setIndex(conFact.getIndexName())
                     .buildTermQueryWithoutTermQuery("_package_id", pid, Metadata.FLD_ARCHIVE_STATUS, status)
                     .setReturnedFields(Arrays.asList("lidvid"))).lidvids();
+                int sizeBefore = total.size();
                 total.addAll(lidvids);
                 srv.updateArchiveStatus (lidvids, status);
+                if (!lidvids.isEmpty() && total.size() == sizeBefore) {
+                  throw new RegistryUpdateException("set-archive-status failed: " + lidvids.size()
+                      + " document(s) could not be updated. Check server logs for errors (e.g. throttling).");
+                }
               } while (lidvids.size() > 0);
-              System.out.println ("updated " + total.size() + " documents associated with package ID " + pid);
+              log.info("updated {} documents associated with package ID {}", total.size(), pid);
             }
         }
         catch(ResponseException ex)

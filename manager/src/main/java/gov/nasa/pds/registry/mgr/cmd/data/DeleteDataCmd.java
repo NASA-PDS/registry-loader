@@ -2,6 +2,8 @@ package gov.nasa.pds.registry.mgr.cmd.data;
 
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.Request;
@@ -18,6 +20,8 @@ import gov.nasa.pds.registry.mgr.cmd.CliCommand;
  */
 public class DeleteDataCmd implements CliCommand
 {
+    private static final Logger log = LogManager.getLogger(DeleteDataCmd.class);
+
     /**
      * Constructor
      */
@@ -39,9 +43,8 @@ public class DeleteDataCmd implements CliCommand
         String authPath = cmdLine.getOptionValue("auth");
 
 
-        System.out.println("Elasticsearch URL: " + esUrl);
-        System.out.println();
-                
+        log.info("Elasticsearch URL: {}", esUrl);
+
         ConnectionFactory conFact = EstablishConnectionFactory.from(esUrl, authPath);
         String refIndex = conFact.getIndexName() + "-refs";
         String regIndex = conFact.getIndexName();
@@ -65,24 +68,24 @@ public class DeleteDataCmd implements CliCommand
         }
         catch(ResponseException ex)
         {
-            throw new Exception(ex.extractErrorMessage());
+            throw ex;
         }
     }
 
-    
-    private static void deleteByQuery(String indexName, long numDeleted) throws Exception
+
+    private void deleteByQuery(String indexName, long numDeleted)
     {
-        System.out.format("Deleted %d document(s) from %s index\n", numDeleted, indexName);
+        log.info("Deleted {} document(s) from {} index", numDeleted, indexName);
     }
-    
+
     /**
      * Build Elasticsearch query to delete records.
      * Records can be deleted by LIDVID, LID, PackageID. All records can also be deleted.
      * @param cmdLine
-     * @throws Exception
+     * @throws IllegalArgumentException when neither -lidvid nor -packageId options are provided
      */
-    private void buildEsQuery(CommandLine cmdLine, Request.DeleteByQuery regQuery, Request.DeleteByQuery refsQuery) throws Exception
-    {       
+    private void buildEsQuery(CommandLine cmdLine, Request.DeleteByQuery regQuery, Request.DeleteByQuery refsQuery)
+    {
         String id = cmdLine.getOptionValue("lidvid");
         if(id != null)
         {
@@ -90,16 +93,16 @@ public class DeleteDataCmd implements CliCommand
             refsQuery.createFilterQuery("collection_lidvid", id);
             return;
         }
-        
+
         id = cmdLine.getOptionValue("packageId");
         if(id != null)
         {
             regQuery.createFilterQuery("_package_id", id);
             refsQuery.createFilterQuery("_package_id", id);
-            
+
             return;
         }
-        throw new Exception("One of the following options is required: -lidvid, -packageId");
+        throw new IllegalArgumentException("One of the following options is required: -lidvid, -packageId");
     }
     
     
