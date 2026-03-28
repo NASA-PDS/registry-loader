@@ -2,6 +2,7 @@ package gov.nasa.pds.registry.common.es.service;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -36,8 +37,10 @@ public class ProductService
     }
     /**
      * Set archive status
-     * @param lidvid ID of a product to update. If it is a collection, 
-     * update primary references from collection inventory.
+     * @param lidvid LID or LIDVID of a product to update. If a bare LID is provided it is
+     * resolved to the latest LIDVID. If the product is a collection, primary references from
+     * collection inventory are also updated. If it is a bundle, all referenced collections and
+     * their products are updated.
      * @param status new status
      * @throws Exception an exception
      */
@@ -46,26 +49,44 @@ public class ProductService
         log.info("Setting product status and its references if bundle or collection. LIDVID = " + lidvid + ", status = " + status);
         int total = 1;
 
+        String resolvedLidvid = lidvid;
         String pClass = dao.getProductClass(lidvid);
-        if(pClass == null) 
+        if(pClass == null)
         {
-            log.warn("Unknown LIDVID: " + lidvid);
-            return;
+            // If the input has no version component it may be a bare LID; try to resolve it.
+            if(!lidvid.contains("::"))
+            {
+                List<String> resolved = dao.getLatestLidVids(Collections.singletonList(lidvid));
+                if(resolved != null && !resolved.isEmpty())
+                {
+                    resolvedLidvid = resolved.get(0);
+                    log.info("Resolved bare LID " + lidvid + " to LIDVID " + resolvedLidvid);
+                    pClass = dao.getProductClass(resolvedLidvid);
+                }
+            }
+
+            if(pClass == null)
+            {
+                throw new Exception("Unknown LID/LIDVID: " + lidvid
+                        + ". Verify that the identifier exists in the registry and that a full"
+                        + " LIDVID (e.g. urn:nasa:pds:bundle::1.0) is provided when multiple"
+                        + " versions are present.");
+            }
         }
-        
+
         // Update the product
-        dao.updateArchiveStatus(Arrays.asList(lidvid), status);
+        dao.updateArchiveStatus(Arrays.asList(resolvedLidvid), status);
         
         // Update collection inventory
         if("Product_Collection".equals(pClass))
         {
             log.info("Setting status of primary references from collection inventory");
-            total += updateCollectionInventory(lidvid, status);            
+            total += updateCollectionInventory(resolvedLidvid, status);            
         }
         else if("Product_Bundle".equals(pClass))
         {
             // Get collection IDs. There could be both LIDs and LIDVIDs at the same time.
-            LidvidSet collectionIds = dao.getCollectionIds(lidvid);
+            LidvidSet collectionIds = dao.getCollectionIds(resolvedLidvid);
             if(collectionIds == null) return;
             
             Set<String> lidvids = new TreeSet<String>();            
@@ -73,6 +94,13 @@ public class ProductService
             
             List<String> tmp = dao.getLatestLidVids(collectionIds.lids);
             if(tmp != null) lidvids.addAll(tmp);
+
+            if(lidvids.isEmpty())
+            {
+                log.warn("No collection references found for bundle " + resolvedLidvid
+                        + ". Verify that the bundle document contains 'ref_lid_collection' or"
+                        + " 'ref_lidvid_collection' fields.");
+            }
 
             total += updateCollections(lidvids, status);
         }
