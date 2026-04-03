@@ -127,8 +127,10 @@ public class SetArchiveStatusCmd implements CliCommand {
       System.out.println("     " + name);
     }
 
-    System.out.println("  -lidvid <id>    Update archive status of a document with given LIDVID.");
-    System.out.println("                  For a collection also update primary references from collection inventory.");
+    System.out.println("  -lidvid <id>    Update archive status of a product with the given LID or LIDVID.");
+    System.out.println("                  A bare LID is automatically resolved to the latest LIDVID.");
+    System.out.println("                  For a bundle, all referenced collections and their products are also updated.");
+    System.out.println("                  For a collection, all primary products in the collection inventory are also updated.");
     System.out.println();
   }
 
