@@ -1,4 +1,4 @@
-package service;
+package gov.nasa.pds.registry.common.es.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;

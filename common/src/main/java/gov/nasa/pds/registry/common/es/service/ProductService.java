@@ -87,13 +87,15 @@ public class ProductService
         {
             // Get collection IDs. There could be both LIDs and LIDVIDs at the same time.
             LidvidSet collectionIds = dao.getCollectionIds(resolvedLidvid);
-            if(collectionIds == null) return;
-            
-            Set<String> lidvids = new TreeSet<String>();            
-            if(collectionIds.lidvids != null) lidvids.addAll(collectionIds.lidvids);
-            
-            List<String> tmp = dao.getLatestLidVids(collectionIds.lids);
-            if(tmp != null) lidvids.addAll(tmp);
+
+            Set<String> lidvids = new TreeSet<String>();
+            if(collectionIds != null)
+            {
+                if(collectionIds.lidvids != null) lidvids.addAll(collectionIds.lidvids);
+
+                List<String> tmp = dao.getLatestLidVids(collectionIds.lids);
+                if(tmp != null) lidvids.addAll(tmp);
+            }
 
             if(lidvids.isEmpty())
             {
