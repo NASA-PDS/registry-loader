@@ -1,6 +1,6 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-04-27)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-05-05)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...«unknown»)
 
