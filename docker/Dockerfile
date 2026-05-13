@@ -28,42 +28,36 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-FROM eclipse-temurin:25-jdk-jammy
+FROM eclipse-temurin:25-jdk-jammy AS base
 
-# Set following arguments with compatible versions
-ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.0.0/harvest-5.0.0-bin.tar.gz
-ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.0.0/registry-manager-6.0.0-bin.tar.gz
-ARG test_data_url=https://pds.nasa.gov/data/pds4/test-data/registry/custom-datasets.tar.gz
+ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.0.0/harvest-5.1.0-bin.tar.gz
+ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.1.0-SNAPSHOT/registry-manager-6.1.0-SNAPSHOT-bin.tar.gz
 
-
-# Install curl
 RUN apt-get update -y
 RUN apt-get install curl -y
 
-
-# Add and untar application packages
-# TODO change when we switch to using the package found in the same repository
 RUN mkdir /app
 ADD $harvest_package_path /app/
 ADD $reg_manager_package_path /app/
-# One extraction step for all archives
-RUN sh -c 'ls /app/*.tar.gz 2>/dev/null | grep -q . && for f in /app/*.tar.gz; do tar -xzf "$f" -C /app; done || echo "No .tar.gz files to extract"' \    
+RUN sh -c 'ls /app/*.tar.gz 2>/dev/null | grep -q . && for f in /app/*.tar.gz; do tar -xzf "$f" -C /app; done || echo "No .tar.gz files to extract"' \
     && rm -f /app/*.tar.gz
 
-# Harvest in path
 RUN ln -s /app/harvest-* /app/harvest
 ENV PATH="$PATH:/app/harvest/bin"
 
-# Registry Manager in path
 RUN ln -s /app/registry-manager-* /app/registry-manager
 ENV PATH="$PATH:/app/registry-manager/bin"
 
-# Copy test data config file \
-RUN  mkdir -p /test/cfg
-COPY ./src/test/resources//harvest-test-config.xml /test/cfg/harvest-config.xml
-COPY ./src/test/resources//connection.xml /test/cfg/connection.xml
+
+FROM base AS lite
+
+
+FROM base AS full
+
+RUN mkdir -p /test/cfg
+COPY ./src/test/resources/harvest-test-config.xml /test/cfg/harvest-config.xml
+COPY ./src/test/resources/connection.xml /test/cfg/connection.xml
 COPY ./src/test/resources/es-auth.cfg /test/cfg/es-auth.cfg
 
-# Entry point
 COPY ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["bash", "/usr/local/bin/entrypoint.sh"]
