@@ -12,11 +12,10 @@ name: 🔁 Branch integration testing
 # What event starts this workflow: a push to any branch other than main
 
 on:
-    # deactivate in favor of legacy-branch-cicd while testing with legacy harvest and registry-mgr repository
-    #push:
-    #    branches:
-    #        -   '**'
-    #        -   '!main'
+    push:
+        branches:
+            -   '**'
+            -   '!main'
 
     workflow_dispatch:
 
@@ -92,9 +91,10 @@ jobs:
                 with:
                     context: ./
                     file: ./docker/Dockerfile
-                    build-args: |
-                        harvest_package_path=${{steps.harvest_package.outputs.harvest_package}}
-                        reg_manager_package_path=${{steps.manager_package.outputs.manager_package}}
+                    # use the default args coded in the Dockerfile which is suffucient for using the legacy harvest and registry-mgr repositories
+                    # build-args: |
+                    #    harvest_package_path=${{steps.harvest_package.outputs.harvest_package}}
+                    #    reg_manager_package_path=${{steps.manager_package.outputs.manager_package}}
                     push: false
                     load: true
                     tags: nasapds/registry-loader:latest
