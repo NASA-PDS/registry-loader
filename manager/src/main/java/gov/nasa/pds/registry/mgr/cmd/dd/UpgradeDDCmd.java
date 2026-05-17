@@ -39,9 +39,8 @@ public class UpgradeDDCmd implements CliCommand
             return;
         }
 
-        String[] cfg = CliCommand.getConfigPair(cmdLine);
-        esUrl = cfg[0];
-        authPath = cfg[1];
+        esUrl = CliCommand.getRegistryUrl(cmdLine);
+        authPath = CliCommand.getAuthFile(cmdLine);
 
         boolean replace= cmdLine.hasOption("r");
 

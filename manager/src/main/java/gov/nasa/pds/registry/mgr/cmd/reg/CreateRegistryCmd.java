@@ -39,9 +39,8 @@ public class CreateRegistryCmd implements CliCommand
             return;
         }
 
-        String[] cfg = CliCommand.getConfigPair(cmdLine);
-        String esUrl = cfg[0];
-        String authPath = cfg[1];
+        String esUrl = CliCommand.getRegistryUrl(cmdLine);
+        String authPath = CliCommand.getAuthFile(cmdLine);
         int shards = parseShards(cmdLine.getOptionValue("shards", "1"));
         int replicas = parseReplicas(cmdLine.getOptionValue("replicas", "0"));
         

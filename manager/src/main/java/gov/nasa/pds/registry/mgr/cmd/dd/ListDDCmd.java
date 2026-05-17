@@ -34,9 +34,8 @@ public class ListDDCmd implements CliCommand
             return;
         }
 
-        String[] cfg = CliCommand.getConfigPair(cmdLine);
-        String url = cfg[0];
-        String authFile = cfg[1];
+        String url = CliCommand.getRegistryUrl(cmdLine);
+        String authFile = CliCommand.getAuthFile(cmdLine);
         String namespace = cmdLine.getOptionValue("ns");
 
         if (namespace == null || namespace.isBlank()) {

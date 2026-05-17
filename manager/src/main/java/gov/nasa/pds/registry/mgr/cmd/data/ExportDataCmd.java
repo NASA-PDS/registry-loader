@@ -46,9 +46,8 @@ public class ExportDataCmd implements CliCommand
             throw new Exception("Missing required parameter '-file'");
         }
         
-        String[] cfg = CliCommand.getConfigPair(cmdLine);
-        String esUrl = cfg[0];
-        String authPath = cfg[1];
+        String esUrl = CliCommand.getRegistryUrl(cmdLine);
+        String authPath = CliCommand.getAuthFile(cmdLine);
 
         extractFilterParams(cmdLine);
         if(filterType == null)

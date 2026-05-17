@@ -39,9 +39,8 @@ public class ExportDDCmd implements CliCommand
             throw new Exception("Missing required parameter '-file'");
         }
         
-        String[] cfg = CliCommand.getConfigPair(cmdLine);
-        String esUrl = cfg[0];
-        String authPath = cfg[1];
+        String esUrl = CliCommand.getRegistryUrl(cmdLine);
+        String authPath = CliCommand.getAuthFile(cmdLine);
 
         System.out.println("Elasticsearch URL: " + esUrl);
         System.out.println();

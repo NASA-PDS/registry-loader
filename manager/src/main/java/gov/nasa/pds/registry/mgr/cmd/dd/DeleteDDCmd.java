@@ -39,9 +39,8 @@ public class DeleteDDCmd implements CliCommand
             return;
         }
 
-        String[] cfg = CliCommand.getConfigPair(cmdLine);
-        esUrl = cfg[0];
-        authPath = cfg[1];
+        esUrl = CliCommand.getRegistryUrl(cmdLine);
+        authPath = CliCommand.getAuthFile(cmdLine);
         this.conFact = EstablishConnectionFactory.from(esUrl, authPath);
         String id = cmdLine.getOptionValue("id");
         if(id != null)

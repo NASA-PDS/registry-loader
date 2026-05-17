@@ -94,11 +94,11 @@ public class RegistryManagerCli
 
         System.out.println();
         System.out.println("Global required parameters:");
-        System.out.println("  -c <file>         Path to Harvest configuration XML (preferred). Registry URL and auth are read from the XML.");
+        System.out.println("  -c <file>         Path to Harvest configuration XML (preferred). Registry URL and auth are read from the XML."); // NOSONAR
         System.out.println();
-        System.out.println("  Deprecated (use -c instead):");
+        System.out.println("  Deprecated (use -c instead):"); // NOSONAR
         System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml");
+        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml"); // NOSONAR
 
         System.out.println();
         System.out.println("Other:");
@@ -183,9 +183,8 @@ public class RegistryManagerCli
       if (this.commands.get("create-registry") == this.command) {
         return true;
       }
-      String[] cfg = CliCommand.getConfigPair(cmdLine);
       return Version.instance().checkVersion(
-          EstablishConnectionFactory.from(cfg[0], cfg[1]),
+          EstablishConnectionFactory.from(CliCommand.getRegistryUrl(cmdLine), CliCommand.getAuthFile(cmdLine)),
           Arrays.asList(gov.nasa.pds.registry.common.Version.instance(), Version.instance().subcommand(this.cmdname)));
     }
 

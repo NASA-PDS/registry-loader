@@ -2,6 +2,8 @@ package gov.nasa.pds.registry.mgr.cmd;
 
 import java.io.File;
 import org.apache.commons.cli.CommandLine;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.registry.mgr.util.HarvestConfigReader;
 
 /**
@@ -13,6 +15,8 @@ import gov.nasa.pds.registry.mgr.util.HarvestConfigReader;
  */
 public interface CliCommand
 {
+    Logger LOG = LogManager.getLogger(CliCommand.class);
+
     /**
      * Run CLI command.
      * @param cmdLine Command line parameters.
@@ -29,24 +33,34 @@ public interface CliCommand
             return HarvestConfigReader.readRegistryAndAuth(new File(cmdLine.getOptionValue("c")));
         }
         if (cmdLine.hasOption("registry")) {
-            System.err.println("[WARN] -registry is deprecated; use -c <harvest-config.xml> instead");
+            LOG.warn("-registry is deprecated; use -c <harvest-config.xml> instead");
             if (cmdLine.hasOption("auth")) {
-                System.err.println("[WARN] -auth is deprecated; use -c <harvest-config.xml> instead");
+                LOG.warn("-auth is deprecated; use -c <harvest-config.xml> instead");
             }
             return new String[]{cmdLine.getOptionValue("registry"), cmdLine.getOptionValue("auth")};
         }
-        throw new RuntimeException("Must provide -c <harvest-config.xml> on the command line. See usage for more details.");
+        throw new IllegalArgumentException("Must provide -c <harvest-config.xml> on the command line. See usage for more details.");
     }
 
-    /** @deprecated Use getConfigPair(cmdLine)[0] or getConfigPair(cmdLine) instead. */
-    @Deprecated
+    /** Returns the registry connection URL from -c or the deprecated -registry flag. */
+    public static String getRegistryUrl(CommandLine cmdLine) throws Exception {
+        return getConfigPair(cmdLine)[0];
+    }
+
+    /** Returns the auth file path from -c or the deprecated -auth flag. */
+    public static String getAuthFile(CommandLine cmdLine) throws Exception {
+        return getConfigPair(cmdLine)[1];
+    }
+
+    /** @deprecated Use getRegistryUrl(cmdLine) instead. */
+    @Deprecated(since = "1.3.0")
     public static String getUsersRegistry(CommandLine cmdLine) {
         try {
             return getConfigPair(cmdLine)[0];
         } catch (RuntimeException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
 }
