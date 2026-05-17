@@ -47,8 +47,8 @@ public class UpdateAltIdsCmd implements CliCommand
             printHelp();
             return;
         }
-        String url = CliCommand.getUsersRegistry(cmdLine);
-        String authFile = cmdLine.getOptionValue("auth");
+        String url = CliCommand.getRegistryUrl(cmdLine);
+        String authFile = CliCommand.getAuthFile(cmdLine);
         String filePath = cmdLine.getOptionValue("file");
         if(filePath == null) throw new Exception("Missing required parameter '-file'");
         File file = new File(filePath);

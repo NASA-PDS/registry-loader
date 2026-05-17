@@ -34,8 +34,8 @@ public class DeleteRegistryCmd implements CliCommand
             return;
         }
         
-        String esUrl = CliCommand.getUsersRegistry(cmdLine);
-        String authPath = cmdLine.getOptionValue("auth");
+        String esUrl = CliCommand.getRegistryUrl(cmdLine);
+        String authPath = CliCommand.getAuthFile(cmdLine);
 
         RestClient client = null;
         
