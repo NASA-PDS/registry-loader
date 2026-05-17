@@ -16,8 +16,9 @@ public class UpdateToolVersionCmd implements CliCommand {
       printHelp();
       return;
     }
-    String url = CliCommand.getUsersRegistry(cmdLine);
-    String authFile = cmdLine.getOptionValue("auth");
+    String[] cfg = CliCommand.getConfigPair(cmdLine);
+    String url = cfg[0];
+    String authFile = cfg[1];
     String[] args = cmdLine.getArgs();
     String[] parts;
 

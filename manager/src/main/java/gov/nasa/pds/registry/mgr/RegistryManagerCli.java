@@ -94,8 +94,11 @@ public class RegistryManagerCli
 
         System.out.println();
         System.out.println("Global required parameters:");
+        System.out.println("  -c <file>         Path to Harvest configuration XML (preferred). Registry URL and auth are read from the XML.");
+        System.out.println();
+        System.out.println("  Deprecated (use -c instead):");
         System.out.println("  -auth <file>      Authentication config file");
-        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml. Default is app:/connections/direct/localhost.xml");
+        System.out.println("  -registry <url>   File URI to the configuration to connect to the registry. For example, file:///home/user/.pds/mcp.xml");
 
         System.out.println();
         System.out.println("Other:");
@@ -177,16 +180,12 @@ public class RegistryManagerCli
     
 
     private boolean checkVersion() throws Exception {
-      // if create-registry, then return true.
-      // check the database for correct versions
-      // print if not the correct version and to upgrade to latest tool
       if (this.commands.get("create-registry") == this.command) {
-        return true; // short cut out so that repo can be created
+        return true;
       }
+      String[] cfg = CliCommand.getConfigPair(cmdLine);
       return Version.instance().checkVersion(
-          EstablishConnectionFactory.from(
-              CliCommand.getUsersRegistry(cmdLine),
-              cmdLine.getOptionValue("auth")),
+          EstablishConnectionFactory.from(cfg[0], cfg[1]),
           Arrays.asList(gov.nasa.pds.registry.common.Version.instance(), Version.instance().subcommand(this.cmdname)));
     }
 
@@ -302,7 +301,10 @@ public class RegistryManagerCli
         
         bld = Option.builder("help");
         options.addOption(bld.build());
-        
+
+        bld = Option.builder("c").hasArg().argName("file");
+        options.addOption(bld.build());
+
         bld = Option.builder("registry").hasArg().argName("url");
         options.addOption(bld.build());
 

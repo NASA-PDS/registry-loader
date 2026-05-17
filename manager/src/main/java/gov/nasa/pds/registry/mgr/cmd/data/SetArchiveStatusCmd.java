@@ -43,9 +43,10 @@ public class SetArchiveStatusCmd implements CliCommand {
             return;
         }
 
-        String esUrl = CliCommand.getUsersRegistry(cmdLine);
-        String authPath = cmdLine.getOptionValue("auth");
-        
+        String[] cfg = CliCommand.getConfigPair(cmdLine);
+        String esUrl = cfg[0];
+        String authPath = cfg[1];
+
         String status = getStatus(cmdLine);
 
         String lidvid = cmdLine.getOptionValue("lidvid"), pid = cmdLine.getOptionValue("packageId");

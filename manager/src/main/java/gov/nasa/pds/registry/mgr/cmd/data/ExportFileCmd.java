@@ -41,9 +41,10 @@ public class ExportFileCmd implements CliCommand
             return;
         }
         
-        String esUrl = CliCommand.getUsersRegistry(cmdLine);
-        String authPath = cmdLine.getOptionValue("auth");
-        
+        String[] cfg = CliCommand.getConfigPair(cmdLine);
+        String esUrl = cfg[0];
+        String authPath = cfg[1];
+
         // Lidvid
         String lidvid = cmdLine.getOptionValue("lidvid");
         if(lidvid == null) 
