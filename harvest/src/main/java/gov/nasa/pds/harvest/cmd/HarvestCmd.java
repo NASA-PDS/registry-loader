@@ -148,7 +148,8 @@ public class HarvestCmd implements CliCommand
         initWriterManager(cmdLine);
         
         boolean overwriteFlag = cmdLine.hasOption("overwrite");
-        
+        boolean forceFlag = cmdLine.hasOption("force");
+
         if (!Version.instance().checkVersion(ConfigManager.exchangeRegistry(cfg.getRegistry()),
             Arrays.asList(
                 gov.nasa.pds.registry.common.Version.instance(),
@@ -156,7 +157,7 @@ public class HarvestCmd implements CliCommand
           throw new ProviderException("Exiting without executing command because version is too old.");
         }
         // Registry manager
-        RegistryManager.init(ConfigManager.exchangeRegistry(cfg.getRegistry()), overwriteFlag);
+        RegistryManager.init(ConfigManager.exchangeRegistry(cfg.getRegistry()), overwriteFlag, forceFlag);
         log.info("Connecting to Elasticsearch");
         RegistryManager.getInstance().getFieldNameCache().update();
         

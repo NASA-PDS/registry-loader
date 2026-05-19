@@ -118,6 +118,8 @@ public class HarvestCli
         System.out.println("  -l <file>             Log file. Default is /tmp/harvest/harvest.log");
         System.out.println("  -v <level>            Logger verbosity: DEBUG, INFO (default), WARNING, ERROR");
         System.out.println("  -O, --overwrite       Overwrite registered products");
+        System.out.println("  -f, --force           Force load products even when namespace schema or attribute");
+        System.out.println("                        type cannot be resolved. Affected fields will not be indexed.");
         System.out.println("  -a, --archive-status  Set the archive status for all products defaulting to staged");
         for (String name : new ArchiveStatus().statusNames) {
           System.out.println("     " + name);
@@ -207,7 +209,10 @@ public class HarvestCli
         
         bld = Option.builder("O").longOpt("overwrite");
         options.addOption(bld.build());
-        
+
+        bld = Option.builder("f").longOpt("force");
+        options.addOption(bld.build());
+
         bld = Option.builder("a").longOpt("archive-status").hasArg().argName("archive_status");
         options.addOption(bld.build());
     }

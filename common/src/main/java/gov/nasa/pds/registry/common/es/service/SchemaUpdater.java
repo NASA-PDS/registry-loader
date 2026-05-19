@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nasa.pds.registry.common.dd.LddException;
 import gov.nasa.pds.registry.common.dd.LddUtils;
 import gov.nasa.pds.registry.common.util.ExceptionUtils;
 import gov.nasa.pds.registry.common.util.file.FileDownloader;
@@ -38,7 +39,12 @@ public class SchemaUpdater
     private SchemaDao schemaDao;
     
     final private String index;
-    
+    private boolean forceLoad = false;
+
+    public void setForceLoad(boolean forceLoad) {
+        this.forceLoad = forceLoad;
+    }
+
     /**
      * Constructor
      * @param cfg Registry (Elasticsearch) configuration
@@ -80,6 +86,10 @@ public class SchemaUpdater
                 try
                 {
                     updateLdd(uri, prefix);
+                }
+                catch(LddException ex)
+                {
+                    throw ex;
                 }
                 catch(Exception ex)
                 {
@@ -163,7 +173,13 @@ public class SchemaUpdater
             log.error(ExceptionUtils.getMessage(ex));
             if(lddInfo.isEmpty())
             {
-                log.warn("Will use 'keyword' data type.");
+                if(!forceLoad)
+                {
+                    throw new LddException("No previously loaded LDD found for namespace '"
+                        + prefix + "'. Cannot load products with fields from this namespace.");
+                }
+                log.warn("Force mode: no LDD found for namespace '" + prefix
+                    + "'. Fields from this namespace will not be indexed.");
                 return;
             }
             else
