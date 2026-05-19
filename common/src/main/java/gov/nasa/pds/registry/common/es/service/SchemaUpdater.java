@@ -4,7 +4,9 @@ package gov.nasa.pds.registry.common.es.service;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +14,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nasa.pds.registry.common.dd.LddException;
 import gov.nasa.pds.registry.common.dd.LddUtils;
 import gov.nasa.pds.registry.common.util.ExceptionUtils;
 import gov.nasa.pds.registry.common.util.file.FileDownloader;
@@ -22,6 +25,7 @@ import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.es.dao.schema.SchemaDao;
 import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;
+import gov.nasa.pds.registry.common.meta.OpsFields;
 
 
 /**
@@ -42,7 +46,12 @@ public class SchemaUpdater
     private SchemaDao schemaDao;
     
     final private String index;
-    
+    private boolean forceLoad = false;
+
+    public void setForceLoad(boolean forceLoad) {
+        this.forceLoad = forceLoad;
+    }
+
     /**
      * Constructor
      * @param cfg Registry (Elasticsearch) configuration
@@ -85,6 +94,10 @@ public class SchemaUpdater
                 {
                     updateLdd(uri, prefix);
                 }
+                catch(LddException ex)
+                {
+                    throw ex;
+                }
                 catch(Exception ex)
                 {
                     log.error("Could not update LDD for namespace '" + prefix + "' at URI " + uri
@@ -93,11 +106,32 @@ public class SchemaUpdater
             }
         }
         
-        // Update schema
+        // Update schema: resolve ops: fields from built-in map, all others from the -dd index
         if(fields != null && !fields.isEmpty())
         {
-            List<Tuple> newFields = ddDao.getDataTypes(fields);
-            if(newFields != null)
+            List<Tuple> newFields = new ArrayList<>();
+            Set<String> ddFields = new HashSet<>();
+            for(String field : fields)
+            {
+                String opsType = OpsFields.FIELD_TYPES.get(field);
+                if(opsType != null)
+                {
+                    newFields.add(new Tuple(field, opsType));
+                }
+                else
+                {
+                    ddFields.add(field);
+                }
+            }
+            if(!ddFields.isEmpty())
+            {
+                List<Tuple> ddTypes = ddDao.getDataTypes(ddFields);
+                if(ddTypes != null)
+                {
+                    newFields.addAll(ddTypes);
+                }
+            }
+            if(!newFields.isEmpty())
             {
                 schemaDao.updateSchema(newFields);
                 log.debug("Updated " + newFields.size() + " fields in OpenSearch mapping for index " + this.index);
@@ -180,8 +214,13 @@ public class SchemaUpdater
             log.error("Interrupted while downloading or loading LDD for namespace '" + prefix + "' from " + jsonUrl);
             if(lddInfo.isEmpty())
             {
-                log.warn("No previously loaded LDD found for namespace '" + prefix
-                    + "'. Fields from this namespace will use 'keyword' data type.");
+                if(!forceLoad)
+                {
+                    throw new LddException("No previously loaded LDD found for namespace '"
+                        + prefix + "'. Cannot load products with fields from this namespace.");
+                }
+                log.warn("Force mode: no LDD found for namespace '" + prefix
+                    + "'. Fields from this namespace will not be indexed.");
             }
             else
             {
@@ -222,8 +261,13 @@ public class SchemaUpdater
                 + ": " + ExceptionUtils.getMessage(ex));
             if(lddInfo.isEmpty())
             {
-                log.warn("No previously loaded LDD found for namespace '" + prefix
-                    + "'. Fields from this namespace will use 'keyword' data type.");
+                if(!forceLoad)
+                {
+                    throw new LddException("No previously loaded LDD found for namespace '"
+                        + prefix + "'. Cannot load products with fields from this namespace.");
+                }
+                log.warn("Force mode: no LDD found for namespace '" + prefix
+                    + "'. Fields from this namespace will not be indexed.");
             }
             else
             {
