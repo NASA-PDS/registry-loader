@@ -31,7 +31,7 @@ From the base directory of the project:
 Alternatively you can create a simplified docker image without the integration test logic which is preferred to be handled in the registry overarching repository.
 
 ```
-    docker image build --tag nasapds/registry-loader-lite --file docker/DockerfileLite --build-arg harvest_package_path=harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz --build-arg reg_manager_package_path=manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz .
+    docker image build --tag nasapds/registry-loader-lite --file docker/Dockerfile --target lite --build-arg harvest_package_path=harvest/target/harvest-5.0.0-SNAPSHOT-bin.tar.gz --build-arg reg_manager_package_path=manager/target/registry-manager-6.0.0-SNAPSHOT-bin.tar.gz .
 ```
 
 ## 🏃 Steps to run a docker container of the Registry Loader
