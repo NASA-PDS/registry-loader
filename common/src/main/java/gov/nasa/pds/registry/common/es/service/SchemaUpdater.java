@@ -2,6 +2,7 @@ package gov.nasa.pds.registry.common.es.service;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -86,7 +87,8 @@ public class SchemaUpdater
                 }
                 catch(Exception ex)
                 {
-                    log.error("Could not update LDD. " + ExceptionUtils.getMessage(ex));
+                    log.error("Could not update LDD for namespace '" + prefix + "' at URI " + uri
+                        + ": " + ex.getMessage() + ". Harvesting will continue with available field definitions.");
                 }
             }
         }
@@ -123,7 +125,20 @@ public class SchemaUpdater
         String schemaFileName = jsonUrl.substring(idx+1);
 
         // Get stored LDDs info
-        LddVersions lddInfo = ddDao.getLddInfo(prefix);
+        LddVersions lddInfo;
+        try
+        {
+            lddInfo = ddDao.getLddInfo(prefix);
+        }
+        catch(RuntimeException ex)
+        {
+            throw ex;
+        }
+        catch(IOException ex)
+        {
+            throw new Exception("Failed to query registry for existing LDD info for namespace '"
+                + prefix + "': " + ExceptionUtils.getMessage(ex), ex);
+        }
 
         // LDD already loaded
         if(lddInfo.files.contains(schemaFileName))
@@ -132,49 +147,88 @@ public class SchemaUpdater
         }
 
         // Download LDD
-        File lddFile = File.createTempFile("LDD-", ".JSON");
+        File lddFile;
+        try
+        {
+            lddFile = File.createTempFile("LDD-", ".JSON");
+            // Restrict permissions to owner only (mitigate publicly writable temp dir risk)
+            lddFile.setReadable(false, false);
+            lddFile.setReadable(true, true);
+            lddFile.setWritable(false, false);
+            lddFile.setWritable(true, true);
+        }
+        catch(IOException ex)
+        {
+            throw new Exception("Failed to create temp file for LDD download for namespace '"
+                + prefix + "': " + ExceptionUtils.getMessage(ex), ex);
+        }
 
         try
         {
-            boolean downloaded = false;
-            try
-            {
-                downloaded = fileDownloader.download(jsonUrl, lddFile);
-            }
-            catch(Exception ex)
-            {
-                String fallbackUrl = LddUrlUtils.toPdsNasaGovUrl(jsonUrl);
-                if(fallbackUrl != null)
-                {
-                    log.warn("Failed to download LDD from " + jsonUrl + "; trying pds.nasa.gov mirror: " + fallbackUrl);
-                    downloaded = fileDownloader.download(fallbackUrl, lddFile);
-                    String originalHost = new URL(jsonUrl).getHost();
-                    domainRedirects.put(originalHost, LddUrlUtils.PDS_NASA_GOV);
-                    log.info("Caching domain redirect: " + originalHost + " -> " + LddUrlUtils.PDS_NASA_GOV);
-                    jsonUrl = fallbackUrl;
-                }
-                else
-                {
-                    throw ex;
-                }
-            }
-            if(downloaded)
+            if(fileDownloader.download(jsonUrl, lddFile))
             {
                 lddLoader.load(lddFile, schemaFileName, prefix);
             }
         }
-        catch(Exception ex)
+        catch(RuntimeException ex)
         {
-            log.error("Failed to download or load LDD for namespace '" + prefix + "' from " + jsonUrl + ": " + ExceptionUtils.getMessage(ex));
+            throw ex;
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+            log.error("Interrupted while downloading or loading LDD for namespace '" + prefix + "' from " + jsonUrl);
             if(lddInfo.isEmpty())
             {
-                log.warn("Will use 'keyword' data type.");
-                return;
+                log.warn("No previously loaded LDD found for namespace '" + prefix
+                    + "'. Fields from this namespace will use 'keyword' data type.");
             }
             else
             {
-                log.warn("Will use field definitions from " + lddInfo.files);
-                return;
+                log.warn("Will use previously loaded field definitions for namespace '" + prefix
+                    + "' from " + lddInfo.files);
+            }
+            return;
+        }
+        catch(Exception ex)
+        {
+            String fallbackUrl = LddUrlUtils.toPdsNasaGovUrl(jsonUrl);
+            if(fallbackUrl != null)
+            {
+                log.warn("Failed to download LDD from " + jsonUrl + "; trying pds.nasa.gov mirror: " + fallbackUrl);
+                boolean mirrorSuccess = false;
+                try
+                {
+                    if(fileDownloader.download(fallbackUrl, lddFile))
+                    {
+                        String originalHost = new URL(jsonUrl).getHost();
+                        domainRedirects.put(originalHost, LddUrlUtils.PDS_NASA_GOV);
+                        log.info("Caching domain redirect: " + originalHost + " -> " + LddUrlUtils.PDS_NASA_GOV);
+                        lddLoader.load(lddFile, schemaFileName, prefix);
+                        mirrorSuccess = true;
+                    }
+                }
+                catch(InterruptedException ie)
+                {
+                    Thread.currentThread().interrupt();
+                }
+                catch(Exception fallbackEx)
+                {
+                    log.debug("pds.nasa.gov mirror also failed: " + fallbackEx.getMessage());
+                }
+                if(mirrorSuccess) return;
+            }
+            log.error("Failed to download or load LDD for namespace '" + prefix + "' from " + jsonUrl
+                + ": " + ExceptionUtils.getMessage(ex));
+            if(lddInfo.isEmpty())
+            {
+                log.warn("No previously loaded LDD found for namespace '" + prefix
+                    + "'. Fields from this namespace will use 'keyword' data type.");
+            }
+            else
+            {
+                log.warn("Will use previously loaded field definitions for namespace '" + prefix
+                    + "' from " + lddInfo.files);
             }
         }
         finally
@@ -184,16 +238,15 @@ public class SchemaUpdater
     }
 
 
-    private String getJsonUrl(String uri) throws Exception
+    private String getJsonUrl(String uri)
     {
         if(uri.endsWith(".xsd"))
         {
-            String jsonUrl = uri.substring(0, uri.length()-3) + "JSON";
-            return jsonUrl;
+            return uri.substring(0, uri.length()-3) + "JSON";
         }
         else
         {
-            throw new Exception("Invalid schema URI. URI doesn't end with '.xsd': " + uri);
+            throw new IllegalArgumentException("Invalid schema URI - does not end with '.xsd': " + uri);
         }
     }
 
@@ -202,7 +255,7 @@ public class SchemaUpdater
      * Apply any cached domain redirect to a URL. If the URL's host has a known
      * redirect (e.g. isda.issdc.gov.in → pds.nasa.gov), return the rewritten URL.
      */
-    private String applyDomainRedirect(String url) throws Exception
+    private String applyDomainRedirect(String url)
     {
         try
         {
