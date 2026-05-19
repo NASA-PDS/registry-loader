@@ -2,6 +2,8 @@ package gov.nasa.pds.registry.common.es.service;
 
 
 import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +29,10 @@ import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;
  */
 public class SchemaUpdater
 {
+    // Cached domain redirects: if a non-pds.nasa.gov host fails but its pds.nasa.gov
+    // mirror succeeds, future requests from that host go directly to pds.nasa.gov.
+    static final Map<String, String> domainRedirects = new HashMap<>();
+
     private Logger log;
     private FileDownloader fileDownloader;
     private JsonLddLoader lddLoader;
@@ -104,39 +110,62 @@ public class SchemaUpdater
         if(prefix == null || prefix.isEmpty()) return;
 
         log.info("Updating '" + prefix  + "' LDD. Schema location: " + uri);
-        
-        // Get JSON schema URL from XSD URL
-        String jsonUrl = getJsonUrl(uri);
+
+        // Get JSON schema URL from XSD URL, applying any cached domain redirect
+        String jsonUrl = applyDomainRedirect(getJsonUrl(uri));
 
         // Get schema file name
         int idx = jsonUrl.lastIndexOf('/');
-        if(idx < 0) 
+        if(idx < 0)
         {
             throw new Exception("Invalid schema URI." + uri);
         }
         String schemaFileName = jsonUrl.substring(idx+1);
-        
+
         // Get stored LDDs info
         LddVersions lddInfo = ddDao.getLddInfo(prefix);
 
         // LDD already loaded
-        if(lddInfo.files.contains(schemaFileName)) 
+        if(lddInfo.files.contains(schemaFileName))
         {
             return;
         }
 
         // Download LDD
         File lddFile = File.createTempFile("LDD-", ".JSON");
-        
+
         try
         {
-            if (fileDownloader.download(jsonUrl, lddFile)) {
-              lddLoader.load(lddFile, schemaFileName, prefix);
+            boolean downloaded = false;
+            try
+            {
+                downloaded = fileDownloader.download(jsonUrl, lddFile);
+            }
+            catch(Exception ex)
+            {
+                String fallbackUrl = LddUrlUtils.toPdsNasaGovUrl(jsonUrl);
+                if(fallbackUrl != null)
+                {
+                    log.warn("Failed to download LDD from " + jsonUrl + "; trying pds.nasa.gov mirror: " + fallbackUrl);
+                    downloaded = fileDownloader.download(fallbackUrl, lddFile);
+                    String originalHost = new URL(jsonUrl).getHost();
+                    domainRedirects.put(originalHost, LddUrlUtils.PDS_NASA_GOV);
+                    log.info("Caching domain redirect: " + originalHost + " -> " + LddUrlUtils.PDS_NASA_GOV);
+                    jsonUrl = fallbackUrl;
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+            if(downloaded)
+            {
+                lddLoader.load(lddFile, schemaFileName, prefix);
             }
         }
         catch(Exception ex)
         {
-            log.error(ExceptionUtils.getMessage(ex));
+            log.error("Failed to download or load LDD for namespace '" + prefix + "' from " + jsonUrl + ": " + ExceptionUtils.getMessage(ex));
             if(lddInfo.isEmpty())
             {
                 log.warn("Will use 'keyword' data type.");
@@ -153,8 +182,8 @@ public class SchemaUpdater
             lddFile.delete();
         }
     }
-    
-    
+
+
     private String getJsonUrl(String uri) throws Exception
     {
         if(uri.endsWith(".xsd"))
@@ -168,4 +197,33 @@ public class SchemaUpdater
         }
     }
 
+
+    /**
+     * Apply any cached domain redirect to a URL. If the URL's host has a known
+     * redirect (e.g. isda.issdc.gov.in → pds.nasa.gov), return the rewritten URL.
+     */
+    private String applyDomainRedirect(String url) throws Exception
+    {
+        try
+        {
+            String host = new URL(url).getHost();
+            if(domainRedirects.containsKey(host))
+            {
+                String redirected = LddUrlUtils.toPdsNasaGovUrl(url);
+                if(redirected != null)
+                {
+                    log.debug("Redirecting " + url + " to " + redirected + " (cached domain redirect)");
+                    return redirected;
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            // fall through and return original
+        }
+        return url;
+    }
+
+
 }
+
