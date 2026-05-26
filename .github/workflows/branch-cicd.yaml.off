@@ -12,11 +12,10 @@ name: 🔁 Branch integration testing
 # What event starts this workflow: a push to any branch other than main
 
 on:
-    # deactivate in favor of legacy-branch-cicd while testing with legacy harvest and registry-mgr repository
-    #push:
-    #    branches:
-    #        -   '**'
-    #        -   '!main'
+    push:
+        branches:
+            -   '**'
+            -   '!main'
 
     workflow_dispatch:
 
