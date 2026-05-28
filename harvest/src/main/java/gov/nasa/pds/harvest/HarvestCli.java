@@ -122,6 +122,7 @@ public class HarvestCli
         for (String name : new ArchiveStatus().statusNames) {
           System.out.println("     " + name);
         }
+        System.out.println("  -s, --streaming       Output format: streaming-json for real-time JSON output");
     }
 
     
@@ -209,6 +210,9 @@ public class HarvestCli
         options.addOption(bld.build());
         
         bld = Option.builder("a").longOpt("archive-status").hasArg().argName("archive_status");
+        options.addOption(bld.build());
+        
+        bld = Option.builder("s").longOpt("streaming").hasArg().argName("format");
         options.addOption(bld.build());
     }
 

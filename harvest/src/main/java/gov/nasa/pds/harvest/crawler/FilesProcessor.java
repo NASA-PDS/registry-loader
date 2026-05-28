@@ -18,6 +18,7 @@ import gov.nasa.pds.harvest.cfg.HarvestConfigurationType;
 import gov.nasa.pds.harvest.cfg.ConfigManager;
 import gov.nasa.pds.harvest.dao.RegistryDao;
 import gov.nasa.pds.harvest.dao.RegistryManager;
+import gov.nasa.pds.harvest.util.StreamingJsonReporter;
 import gov.nasa.pds.harvest.util.out.SupplementalWriter;
 import gov.nasa.pds.harvest.util.out.WriterManager;
 import gov.nasa.pds.harvest.util.xml.XmlIs;
@@ -143,6 +144,8 @@ public class FilesProcessor extends BaseProcessor
             {
                 log.warn("File is too big to parse: " + file.getAbsolutePath());
                 counter.skippedFileCount++;
+                StreamingJsonReporter.getInstance().reportSkipped(
+                    file.getAbsolutePath(), "File too large");
                 return;
             }
 
@@ -152,6 +155,8 @@ public class FilesProcessor extends BaseProcessor
         {
             log.error(ex.getMessage());
             counter.failedFileCount++;
+            StreamingJsonReporter.getInstance().reportFailure(
+                file.getAbsolutePath(), ex.getMessage());
             return;
         }        
         
@@ -171,6 +176,8 @@ public class FilesProcessor extends BaseProcessor
         {
             log.error(ex.getMessage());
             counter.failedFileCount++;
+            StreamingJsonReporter.getInstance().reportFailure(
+                file.getAbsolutePath(), ex.getMessage());
         }        
     }
 
@@ -206,7 +213,7 @@ public class FilesProcessor extends BaseProcessor
         fileDataExtractor.extract(file, meta, ConfigManager.exchangeFileRef(config.getFileInfo().getFileRef()));
         meta.setProduct(doc, this.metaNormalizer);
         // Save data
-        save(meta);
+        save(meta, file.getAbsolutePath());
         
         // Process Collection inventory
         if("Product_Collection".equals(rootElement))

@@ -9,6 +9,7 @@ import gov.nasa.pds.harvest.dao.RegistryManager;
 import gov.nasa.pds.harvest.cfg.HarvestConfigurationType;
 import gov.nasa.pds.harvest.dao.MetadataWriter;
 import gov.nasa.pds.harvest.util.PackageIdGenerator;
+import gov.nasa.pds.harvest.util.StreamingJsonReporter;
 import gov.nasa.pds.registry.common.es.service.MissingFieldsProcessor;
 import gov.nasa.pds.registry.common.meta.BasicMetadataExtractor;
 import gov.nasa.pds.registry.common.meta.FileMetadataExtractor;
@@ -73,10 +74,22 @@ public class BaseProcessor
     
     protected void save(Metadata meta) throws Exception
     {
+        save(meta, null);
+    }
+    
+    protected void save(Metadata meta, String filePath) throws Exception
+    {
         // Process missing fields
         mfProc.processDoc(meta);        
         MetadataWriter writer = RegistryManager.getInstance().getRegistryWriter();
         writer.write(meta);
+        
+        // Report success to streaming JSON reporter if enabled
+        StreamingJsonReporter reporter = StreamingJsonReporter.getInstance();
+        if (reporter.isEnabled() && filePath != null) {
+            String lidvid = meta.lidvid();
+            reporter.reportSuccess(filePath, lidvid);
+        }
     }
     
 }

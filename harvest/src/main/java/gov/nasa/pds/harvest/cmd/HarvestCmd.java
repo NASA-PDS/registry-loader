@@ -21,6 +21,7 @@ import gov.nasa.pds.harvest.dao.RegistryManager;
 import gov.nasa.pds.harvest.meta.XPathCacheLoader;
 import gov.nasa.pds.harvest.util.CounterMap;
 import gov.nasa.pds.harvest.util.PackageIdGenerator;
+import gov.nasa.pds.harvest.util.StreamingJsonReporter;
 import gov.nasa.pds.harvest.util.log.LogUtils;
 import gov.nasa.pds.harvest.util.out.WriterManager;
 import gov.nasa.pds.registry.common.meta.BasicMetadataExtractor;
@@ -66,6 +67,15 @@ public class HarvestCmd implements CliCommand
           this.archive_status = cmdLine.getOptionValue("archive-status").toLowerCase();
           new ArchiveStatus().validateStatusName(archive_status);;
         }
+        
+        // Enable streaming JSON reporter if requested
+        if (cmdLine.hasOption("streaming")) {
+            String format = cmdLine.getOptionValue("streaming");
+            if ("streaming-json".equalsIgnoreCase(format)) {
+                StreamingJsonReporter.getInstance().setEnabled(true);
+            }
+        }
+        
         configure(cmdLine);
 
         try
@@ -283,10 +293,16 @@ public class HarvestCmd implements CliCommand
     private void printSummary()
     {
         Counter counter = RegistryManager.getInstance().getCounter();
+        int processedCount = counter.prodCounters.getTotal();
+        
+        // Output streaming JSON summary if enabled
+        StreamingJsonReporter reporter = StreamingJsonReporter.getInstance();
+        if (reporter.isEnabled()) {
+            reporter.reportSummary(processedCount, counter.failedFileCount, counter.skippedFileCount);
+        }
         
         RegistryDocBatch.showDuplicates();
         log.log(LogUtils.LEVEL_SUMMARY, "Summary:");
-        int processedCount = counter.prodCounters.getTotal();
         
         log.log(LogUtils.LEVEL_SUMMARY, "Skipped files: " + counter.skippedFileCount);
         log.log(LogUtils.LEVEL_SUMMARY, "Loaded files: " + processedCount);
