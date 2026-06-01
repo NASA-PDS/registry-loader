@@ -204,10 +204,6 @@ public class SchemaUpdater
                 lddLoader.load(lddFile, schemaFileName, prefix);
             }
         }
-        catch(RuntimeException ex)
-        {
-            throw ex;
-        }
         catch(InterruptedException ex)
         {
             Thread.currentThread().interrupt();
