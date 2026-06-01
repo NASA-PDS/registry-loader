@@ -1,8 +1,13 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-05-27)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-06-01)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...«unknown»)
+
+**Requirements:**
+
+- As a node operator, I want to force-load products when namespace schema or attribute type is unresolvable, knowing affected fields will not be fully indexed [\#66](https://github.com/NASA-PDS/registry-loader/issues/66)
+- As a node operator, I want harvest to fail product loading when a namespace schema or attribute data type cannot be found [\#65](https://github.com/NASA-PDS/registry-loader/issues/65)
 
 **Improvements:**
 
@@ -10,6 +15,7 @@
 
 **Defects:**
 
+- ops: namespace fields missing from data type resolution, causing DataTypeNotFoundException [\#68](https://github.com/NASA-PDS/registry-loader/issues/68) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Harvest does not detect uppercase file extensions for labels, nor report errors for those missing products [\#52](https://github.com/NASA-PDS/registry-loader/issues/52) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 
 ## [v1.2.4](https://github.com/NASA-PDS/registry-loader/tree/v1.2.4) (2026-01-21)
@@ -38,7 +44,7 @@
 
 **Defects:**
 
-- Remove error from log [\#44](https://github.com/NASA-PDS/registry-loader/issues/44) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
+- Remove `[ERROR] /opt/registry-manager/elastic/data-dic-data.jar`  from log [\#44](https://github.com/NASA-PDS/registry-loader/issues/44) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
 
 ## [v1.1.1](https://github.com/NASA-PDS/registry-loader/tree/v1.1.1) (2025-05-06)
 
