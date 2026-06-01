@@ -36,8 +36,7 @@ public class SchemaUpdater
 {
     // Cached domain redirects: if a non-pds.nasa.gov host fails but its pds.nasa.gov
     // mirror succeeds, future requests from that host go directly to pds.nasa.gov.
-    static final Map<String, String> domainRedirects = new HashMap<>();
-
+    private static final Map<String, String> domainRedirects = new java.util.concurrent.ConcurrentHashMap<>();
     private Logger log;
     private FileDownloader fileDownloader;
     private JsonLddLoader lddLoader;
