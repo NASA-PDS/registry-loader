@@ -101,7 +101,8 @@ public class SchemaUpdater
                 catch(Exception ex)
                 {
                     log.error("Could not update LDD for namespace '" + prefix + "' at URI " + uri
-                        + ": " + ex.getMessage() + ". Harvesting will continue with available field definitions.");
+                        + ": " + ExceptionUtils.getMessage(ex)
+                        + ". Harvesting will continue with available field definitions.");
                 }
             }
         }
