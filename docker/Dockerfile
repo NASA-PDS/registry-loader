@@ -30,17 +30,15 @@
 
 FROM eclipse-temurin:25-jdk-jammy AS base
 
-ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.1.1/harvest-5.1.1-bin.tar.gz
-ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.1.1/registry-manager-6.1.1-bin.tar.gz
+ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.2.0-SNAPSHOT/harvest-5.2.0-SNAPSHOT-bin.tar.gz
+ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.2.0-SNAPSHOT/registry-manager-6.2.0-SNAPSHOT-bin.tar.gz
 
 RUN apt-get update -y
 RUN apt-get install curl -y
 
 RUN mkdir /app
-ADD $harvest_package_path /app/
-ADD $reg_manager_package_path /app/
-RUN sh -c 'ls /app/*.tar.gz 2>/dev/null | grep -q . && for f in /app/*.tar.gz; do tar -xzf "$f" -C /app; done || echo "No .tar.gz files to extract"' \
-    && rm -f /app/*.tar.gz
+RUN curl -L "$harvest_package_path" -o /app/harvest.tar.gz && tar -xzf /app/harvest.tar.gz -C /app && rm /app/harvest.tar.gz
+RUN curl -L "$reg_manager_package_path" -o /app/registry-manager.tar.gz && tar -xzf /app/registry-manager.tar.gz -C /app && rm /app/registry-manager.tar.gz
 
 RUN ln -s /app/harvest-* /app/harvest
 ENV PATH="$PATH:/app/harvest/bin"
