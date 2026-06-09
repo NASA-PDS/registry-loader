@@ -1,0 +1,133 @@
+# 🏃‍♀️ Continuous Integration and Delivery: Branch Testing
+# ======================================================
+
+---
+
+name: 🔁 Branch legacy integration testing
+
+
+# Driving Event
+# -------------
+#
+# What event starts this workflow: a push to any branch other than main
+
+on:
+    push:
+        branches:
+            -   '**'
+            -   '!main'
+
+    workflow_dispatch:
+
+# What to Do
+# ----------
+#
+
+jobs:
+    branch-testing:
+        name: 🪵 Branch Testing
+        runs-on: ubuntu-latest
+        if: github.actor != 'pdsen-ci'
+
+        strategy:
+            matrix:
+                java-version: [17]
+
+        steps:
+            -
+                name: 💳 Checkout
+                uses: actions/checkout@v5
+                with:
+                    lfs: true
+                    fetch-depth: 0
+                    token: ${{secrets.ADMIN_GITHUB_TOKEN}}
+            -
+                name: 💵 Maven Cache
+                uses: actions/cache@v3
+                with:
+                    path: ~/.m2/repository
+                    # The "key" used to indicate a set of cached files is the operating system runner
+                    # plus "mvn" for Maven-specific builds, plus a hash of the `pom.xml` files, which
+                    # should uniquely identify the dependent jars; plus "pds" because we pds-prefix
+                    # everything with "pds" in PDS—even when the context is obvious! 😅
+                    key: pds-${{runner.os}}-mvn-${{hashFiles('**/pom.xml')}}
+                    # To restore a set of files, we only need to match a prefix of the saved key.
+                    restore-keys: pds-${{runner.os}}-mvn-
+            -
+                name: ☕️ Set up OpenJDK
+                uses: actions/setup-java@v5
+                with:
+                    distribution: 'adopt'
+                    java-version: ${{matrix.java-version}}
+            -
+                name: 🩺 Test Software
+                run: mvn --quiet install test
+            -
+                name: 📦 Package construction
+                run: mvn --quiet package
+            -
+                name: 🫙 harvest release package path
+                id: harvest_package
+                run: |
+                    harvest_package=$(find ./harvest/target/ -maxdepth 1  -regextype posix-extended -regex '.*/harvest-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar\.gz')
+                    echo "harvest_package=$harvest_package"
+                    echo "harvest_package=$harvest_package">> $GITHUB_OUTPUT
+            -
+                name: 🫙 manager release package path
+                id: manager_package
+                run: |
+                    manager_package=$(find ./manager/target/ -maxdepth 1 -regextype posix-extended -regex '.*/registry-manager-[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?-bin\.tar\.gz')
+                    echo "manager_package=$manager_package"
+                    echo "manager_package=$manager_package" >> $GITHUB_OUTPUT
+            -
+                name: 🎰 QEMU Multiple Machine Emulation
+                uses: docker/setup-qemu-action@v3
+            -
+                name: 🚢 Docker Buildx
+                uses: docker/setup-buildx-action@v3
+            -
+                name: 🧱 Image Construction and Publication
+                uses: docker/build-push-action@v6
+                with:
+                    context: ./
+                    file: ./docker/Dockerfile
+                    # use the default args coded in the Dockerfile which is suffucient for using the legacy harvest and registry-mgr repositories
+                    # build-args: |
+                    #    harvest_package_path=${{steps.harvest_package.outputs.harvest_package}}
+                    #    reg_manager_package_path=${{steps.manager_package.outputs.manager_package}}
+                    push: false
+                    load: true
+                    tags: nasapds/registry-loader:latest
+            - 
+                name: Check available memory
+                run: free -h
+            -
+                name: ∫ Integration tests … hold onto your hats, pardners
+                run: |
+                    git clone --quiet https://github.com/NASA-PDS/registry.git
+                    cd registry
+                    git checkout develop
+                    cd docker/certs
+                    ./generate-certs.sh
+                    cd ..
+                    # clean up before the demanding docker compose deployment
+                    docker compose down --volumes --remove-orphans || true
+                    docker system prune -af || true
+                    docker volume prune -f || true
+                    docker compose \
+                        --ansi never --profile int-registry-batch-loader --project-name registry \
+                        up  --detach --quiet-pull
+                    # When debugging the docker compose and see detailed logs, replace 
+                    # --detach --quiet-pull
+                    # with 
+                    # --abort-on-container-exit
+                    # and un-comment the 2 following lines:
+                    # echo "===== Docker logs ====="
+                    # docker compose logs --no-color
+
+                    docker compose \
+                        --ansi never --project-name registry \
+                        run --rm --no-TTY reg-api-integration-test-with-wait
+
+
+# -*- mode: yaml; indent: 4; fill-column: 120; coding: utf-8 -*-

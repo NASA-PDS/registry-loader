@@ -22,6 +22,7 @@ import gov.nasa.pds.registry.common.util.file.FileDownloader;
 import gov.nasa.pds.registry.common.util.Tuple;
 
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
+import gov.nasa.pds.registry.common.es.dao.dd.DataTypeNotFoundException;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.es.dao.schema.SchemaDao;
 import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;
@@ -125,10 +126,29 @@ public class SchemaUpdater
             }
             if(!ddFields.isEmpty())
             {
-                List<Tuple> ddTypes = ddDao.getDataTypes(ddFields);
-                if(ddTypes != null)
+                try
                 {
-                    newFields.addAll(ddTypes);
+                    List<Tuple> ddTypes = ddDao.getDataTypes(ddFields);
+                    if(ddTypes != null)
+                    {
+                        newFields.addAll(ddTypes);
+                    }
+                }
+                catch(DataTypeNotFoundException ex)
+                {
+                    if(!forceLoad)
+                    {
+                        for(String f : ex.getMissingFields())
+                        {
+                            log.error("Could not find the data type for the field {}", f);
+                        }
+                        throw ex;
+                    }
+                    log.warn("Force mode: could not find data types for fields {} - these fields will not be indexed or searchable. Product will still be ingested.", ex.getMissingFields());
+                    if(!ex.getFoundTypes().isEmpty())
+                    {
+                        newFields.addAll(ex.getFoundTypes());
+                    }
                 }
             }
             if(!newFields.isEmpty())
