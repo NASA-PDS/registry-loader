@@ -17,7 +17,7 @@ import gov.nasa.pds.registry.common.util.Tuple;
 public class DataTypeNotFoundException extends Exception
 {
     private static final String LINK 
-        = "See 'https://nasa-pds.github.io/pds-registry-app/operate/common-ops.html#Load' for more information.";
+        = "See 'https://nasa-pds.github.io/registry/user/load1.html' for more information.";
 
     private final List<String> missingFields;
     private final List<Tuple> foundTypes;
