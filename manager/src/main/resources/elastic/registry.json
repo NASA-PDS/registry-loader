@@ -40,6 +40,7 @@
 
             "ops:Harvest_Info.ops:node_name": { "type": "keyword" },
             "ops:Harvest_Info.ops:harvest_date_time": { "type": "date" },
+            "ops:Harvest_Info.ops:harvest_version": { "type": "keyword" },
 
             "ops:Label_File_Info.ops:creation_date_time": { "type": "date" },
             "ops:Label_File_Info.ops:file_ref": { "type": "keyword" },
