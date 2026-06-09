@@ -5,11 +5,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,9 +18,7 @@ import gov.nasa.pds.registry.common.dd.LddException;
 import gov.nasa.pds.registry.common.dd.LddUtils;
 import gov.nasa.pds.registry.common.util.ExceptionUtils;
 import gov.nasa.pds.registry.common.util.file.FileDownloader;
-
 import gov.nasa.pds.registry.common.util.Tuple;
-
 import gov.nasa.pds.registry.common.es.dao.dd.DataDictionaryDao;
 import gov.nasa.pds.registry.common.es.dao.dd.DataTypeNotFoundException;
 import gov.nasa.pds.registry.common.ConnectionFactory;
@@ -37,7 +35,7 @@ public class SchemaUpdater
 {
     // Cached domain redirects: if a non-pds.nasa.gov host fails but its pds.nasa.gov
     // mirror succeeds, future requests from that host go directly to pds.nasa.gov.
-    private static final Map<String, String> domainRedirects = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final Map<String, String> domainRedirects = new ConcurrentHashMap<>();
     private Logger log;
     private FileDownloader fileDownloader;
     private JsonLddLoader lddLoader;
@@ -167,18 +165,15 @@ public class SchemaUpdater
 
         log.info("Updating '" + prefix  + "' LDD. Schema location: " + uri);
 
-        // Get JSON schema URL from XSD URL, applying any cached domain redirect
         String jsonUrl = applyDomainRedirect(getJsonUrl(uri));
 
-        // Get schema file name
         int idx = jsonUrl.lastIndexOf('/');
         if(idx < 0)
         {
             throw new Exception("Invalid schema URI." + uri);
         }
-        String schemaFileName = jsonUrl.substring(idx+1);
+        String schemaFileName = jsonUrl.substring(idx + 1);
 
-        // Get stored LDDs info
         LddVersions lddInfo;
         try
         {
@@ -194,13 +189,11 @@ public class SchemaUpdater
                 + prefix + "': " + ExceptionUtils.getMessage(ex), ex);
         }
 
-        // LDD already loaded
         if(lddInfo.files.contains(schemaFileName))
         {
             return;
         }
 
-        // Download LDD
         File lddFile;
         try
         {
@@ -219,7 +212,8 @@ public class SchemaUpdater
 
         try
         {
-            if(fileDownloader.download(jsonUrl, lddFile))
+            boolean downloaded = downloadWithFallback(jsonUrl, lddFile, prefix);
+            if(downloaded)
             {
                 lddLoader.load(lddFile, schemaFileName, prefix);
             }
@@ -228,72 +222,86 @@ public class SchemaUpdater
         {
             Thread.currentThread().interrupt();
             log.error("Interrupted while downloading or loading LDD for namespace '" + prefix + "' from " + jsonUrl);
-            if(lddInfo.isEmpty())
-            {
-                if(!forceLoad)
-                {
-                    throw new LddException("No previously loaded LDD found for namespace '"
-                        + prefix + "'. Cannot load products with fields from this namespace.");
-                }
-                log.warn("Force mode: no LDD found for namespace '" + prefix
-                    + "'. Fields from this namespace will not be indexed.");
-            }
-            else
-            {
-                log.warn("Will use previously loaded field definitions for namespace '" + prefix
-                    + "' from " + lddInfo.files);
-            }
-            return;
+            handleDownloadFailure(prefix, lddInfo);
         }
         catch(Exception ex)
         {
-            String fallbackUrl = LddUrlUtils.toPdsNasaGovUrl(jsonUrl);
-            if(fallbackUrl != null)
-            {
-                log.warn("Failed to download LDD from " + jsonUrl + "; trying pds.nasa.gov mirror: " + fallbackUrl);
-                boolean mirrorSuccess = false;
-                try
-                {
-                    if(fileDownloader.download(fallbackUrl, lddFile))
-                    {
-                        String originalHost = new URL(jsonUrl).getHost();
-                        domainRedirects.put(originalHost, LddUrlUtils.PDS_NASA_GOV);
-                        log.info("Caching domain redirect: " + originalHost + " -> " + LddUrlUtils.PDS_NASA_GOV);
-                        lddLoader.load(lddFile, schemaFileName, prefix);
-                        mirrorSuccess = true;
-                    }
-                }
-                catch(InterruptedException ie)
-                {
-                    Thread.currentThread().interrupt();
-                }
-                catch(Exception fallbackEx)
-                {
-                    log.debug("pds.nasa.gov mirror also failed: " + fallbackEx.getMessage());
-                }
-                if(mirrorSuccess) return;
-            }
             log.error("Failed to download or load LDD for namespace '" + prefix + "' from " + jsonUrl
                 + ": " + ExceptionUtils.getMessage(ex));
-            if(lddInfo.isEmpty())
-            {
-                if(!forceLoad)
-                {
-                    throw new LddException("No previously loaded LDD found for namespace '"
-                        + prefix + "'. Cannot load products with fields from this namespace.");
-                }
-                log.warn("Force mode: no LDD found for namespace '" + prefix
-                    + "'. Fields from this namespace will not be indexed.");
-            }
-            else
-            {
-                log.warn("Will use previously loaded field definitions for namespace '" + prefix
-                    + "' from " + lddInfo.files);
-            }
+            handleDownloadFailure(prefix, lddInfo);
         }
         finally
         {
             lddFile.delete();
+        }
+    }
+
+
+    /**
+     * Attempts to download {@code jsonUrl} to {@code dest}. On failure, tries the pds.nasa.gov
+     * mirror and caches the domain redirect for future calls. Returns true if a download succeeded.
+     * Throws on {@link InterruptedException} or if both attempts throw a non-interrupt exception.
+     */
+    private boolean downloadWithFallback(String jsonUrl, File dest, String prefix)
+        throws Exception
+    {
+        try
+        {
+            return fileDownloader.download(jsonUrl, dest);
+        }
+        catch(InterruptedException ex)
+        {
+            throw ex;
+        }
+        catch(Exception primaryEx)
+        {
+            String fallbackUrl = LddUrlUtils.toPdsNasaGovUrl(jsonUrl);
+            if(fallbackUrl == null)
+            {
+                throw primaryEx;
+            }
+
+            log.warn("Failed to download LDD from " + jsonUrl + "; trying pds.nasa.gov mirror: " + fallbackUrl);
+            try
+            {
+                boolean downloaded = fileDownloader.download(fallbackUrl, dest);
+                if(downloaded)
+                {
+                    String originalHost = new URL(jsonUrl).getHost();
+                    domainRedirects.put(originalHost, LddUrlUtils.PDS_NASA_GOV);
+                    log.info("Caching domain redirect: " + originalHost + " -> " + LddUrlUtils.PDS_NASA_GOV);
+                }
+                return downloaded;
+            }
+            catch(InterruptedException ie)
+            {
+                throw ie;
+            }
+            catch(Exception fallbackEx)
+            {
+                log.debug("pds.nasa.gov mirror also failed: " + fallbackEx.getMessage());
+                throw primaryEx;
+            }
+        }
+    }
+
+
+    private void handleDownloadFailure(String prefix, LddVersions lddInfo) throws LddException
+    {
+        if(lddInfo.isEmpty())
+        {
+            if(!forceLoad)
+            {
+                throw new LddException("No previously loaded LDD found for namespace '"
+                    + prefix + "'. Cannot load products with fields from this namespace.");
+            }
+            log.warn("Force mode: no LDD found for namespace '" + prefix
+                + "'. Fields from this namespace will not be indexed.");
+        }
+        else
+        {
+            log.warn("Will use previously loaded field definitions for namespace '" + prefix
+                + "' from " + lddInfo.files);
         }
     }
 
