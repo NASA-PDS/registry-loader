@@ -1,6 +1,6 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-06-01)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-06-09)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...«unknown»)
 
@@ -15,6 +15,7 @@
 
 **Defects:**
 
+- Force flag discards found field types when any attribute type is unresolvable [\#75](https://github.com/NASA-PDS/registry-loader/issues/75)
 - ops: namespace fields missing from data type resolution, causing DataTypeNotFoundException [\#68](https://github.com/NASA-PDS/registry-loader/issues/68) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Harvest does not detect uppercase file extensions for labels, nor report errors for those missing products [\#52](https://github.com/NASA-PDS/registry-loader/issues/52) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 
@@ -37,10 +38,6 @@
 ## [v1.2.0](https://github.com/NASA-PDS/registry-loader/tree/v1.2.0) (2025-12-15)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.1.1...v1.2.0)
-
-**Requirements:**
-
-- As a Harvest user, I want both the file path and the lidvid included in log messages [\#42](https://github.com/NASA-PDS/registry-loader/issues/42)
 
 **Defects:**
 
