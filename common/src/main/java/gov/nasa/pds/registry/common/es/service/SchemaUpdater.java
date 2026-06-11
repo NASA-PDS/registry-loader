@@ -197,6 +197,7 @@ public class SchemaUpdater
             return;
         }
 
+        // Download LDD
         File lddFile;
         try
         {
@@ -204,15 +205,20 @@ public class SchemaUpdater
                 PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------")));
             lddFile = lddPath.toFile();
         }
-        catch(UnsupportedOperationException ex)
+        catch(UnsupportedOperationException | IOException ex)
         {
-            // Non-POSIX filesystem (e.g. Windows): fall back to plain temp file
-            lddFile = File.createTempFile("LDD-", ".JSON");
-        }
-        catch(IOException ex)
-        {
-            throw new Exception("Failed to create temp file for LDD download for namespace '"
-                + prefix + "': " + ExceptionUtils.getMessage(ex), ex);
+            // Non-POSIX filesystem (e.g. Windows) throws UnsupportedOperationException;
+            // some environments throw IOException when POSIX attrs cannot be applied.
+            // Fall back to a plain temp file in both cases.
+            try
+            {
+                lddFile = File.createTempFile("LDD-", ".JSON");
+            }
+            catch(IOException fallbackEx)
+            {
+                throw new Exception("Failed to create temp file for LDD download for namespace '"
+                    + prefix + "': " + ExceptionUtils.getMessage(fallbackEx), fallbackEx);
+            }
         }
 
         try
