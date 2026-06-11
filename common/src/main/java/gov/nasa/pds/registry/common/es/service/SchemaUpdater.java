@@ -4,6 +4,9 @@ package gov.nasa.pds.registry.common.es.service;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -197,12 +200,14 @@ public class SchemaUpdater
         File lddFile;
         try
         {
+            Path lddPath = Files.createTempFile("LDD-", ".JSON",
+                PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------")));
+            lddFile = lddPath.toFile();
+        }
+        catch(UnsupportedOperationException ex)
+        {
+            // Non-POSIX filesystem (e.g. Windows): fall back to plain temp file
             lddFile = File.createTempFile("LDD-", ".JSON");
-            // Restrict permissions to owner only (mitigate publicly writable temp dir risk)
-            lddFile.setReadable(false, false);
-            lddFile.setReadable(true, true);
-            lddFile.setWritable(false, false);
-            lddFile.setWritable(true, true);
         }
         catch(IOException ex)
         {
