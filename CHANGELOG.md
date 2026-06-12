@@ -1,6 +1,6 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-06-09)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-06-12)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...«unknown»)
 
@@ -11,6 +11,7 @@
 
 **Improvements:**
 
+- Fallback to pds.nasa.gov mirror when third-party LDD URL is unreachable [\#70](https://github.com/NASA-PDS/registry-loader/issues/70)
 - Merge registry-common, registry-mgr, harvest into one uber repo [\#41](https://github.com/NASA-PDS/registry-loader/issues/41)
 
 **Defects:**
