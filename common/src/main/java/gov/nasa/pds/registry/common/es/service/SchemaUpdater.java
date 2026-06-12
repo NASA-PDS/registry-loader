@@ -173,7 +173,7 @@ public class SchemaUpdater
         int idx = jsonUrl.lastIndexOf('/');
         if(idx < 0)
         {
-            throw new Exception("Invalid schema URI." + uri);
+            throw new LddException("Invalid schema URI." + uri);
         }
         String schemaFileName = jsonUrl.substring(idx + 1);
 
@@ -217,7 +217,7 @@ public class SchemaUpdater
             catch(IOException fallbackEx)
             {
                 fallbackEx.addSuppressed(ex);
-                throw new Exception("Failed to create temp file for LDD download for namespace '"
+                throw new LddException("Failed to create temp file for LDD download for namespace '"
                     + prefix + "': " + ExceptionUtils.getMessage(fallbackEx), fallbackEx);
             }
         }
