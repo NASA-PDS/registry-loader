@@ -216,6 +216,7 @@ public class SchemaUpdater
             }
             catch(IOException fallbackEx)
             {
+                fallbackEx.addSuppressed(ex);
                 throw new Exception("Failed to create temp file for LDD download for namespace '"
                     + prefix + "': " + ExceptionUtils.getMessage(fallbackEx), fallbackEx);
             }
