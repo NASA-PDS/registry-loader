@@ -188,7 +188,7 @@ public class SchemaUpdater
         }
         catch(IOException ex)
         {
-            throw new Exception("Failed to query registry for existing LDD info for namespace '"
+            throw new LddException("Failed to query registry for existing LDD info for namespace '"
                 + prefix + "': " + ExceptionUtils.getMessage(ex), ex);
         }
 
