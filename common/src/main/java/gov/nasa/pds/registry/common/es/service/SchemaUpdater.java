@@ -198,29 +198,7 @@ public class SchemaUpdater
         }
 
         // Download LDD
-        File lddFile;
-        try
-        {
-            Path lddPath = Files.createTempFile("LDD-", ".JSON",
-                PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------")));
-            lddFile = lddPath.toFile();
-        }
-        catch(UnsupportedOperationException | IOException ex)
-        {
-            // Non-POSIX filesystem (e.g. Windows) throws UnsupportedOperationException;
-            // some environments throw IOException when POSIX attrs cannot be applied.
-            // Fall back to a plain temp file in both cases.
-            try
-            {
-                lddFile = File.createTempFile("LDD-", ".JSON");
-            }
-            catch(IOException fallbackEx)
-            {
-                fallbackEx.addSuppressed(ex);
-                throw new LddException("Failed to create temp file for LDD download for namespace '"
-                    + prefix + "': " + ExceptionUtils.getMessage(fallbackEx), fallbackEx);
-            }
-        }
+        File lddFile = createLddTempFile(prefix);
 
         try
         {
@@ -335,6 +313,34 @@ public class SchemaUpdater
      * Apply any cached domain redirect to a URL. If the URL's host has a known
      * redirect (e.g. isda.issdc.gov.in → pds.nasa.gov), return the rewritten URL.
      */
+    /**
+     * Creates a temp file for LDD download. Tries POSIX permissions first (rw-------); falls back to
+     * a plain temp file on non-POSIX filesystems (e.g. Windows NTFS) that throw
+     * UnsupportedOperationException or IOException when POSIX attributes are applied.
+     */
+    public static File createLddTempFile(String prefix) throws LddException
+    {
+        try
+        {
+            return Files.createTempFile("LDD-", ".JSON",
+                PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"))).toFile();
+        }
+        catch(UnsupportedOperationException | IOException ex)
+        {
+            try
+            {
+                return File.createTempFile("LDD-", ".JSON");
+            }
+            catch(IOException fallbackEx)
+            {
+                fallbackEx.addSuppressed(ex);
+                throw new LddException("Failed to create temp file for LDD download for namespace '"
+                    + prefix + "': " + ExceptionUtils.getMessage(fallbackEx), fallbackEx);
+            }
+        }
+    }
+
+
     private String applyDomainRedirect(String url)
     {
         try
