@@ -48,26 +48,26 @@ public class TestLddFieldResolution {
 
     static Stream<LddTestCase> testCases() {
         Map<String, String> mroFields = new HashMap<>();
-        mroFields.put("mro:CRISM_Temperatures/mro:fpe_temperature",          "double");
-        mroFields.put("mro:CRISM_Parameters/mro:sensor_id",                  "keyword");
-        mroFields.put("mro:CRISM_Band/mro:scaling_factor",                   "double");
-        mroFields.put("mro:MRO_Parameters/mro:orbit_number",                 "long");
-        mroFields.put("mro:MRO_Parameters/mro:spacecraft_clock_start_count", "keyword");
-        mroFields.put("mro:CRISM_Band/mro:band_sequence_number",             "integer");
-        mroFields.put("mro:CRISM_Parameters/mro:observation_id",             "keyword");
-        mroFields.put("mro:CRISM_Band/mro:value_offset",                     "double");
-        mroFields.put("mro:CRISM_Parameters/mro:observation_number",         "keyword");
-        mroFields.put("mro:MRO_Parameters/mro:product_type",                 "keyword");
+        mroFields.put("mro:CRISM_Temperatures.mro:fpe_temperature",          "double");
+        mroFields.put("mro:CRISM_Parameters.mro:sensor_id",                  "keyword");
+        mroFields.put("mro:CRISM_Band.mro:scaling_factor",                   "double");
+        mroFields.put("mro:MRO_Parameters.mro:orbit_number",                 "long");
+        mroFields.put("mro:MRO_Parameters.mro:spacecraft_clock_start_count", "keyword");
+        mroFields.put("mro:CRISM_Band.mro:band_sequence_number",             "integer");
+        mroFields.put("mro:CRISM_Parameters.mro:observation_id",             "keyword");
+        mroFields.put("mro:CRISM_Band.mro:value_offset",                     "double");
+        mroFields.put("mro:CRISM_Parameters.mro:observation_number",         "keyword");
+        mroFields.put("mro:MRO_Parameters.mro:product_type",                 "keyword");
 
         Map<String, String> cartFields = new HashMap<>();
-        cartFields.put("cart:Bounding_Coordinates/cart:west_bounding_coordinate",  "double");
-        cartFields.put("cart:Bounding_Coordinates/cart:east_bounding_coordinate",  "double");
-        cartFields.put("cart:Bounding_Coordinates/cart:north_bounding_coordinate", "double");
-        cartFields.put("cart:Bounding_Coordinates/cart:south_bounding_coordinate", "double");
-        cartFields.put("cart:Geodetic_Model/cart:latitude_type",                    "keyword");
-        cartFields.put("cart:Geodetic_Model/cart:spheroid_name",                    "keyword");
-        cartFields.put("cart:Geodetic_Model/cart:a_axis_radius",                    "double");
-        cartFields.put("cart:Geodetic_Model/cart:longitude_direction",              "keyword");
+        cartFields.put("cart:Bounding_Coordinates.cart:west_bounding_coordinate",  "double");
+        cartFields.put("cart:Bounding_Coordinates.cart:east_bounding_coordinate",  "double");
+        cartFields.put("cart:Bounding_Coordinates.cart:north_bounding_coordinate", "double");
+        cartFields.put("cart:Bounding_Coordinates.cart:south_bounding_coordinate", "double");
+        cartFields.put("cart:Geodetic_Model.cart:latitude_type",                    "keyword");
+        cartFields.put("cart:Geodetic_Model.cart:spheroid_name",                    "keyword");
+        cartFields.put("cart:Geodetic_Model.cart:a_axis_radius",                    "double");
+        cartFields.put("cart:Geodetic_Model.cart:longitude_direction",              "keyword");
 
         return Stream.of(
             new LddTestCase("MRO 1M00_1400",
