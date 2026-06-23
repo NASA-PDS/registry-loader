@@ -1,6 +1,6 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-06-12)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-06-23)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...«unknown»)
 
@@ -16,6 +16,7 @@
 
 **Defects:**
 
+- Harvest does not download LDD on Windows: temp file creation fails with 'The system cannot find the path specified' [\#77](https://github.com/NASA-PDS/registry-loader/issues/77) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Force flag discards found field types when any attribute type is unresolvable [\#75](https://github.com/NASA-PDS/registry-loader/issues/75)
 - ops: namespace fields missing from data type resolution, causing DataTypeNotFoundException [\#68](https://github.com/NASA-PDS/registry-loader/issues/68) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Harvest does not detect uppercase file extensions for labels, nor report errors for those missing products [\#52](https://github.com/NASA-PDS/registry-loader/issues/52) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
