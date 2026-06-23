@@ -30,8 +30,8 @@
 
 FROM eclipse-temurin:25-jdk-jammy AS base
 
-ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.2.0-SNAPSHOT/harvest-5.2.0-SNAPSHOT-bin.tar.gz
-ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.2.0-SNAPSHOT/registry-manager-6.2.0-SNAPSHOT-bin.tar.gz
+ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.1.2/harvest-5.1.2-bin.tar.gz
+ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.1.2/registry-manager-6.1.2-bin.tar.gz
 
 RUN apt-get update -y
 RUN apt-get install curl -y
