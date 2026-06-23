@@ -17,7 +17,7 @@ class MGetRespWrap extends GetRespWrap {
   }
   @Override
   public List<Tuple> dataTypes() throws IOException, DataTypeNotFoundException {
-    boolean stillMissing = false;
+    ArrayList<String> missing = new ArrayList<String>();
     ArrayList<Tuple> results = new ArrayList<Tuple>();
     for (MultiGetResponseItem<Object> doc : this.parent.docs()) {
       Tuple t = null;
@@ -32,13 +32,12 @@ class MGetRespWrap extends GetRespWrap {
             log.warn("Could not find datatype for field {} and defaulting to 'text'", doc.result().id());
             t = new Tuple(doc.result().id(), "text");
         } else {
-          stillMissing = true;
-          log.error("Could not find the data type for the field {}", doc.result().id());
+          missing.add(doc.result().id());
         }
       }
       if (t != null) results.add(t);
     }
-    if (stillMissing) throw new DataTypeNotFoundException();
+    if (!missing.isEmpty()) throw new DataTypeNotFoundException(missing, results);
     return results;
   }
 }
