@@ -1,8 +1,16 @@
 # Changelog
 
-## [release/1.3.0](https://github.com/NASA-PDS/registry-loader/tree/release/1.3.0) (2026-06-23)
+## [1.2.4](https://github.com/NASA-PDS/registry-loader/tree/1.2.4) (2026-06-24)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...release/1.3.0)
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.3.0...1.2.4)
+
+**Defects:**
+
+- LDD JSON parser fails to resolve field data types across IM versions due to format changes [\#80](https://github.com/NASA-PDS/registry-loader/issues/80) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+
+## [v1.3.0](https://github.com/NASA-PDS/registry-loader/tree/v1.3.0) (2026-06-23)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...v1.3.0)
 
 **Requirements:**
 
