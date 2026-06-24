@@ -39,9 +39,8 @@ public class DeleteDataCmd implements CliCommand
             return;
         }
 
-        String esUrl = CliCommand.getUsersRegistry(cmdLine);
-        String authPath = cmdLine.getOptionValue("auth");
-
+        String esUrl = CliCommand.getRegistryUrl(cmdLine);
+        String authPath = CliCommand.getAuthFile(cmdLine);
 
         log.info("Elasticsearch URL: {}", esUrl);
 

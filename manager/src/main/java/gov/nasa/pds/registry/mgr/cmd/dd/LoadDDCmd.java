@@ -65,8 +65,8 @@ public class LoadDDCmd implements CliCommand
             return;
         }
 
-        this.url = CliCommand.getUsersRegistry(cmdLine);
-        this.authFile = cmdLine.getOptionValue("auth");
+        this.url = CliCommand.getRegistryUrl(cmdLine);
+        this.authFile = CliCommand.getAuthFile(cmdLine);
         this.indexName = EstablishConnectionFactory.from(this.url, this.authFile).getIndexName();
         
         RegistryManager.init(url, authFile);

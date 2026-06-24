@@ -39,9 +39,9 @@ public class UpgradeDDCmd implements CliCommand
             return;
         }
 
-        esUrl = CliCommand.getUsersRegistry(cmdLine);
-        authPath = cmdLine.getOptionValue("auth");
-        
+        esUrl = CliCommand.getRegistryUrl(cmdLine);
+        authPath = CliCommand.getAuthFile(cmdLine);
+
         boolean replace= cmdLine.hasOption("r");
 
         RestClient client = null;
