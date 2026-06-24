@@ -171,6 +171,15 @@ POSSIBILITY OF SUCH DAMAGE.
             <filtering>true</filtering>
           </resource>
         </resources>
+        <testResources>
+          <testResource>
+            <directory>src/test/resources</directory>
+          </testResource>
+          <!-- data-dic-types.cfg lives in harvest; reference it here to avoid duplication -->
+          <testResource>
+            <directory>../harvest/src/main/resources</directory>
+          </testResource>
+        </testResources>
     </build>
 
   <scm>
