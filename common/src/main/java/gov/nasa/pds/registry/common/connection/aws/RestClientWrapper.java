@@ -86,6 +86,7 @@ public class RestClientWrapper implements RestClient {
   final private Logger log;
   final private SdkHttpClient httpClient;
   private OpenSearchClient client;
+  private String scope = "aoss";
   public RestClientWrapper(ConnectionFactory conFact, boolean isServerless) {
     this.conFact = conFact;
     this.httpClient = ApacheHttpClient.builder().socketTimeout(Duration.ofHours(2)).build();
@@ -96,15 +97,29 @@ public class RestClientWrapper implements RestClient {
   private OpenSearchClient buildClient() {
     OpenSearchClient client = null;
     if (isServerless) {
-      client = new OpenSearchClient(
-          new AwsSdk2Transport(
-              this.httpClient,
-              this.conFact.getHostName(),
-              "aoss",
-              Region.US_WEST_2, // signing service region that we should probably get from host name??
-              AwsSdk2TransportOptions.builder().build()
-              )
-          );
+      try {
+        client = new OpenSearchClient(
+            new AwsSdk2Transport(
+                this.httpClient,
+                this.conFact.getHostName(),
+                this.scope,
+                Region.US_WEST_2, // signing service region that we should probably get from host name??
+                AwsSdk2TransportOptions.builder().build()
+                )
+            );
+        client.info();
+      } catch (IOException | OpenSearchException e) {
+        if (e.getMessage().contains("Credential should be scoped to correct service:")) {
+          int first = e.getMessage().indexOf("'") + 1;
+          int last = e.getMessage().lastIndexOf("'");
+          String scop = e.getMessage().substring(first, last);
+          if (!this.scope.equalsIgnoreCase(scop)) {
+            this.scope = scop;
+            return buildClient();
+          }
+        }
+        throw new RuntimeException("Failed to connect to AWS", e);
+      }
     } else {
       try {
         SSLContext sslcontext = SSLContextBuilder
