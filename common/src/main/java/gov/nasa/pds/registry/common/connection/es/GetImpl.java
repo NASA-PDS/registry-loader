@@ -43,6 +43,11 @@ class GetImpl implements MGet {
     return this;
   }
   @Override
+  public MGet setRefresh(boolean refresh) {
+    // no-op: SDK1 ES client does not use this path for AOSS eventual consistency
+    return this;
+  }
+  @Override
   public Get setIndex(String index) {
     this.setIndex(index);
     return this;

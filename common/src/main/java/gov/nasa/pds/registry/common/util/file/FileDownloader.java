@@ -78,7 +78,7 @@ public class FileDownloader
             }
             catch(Exception ex)
             {
-                log.info(ex.getMessage());
+                log.info("Failed to download " + fromUrl + ": " + ex.getMessage());
                 if(count < numRetries)
                 {
                     log.info("Will retry in 5 seconds");
@@ -107,7 +107,7 @@ public class FileDownloader
         FileOutputStream os = null;
         CloseableHttpResponse resp = null;
         
-        log.info("Downloading " + fromUrl + " to " + toFile.getAbsolutePath());
+        log.debug("Downloading " + fromUrl + " to " + toFile.getAbsolutePath());
         
         try
         {

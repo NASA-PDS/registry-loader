@@ -16,4 +16,6 @@ public interface ConnectionFactory {
   public boolean isTrustingSelfSigned();
   public void reconnect() throws IOException, InterruptedException; // used when credentials time out otherwise not defined
   public ConnectionFactory setIndexName (String idxName);
+  /** Returns true when this connection targets an AWS OpenSearch Serverless (AOSS) collection. */
+  default boolean isServerless() { return false; }
 }

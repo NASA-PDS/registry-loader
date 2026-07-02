@@ -45,7 +45,8 @@ public class SchemaUpdater
 
     private DataDictionaryDao ddDao;
     private SchemaDao schemaDao;
-    
+    private ConnectionFactory conFact;
+
     final private String index;
     private boolean forceLoad = false;
 
@@ -64,9 +65,10 @@ public class SchemaUpdater
         
         this.ddDao = ddDao;
         this.schemaDao = schemaDao;
-        
+        this.conFact = conFact;
+
         fileDownloader = new FileDownloader(true);
-        
+
         lddLoader = new JsonLddLoader(ddDao, conFact);
         lddLoader.loadPds2EsDataTypeMap(LddUtils.getPds2EsDataTypeCfgFile("HARVEST_HOME"));
         this.index = conFact.getIndexName();
@@ -127,28 +129,33 @@ public class SchemaUpdater
             }
             if(!ddFields.isEmpty())
             {
+                int waitSeconds = conFact.isServerless() ? SearchIndexWait.DEFAULT_WAIT_SECONDS : 0;
                 try
                 {
-                    List<Tuple> ddTypes = ddDao.getDataTypes(ddFields);
+                    List<Tuple> ddTypes = SearchIndexWait.untilVisible(waitSeconds,
+                        () -> ddDao.getDataTypes(ddFields), log, "data dictionary fields");
                     if(ddTypes != null)
                     {
                         newFields.addAll(ddTypes);
                     }
                 }
-                catch(DataTypeNotFoundException ex)
+                catch(DataTypeNotFoundException lastEx)
                 {
                     if(!forceLoad)
                     {
-                        for(String f : ex.getMissingFields())
+                        for(String f : lastEx.getMissingFields())
                         {
                             log.error("Could not find the data type for the field {}", f);
                         }
-                        throw ex;
+                        log.error("One or more field types could not be resolved from the registry data dictionary."
+                            + " Please re-run Harvest, as this may be a transient registry indexing delay."
+                            + " If the problem persists, contact pds-operator@jpl.nasa.gov.");
+                        throw lastEx;
                     }
-                    log.warn("Force mode: could not find data types for fields {} - these fields will not be indexed or searchable. Product will still be ingested.", ex.getMissingFields());
-                    if(!ex.getFoundTypes().isEmpty())
+                    log.warn("Force mode: could not find data types for fields {} - these fields will not be indexed or searchable. Product will still be ingested.", lastEx.getMissingFields());
+                    if(!lastEx.getFoundTypes().isEmpty())
                     {
-                        newFields.addAll(ex.getFoundTypes());
+                        newFields.addAll(lastEx.getFoundTypes());
                     }
                 }
             }
@@ -194,6 +201,7 @@ public class SchemaUpdater
 
         if(lddInfo.files.contains(schemaFileName))
         {
+            log.debug("LDD {} already loaded in registry for namespace '{}'.", schemaFileName, prefix);
             return;
         }
 

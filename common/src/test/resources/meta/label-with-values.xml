@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<geom:Geometry xmlns:geom="https://pds.nasa.gov/pds4/geom/v1">
+  <geom:Geometry_Orbiter>
+    <geom:Illumination_Geometry>
+      <geom:incidence_angle unit="deg">45.0</geom:incidence_angle>
+      <geom:emission_angle unit="deg">10.0</geom:emission_angle>
+    </geom:Illumination_Geometry>
+  </geom:Geometry_Orbiter>
+</geom:Geometry>

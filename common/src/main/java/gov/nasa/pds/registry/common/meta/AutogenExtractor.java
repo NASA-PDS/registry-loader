@@ -118,6 +118,11 @@ public class AutogenExtractor
         
         // Field value
         String fieldValue = StringUtils.normalizeSpace(node.getTextContent());
+        // Skip empty container elements (e.g. <geom:Illumination_Geometry/>): they have
+        // no text content and no corresponding LDD attribute entry, so indexing them as
+        // an empty-string field would later cause DataTypeNotFoundException during schema
+        // resolution. See https://github.com/NASA-PDS/registry-common/issues/293.
+        if(fieldValue.isEmpty()) return;
         fields.addValue(fieldName, fieldValue);
     }
     

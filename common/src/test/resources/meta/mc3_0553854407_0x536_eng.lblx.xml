@@ -1,0 +1,1510 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-model href="https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1J00.sch"
+    schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1J00_1510.sch"
+    schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1J00_1960.sch"
+    schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/img/v1/PDS4_IMG_1J00_1920.sch"
+    schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/proc/v1/PDS4_PROC_1J00_1300.sch" 
+    schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/sb/v1/PDS4_SB_1J00_1110.sch"
+    schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/mission/nh/v1/PDS4_NH_1J00_1200.sch"
+    schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<Product_Observational xmlns="http://pds.nasa.gov/pds4/pds/v1" xmlns:disp="http://pds.nasa.gov/pds4/disp/v1" xmlns:geom="http://pds.nasa.gov/pds4/geom/v1" xmlns:img="http://pds.nasa.gov/pds4/img/v1" xmlns:proc="http://pds.nasa.gov/pds4/proc/v1" xmlns:nh="http://pds.nasa.gov/pds4/mission/nh/v1" xmlns:sb="http://pds.nasa.gov/pds4/sb/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pds.nasa.gov/pds4/pds/v1 https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1J00.xsd                         http://pds.nasa.gov/pds4/disp/v1 https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1J00_1510.xsd                         http://pds.nasa.gov/pds4/geom/v1 https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1J00_1960.xsd                         http://pds.nasa.gov/pds4/img/v1 https://pds.nasa.gov/pds4/img/v1/PDS4_IMG_1J00_1920.xsd                         http://pds.nasa.gov/pds4/proc/v1 https://pds.nasa.gov/pds4/proc/v1/PDS4_PROC_1J00_1300.xsd                         http://pds.nasa.gov/pds4/mission/nh/v1 https://pds.nasa.gov/pds4/mission/nh/v1/PDS4_NH_1J00_1200.xsd                         http://pds.nasa.gov/pds4/sb/v1 https://pds.nasa.gov/pds4/sb/v1/PDS4_SB_1J00_1110.xsd">
+    <Identification_Area>
+        <logical_identifier>urn:nasa:pds:nh_mvic:kem2_raw:mc3_0553854407_0x536_eng</logical_identifier>
+        <version_id>1.0</version_id>
+        <title>New Horizons MVIC Raw Color TDI Image: mc3_0553854407_0x536_eng</title>
+        <information_model_version>1.19.0.0</information_model_version>
+        <product_class>Product_Observational</product_class>
+        <Citation_Information>
+            <author_list>Reuter, D. C.; Taylor, H.; Lunsford, A.; Howett, C.; Protopapa, S.; Singer, K. N.; Stern, S. A.</author_list>
+            <editor_list>Enke, B.; Gobat, C.; Keeney, B.; Crombie, M. K.; Parker, J. Wm.; Trantham, B.</editor_list>
+            <publication_year>2026</publication_year>
+            <description>New Horizons archive product mc3_0553854407_0x536_eng</description>
+        </Citation_Information>
+        <Modification_History>
+            <Modification_Detail>
+                <modification_date>2025-06-22</modification_date>
+                <version_id>1.0</version_id>
+                <description>Created/updated by New Horizons SOC for K7 delivery and liens resolution.</description>
+            </Modification_Detail>
+        </Modification_History>
+    </Identification_Area>
+    <Observation_Area>
+        <Time_Coordinates>
+            <start_date_time>2023-08-09T02:34:56.916784Z</start_date_time>
+            <stop_date_time>2023-08-09T02:35:58.784784Z</stop_date_time>
+        </Time_Coordinates>
+        <Primary_Result_Summary>
+            <purpose>Science</purpose>
+            <processing_level>Raw</processing_level>
+            <Science_Facets>
+                <wavelength_range>Visible</wavelength_range>
+                <wavelength_range>Near Infrared</wavelength_range>
+                <discipline_name>Imaging</discipline_name>
+                <facet1>Color</facet1>
+            </Science_Facets>
+        </Primary_Result_Summary>
+        <Investigation_Area>
+            <name>New Horizons Kuiper Belt Extended Mission 2</name>
+            <type>Mission</type>
+            <Internal_Reference>
+                <lid_reference>urn:nasa:pds:context:investigation:mission.new_horizons_kem2</lid_reference>
+                <reference_type>data_to_investigation</reference_type>
+            </Internal_Reference>
+        </Investigation_Area>
+        <Observing_System>
+            <Observing_System_Component>
+                <name>New Horizons Spacecraft</name>
+                <type>Host</type>
+                <Internal_Reference>
+                    <lid_reference>urn:nasa:pds:context:instrument_host:spacecraft.nh</lid_reference>
+                    <reference_type>is_instrument_host</reference_type>
+                </Internal_Reference>
+            </Observing_System_Component>
+            <Observing_System_Component>
+                <name>Multispectral Visible Imaging Camera</name>
+                <type>Instrument</type>
+                <description>Note that the MVIC instrument has seven distinct detectors, identified
+                    by the "nh:Detector" class metadata.</description>
+                <Internal_Reference>
+                    <lid_reference>urn:nasa:pds:context:instrument:nh.mvic</lid_reference>
+                    <reference_type>is_instrument</reference_type>
+                </Internal_Reference>
+            </Observing_System_Component>
+        </Observing_System>
+        <Target_Identification>
+            <name>NGC 3532</name>
+            <type>Star Cluster</type>
+            <Internal_Reference>
+                <lid_reference>urn:nasa:pds:context:target:star_cluster.ngc_3532</lid_reference>
+                <reference_type>data_to_target</reference_type>
+            </Internal_Reference>
+        </Target_Identification>
+        <Mission_Area>
+            <nh:Mission_Parameters>
+                <nh:mission_phase_name>KEM2 Cruise</nh:mission_phase_name>
+                <nh:Observation_Parameters>
+                    <nh:telemetry_apid>0x536</nh:telemetry_apid>
+                    <nh:sequence_id>K2MV_NGC3235_300_preColorCal_NGC3532Cal</nh:sequence_id>
+                    <nh:observation_description>MVIC NGC3532</nh:observation_description>
+                    <nh:Mission_Elapsed_Time>
+                        <nh:clock_partition>3</nh:clock_partition>
+                        <nh:start_clock_count>0553854413:06600</nh:start_clock_count>
+                        <nh:stop_clock_count>0553854475:00000</nh:stop_clock_count>
+                    </nh:Mission_Elapsed_Time>
+                    <nh:Detector>
+                        <nh:detector_name>MVIC Methane (CH4) Channel</nh:detector_name>
+                        <nh:detector_type>CCD</nh:detector_type>
+                        <nh:Ralph_Details>
+                            <nh:met510 unit="s">553854407</nh:met510>
+                            <nh:hk_packet_is_real>true</nh:hk_packet_is_real>
+                        </nh:Ralph_Details>
+                        <nh:MVIC_Details>
+                            <nh:scan_type>TDI - Time Delay Integration Mode</nh:scan_type>
+                        </nh:MVIC_Details>
+                    </nh:Detector>
+                    <nh:Spacecraft_State>
+                        <nh:thruster_x_enabled>false</nh:thruster_x_enabled>
+                        <nh:thruster_y_enabled>false</nh:thruster_y_enabled>
+                        <nh:thruster_z_enabled>false</nh:thruster_z_enabled>
+                        <nh:gc_scan_rate unit="Hz">0.000200</nh:gc_scan_rate>
+                        <nh:target_motion_rate unit="rad/s">0.000200</nh:target_motion_rate>
+                        <nh:relative_control_mode_active>false</nh:relative_control_mode_active>
+                        <nh:spacecraft_spin_state>3-Axis</nh:spacecraft_spin_state>
+                    </nh:Spacecraft_State>
+                </nh:Observation_Parameters>
+            </nh:Mission_Parameters>
+        </Mission_Area>
+        <Discipline_Area>
+            <disp:Display_Settings>
+                <Local_Internal_Reference>
+                    <local_identifier_reference>data_array</local_identifier_reference>
+                    <local_reference_type>display_settings_to_array</local_reference_type>
+                </Local_Internal_Reference>
+                <disp:Display_Direction>
+                    <disp:horizontal_display_axis>Sample</disp:horizontal_display_axis>
+                    <disp:horizontal_display_direction>Left to Right</disp:horizontal_display_direction>
+                    <disp:vertical_display_axis>Line</disp:vertical_display_axis>
+                    <disp:vertical_display_direction>Bottom to Top</disp:vertical_display_direction>
+                </disp:Display_Direction>
+            </disp:Display_Settings>
+            <img:Imaging>
+                <Local_Internal_Reference>
+                    <local_identifier_reference>data_array</local_identifier_reference>
+                    <local_reference_type>imaging_parameters_to_image_object</local_reference_type>
+                </Local_Internal_Reference>
+                <img:Exposure>
+                    <img:exposure_duration unit="s">2.91392</img:exposure_duration>
+                </img:Exposure>
+                <img:Onboard_Compression>
+                    <img:onboard_compression_class>Lossless</img:onboard_compression_class>
+                </img:Onboard_Compression>
+            </img:Imaging>
+            <geom:Geometry>
+                <geom:SPICE_Kernel_Files>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20060119_20100101_od032.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20061001_20100101_od040.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20070307_20100101_od041.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20070319_20150901_od077.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20120501_20160913_od091.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20150801_20190901_od126.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20161201_20250101_od132.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20161202_20250101_od134.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20180601_20250101_od146.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20190101_20270101_od157.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pred_20211001_20300101_od161.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Predicted</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>LSK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>naif0012.tls</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SCLK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>new-horizons_3118.tsc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>PCK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_stars_kbo_centaur_ppinp.tpc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>PCK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>pck00011.tpc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>PCK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_arrokoth_001.tpc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>FK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_v220.tf</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>IK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_allinstruments_v002.ti</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>IK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_alice_v200.ti</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>IK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_lorri_v201.ti</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>IK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_pepssi_v110.ti</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>IK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_ralph_v100.ti</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>IK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_rex_v100.ti</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>IK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_sdc_v101.ti</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>IK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_swap_v200.ti</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>FK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_soc_misc_v003.tf</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Provenance Not Applicable</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>sb-2002jf56-2.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>jup365.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>kbo_centaur_20230112.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_extras.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_stars.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>2002_KX14_20160411.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>Huya_20160411.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>Pholus_20160411.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_2020KS11_20230630a.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_nep081.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_ura111.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>NavPE_de433_od161.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>NavSE_plu047_od123.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>NavSBE_2014MU69_od161.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_nep_ura_000.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_recon_e2j_v1.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_recon_j2sep07_prelimv1.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>SPK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nh_recon_pluto_od122_v01.bsp</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2006_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2007_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2008_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2009_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2010_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2011_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2012_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2013_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2014_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2015_v039.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2016_v003.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2017_v014.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2018_v100.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2019_v029.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2020_v016.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2021_v010.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2022_v006.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2023_v001.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2024_01_v035.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2024_02_v008.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2024_03_v011.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>merged_nhpc_2024_04_v003.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>CK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>nhpc_2024_122_02.bc</geom:spice_kernel_file_name>
+                        <geom:kernel_provenance>Reconstructed</geom:kernel_provenance>
+                    </geom:SPICE_Kernel_Identification>
+                </geom:SPICE_Kernel_Files>
+                <geom:Image_Display_Geometry>
+                    <Local_Internal_Reference>
+                        <local_identifier_reference>data_array</local_identifier_reference>
+                        <local_reference_type>display_to_data_object</local_reference_type>
+                    </Local_Internal_Reference>
+                    <geom:Display_Direction>
+                        <geom:horizontal_display_axis>Sample</geom:horizontal_display_axis>
+                        <geom:horizontal_display_direction>Left to Right</geom:horizontal_display_direction>
+                        <geom:vertical_display_axis>Line</geom:vertical_display_axis>
+                        <geom:vertical_display_direction>Bottom to Top</geom:vertical_display_direction>
+                    </geom:Display_Direction>
+                    <geom:Object_Orientation_RA_Dec>
+                        <geom:reference_pixel_location>Center</geom:reference_pixel_location>
+                        <geom:right_ascension_angle unit="deg">166.3101669247915</geom:right_ascension_angle>
+                        <geom:declination_angle unit="deg">-58.62668575492692</geom:declination_angle>
+                        <geom:celestial_north_clock_angle unit="deg">281.524249073107</geom:celestial_north_clock_angle>
+                        <geom:Reference_Frame_Identification>
+                            <geom:frame_spice_name>J2000</geom:frame_spice_name>
+                        </geom:Reference_Frame_Identification>
+                    </geom:Object_Orientation_RA_Dec>
+                    <geom:Object_Orientation_Clock_Angles>
+                        <geom:celestial_north_clock_angle unit="deg">281.524249073107</geom:celestial_north_clock_angle>
+                        <geom:ecliptic_north_clock_angle unit="deg">327.31366402563344</geom:ecliptic_north_clock_angle>
+                    </geom:Object_Orientation_Clock_Angles>
+                    <geom:Quaternion_Plus_To_From>
+                        <geom:qcos>0.8672242418887652</geom:qcos>
+                        <geom:qsin1>0.02886399023561127</geom:qsin1>
+                        <geom:qsin2>-0.4940734377450403</geom:qsin2>
+                        <geom:qsin3>-0.05459324557976793</geom:qsin3>
+                        <geom:Rotate_From>
+                            <geom:name>Instrument</geom:name>
+                        </geom:Rotate_From>
+                        <geom:Rotate_To>
+                            <geom:name>J2000</geom:name>
+                        </geom:Rotate_To>
+                    </geom:Quaternion_Plus_To_From>
+                    <geom:Quaternion_Plus_To_From>
+                        <geom:qcos>0.8680915289199039</geom:qcos>
+                        <geom:qsin1>0.02449620007775402</geom:qsin1>
+                        <geom:qsin2>-0.4939164097936121</geom:qsin2>
+                        <geom:qsin3>-0.04316959272268971</geom:qsin3>
+                        <geom:Rotate_From>
+                            <geom:name>Spacecraft</geom:name>
+                        </geom:Rotate_From>
+                        <geom:Rotate_To>
+                            <geom:name>J2000</geom:name>
+                        </geom:Rotate_To>
+                    </geom:Quaternion_Plus_To_From>
+                </geom:Image_Display_Geometry>
+                <geom:Geometry_Orbiter>
+                    <geom:geometry_reference_time_utc>2023-08-09T02:35:27.851Z</geom:geometry_reference_time_utc>
+                    <geom:geometry_reference_time_tdb unit="s">744820597.03387</geom:geometry_reference_time_tdb>
+                    <geom:Orbiter_Identification>
+                        <geom:Geometry_Target_Identification>
+                            <geom:body_spice_name>NGC 3532</geom:body_spice_name>
+                            <geom:name>NGC3532</geom:name>
+                        </geom:Geometry_Target_Identification>
+                    </geom:Orbiter_Identification>
+                    <geom:Pixel_Dimensions>
+                        <geom:pixel_field_of_view_method>Constant</geom:pixel_field_of_view_method>
+                        <geom:horizontal_pixel_field_of_view unit="mrad">0.0198065</geom:horizontal_pixel_field_of_view>
+                        <geom:vertical_pixel_field_of_view unit="mrad">0.0198065</geom:vertical_pixel_field_of_view>
+                    </geom:Pixel_Dimensions>
+                    <geom:Distances>
+                        <geom:Distances_Specific>
+                            <geom:spacecraft_geocentric_distance unit="km">8347063325.593175</geom:spacecraft_geocentric_distance>
+                            <geom:spacecraft_heliocentric_distance unit="km">8480784979.570783</geom:spacecraft_heliocentric_distance>
+                            <geom:spacecraft_target_center_distance unit="km">1.000001234984585</geom:spacecraft_target_center_distance>
+                            <geom:target_geocentric_distance unit="km">8347859255.067448</geom:target_geocentric_distance>
+                            <geom:target_heliocentric_distance unit="km">8480784979.605169</geom:target_heliocentric_distance>
+                        </geom:Distances_Specific>
+                    </geom:Distances>
+                    <geom:Illumination_Geometry/>
+                    <geom:Vectors>
+                        <geom:Vectors_Cartesian_Specific>
+                            <geom:Vector_Cartesian_Position_Spacecraft_To_Target>
+                                <geom:x_position unit="km">0.504212515477608</geom:x_position>
+                                <geom:y_position unit="km">-0.1218622798684645</geom:y_position>
+                                <geom:z_position unit="km">0.8549396434554304</geom:z_position>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Position_Spacecraft_To_Target>
+                            <geom:Vector_Cartesian_Position_Sun_To_Spacecraft>
+                                <geom:x_position unit="km">-2589536001.686072</geom:x_position>
+                                <geom:y_position unit="km">7521265012.138471</geom:y_position>
+                                <geom:z_position unit="km">2940848480.093254</geom:z_position>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Position_Sun_To_Spacecraft>
+                            <geom:Vector_Cartesian_Position_Sun_To_Target>
+                                <geom:x_position unit="km">-2589502325.794815</geom:x_position>
+                                <geom:y_position unit="km">7521274687.244592</geom:y_position>
+                                <geom:z_position unit="km">2940853388.731519</geom:z_position>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Position_Sun_To_Target>
+                            <geom:Vector_Cartesian_Position_Earth_To_Spacecraft>
+                                <geom:x_position unit="km">2481053162.740263</geom:x_position>
+                                <geom:y_position unit="km">-7423982449.947536</geom:y_position>
+                                <geom:z_position unit="km">-2898676585.614565</geom:z_position>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Position_Earth_To_Spacecraft>
+                            <geom:Vector_Cartesian_Position_Earth_To_Target>
+                                <geom:x_position unit="km">-2479962637.766099</geom:x_position>
+                                <geom:y_position unit="km">7425059568.708693</geom:y_position>
+                                <geom:z_position unit="km">2899142952.464906</geom:z_position>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Position_Earth_To_Target>
+                            <geom:Vector_Cartesian_Velocity_Spacecraft_Relative_To_Target>
+                                <geom:x_velocity unit="km/s">2.32778389248559e-16</geom:x_velocity>
+                                <geom:y_velocity unit="km/s">-2.0134240916708e-16</geom:y_velocity>
+                                <geom:z_velocity unit="km/s">6.90989578368481e-16</geom:z_velocity>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Velocity_Spacecraft_Relative_To_Target>
+                            <geom:Vector_Cartesian_Velocity_Spacecraft_Relative_To_Sun>
+                                <geom:x_velocity unit="km/s">-5.361728871650416</geom:x_velocity>
+                                <geom:y_velocity unit="km/s">11.77733294776726</geom:y_velocity>
+                                <geom:z_velocity unit="km/s">4.564664837458929</geom:z_velocity>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Velocity_Spacecraft_Relative_To_Sun>
+                            <geom:Vector_Cartesian_Velocity_Target_Relative_To_Sun>
+                                <geom:x_velocity unit="km/s">-5.361730400446794</geom:x_velocity>
+                                <geom:y_velocity unit="km/s">11.77733751832864</geom:y_velocity>
+                                <geom:z_velocity unit="km/s">4.564666834245891</geom:z_velocity>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Velocity_Target_Relative_To_Sun>
+                            <geom:Vector_Cartesian_Velocity_Spacecraft_Relative_To_Earth>
+                                <geom:x_velocity unit="km/s">-14.98143504025381</geom:x_velocity>
+                                <geom:y_velocity unit="km/s">-31.21092688661697</geom:y_velocity>
+                                <geom:z_velocity unit="km/s">-12.98768503419297</geom:z_velocity>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Velocity_Spacecraft_Relative_To_Earth>
+                            <geom:Vector_Cartesian_Velocity_Target_Relative_To_Earth>
+                                <geom:x_velocity unit="km/s">14.75415997812357</geom:x_velocity>
+                                <geom:y_velocity unit="km/s">31.42053150437099</geom:y_velocity>
+                                <geom:z_velocity unit="km/s">13.07859437777041</geom:z_velocity>
+                                <geom:light_time_correction_applied>Received_Light_Time_Stellar_Abb</geom:light_time_correction_applied>
+                            </geom:Vector_Cartesian_Velocity_Target_Relative_To_Earth>
+                        </geom:Vectors_Cartesian_Specific>
+                    </geom:Vectors>
+                </geom:Geometry_Orbiter>
+            </geom:Geometry>
+            <sb:SB_Metadata>
+                <sb:Observation_Parameters>
+                    <sb:Exposure>
+                        <sb:exposure_duration unit="s">2.91392</sb:exposure_duration>
+                        <sb:exposure_description>The exposure duration is the amount of time that
+                            data was collected for each pixel in the array. For details of how the MVIC TDI
+                            scanning observations collected data, see "Ralph: A Visible/Infrared Imager for
+                            the New Horizons Pluto/Kuiper Belt Mission" (Reuter, et al. 2008), a preprint
+                            copy of which is included in the mission archive and referenced below.
+                        </sb:exposure_description>
+                    </sb:Exposure>
+                    <sb:Filter>
+                        <sb:filter_name>CH4</sb:filter_name>
+                        <sb:filter_type>Broadband</sb:filter_type>
+                        <sb:short_wavelength_limit unit="nm">540</sb:short_wavelength_limit>
+                        <sb:long_wavelength_limit unit="nm">700</sb:long_wavelength_limit>
+                    </sb:Filter>
+                    <sb:Timing>
+                        <sb:midobservation_time_UTC_YMD>2023-08-09T02:35:27.851Z</sb:midobservation_time_UTC_YMD>
+                        <sb:midobservation_time_UTC_JD unit="julian day">2460165.6079612</sb:midobservation_time_UTC_JD>
+                        <sb:start_time_UTC_JD unit="julian day">2460165.6076032035</sb:start_time_UTC_JD>
+                        <sb:stop_time_UTC_JD unit="julian day">2460165.6083192686</sb:stop_time_UTC_JD>
+                    </sb:Timing>
+                </sb:Observation_Parameters>
+                <sb:Additional_Image_Metadata>
+                    <Local_Internal_Reference>
+                        <local_identifier_reference>data_file</local_identifier_reference>
+                        <local_reference_type>image_to_additional_metadata</local_reference_type>
+                    </Local_Internal_Reference>
+                    <sb:comment>The data product that this section describes may or may not actually be an image as the name implies. The information available in this class is applicable to all kinds of data, not just imagery.</sb:comment>
+                    <sb:image_observation_type>Single Image</sb:image_observation_type>
+                    <sb:Ancillary_Data_Objects/>
+                    <sb:Additional_Geometry_Metadata>
+                        <sb:Instrument_Position_Angles>
+                            <sb:y_axis_position_angle unit="deg">281.524249073107</sb:y_axis_position_angle>
+                            <sb:z_axis_position_angle unit="deg">11.524249073107</sb:z_axis_position_angle>
+                        </sb:Instrument_Position_Angles>
+                        <sb:Geometry_Vector_Time>
+                            <sb:position_velocity_vectors>Spacecraft_to_Target</sb:position_velocity_vectors>
+                            <sb:time_at_target_UTC_YMD>2023-08-09T02:35:27.848Z</sb:time_at_target_UTC_YMD>
+                            <sb:time_at_target_UTC_JD unit="julian day">2460165.6079612</sb:time_at_target_UTC_JD>
+                        </sb:Geometry_Vector_Time>
+                        <sb:Geometry_Vector_Time>
+                            <sb:position_velocity_vectors>Earth_to_Target</sb:position_velocity_vectors>
+                            <sb:time_at_Earth_UTC_YMD>2023-08-09T10:19:33.315Z</sb:time_at_Earth_UTC_YMD>
+                            <sb:time_at_Earth_UTC_JD unit="julian day">2460165.9302467</sb:time_at_Earth_UTC_JD>
+                        </sb:Geometry_Vector_Time>
+                        <sb:Geometry_Vector_Time>
+                            <sb:position_velocity_vectors>Sun_to_Spacecraft</sb:position_velocity_vectors>
+                            <sb:time_at_Sun_UTC_YMD>2023-08-08T18:43:58.993Z</sb:time_at_Sun_UTC_YMD>
+                            <sb:time_at_Sun_UTC_JD unit="julian day">2460165.2805439</sb:time_at_Sun_UTC_JD>
+                        </sb:Geometry_Vector_Time>
+                        <sb:Geometry_Vector_Time>
+                            <sb:position_velocity_vectors>Earth_to_Spacecraft</sb:position_velocity_vectors>
+                            <sb:time_at_Earth_UTC_YMD>2023-08-08T18:51:25.042Z</sb:time_at_Earth_UTC_YMD>
+                            <sb:time_at_Earth_UTC_JD unit="julian day">2460165.2857065</sb:time_at_Earth_UTC_JD>
+                        </sb:Geometry_Vector_Time>
+                    </sb:Additional_Geometry_Metadata>
+                </sb:Additional_Image_Metadata>
+            </sb:SB_Metadata>
+            <proc:Processing_Information>
+                <Local_Internal_Reference>
+                    <local_identifier_reference>data_file</local_identifier_reference>
+                    <local_reference_type>processing_information_to_data_object</local_reference_type>
+                </Local_Internal_Reference>
+                <proc:Process>
+                    <proc:name>NH SOC Data Processing Pipeline</proc:name>
+                    <proc:process_owner_name>TSOC</proc:process_owner_name>
+                    <proc:process_owner_institution_name>Southwest Research Institute</proc:process_owner_institution_name>
+                    <proc:Software>
+                        <proc:software_id>L1</proc:software_id>
+                        <proc:software_version_id>7.0</proc:software_version_id>
+                    </proc:Software>
+                </proc:Process>
+            </proc:Processing_Information>
+        </Discipline_Area>
+    </Observation_Area>
+    <Reference_List>
+        <Internal_Reference>
+            <lid_reference>urn:nasa:pds:nh_mvic:kem2_cal:mc3_0553854407_0x536_sci</lid_reference>
+            <reference_type>data_to_calibrated_product</reference_type>
+        </Internal_Reference>
+        <Internal_Reference>
+            <lid_reference>urn:nasa:pds:nh_documents:ralph:ralph_ssr</lid_reference>
+            <reference_type>data_to_document</reference_type>
+            <comment>Space Science Reviews paper describing the MVIC instrument.</comment>
+        </Internal_Reference>
+        <Internal_Reference>
+            <lid_reference>urn:nasa:pds:nh_documents:mission:payload_ssr</lid_reference>
+            <reference_type>data_to_document</reference_type>
+            <comment>Space Science Reviews paper describing the New Horizons payload/instrument suite.</comment>
+        </Internal_Reference>
+        <Internal_Reference>
+            <lid_reference>urn:nasa:pds:nh_documents:mission:soc_inst_icd</lid_reference>
+            <reference_type>data_to_document</reference_type>
+            <comment>Interface control document describing all New Horizons data products' contents and formats.</comment>
+        </Internal_Reference>
+    </Reference_List>
+    <File_Area_Observational>
+        <File>
+            <file_name>mc3_0553854407_0x536_eng.fit</file_name>
+            <local_identifier>data_file</local_identifier>
+            <creation_date_time>2024-05-04T15:43:35Z</creation_date_time>
+            <file_size unit="byte">6615360</file_size>
+            <md5_checksum>79844d7ed42ab9138dafd5c57f3b3303</md5_checksum>
+        </File>
+        <Header>
+            <offset unit="byte">0</offset>
+            <object_length unit="byte">20160</object_length>
+            <parsing_standard_id>FITS 4.0</parsing_standard_id>
+        </Header>
+        <Array_2D_Image>
+            <name>Observational Image</name>
+            <local_identifier>data_array</local_identifier>
+            <offset unit="byte">20160</offset>
+            <axes>2</axes>
+            <axis_index_order>Last Index Fastest</axis_index_order>
+            <Element_Array>
+                <data_type>SignedMSB2</data_type>
+                <scaling_factor>1</scaling_factor>
+                <value_offset>0</value_offset>
+            </Element_Array>
+            <Axis_Array>
+                <axis_name>Line</axis_name>
+                <elements>653</elements>
+                <sequence_number>1</sequence_number>
+            </Axis_Array>
+            <Axis_Array>
+                <axis_name>Sample</axis_name>
+                <elements>5024</elements>
+                <sequence_number>2</sequence_number>
+            </Axis_Array>
+            <Special_Constants>
+                <missing_constant>-1</missing_constant>
+            </Special_Constants>
+        </Array_2D_Image>
+        <Header>
+            <offset unit="byte">6583680</offset>
+            <object_length unit="byte">17280</object_length>
+            <parsing_standard_id>FITS 4.0</parsing_standard_id>
+        </Header>
+        <Table_Binary>
+            <name>Housekeeping</name>
+            <offset unit="byte">6600960</offset>
+            <records>69</records>
+            <Record_Binary>
+                <fields>75</fields>
+                <groups>0</groups>
+                <record_length unit="byte">115</record_length>
+                <Field_Binary>
+                    <name>MET</name>
+                    <field_number>1</field_number>
+                    <field_location unit="byte">1</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>2147483648</value_offset>
+                    <description>Mission Elapsed Time Approximately equal to seconds past 19.January, 2006 18:08:02 UTC</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>AcqStart</name>
+                    <field_number>2</field_number>
+                    <field_location unit="byte">5</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Acquisition Start Bit - if set, source is ApID 0X510 instead of 0X500 Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>CMDEXE_CNT</name>
+                    <field_number>3</field_number>
+                    <field_location unit="byte">6</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.CMDEXE_CNT General Description: Count of valid commands processed Extended Description: COUNT OF VALID COMMANDS PROCESSED Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 10 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>CMDREJ_CNT</name>
+                    <field_number>4</field_number>
+                    <field_location unit="byte">7</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.CMDREJ_CNT General Description: Count of rejected commands Extended Description: COUNT OF REJECTED COMMANDS Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 11 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>VERSION</name>
+                    <field_number>5</field_number>
+                    <field_location unit="byte">8</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.VERSION General Description: Current software version Extended Description: CURRENT SOFTWARE VERSION Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 12 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>STATE</name>
+                    <field_number>6</field_number>
+                    <field_location unit="byte">9</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.STATE General Description: CurrentRALPHFW State Extended Description: CURRENTRALPHFW STATE Conversion: STATES - [lo:hi]=state description: [0:0]=INITIAL [1:1]=ACQUIRE [2:2]=CHECKOUT [3:7]=INVALID Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 13 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 3 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>MODE</name>
+                    <field_number>7</field_number>
+                    <field_location unit="byte">10</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.MODE General Description: Current DE Mode Extended Description: CURRENT DE MODE Conversion: STATES - [lo:hi]=state description: [0:0]=INVALID [1:1]=DE_MVIC_FRAME_MODE [2:2]=DE_MVIC_TDI_COLOR [3:3]=DE_MVIC_TDI_PAN1 [4:4]=DE_MVIC_TDI_PAN2 [5:5]=DE_MVIC_TDI_PAN_BIN [6:6]=INVALID [7:7]=DE_LEISA_FRAME [8:8]=DE_LEISA_FRAME_RAW [9:17]=INVALID [18:18]=DE_IDLE [19:19]=DE_ABORT [20:31]=INVALID Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 13 Bit Offset within Byte of ApID packet: 3 Bit Length within ApID packet: 5 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>POS_12V</name>
+                    <field_number>8</field_number>
+                    <field_location unit="byte">11</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.POS_12V General Description: +12V monitor Extended Description: +12V MONITOR Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.14298 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 14 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>NEG_12V</name>
+                    <field_number>9</field_number>
+                    <field_location unit="byte">13</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.NEG_12V General Description: -12V monitor Extended Description: -12V MONITOR Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.14298 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 15 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>POS_5V</name>
+                    <field_number>10</field_number>
+                    <field_location unit="byte">15</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.POS_5V General Description: +5V monitor Extended Description: +5V MONITOR Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.058588 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 16 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>NEG_5V</name>
+                    <field_number>11</field_number>
+                    <field_location unit="byte">17</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.NEG_5V General Description: -5V monitor Extended Description: -5V MONITOR Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.058588 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 17 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>POS_30V</name>
+                    <field_number>12</field_number>
+                    <field_location unit="byte">19</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.POS_30V General Description: +30V monitor Extended Description: +30V MONITOR Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.35356 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 18 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>MVIC_TEMP</name>
+                    <field_number>13</field_number>
+                    <field_location unit="byte">21</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <description>Full Mnemonic: RALPH_HK.MVIC_TEMP General Description: MVIC temperature Extended Description: MVIC TEMPERATURE Conversion: polynomial coefficients: Order 0: -87.6941 Order 1: 0.0172462 Order 2: -1.51767e-07 Order 3: 9.36637e-12 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 19 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 16 Type of value: SIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_TEMP</name>
+                    <field_number>14</field_number>
+                    <field_location unit="byte">23</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_TEMP General Description: LEISA temperature Extended Description: LEISA TEMPERATURE Conversion: polynomial coefficients: Order 0: -75.5416 Order 1: 0.018222 Order 2: -1.98478e-07 Order 3: 1.3039e-11 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 21 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 16 Type of value: SIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>DE_NOT_DONE</name>
+                    <field_number>15</field_number>
+                    <field_location unit="byte">25</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.DE_NOT_DONE General Description: Handshake with DE not completed state Extended Description: HANDSHAKE WITH DE NOT COMPLETED STATE Conversion: STATES - [lo:hi]=state description: [0:0]=DE DONE [1:1]=DE NOT DONE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 23 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>EEPTAB</name>
+                    <field_number>16</field_number>
+                    <field_location unit="byte">26</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.EEPTAB General Description: EEP tables use status Extended Description: FLAG INDICATING WHETHER THE TABLES FOUND IN EEPROM ARE BEING USED FOR ACQUISITION CALCULATIONS Conversion: STATES - [lo:hi]=state description: [0:0]=NO TABLE [1:1]=TABLE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 23 Bit Offset within Byte of ApID packet: 1 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>SPARE0</name>
+                    <field_number>17</field_number>
+                    <field_location unit="byte">27</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.SPARE0 General Description: Spare Extended Description: SPARE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 23 Bit Offset within Byte of ApID packet: 2 Bit Length within ApID packet: 2 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>PPS</name>
+                    <field_number>18</field_number>
+                    <field_location unit="byte">28</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.PPS General Description: 1 PPS detected state Extended Description: FLAG INDICATING THAT 1 PPS SIGNAL HAS BEEN DETECTED. Conversion: STATES - [lo:hi]=state description: [0:0]=PPS NOT DET [1:1]=PPS DET Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 23 Bit Offset within Byte of ApID packet: 4 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>SIDE</name>
+                    <field_number>19</field_number>
+                    <field_location unit="byte">29</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.SIDE General Description: Which side is RALPH on Extended Description: WHICH SIDE IS RALPH ON (A=0 B=1) Conversion: STATES - [lo:hi]=state description: [0:0]=B [1:1]=A Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 23 Bit Offset within Byte of ApID packet: 5 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>WDT_EXP</name>
+                    <field_number>20</field_number>
+                    <field_location unit="byte">30</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.WDT_EXP General Description: Watchdog expired Extended Description: WATCHDOG EXPIRED Conversion: STATES - [lo:hi]=state description: [0:0]=NO [1:1]=YES Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 23 Bit Offset within Byte of ApID packet: 6 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>RLY_ERR</name>
+                    <field_number>21</field_number>
+                    <field_location unit="byte">31</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.RLY_ERR General Description: Error setting the relays Extended Description: ERROR SETTING THE RELAYS Conversion: STATES - [lo:hi]=state description: [0:0]=OK [1:1]=ERR Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 23 Bit Offset within Byte of ApID packet: 7 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>OPCODE</name>
+                    <field_number>22</field_number>
+                    <field_location unit="byte">32</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.OPCODE General Description: Last Opcode Extended Description: LAST OPCODE Conversion: STATES - [lo:hi]=state description: [0:0]=INVALID [1:1]=INVALID [2:2]=RALPH_MVIC_COLOR [3:3]=RALPH_MVIC_PAN1 [4:4]=RALPH_MVIC_PAN2 [5:5]=RALPH_MVIC_PAN_BIN [6:6]=INVALID [7:7]=RALPH_LEISA [8:8]=RALPH_LEISA_RAW [9:19]=INVALID [20:20]=MEMORY_LOAD [21:21]=MEMORY_DUMP [22:31]=INVALID [32:32]=RALPH_MVIC_COLR_FRCD [33:33]=RALPH_MVIC_PBIN_FRCD [34:34]=RALPH_MVIC_PAN1_FRCD [35:35]=RALPH_MVIC_PAN2_FRCD [36:36]=RALPH_LEISA_FRCD [37:37]=RALPH_LEISA_RAW_FRCD [38:38]=RALPH_MVIC_PAN_FRAME [39:47]=INVALID [48:48]=RALPH_IDLE [49:49]=RALPH_ABORT [50:50]=RALPH_NOP [51:51]=RALPH_SIDESEL_RLY [52:52]=RALPH_GO [53:53]=RALPH_GROUP_RLY [54:54]=RALPH_STATE [55:55]=RALPH_LEISA_OFFSETS [56:255]=INVALID Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 24 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>XMT_AFF</name>
+                    <field_number>23</field_number>
+                    <field_location unit="byte">33</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.XMT_AFF General Description: Almost Full Flag Extended Description: ALMOST FULL FLAG Conversion: STATES - [lo:hi]=state description: [0:0]=OK [1:1]=ALMOST_FULL Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 25 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>XMT_FF</name>
+                    <field_number>24</field_number>
+                    <field_location unit="byte">34</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.XMT_FF General Description: Transmission Full Flag Extended Description: TRANSMISSION FULL FLAG Conversion: STATES - [lo:hi]=state description: [0:0]=OK [1:1]=FULL Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 25 Bit Offset within Byte of ApID packet: 1 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>RCV1_OVRN</name>
+                    <field_number>25</field_number>
+                    <field_location unit="byte">35</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.RCV1_OVRN General Description: Receive FIFO 1 overrun Extended Description: RECEIVE FIFO 1 OVERRUN Conversion: STATES - [lo:hi]=state description: [0:0]=OK [1:1]=OVERRUN Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 25 Bit Offset within Byte of ApID packet: 2 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>RCV1_AFF</name>
+                    <field_number>26</field_number>
+                    <field_location unit="byte">36</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.RCV1_AFF General Description: Almost Full Flag receive Extended Description: ALMOST FULL FLAG RECEIVE Conversion: STATES - [lo:hi]=state description: [0:0]=OK [1:1]=ALMOST_FULL Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 25 Bit Offset within Byte of ApID packet: 3 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>RCV1_FF</name>
+                    <field_number>27</field_number>
+                    <field_location unit="byte">37</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.RCV1_FF General Description: receive FIFO1 full flag Extended Description: RECEIVE FIFO1 FULL FLAG Conversion: STATES - [lo:hi]=state description: [0:0]=OK [1:1]=FULL Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 25 Bit Offset within Byte of ApID packet: 4 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>RCV2_OVRN</name>
+                    <field_number>28</field_number>
+                    <field_location unit="byte">38</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.RCV2_OVRN General Description: Receive FIFO 2 overrun Extended Description: RECEIVE FIFO 2 OVERRUN Conversion: STATES - [lo:hi]=state description: [0:0]=OK [1:1]=OVERRUN Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 25 Bit Offset within Byte of ApID packet: 5 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>RCV2_AFF</name>
+                    <field_number>29</field_number>
+                    <field_location unit="byte">39</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.RCV2_AFF General Description: almost Full Flag FIFO2 Extended Description: ALMOST FULL FLAG FIFO2 Conversion: STATES - [lo:hi]=state description: [0:0]=OK [1:1]=ALMOST_FULL Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 25 Bit Offset within Byte of ApID packet: 6 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>RCV2_FF</name>
+                    <field_number>30</field_number>
+                    <field_location unit="byte">40</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.RCV2_FF General Description: receive FIFO2 full flag Extended Description: RECEIVE FIFO2 FULL FLAG Conversion: STATES - [lo:hi]=state description: [0:0]=OK [1:1]=FULL Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 25 Bit Offset within Byte of ApID packet: 7 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>EE_WEN</name>
+                    <field_number>31</field_number>
+                    <field_location unit="byte">41</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.EE_WEN General Description: EEPROM Write Enable Extended Description: EEPROM WRITE ENABLE Conversion: STATES - [lo:hi]=state description: [0:0]=DISABLED [1:1]=ENABLED Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 26 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>IEM_ACTIVE</name>
+                    <field_number>32</field_number>
+                    <field_location unit="byte">42</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.IEM_ACTIVE General Description: Which IEM is Active Extended Description: WHICH IEM IS ACTIVE (0-NEITHER 1=1 2=2) Conversion: STATES - [lo:hi]=state description: [0:0]=NO_PPS [1:1]=IEM_1 [2:2]=IEM_2 [3:3]=INVALID Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 26 Bit Offset within Byte of ApID packet: 1 Bit Length within ApID packet: 2 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>IEM_SELECT</name>
+                    <field_number>33</field_number>
+                    <field_location unit="byte">43</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.IEM_SELECT General Description: Which IEM is Selected Extended Description: WHICH IEM IS SELECTED Conversion: STATES - [lo:hi]=state description: [0:0]=IEM_1 [1:1]=IEM_2 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 26 Bit Offset within Byte of ApID packet: 3 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>WDT_EN</name>
+                    <field_number>34</field_number>
+                    <field_location unit="byte">44</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.WDT_EN General Description: Watchdog Enable Extended Description: WATCHDOG ENABLE Conversion: STATES - [lo:hi]=state description: [0:0]=DISABLED [1:1]=ENABLED Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 26 Bit Offset within Byte of ApID packet: 4 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>RLY_BSY</name>
+                    <field_number>35</field_number>
+                    <field_location unit="byte">45</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.RLY_BSY General Description: Relay Busy Extended Description: RELAY BUSY Conversion: STATES - [lo:hi]=state description: [0:0]=READY [1:1]=BUSY Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 26 Bit Offset within Byte of ApID packet: 5 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>SPARE1</name>
+                    <field_number>36</field_number>
+                    <field_location unit="byte">46</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.SPARE1 General Description: SPARE Extended Description: SPARE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 26 Bit Offset within Byte of ApID packet: 6 Bit Length within ApID packet: 2 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>EXP_CNT</name>
+                    <field_number>37</field_number>
+                    <field_location unit="byte">47</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.EXP_CNT General Description: Watchdog Reset Counter Extended Description: WATCHDOG RESET COUNTER Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 27 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>FPGA_VER</name>
+                    <field_number>38</field_number>
+                    <field_location unit="byte">48</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.FPGA_VER General Description: C&amp;amp;DH FPGA version number Extended Description: C&amp;amp;DH FPGA VERSION NUMBER Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 28 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>OSC_CNT</name>
+                    <field_number>39</field_number>
+                    <field_location unit="byte">49</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>32768</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.OSC_CNT General Description: 20 uS based counter from DE Extended Description: 20 US BASED COUNTER FROM DE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 29 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 16 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>TDI_RATE</name>
+                    <field_number>40</field_number>
+                    <field_location unit="byte">51</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>32768</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.TDI_RATE General Description: calculated TDI rate Extended Description: CALCULATED TDI RATE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 31 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 16 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>FRAME_RATE</name>
+                    <field_number>41</field_number>
+                    <field_location unit="byte">53</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>32768</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.FRAME_RATE General Description: LEISA Frame Rate Extended Description: LEISA FRAME RATE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 33 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 16 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>MEMDP_STATE</name>
+                    <field_number>42</field_number>
+                    <field_location unit="byte">55</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.MEMDP_STATE General Description: Memdump state Extended Description: 0 - IDLE 1 - ACTIVE Conversion: STATES - [lo:hi]=state description: [0:0]=IDLE [1:1]=ACTIVE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 35 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>MEMLD_STATE</name>
+                    <field_number>43</field_number>
+                    <field_location unit="byte">56</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.MEMLD_STATE General Description: Memload state Extended Description: 0-IDLE 1-LOADING 2-CHECKING 3-PATCHING 4-VERIFYING 5-SUCCESS 6-CHECKING-FAIL 7-VERIFYING-FAIL Conversion: STATES - [lo:hi]=state description: [0:0]=IDLE [1:1]=LOADING [2:2]=CHECKING [3:3]=PATCHING [4:4]=VERIFYING [5:5]=SUCCESS [6:6]=CHECKING-FAIL [7:7]=VERIFYING-FAIL Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 35 Bit Offset within Byte of ApID packet: 1 Bit Length within ApID packet: 3 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>DRAM_WIN</name>
+                    <field_number>44</field_number>
+                    <field_location unit="byte">57</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.DRAM_WIN General Description: Data RAM Window Extended Description: WINDOW THAT IS USED FOR DATA RAM (THIS IS CHECKED AT BOOTUP). VALID WINDOWS ARE 6 THROUGH E Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 35 Bit Offset within Byte of ApID packet: 4 Bit Length within ApID packet: 4 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>DE_FPGA</name>
+                    <field_number>45</field_number>
+                    <field_location unit="byte">58</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.DE_FPGA General Description: DE FPGA Extended Description: DE FPGA Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 36 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 3 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>DISCRETE</name>
+                    <field_number>46</field_number>
+                    <field_location unit="byte">59</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.DISCRETE General Description: DE readback information Extended Description: DE READBACK INFORMATION Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 36 Bit Offset within Byte of ApID packet: 3 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>GRP_RLY3</name>
+                    <field_number>47</field_number>
+                    <field_location unit="byte">60</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.GRP_RLY3 General Description: Group relay 3 fired flag Extended Description: INDICATOR THAT GROUP RELAY 3 APPEARS TO HAVE FIRED CORRECTLY Conversion: STATES - [lo:hi]=state description: [0:0]=OFF [1:1]=ON Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 36 Bit Offset within Byte of ApID packet: 4 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>GRP_RLY2</name>
+                    <field_number>48</field_number>
+                    <field_location unit="byte">61</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.GRP_RLY2 General Description: Group relay 2 fired flag Extended Description: INDICATOR THAT GROUP RELAY 2 APPEARS TO HAVE FIRED CORRECTLY Conversion: STATES - [lo:hi]=state description: [0:0]=OFF [1:1]=ON Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 36 Bit Offset within Byte of ApID packet: 5 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>GRP_RLY1</name>
+                    <field_number>49</field_number>
+                    <field_location unit="byte">62</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.GRP_RLY1 General Description: Group relay 1 fired flag Extended Description: INDICATOR THAT GROUP RELAY 1 APPEARS TO HAVE FIRED CORRECTLY Conversion: STATES - [lo:hi]=state description: [0:0]=OFF [1:1]=ON Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 36 Bit Offset within Byte of ApID packet: 6 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>DE_SEL_RLY</name>
+                    <field_number>50</field_number>
+                    <field_location unit="byte">63</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.DE_SEL_RLY General Description: Relay fired flag Extended Description: INDICATOR THAT SELECT RELAY APPEARS TO HAVE FIRED CORRECTLY Conversion: STATES - [lo:hi]=state description: [0:0]=OFF [1:1]=ON Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 36 Bit Offset within Byte of ApID packet: 7 Bit Length within ApID packet: 1 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>GO_STATE</name>
+                    <field_number>51</field_number>
+                    <field_location unit="byte">64</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.GO_STATE General Description: GO state Extended Description: GO STATE (IDLE=0 CODE=1 FPGA=2) Conversion: STATES - [lo:hi]=state description: [0:0]=IDLE [1:1]=CODE [2:2]=FPGA Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 37 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 2 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>CODE</name>
+                    <field_number>52</field_number>
+                    <field_location unit="byte">65</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.CODE General Description: Code area chosen Extended Description: CODE AREA CHOSEN: 0-PROM 1-EEPROM COPY 1 2- EEPROM COPY 2 3-EEPROM COPY 3 4-TRIPLE VOTE Conversion: STATES - [lo:hi]=state description: [0:0]=PROM [1:1]=EEPROM 1 [2:2]=EEPROM 2 [3:3]=EEPROM 3 [4:4]=TRIPLE VOTE [5:5]=INVALID Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 37 Bit Offset within Byte of ApID packet: 2 Bit Length within ApID packet: 3 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>TABLE_AREA</name>
+                    <field_number>53</field_number>
+                    <field_location unit="byte">66</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.TABLE General Description: Table area chosen Extended Description: TABLE AREA CHOSEN: 0-NONE 1-EEPROM COPY 1 2- EEPROM COPY 2 3-EEPROM COPY 3 4-TRIPLE VOTE Conversion: STATES - [lo:hi]=state description: [0:0]=NONE [1:1]=EEPROM 1 [2:2]=EEPROM 2 [3:3]=EEPROM 3 [4:4]=TRIPLE VOTE [5:5]=INVALID Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 37 Bit Offset within Byte of ApID packet: 5 Bit Length within ApID packet: 3 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>MVIC_VRD</name>
+                    <field_number>54</field_number>
+                    <field_location unit="byte">67</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>DN</unit>
+                    <description>Full Mnemonic: RALPH_HK.MVIC_VRD General Description: Reset Drain Bias Reading Extended Description: RESET DRAIN BIAS READING Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.196863 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 38 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>MVIC_VOD</name>
+                    <field_number>55</field_number>
+                    <field_location unit="byte">69</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>DN</unit>
+                    <description>Full Mnemonic: RALPH_HK.MVIC_VOD General Description: Output Drain Bias Reading Extended Description: OUTPUT DRAIN BIAS READING Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.290015 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 39 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>MVIC_VOG</name>
+                    <field_number>56</field_number>
+                    <field_location unit="byte">71</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>DN</unit>
+                    <description>Full Mnemonic: RALPH_HK.MVIC_VOG General Description: Output Gate Bias Reading Extended Description: OUTPUT GATE BIAS READING Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.0234375 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 40 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>MVIC_BSPAR</name>
+                    <field_number>57</field_number>
+                    <field_location unit="byte">73</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>DN</unit>
+                    <description>Full Mnemonic: RALPH_HK.MVIC_BSPAR General Description: Bias Spare Extended Description: BIAS SPARE Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.0234375 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 41 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_VRST</name>
+                    <field_number>58</field_number>
+                    <field_location unit="byte">75</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_VRST General Description: VRESET Bias Extended Description: VRESET BIAS Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.0234375 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 42 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_VDDA</name>
+                    <field_number>59</field_number>
+                    <field_location unit="byte">77</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_VDDA General Description: VDDA Bias Extended Description: VDDA BIAS Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.05856078 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 43 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_DSUB</name>
+                    <field_number>60</field_number>
+                    <field_location unit="byte">79</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_DSUB General Description: Substrate Extended Description: SUBSTRATE Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.0234375 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 44 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_GATE</name>
+                    <field_number>61</field_number>
+                    <field_location unit="byte">81</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_GATE General Description: Bias Gate Extended Description: BIAS GATE Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.041 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 45 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_BSPAR</name>
+                    <field_number>62</field_number>
+                    <field_location unit="byte">83</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <unit>volt</unit>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_BSPAR General Description: Bias Spare Extended Description: Monitor for LEISA DAC #1 setting Conversion: polynomial coefficients: Order 0: 0 Order 1: -0.0234375 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 46 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: V Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>RPT_SHFTRTE</name>
+                    <field_number>63</field_number>
+                    <field_location unit="byte">85</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>2147483648</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.RPT_SHFTRTE General Description: Reported shift rate Extended Description: REPORTED SHIFT RATE FROM THE S/C TIME MESSAGE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 47 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 32 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>SHFTRTE_OFF</name>
+                    <field_number>64</field_number>
+                    <field_location unit="byte">89</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>2147483648</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.SHFTRTE_OFF General Description: Shift rate offset used Extended Description: SHIFT RATE OFFSET USED Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 51 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 32 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>OBS_TABLE</name>
+                    <field_number>65</field_number>
+                    <field_location unit="byte">93</field_location>
+                    <data_type>UnsignedByte</data_type>
+                    <field_length unit="byte">1</field_length>
+                    <description>Full Mnemonic: RALPH_HK.OBS_TABLE General Description: Observation table number Extended Description: OBSERVATION TABLE NUMBER Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 55 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_OFF1</name>
+                    <field_number>66</field_number>
+                    <field_location unit="byte">94</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>32768</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_OFF1 General Description: LEISA Offset 1 commanded value Extended Description: LEISA OFFSET 1 COMMANDED VALUE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 56 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 16 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_OFF2</name>
+                    <field_number>67</field_number>
+                    <field_location unit="byte">96</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>32768</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_OFF2 General Description: LEISA Offset 2 commanded value Extended Description: LEISA OFFSET 2 COMMANDED VALUE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 58 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 16 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_OFF3</name>
+                    <field_number>68</field_number>
+                    <field_location unit="byte">98</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>32768</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_OFF3 General Description: LEISA Offset 3 commanded value Extended Description: LEISA OFFSET 3 COMMANDED VALUE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 60 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 16 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>LEISA_OFF4</name>
+                    <field_number>69</field_number>
+                    <field_location unit="byte">100</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>32768</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.LEISA_OFF4 General Description: LEISA Offset 4 commanded value Extended Description: LEISA OFFSET 4 COMMANDED VALUE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 62 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 16 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>CDH_THERM</name>
+                    <field_number>70</field_number>
+                    <field_location unit="byte">102</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <description>Full Mnemonic: RALPH_HK.CDH_THERM General Description: C&amp;amp;DH Thermistor value Extended Description: C&amp;amp;DH THERMISTOR Conversion: polynomial coefficients: Order 0: -56.773 Order 1: -1.6372 Order 2: -0.0173 Order 3: -0.0001 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 64 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>DE_SPARE_50</name>
+                    <field_number>71</field_number>
+                    <field_location unit="byte">104</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <description>Full Mnemonic: RALPH_HK.DE_SPARE_50 General Description: DE spare 0 Extended Description: DE SPARE PIN 50 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 65 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>DE_SPARE_51</name>
+                    <field_number>72</field_number>
+                    <field_location unit="byte">106</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <description>Full Mnemonic: RALPH_HK.DE_SPARE_51 General Description: DE spare 1 Extended Description: DE SPARE PIN 51 Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 66 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>ANA_GRND</name>
+                    <field_number>73</field_number>
+                    <field_location unit="byte">108</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <description>Full Mnemonic: RALPH_HK.ANA_GRND General Description: analog ground monitor Extended Description: Analog ground monitor Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 67 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: SIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>CHECKSUM</name>
+                    <field_number>74</field_number>
+                    <field_location unit="byte">110</field_location>
+                    <data_type>SignedMSB2</data_type>
+                    <field_length unit="byte">2</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>32768</value_offset>
+                    <description>Full Mnemonic: RALPH_HK.CHECKSUM General Description: XOR check Extended Description: XOR CHECK OF CURRENT HOUSEKEEPING IMAGE Subsystem: RALPH Packet ApID: 0X500 Byte Offset within ApID packet: 68 Bit Offset within Byte of ApID packet: 0 Bit Length within ApID packet: 8 Type of value: UNSIGNED Units: N/A Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>CalcChecksum</name>
+                    <field_number>75</field_number>
+                    <field_location unit="byte">112</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <scaling_factor>1</scaling_factor>
+                    <value_offset>2147483648</value_offset>
+                    <description>XOR checksum calculated by pipeline from data Additional information from science team: - Present for engineering and historical purposes - Neither useful for science analysis nor used for calibration</description>
+                </Field_Binary>
+            </Record_Binary>
+        </Table_Binary>
+        <Header>
+            <offset unit="byte">6609600</offset>
+            <object_length unit="byte">2880</object_length>
+            <parsing_standard_id>FITS 4.0</parsing_standard_id>
+        </Header>
+        <Table_Binary>
+            <name>Window Mismatches</name>
+            <offset unit="byte">6612480</offset>
+            <records>1</records>
+            <Record_Binary>
+                <fields>10</fields>
+                <groups>0</groups>
+                <record_length unit="byte">57</record_length>
+                <Field_Binary>
+                    <name>MMNAXIS1OFFSET</name>
+                    <field_number>1</field_number>
+                    <field_location unit="byte">1</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <description>Image window mismatch axis</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>MMNAXIS2OFFSET</name>
+                    <field_number>2</field_number>
+                    <field_location unit="byte">5</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <description>Image window mismatch axis</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>DELTA</name>
+                    <field_number>3</field_number>
+                    <field_location unit="byte">9</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <description>The offset of the pixel value mismatch, from the previous pixel value to the replacement pixel value. N.B. will be zero for row that has provenance only.</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>WINDOWX</name>
+                    <field_number>4</field_number>
+                    <field_location unit="byte">13</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <description>NAXIS1 (LINE_SAMPLES) pixel offset to merged window. Describes the location of the merged window. One of compression parameters X_1 to X_8. First parameter of the merged window key.</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>WINDOWY</name>
+                    <field_number>5</field_number>
+                    <field_location unit="byte">17</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <description>NAXIS2 (LINES) pixel offset to merged window. Describes the location of the merged window. One of compression parameters Y_1 to Y_8. First parameter of the merged window key.</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>WINDOWW</name>
+                    <field_number>6</field_number>
+                    <field_location unit="byte">21</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <description>NAXIS1 (LINE_SAMPLES) pixel width of merged window. Describes the size of the merged window. One of compression parameters X1_len to X8_len. Third parameter of the merged window key.</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>WINDOWH</name>
+                    <field_number>7</field_number>
+                    <field_location unit="byte">25</field_location>
+                    <data_type>SignedMSB4</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <description>NAXIS2 (LINES) height pixel of merged window. Describes the size of the merged window. One of compression parameters Y1_len to Y8_len. Fourth parameter of the merged window key.</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>APID</name>
+                    <field_number>8</field_number>
+                    <field_location unit="byte">29</field_location>
+                    <data_type>ASCII_String</data_type>
+                    <field_length unit="byte">5</field_length>
+                    <description>Application Process ID of packets that were combined to create the merged window, in hexadecimal form e.g. 0x53f. Fifth parameter of the merged window key.</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>GRT</name>
+                    <field_number>9</field_number>
+                    <field_location unit="byte">34</field_location>
+                    <data_type>IEEE754MSBSingle</data_type>
+                    <field_length unit="byte">4</field_length>
+                    <description>Ground Receipt time of first packet of those combined to create the merged window. The value is only used here as part of the merged window key, but its meaning is roughly the number of fractional days since 1958-01-01T12:00:00. Sixth parameter of the merged window key.</description>
+                </Field_Binary>
+                <Field_Binary>
+                    <name>ARCHDATE</name>
+                    <field_number>10</field_number>
+                    <field_location unit="byte">38</field_location>
+                    <data_type>ASCII_String</data_type>
+                    <field_length unit="byte">20</field_length>
+                    <description>Date of the archive telementry file that contained  the first packet of those combined to create the merged window. The value is only used here as part of the merged window key, but its meaning is a combination of year and dsy of year, e.g. 2015/064. Related to the filename of the actual telemetry filename. Seventh parameter of the merged window key.</description>
+                </Field_Binary>
+            </Record_Binary>
+        </Table_Binary>
+    </File_Area_Observational>
+</Product_Observational>

@@ -89,6 +89,18 @@ class SearchImpl implements Search {
     return this;
   }
   @Override
+  public Search buildListLddsNoCache(String namespace) {
+    BoolQuery.Builder journeyman = new BoolQuery.Builder()
+        .must(this.matchQuery("class_ns", "registry").build(),
+            this.matchQuery("class_name", "LDD_Info").build(),
+            this.matchQuery("attr_ns", namespace).build());
+    this.craftsman.query(new Query.Builder().bool(journeyman.build()).build());
+    this.craftsman.requestCache(false);
+    this.craftsman.size(1000); // have no idea why hardcoded but it is (.es.JsonHelper:265
+    this.craftsman.source(new SourceConfig.Builder().filter(new SourceFilter.Builder().includes("date", "attr_name").build()).build());
+    return this;
+  }
+  @Override
   public Search buildTheseIds(Collection<String> lids) {
     this.buildIds(lids, false);
     return this;

@@ -44,4 +44,9 @@ class MGetImpl implements MGet {
     this.craftsman.ids(new ArrayList<String>(ids));
     return this;
   }
+  @Override
+  public MGet setRefresh(boolean refresh) {
+    this.craftsman.refresh(refresh);
+    return this;
+  }
 }
