@@ -9,6 +9,7 @@
 - Detect and remove stale LDD sentinel records across all node registry indexes [\#89](https://github.com/NASA-PDS/registry-loader/issues/89) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - LDD fields silently not loaded when PDS4 LDD JSON uses older tooling-generated association format [\#88](https://github.com/NASA-PDS/registry-loader/issues/88) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Incomplete LDD load permanently blocked by stale sentinel record in data dictionary index [\#87](https://github.com/NASA-PDS/registry-loader/issues/87) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- Harvest fails when PDS4 label contains empty class definitions [\#86](https://github.com/NASA-PDS/registry-loader/issues/86) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - AOSS propagation race: LDD re-downloaded and fields fail to resolve immediately after bulk load into -dd index [\#81](https://github.com/NASA-PDS/registry-loader/issues/81) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - LDD JSON parser fails to resolve field data types across IM versions due to format changes [\#80](https://github.com/NASA-PDS/registry-loader/issues/80) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 
