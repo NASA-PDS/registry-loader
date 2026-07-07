@@ -109,12 +109,12 @@ public class RestClientWrapper implements RestClient {
             );
         client.info();
       } catch (IOException | OpenSearchException e) {
-        if (e.getMessage().contains("Credential should be scoped to correct service:")) {
+        if (e.getMessage() != null && e.getMessage().contains("Credential should be scoped to correct service:")) {
           int first = e.getMessage().indexOf("'") + 1;
           int last = e.getMessage().lastIndexOf("'");
-          String scop = e.getMessage().substring(first, last);
-          if (!this.scope.equalsIgnoreCase(scop)) {
-            this.scope = scop;
+          String scope = (first > 0 && last > first) ? e.getMessage().substring(first, last) : this.scope;
+          if (!this.scope.equalsIgnoreCase(scope)) {
+            this.scope = scope;
             return buildClient();
           }
         }
