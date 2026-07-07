@@ -36,14 +36,14 @@ jobs:
         steps:
             -
                 name: 💳 Checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v7
                 with:
                     lfs: true
                     fetch-depth: 0
                     token: ${{secrets.ADMIN_GITHUB_TOKEN}}
             -
                 name: 💵 Maven Cache
-                uses: actions/cache@v3
+                uses: actions/cache@v6
                 with:
                     path: ~/.m2/repository
                     # The "key" used to indicate a set of cached files is the operating system runner
@@ -81,13 +81,13 @@ jobs:
                     echo "manager_package=$manager_package" >> $GITHUB_OUTPUT
             -
                 name: 🎰 QEMU Multiple Machine Emulation
-                uses: docker/setup-qemu-action@v3
+                uses: docker/setup-qemu-action@v4
             -
                 name: 🚢 Docker Buildx
-                uses: docker/setup-buildx-action@v3
+                uses: docker/setup-buildx-action@v4
             -
                 name: 🧱 Image Construction and Publication
-                uses: docker/build-push-action@v6
+                uses: docker/build-push-action@v7
                 with:
                     context: ./
                     file: ./docker/Dockerfile
