@@ -57,7 +57,7 @@ public class RestClientWrapper implements RestClient {
               catch (InterruptedException ie) { throw new RuntimeException ("How did this happen??", ie); }
               client = buildClient();
             } else {
-              log.error ("Tried " + retry_limit + " to re-establish connection but cannot.");
+              log.error ("Tried {} to re-establish connection but cannot.", retry_limit);
               throw ose;
             }
           } else if (ose.response().status() == 429) {
@@ -73,8 +73,7 @@ public class RestClientWrapper implements RestClient {
               retries++;
             }
           } else {
-            LogManager.getLogger(this.getClass()).error("OSE message: " + ose.getMessage() +
-                "{ status code = " + ose.status() + " }");
+            LogManager.getLogger(this.getClass()).error("OSE message: {} <status code = {}>", ose.getMessage(), ose.status());
             throw ose;
           }
         }
@@ -112,9 +111,9 @@ public class RestClientWrapper implements RestClient {
         if (e.getMessage() != null && e.getMessage().contains("Credential should be scoped to correct service:")) {
           int first = e.getMessage().indexOf("'") + 1;
           int last = e.getMessage().lastIndexOf("'");
-          String scope = (first > 0 && last > first) ? e.getMessage().substring(first, last) : this.scope;
-          if (!this.scope.equalsIgnoreCase(scope)) {
-            this.scope = scope;
+          String newscope = (first > 0 && last > first) ? e.getMessage().substring(first, last) : this.scope;
+          if (!this.scope.equalsIgnoreCase(newscope)) {
+            this.scope = newscope;
             return buildClient();
           }
         }
