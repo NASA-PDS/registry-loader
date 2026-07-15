@@ -1,6 +1,6 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-07-07)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-07-15)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.3.0...«unknown»)
 
@@ -10,8 +10,13 @@
 - LDD fields silently not loaded when PDS4 LDD JSON uses older tooling-generated association format [\#88](https://github.com/NASA-PDS/registry-loader/issues/88) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Incomplete LDD load permanently blocked by stale sentinel record in data dictionary index [\#87](https://github.com/NASA-PDS/registry-loader/issues/87) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Harvest fails when PDS4 label contains empty class definitions [\#86](https://github.com/NASA-PDS/registry-loader/issues/86) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- harvest 5.1.2 is failing where harvest 5.00 works [\#85](https://github.com/NASA-PDS/registry-loader/issues/85) [[s.critical](https://github.com/NASA-PDS/registry-loader/labels/s.critical)]
 - AOSS propagation race: LDD re-downloaded and fields fail to resolve immediately after bulk load into -dd index [\#81](https://github.com/NASA-PDS/registry-loader/issues/81) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - LDD JSON parser fails to resolve field data types across IM versions due to format changes [\#80](https://github.com/NASA-PDS/registry-loader/issues/80) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+
+**Other closed issues:**
+
+- harvest structured complains about the version [\#48](https://github.com/NASA-PDS/registry-loader/issues/48)
 
 ## [v1.3.0](https://github.com/NASA-PDS/registry-loader/tree/v1.3.0) (2026-06-23)
 
