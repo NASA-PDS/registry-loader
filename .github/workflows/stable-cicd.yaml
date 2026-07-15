@@ -102,11 +102,22 @@ jobs:
                 name: Fix issue with QEMU
                 run: docker container run --rm --privileged multiarch/qemu-user-static --reset -p yes -c yes
             -
-                name: 🧱 Image Construction and Publication
+                name: 🧱 Lite Image Construction and Publication
                 uses: docker/build-push-action@v7
                 with:
                     context: .
                     file: ./docker/Dockerfile
+                    target: lite
+                    platforms: linux/amd64,linux/arm64
+                    push: true
+                    tags: ${{secrets.DOCKERHUB_USERNAME}}/registry-loader-lite:${{steps.tagger.outputs.image_tag}}
+            -
+                name: 🧱 Full Image Construction and Publication
+                uses: docker/build-push-action@v7
+                with:
+                    context: .
+                    file: ./docker/Dockerfile
+                    target: full
                     platforms: linux/amd64,linux/arm64
                     push: true
                     tags: ${{secrets.DOCKERHUB_USERNAME}}/registry-loader:${{steps.tagger.outputs.image_tag}}
