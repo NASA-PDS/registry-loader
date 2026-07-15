@@ -30,8 +30,8 @@
 
 FROM eclipse-temurin:25-jdk-jammy AS base
 
-ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.1.2/harvest-5.1.2-bin.tar.gz
-ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.1.2/registry-manager-6.1.2-bin.tar.gz
+ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.1.2/harvest-5.1.3-bin.tar.gz
+ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.1.2/registry-manager-6.1.3-bin.tar.gz
 
 RUN apt-get update -y
 RUN apt-get install curl -y
@@ -39,6 +39,12 @@ RUN apt-get install curl -y
 RUN mkdir /app
 RUN curl -L "$harvest_package_path" -o /app/harvest.tar.gz && tar -xzf /app/harvest.tar.gz -C /app && rm /app/harvest.tar.gz
 RUN curl -L "$reg_manager_package_path" -o /app/registry-manager.tar.gz && tar -xzf /app/registry-manager.tar.gz -C /app && rm /app/registry-manager.tar.gz
+# commented out, this is used for local/manual builds, where the tar.gz files are already downloaded and available in the docker folder
+#COPY ./docker/harvest-5.1.3-bin.tar.gz /app/harvest.tar.gz
+#COPY ./docker/registry-manager-6.1.3-bin.tar.gz /app/registry-manager.tar.gz
+#RUN tar -xzf /app/harvest.tar.gz -C /app && rm /app/harvest.tar.gz
+#RUN tar -xzf /app/registry-manager.tar.gz -C /app && rm /app/registry-manager.tar.gz
+
 
 RUN ln -s /app/harvest-* /app/harvest
 ENV PATH="$PATH:/app/harvest/bin"
