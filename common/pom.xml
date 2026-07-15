@@ -83,7 +83,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20250517</version>
+            <version>20260522</version>
         </dependency>
         <!-- Log4j logger -->
         <dependency>
