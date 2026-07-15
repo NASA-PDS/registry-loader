@@ -1,8 +1,21 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-06-12)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-07-07)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...«unknown»)
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.3.0...«unknown»)
+
+**Defects:**
+
+- Detect and remove stale LDD sentinel records across all node registry indexes [\#89](https://github.com/NASA-PDS/registry-loader/issues/89) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- LDD fields silently not loaded when PDS4 LDD JSON uses older tooling-generated association format [\#88](https://github.com/NASA-PDS/registry-loader/issues/88) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- Incomplete LDD load permanently blocked by stale sentinel record in data dictionary index [\#87](https://github.com/NASA-PDS/registry-loader/issues/87) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- Harvest fails when PDS4 label contains empty class definitions [\#86](https://github.com/NASA-PDS/registry-loader/issues/86) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- AOSS propagation race: LDD re-downloaded and fields fail to resolve immediately after bulk load into -dd index [\#81](https://github.com/NASA-PDS/registry-loader/issues/81) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- LDD JSON parser fails to resolve field data types across IM versions due to format changes [\#80](https://github.com/NASA-PDS/registry-loader/issues/80) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+
+## [v1.3.0](https://github.com/NASA-PDS/registry-loader/tree/v1.3.0) (2026-06-23)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.2.4...v1.3.0)
 
 **Requirements:**
 
@@ -16,6 +29,7 @@
 
 **Defects:**
 
+- Harvest does not download LDD on Windows: temp file creation fails with 'The system cannot find the path specified' [\#77](https://github.com/NASA-PDS/registry-loader/issues/77) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Force flag discards found field types when any attribute type is unresolvable [\#75](https://github.com/NASA-PDS/registry-loader/issues/75)
 - ops: namespace fields missing from data type resolution, causing DataTypeNotFoundException [\#68](https://github.com/NASA-PDS/registry-loader/issues/68) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Harvest does not detect uppercase file extensions for labels, nor report errors for those missing products [\#52](https://github.com/NASA-PDS/registry-loader/issues/52) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]

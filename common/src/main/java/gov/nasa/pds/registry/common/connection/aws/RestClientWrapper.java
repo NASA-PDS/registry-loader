@@ -57,7 +57,7 @@ public class RestClientWrapper implements RestClient {
               catch (InterruptedException ie) { throw new RuntimeException ("How did this happen??", ie); }
               client = buildClient();
             } else {
-              log.error ("Tried " + retry_limit + " to re-establish connection but cannot.");
+              log.error ("Tried {} to re-establish connection but cannot.", retry_limit);
               throw ose;
             }
           } else if (ose.response().status() == 429) {
@@ -73,8 +73,7 @@ public class RestClientWrapper implements RestClient {
               retries++;
             }
           } else {
-            LogManager.getLogger(this.getClass()).error("OSE message: " + ose.getMessage() +
-                "{ status code = " + ose.status() + " }");
+            LogManager.getLogger(this.getClass()).error("OSE message: {} <status code = {}>", ose.getMessage(), ose.status());
             throw ose;
           }
         }
@@ -86,6 +85,7 @@ public class RestClientWrapper implements RestClient {
   final private Logger log;
   final private SdkHttpClient httpClient;
   private OpenSearchClient client;
+  private String scope = "aoss";
   public RestClientWrapper(ConnectionFactory conFact, boolean isServerless) {
     this.conFact = conFact;
     this.httpClient = ApacheHttpClient.builder().socketTimeout(Duration.ofHours(2)).build();
@@ -96,15 +96,29 @@ public class RestClientWrapper implements RestClient {
   private OpenSearchClient buildClient() {
     OpenSearchClient client = null;
     if (isServerless) {
-      client = new OpenSearchClient(
-          new AwsSdk2Transport(
-              this.httpClient,
-              this.conFact.getHostName(),
-              "aoss",
-              Region.US_WEST_2, // signing service region that we should probably get from host name??
-              AwsSdk2TransportOptions.builder().build()
-              )
-          );
+      try {
+        client = new OpenSearchClient(
+            new AwsSdk2Transport(
+                this.httpClient,
+                this.conFact.getHostName(),
+                this.scope,
+                Region.US_WEST_2, // signing service region that we should probably get from host name??
+                AwsSdk2TransportOptions.builder().build()
+                )
+            );
+        client.info();
+      } catch (IOException | OpenSearchException e) {
+        if (e.getMessage() != null && e.getMessage().contains("Credential should be scoped to correct service:")) {
+          int first = e.getMessage().indexOf("'") + 1;
+          int last = e.getMessage().lastIndexOf("'");
+          String newscope = (first > 0 && last > first) ? e.getMessage().substring(first, last) : this.scope;
+          if (!this.scope.equalsIgnoreCase(newscope)) {
+            this.scope = newscope;
+            return buildClient();
+          }
+        }
+        throw new RuntimeException("Failed to connect to AWS", e);
+      }
     } else {
       try {
         SSLContext sslcontext = SSLContextBuilder
