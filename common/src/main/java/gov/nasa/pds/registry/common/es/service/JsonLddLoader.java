@@ -156,11 +156,13 @@ public class JsonLddLoader {
       }
       loader.loadFile(tempEsDataFile);
 
-      // Wait until the LDD_Info sentinel is visible via search (confirms bulk load completed).
+      // Wait until the newly loaded LDD file is visible in the LDD_Info sentinel (confirms
+      // bulk load completed). Checking v.files.contains(lddFileName) rather than !v.isEmpty()
+      // prevents a false pass when prior LDDs for the same namespace are already indexed.
       LddVersions info = SearchIndexWait.untilReady(SearchIndexWait.DEFAULT_WAIT_SECONDS,
           () -> { try { return dao.getLddInfoNoCache(namespace); } catch (IOException e) { throw e; } catch (Exception e) { throw new IOException(e); } },
-          v -> !v.isEmpty(), log, "LDD sentinel for namespace " + namespace);
-      if (info.isEmpty()) {
+          v -> v.files.contains(lddFileName), log, "LDD sentinel for namespace " + namespace);
+      if (info.isEmpty() || !info.files.contains(lddFileName)) {
         log.warn("LDD {} not indexed after {} seconds. It may be indexed later, but there may be a delay in loading other LDDs for this namespace.",
             namespace, SearchIndexWait.DEFAULT_WAIT_SECONDS);
         return false;

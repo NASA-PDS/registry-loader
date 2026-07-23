@@ -34,7 +34,7 @@ class GetImpl implements MGet {
   }
   @Override
   public Get setId(String id) {
-    this.setId(id);
+    this.id = id;
     return this;
   }
   @Override
@@ -49,7 +49,7 @@ class GetImpl implements MGet {
   }
   @Override
   public Get setIndex(String index) {
-    this.setIndex(index);
+    this.index = index;
     return this;
   }
   @Override
