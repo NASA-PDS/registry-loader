@@ -188,6 +188,10 @@ public final class UseOpensearchSDK2 implements ConnectionFactory {
     return this.veryTrusting;
   }
   @Override
+  public boolean isServerless() {
+    return this.isServerless;
+  }
+  @Override
   public ConnectionFactory setIndexName(String idxName) {
     this.index = idxName;
     return this;

@@ -34,7 +34,7 @@ class GetImpl implements MGet {
   }
   @Override
   public Get setId(String id) {
-    this.setId(id);
+    this.id = id;
     return this;
   }
   @Override
@@ -43,8 +43,13 @@ class GetImpl implements MGet {
     return this;
   }
   @Override
+  public MGet setRefresh(boolean refresh) {
+    // no-op: SDK1 ES client does not use this path for AOSS eventual consistency
+    return this;
+  }
+  @Override
   public Get setIndex(String index) {
-    this.setIndex(index);
+    this.index = index;
     return this;
   }
   @Override

@@ -41,6 +41,7 @@ public interface Request {
   }
   public interface MGet extends Get { // _mget
     public MGet setIds (Collection<String> ids);
+    public MGet setRefresh (boolean refresh);
   }
   public interface Search { // _search
     public Search all(String sortField, int size, String searchAfter);
@@ -52,6 +53,7 @@ public interface Request {
     public Search buildLidvidsFromTermQuery (String fieldname, String value);
     public Search buildListFields(String dataType);
     public Search buildListLdds (String namespace);
+    public Search buildListLddsNoCache (String namespace);
     public Search buildTermQuery (String fieldname, String value);
     public Search buildTermQueryWithoutTermQuery (String yesFieldname, String yesValue, String noFieldname, String noValue);
     public Search buildTheseIds(Collection<String> lids);
