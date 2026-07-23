@@ -1,8 +1,17 @@
 # Changelog
 
-## [release/1.3.2](https://github.com/NASA-PDS/registry-loader/tree/release/1.3.2) (2026-07-15)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-07-23)
 
-[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.3.1...release/1.3.2)
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.3.2...«unknown»)
+
+**Defects:**
+
+- LDD\_Info sentinel written for partial load blocks future re-download of missing fields [\#122](https://github.com/NASA-PDS/registry-loader/issues/122) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- Harvest cannot find datatypes for pds namespace [\#105](https://github.com/NASA-PDS/registry-loader/issues/105) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+
+## [v1.3.2](https://github.com/NASA-PDS/registry-loader/tree/v1.3.2) (2026-07-15)
+
+[Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.3.1...v1.3.2)
 
 ## [v1.3.1](https://github.com/NASA-PDS/registry-loader/tree/v1.3.1) (2026-07-15)
 
