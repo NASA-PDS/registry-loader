@@ -104,7 +104,7 @@ public class SchemaUpdater
                 catch(Exception ex)
                 {
                     log.warn("Could not update LDD for namespace '{}' at URI {}: {}. Harvesting will continue with available field definitions.",
-                        prefix, uri, ex.getMessage());
+                        prefix, uri, ex.getMessage(), ex);
                 }
             }
         }
@@ -301,7 +301,8 @@ public class SchemaUpdater
         }
         else
         {
-            log.warn("Will use previously loaded field definitions for namespace '{}' from {}.", prefix, lddInfo.files);
+            log.warn("Will use previously loaded field definitions for namespace '{}' from {}.",
+                prefix, lddInfo.files);
         }
     }
 

@@ -242,10 +242,21 @@ public class JsonLddLoader {
 
     // If this LDD date is after the last stored in Elasticsearch, overwrite old records
     boolean overwrite = overwriteLdd(lastDate, attrParser.getLddDate());
-    if (!overwrite && !lastDate.equals(Instant.parse("1965-01-01T00:00:00.000Z"))) {
-      log.info("LDD {} (dated {}) is not newer than the version already loaded in the registry (dated {})."
-          + " Existing field definitions for namespace '{}' will be used.",
-          lddFileName, attrParser.getLddDate(), lastDate, namespace);
+    if (!overwrite && !lastDate.equals(LddVersions.DEFAULT_LAST_DATE)) {
+      // Only log "not newer" when the date was parseable — overwriteLdd() returns false on
+      // parse failure too, but in that case it already logged a warn about the bad date string.
+      boolean dateWasParseable;
+      try {
+        LddUtils.lddDateToIsoInstant(attrParser.getLddDate());
+        dateWasParseable = true;
+      } catch (Exception ex) {
+        dateWasParseable = false;
+      }
+      if (dateWasParseable) {
+        log.debug("LDD {} (dated {}) is not newer than the version already loaded in the registry (dated {})."
+            + " Existing field definitions for namespace '{}' will be used.",
+            lddFileName, attrParser.getLddDate(), lastDate, namespace);
+      }
     }
 
     // Create a writer to save LDD data in Elasticsearch JSON data file

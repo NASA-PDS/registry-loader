@@ -207,9 +207,10 @@ public class DataLoader
             totalRecords += uploaded;
             
             if (uploaded != numRecords) {
-              // uploaded counts only truly failed docs (non-409 errors); 409 Conflict means the
-              // document already exists in the index (acceptable for LDD create-idempotent loads)
-              // and is not included in this count.  A shortfall here means real write failures.
+              // When ignoreConflicts=true, 409s are not counted as errors so uploaded==numRecords
+              // and this branch is not reached.  When ignoreConflicts=false (default, product
+              // ingestion), 409s ARE counted as failures, so a shortfall here means real write
+              // failures that should be investigated.
               throw new Exception(
                   "Failed to upload " + (numRecords - uploaded) + "/" + numRecords + " documents to index '"
                       + conFactory.getIndexName() + "'. Check ERROR lines above for per-document reasons.");
