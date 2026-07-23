@@ -50,6 +50,7 @@ public class JsonLddLoader {
     dtMap = new Pds2EsDataTypeMap();
 
     loader = new DataLoader(conFact.clone().setIndexName(conFact.getIndexName() + "-dd"));
+    loader.setIgnoreConflicts(true);
     this.dao = dao;
   }
 
@@ -241,6 +242,11 @@ public class JsonLddLoader {
 
     // If this LDD date is after the last stored in Elasticsearch, overwrite old records
     boolean overwrite = overwriteLdd(lastDate, attrParser.getLddDate());
+    if (!overwrite && !lastDate.equals(Instant.parse("1965-01-01T00:00:00.000Z"))) {
+      log.info("LDD {} (dated {}) is not newer than the version already loaded in the registry (dated {})."
+          + " Existing field definitions for namespace '{}' will be used.",
+          lddFileName, attrParser.getLddDate(), lastDate, namespace);
+    }
 
     // Create a writer to save LDD data in Elasticsearch JSON data file
     LddEsJsonWriter writer = new LddEsJsonWriter(tempEsFile, dtMap, ddAttrCache, overwrite);
