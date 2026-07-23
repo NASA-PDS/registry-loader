@@ -13,7 +13,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class LddVersions
 {
-    private static final String DEFAULT_DATE = "1965-01-01T00:00:00.000Z";
+    public static final String DEFAULT_DATE = "1965-01-01T00:00:00.000Z";
+    public static final Instant DEFAULT_LAST_DATE = Instant.parse(DEFAULT_DATE);
     
     public Set<String> files;
     public Instant lastDate;
