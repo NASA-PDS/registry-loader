@@ -291,7 +291,7 @@ public class HarvestCmd implements CliCommand
         
         log.log(LogUtils.LEVEL_SUMMARY, "Label Failure: {} (database rejected label/product)", counter.failedFileCount);
         log.log(LogUtils.LEVEL_SUMMARY, "Label Ignored: {} (files that are not readable as label/product)", counter.ignoredFileCount);
-        log.log(LogUtils.LEVEL_SUMMARY, "Label Matched: {} (files that are not readable as label/product)", counter.matchedFileCount);
+        log.log(LogUtils.LEVEL_SUMMARY, "Label Matched: {} (batch rejected as duplicate lidvid)", counter.matchedFileCount);
         log.log(LogUtils.LEVEL_SUMMARY, "Label Skipped: {} (lidvids that already existed in database)", counter.skippedFileCount);
         log.log(LogUtils.LEVEL_SUMMARY, "Label Success: {} (database accepted label/product)", processedCount);
         
