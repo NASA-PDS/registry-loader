@@ -171,7 +171,7 @@ public class RegistryManagerCli
     {
         String verbosity = cmdLine.getOptionValue("v", "INFO");
         String logFile = cmdLine.getOptionValue("l", "/tmp/harvest/registry-manager.log");
-        Log4jConfigurator.configure(verbosity, logFile);
+        Log4jConfigurator.configure("manager", verbosity, logFile);
     }
     
 

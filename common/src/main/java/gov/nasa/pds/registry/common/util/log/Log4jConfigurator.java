@@ -26,12 +26,12 @@ public class Log4jConfigurator {
    * @param verbosity Log verbosity value: 0 = ALL, 1 = INFO, 2 = WARN, 3 = ERROR
    * @param filePath Log file path
    */
-  public static void configure(String verbosity, @Nonnull String filePath) {
+  public static void configure(String me, String verbosity, @Nonnull String filePath) {
     // Configure Log4j
     ConfigurationBuilder<BuiltConfiguration> cfg =
         ConfigurationBuilderFactory.newConfigurationBuilder();
     cfg.setStatusLevel(Level.ERROR);
-    cfg.setConfigurationName("Harvest");
+    cfg.setConfigurationName(me);
 
     // Appenders
     addConsoleAppender(cfg, "console");
@@ -43,7 +43,7 @@ public class Log4jConfigurator {
     rootLog.add(cfg.newAppenderRef("file"));
     cfg.add(rootLog);
 
-    // Default Harvest logger
+    // Default logger
     Level level = parseLogLevel(verbosity);
     LoggerComponentBuilder defLog = cfg.newLogger("gov.nasa.pds", level);
     cfg.add(defLog);

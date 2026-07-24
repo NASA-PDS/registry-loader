@@ -182,7 +182,7 @@ public class HarvestCli
     {
         String verbosity = cmdLine.getOptionValue("v", "INFO");
         String logFile = cmdLine.getOptionValue("l", "/tmp/harvest/harvest.log");
-        Log4jConfigurator.configure(verbosity, logFile);
+        Log4jConfigurator.configure("harvest", verbosity, logFile);
     }
 
     
