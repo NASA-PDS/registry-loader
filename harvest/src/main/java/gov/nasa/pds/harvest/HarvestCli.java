@@ -13,11 +13,11 @@ import org.apache.logging.log4j.Logger;
 
 import gov.nasa.pds.harvest.cmd.CliCommand;
 import gov.nasa.pds.harvest.cmd.HarvestCmd;
-import gov.nasa.pds.harvest.util.log.Log4jConfigurator;
 import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.ArchiveStatus;
 import gov.nasa.pds.registry.common.util.ExceptionUtils;
 import gov.nasa.pds.registry.common.util.ManifestUtils;
+import gov.nasa.pds.registry.common.util.log.Log4jConfigurator;
 
 
 /**
@@ -181,8 +181,7 @@ public class HarvestCli
     private static void initLogger(CommandLine cmdLine)
     {
         String verbosity = cmdLine.getOptionValue("v", "INFO");
-        String logFile = cmdLine.getOptionValue("l");
-
+        String logFile = cmdLine.getOptionValue("l", "/tmp/harvest/harvest.log");
         Log4jConfigurator.configure(verbosity, logFile);
     }
 

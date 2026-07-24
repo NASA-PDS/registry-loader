@@ -14,6 +14,7 @@ import org.apache.commons.cli.ParseException;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.util.ExceptionUtils;
 import gov.nasa.pds.registry.common.util.ManifestUtils;
+import gov.nasa.pds.registry.common.util.log.Log4jConfigurator;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.cmd.Known;
 import gov.nasa.pds.registry.mgr.cmd.data.DeleteDataCmd;
@@ -30,7 +31,6 @@ import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.FetchRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.KnownRegistryCmd;
-import gov.nasa.pds.registry.mgr.util.log.Log4jConfigurator;
 
 
 /**
@@ -170,8 +170,7 @@ public class RegistryManagerCli
     private static void initLogger(CommandLine cmdLine)
     {
         String verbosity = cmdLine.getOptionValue("v", "INFO");
-        String logFile = cmdLine.getOptionValue("l");
-
+        String logFile = cmdLine.getOptionValue("l", "/tmp/harvest/registry-manager.log");
         Log4jConfigurator.configure(verbosity, logFile);
     }
     

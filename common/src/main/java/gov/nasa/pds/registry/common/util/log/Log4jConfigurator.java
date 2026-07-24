@@ -1,7 +1,6 @@
-package gov.nasa.pds.harvest.util.log;
+package gov.nasa.pds.registry.common.util.log;
 
-import java.io.File;
-
+import javax.annotation.Nonnull;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -25,7 +24,7 @@ public class Log4jConfigurator
      * @param verbosity Log verbosity value: 0 = ALL, 1 = INFO, 2 = WARN, 3 = ERROR
      * @param filePath Log file path
      */
-    public static void configure(String verbosity, String filePath) 
+    public static void configure(String verbosity, @Nonnull String filePath) 
     {
         // Configure Log4j
         ConfigurationBuilder<BuiltConfiguration> cfg = ConfigurationBuilderFactory.newConfigurationBuilder();
@@ -61,16 +60,8 @@ public class Log4jConfigurator
     }
     
     
-    private static void addFileAppender(ConfigurationBuilder<BuiltConfiguration> cfg, String name, String filePath)
+    private static void addFileAppender(ConfigurationBuilder<BuiltConfiguration> cfg, String name, @Nonnull String filePath)
     {
-        // Use default log name if not provided
-        if(filePath == null)
-        {
-            File dir = new File("/tmp/harvest");
-            dir.mkdirs();
-            filePath = "/tmp/harvest/harvest.log";
-        }
-        
         AppenderComponentBuilder appender = cfg.newAppender(name, "FILE");
         appender.addAttribute("fileName", filePath);
         appender.addAttribute("append", false);
