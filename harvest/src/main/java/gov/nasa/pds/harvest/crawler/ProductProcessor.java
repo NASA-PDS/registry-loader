@@ -12,6 +12,7 @@ import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import gov.nasa.pds.registry.common.util.FieldMapSet;
+import gov.nasa.pds.registry.common.util.LogLevels;
 import org.w3c.dom.Document;
 import gov.nasa.pds.harvest.cfg.BundleType;
 import gov.nasa.pds.harvest.cfg.ConfigManager;
@@ -134,8 +135,8 @@ public class ProductProcessor extends BaseProcessor
             // Skip very large files
             if(file.length() > MAX_XML_FILE_LENGTH)
             {
-                log.warn("File is too big to parse: " + file.getAbsolutePath());
-                counter.skippedFileCount++;
+                log.log(LogLevels.LABEL_IGNORED,"File is too big to parse: {}", file.getAbsolutePath());
+                counter.ignoredFileCount++;
                 return;
             }
 
@@ -143,8 +144,8 @@ public class ProductProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.warn(ex.getMessage());
-            counter.failedFileCount++;
+            log.log(LogLevels.LABEL_IGNORED, "File {} is ignored because: {}", file.getAbsoluteFile(), ex.getMessage());
+            counter.ignoredFileCount++;
             return;
         }        
         
@@ -165,8 +166,8 @@ public class ProductProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.error(ex.getMessage());
-            counter.failedFileCount++;
+            log.log(LogLevels.LABEL_IGNORED, "Ignoring file {} because: {}", file.getAbsolutePath(), ex.getMessage());
+            counter.ignoredFileCount++;
         }        
     }
     

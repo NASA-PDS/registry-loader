@@ -289,8 +289,11 @@ public class HarvestCmd implements CliCommand
         log.log(LogUtils.LEVEL_SUMMARY, "Summary:");
         int processedCount = counter.prodCounters.getTotal();
         
-        log.log(LogUtils.LEVEL_SUMMARY, "Skipped files: " + counter.skippedFileCount);
-        log.log(LogUtils.LEVEL_SUMMARY, "Loaded files: " + processedCount);
+        log.log(LogUtils.LEVEL_SUMMARY, "Label Failure: {} (database rejected label/product)", counter.failedFileCount);
+        log.log(LogUtils.LEVEL_SUMMARY, "Label Ignored: {} (files that are not readable as label/product)", counter.ignoredFileCount);
+        log.log(LogUtils.LEVEL_SUMMARY, "Label Matched: {} (files that are not readable as label/product)", counter.matchedFileCount);
+        log.log(LogUtils.LEVEL_SUMMARY, "Label Skipped: {} (lidvids that already existed in database)", counter.skippedFileCount);
+        log.log(LogUtils.LEVEL_SUMMARY, "Label Success: {} (database accepted label/product)", processedCount);
         
         if(processedCount > 0)
         {
@@ -298,9 +301,7 @@ public class HarvestCmd implements CliCommand
             {
                 log.log(LogUtils.LEVEL_SUMMARY, "  " + item.name + ": " + item.count);
             }
-        }
-        
-        log.log(LogUtils.LEVEL_SUMMARY, "Failed files: " + counter.failedFileCount);
+        }        
         log.log(LogUtils.LEVEL_SUMMARY, "Package ID: " + PackageIdGenerator.getInstance().getPackageId());
     }
 

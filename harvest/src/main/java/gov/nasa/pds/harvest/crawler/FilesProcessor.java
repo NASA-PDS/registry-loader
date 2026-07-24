@@ -27,6 +27,7 @@ import gov.nasa.pds.registry.common.meta.CollectionMetadataExtractor;
 import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.common.util.FieldMapSet;
+import gov.nasa.pds.registry.common.util.LogLevels;
 import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
 
 
@@ -141,8 +142,8 @@ public class FilesProcessor extends BaseProcessor
             // Skip very large files
             if(file.length() > MAX_XML_FILE_LENGTH)
             {
-                log.warn("File is too big to parse: " + file.getAbsolutePath());
-                counter.skippedFileCount++;
+                log.log(LogLevels.LABEL_IGNORED, "File is too big to parse: {}", file.getAbsolutePath());
+                counter.ignoredFileCount++;
                 return;
             }
 
@@ -150,8 +151,8 @@ public class FilesProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.error(ex.getMessage());
-            counter.failedFileCount++;
+            log.log(LogLevels.LABEL_IGNORED, "File {} unreadable because {}", file.getAbsolutePath(), ex.getMessage());
+            counter.ignoredFileCount++;
             return;
         }        
         
@@ -169,8 +170,8 @@ public class FilesProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.error(ex.getMessage());
-            counter.failedFileCount++;
+            log.log(LogLevels.LABEL_IGNORED, "Could not process file {} because: ", file.getAbsoluteFile(), ex.getMessage());
+            counter.ignoredFileCount++;
         }        
     }
 

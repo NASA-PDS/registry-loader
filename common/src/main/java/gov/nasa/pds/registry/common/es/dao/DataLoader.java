@@ -22,6 +22,7 @@ import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.util.CloseUtils;
+import gov.nasa.pds.registry.common.util.LogLevels;
 
 
 /**
@@ -212,9 +213,9 @@ public class DataLoader
      * @return Number of loaded documents
      * @throws Exception an exception
      */
-    public int loadBatch(List<String> data, Set<String> errorLidvids) throws Exception
+    public int loadBatch(List<String> data, Set<String> errorLidvids, Set<String> matchedIds) throws Exception
     {
-        return loadBatch(data, errorLidvids, defaultRequestRetries);
+        return loadBatch(data, errorLidvids, matchedIds, defaultRequestRetries);
     }
 
     /**
@@ -225,7 +226,7 @@ public class DataLoader
      * @return Number of loaded documents
      * @throws Exception an exception
      */
-    public int loadBatch(List<String> data, Set<String> errorLidvids, int retries) throws Exception
+    public int loadBatch(List<String> data, Set<String> errorLidvids, Set<String> matchedIds, int retries) throws Exception
     {
         if(data == null || data.isEmpty()) return 0;
         if(data.size() % 2 != 0) throw new Exception("Data list size should be an even number.");
@@ -240,7 +241,7 @@ public class DataLoader
             queued += data.get(index).length() + data.get(index+1).length();
             queue.put(data.get(index), data.get(++index));
             if (queued > SIZE_THRESHOLD) {
-              failedCount += emptyQueue(queue, errorLidvids);
+              failedCount += emptyQueue(queue, errorLidvids, matchedIds);
               // Calculate number of successfully saved records
               // NOTE: data list has two lines per record (primary key + data)
               loadedCount += data.size() / 2 - failedCount;
@@ -248,7 +249,7 @@ public class DataLoader
             }
           }
           if (queued > 0) {
-            failedCount += emptyQueue(queue, errorLidvids);
+            failedCount += emptyQueue(queue, errorLidvids, matchedIds);
             // Calculate number of successfully saved records
             // NOTE: data list has two lines per record (primary key + data)
             loadedCount += data.size() / 2 - failedCount;
@@ -264,13 +265,13 @@ public class DataLoader
             if (retries > 0) {
                 String msg = ex.getMessage();
                 log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
-                return loadBatch(data, errorLidvids, retries - 1);
+                return loadBatch(data, errorLidvids, matchedIds, retries - 1);
             }
             throw ex;
         }
     }
 
-    private int emptyQueue (LinkedHashMap<String,String> todo, Set<String> errorLidvids) throws Exception {
+    private int emptyQueue (LinkedHashMap<String,String> todo, Set<String> errorLidvids, Set<String> matchedIds) throws Exception {
       int failed = 0;
       int retry = 0;
       while (!todo.isEmpty() && retry < MAX_RETRY) {
@@ -279,7 +280,7 @@ public class DataLoader
           bulk.add(item.getKey(), item.getValue());
         }
         Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
-        failed += processErrors (response, errorLidvids, todo, retry);
+        failed += processErrors (response, errorLidvids, matchedIds, todo, retry);
         retry++;
         
         if (!todo.isEmpty()) {
@@ -302,35 +303,39 @@ public class DataLoader
      */
     public int loadBatch(List<String> data) throws Exception
     {
-        return loadBatch(data, null);
+        return loadBatch(data, null, null);
     }
 
     private String asKey(Response.Bulk.Item item) {
       return "{\"" + item.operation()+"\":{\"_id\":\"" + item.id()+ "\"}}";
     }
-    private int processErrors(Response.Bulk resp, Set<String> errorLidvids, LinkedHashMap<String,String> todo, int retry) {
+    private int processErrors(Response.Bulk resp, Set<String> errorLidvids, Set<String> matchedIds, LinkedHashMap<String,String> todo, int retry) {
       int numErrors = 0;
 
       if (resp.errors()) {
         for (Response.Bulk.Item item : resp.items()) {
+          String sanitizedLidvid = item.id().replace('\r', ' ').replace('\n', ' ');  // protect vs log spoofing see code-scanning alert #37
           if (item.error()) {
             if (item.operation().equals("create") && item.status() == 409) { // already exists
+              log.log(LogLevels.LABEL_MATCHED, sanitizedLidvid);
               todo.remove(asKey(item));
               numErrors++;
+              if (matchedIds != null) matchedIds.add(item.id());
             } else {
               String message = item.reason();
-              String sanitizedLidvid = item.id().replace('\r', ' ').replace('\n', ' ');  // protect vs log spoofing see code-scanning alert #37
               String sanitizedMessage = message.replace('\r', ' ').replace('\n', ' '); // protect vs log spoofing
               
               if ((message.contains("[throttled]") || message.contains("[maximum OCU capacity reached]")) && retry < MAX_RETRY) continue;
               
-              log.error("LIDVID = " + sanitizedLidvid + ", Message = " + sanitizedMessage);
+              log.error("LIDVID = {}, Message = ", sanitizedLidvid, sanitizedMessage);
               numErrors++;
               todo.remove(asKey(item));
+              log.log(LogLevels.LABEL_FAILURE, sanitizedLidvid);
               if(errorLidvids != null) errorLidvids.add(item.id());            
             }
           } else {
             todo.remove(asKey(item));
+            log.log(LogLevels.LABEL_SUCCESS, sanitizedLidvid);
           }
         }
       } else {

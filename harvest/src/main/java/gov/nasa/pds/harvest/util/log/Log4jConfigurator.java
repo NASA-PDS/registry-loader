@@ -84,7 +84,7 @@ public class Log4jConfigurator
         // Logger is not setup yet. Print to console.
         if(verbosity == null)
         {
-            System.out.println("[WARN] Log verbosity is not set. Will use 'INFO'.");
+            System.out.println("[WARNING] Log verbosity is not set. Will use 'INFO'.");
             return Level.INFO;
         }
         
