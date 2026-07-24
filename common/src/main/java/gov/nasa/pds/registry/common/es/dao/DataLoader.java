@@ -263,8 +263,7 @@ public class DataLoader
         catch(IOException ex)
         {
             if (retries > 0) {
-                String msg = ex.getMessage();
-                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
+                log.warn("DataLoader.loadBatch() request failed ({} retries remaining) due to", retries, ex);
                 return loadBatch(data, errorLidvids, matchedIds, retries - 1);
             }
             throw ex;

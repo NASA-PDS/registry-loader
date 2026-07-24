@@ -151,7 +151,7 @@ public class FilesProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.log(LogLevels.LABEL_IGNORED, "File {} unreadable because {}", file.getAbsolutePath(), ex.getMessage());
+            log.log(LogLevels.LABEL_IGNORED, "File {} unreadable because ", file.getAbsolutePath(), ex);
             counter.ignoredFileCount++;
             return;
         }        
@@ -170,7 +170,7 @@ public class FilesProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.log(LogLevels.LABEL_IGNORED, "Could not process file {} because: ", file.getAbsoluteFile(), ex.getMessage());
+            log.log(LogLevels.LABEL_IGNORED, "Could not process file {} because: ", file.getAbsoluteFile(), ex);
             counter.ignoredFileCount++;
         }        
     }

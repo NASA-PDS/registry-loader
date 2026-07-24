@@ -144,7 +144,7 @@ public class ProductProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.log(LogLevels.LABEL_IGNORED, "File {} is ignored because: {}", file.getAbsoluteFile(), ex.getMessage());
+            log.log(LogLevels.LABEL_IGNORED, "File {} is ignored because: ", file.getAbsoluteFile(), ex);
             counter.ignoredFileCount++;
             return;
         }        
@@ -166,7 +166,7 @@ public class ProductProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.log(LogLevels.LABEL_IGNORED, "Ignoring file {} because: {}", file.getAbsolutePath(), ex.getMessage());
+            log.log(LogLevels.LABEL_IGNORED, "Ignoring file {} because: ", file.getAbsolutePath(), ex);
             counter.ignoredFileCount++;
         }        
     }
