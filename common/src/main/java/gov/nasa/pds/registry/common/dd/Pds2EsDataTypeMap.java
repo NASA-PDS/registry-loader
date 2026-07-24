@@ -140,13 +140,4 @@ public class Pds2EsDataTypeMap
             CloseUtils.close(rd);
         }
     }
-    
-    
-    /**
-     * Print all mappings
-     */
-    public void debug()
-    {
-        map.forEach((key, val) -> { System.out.println(key + "  -->  " + val); } );
-    }
 }

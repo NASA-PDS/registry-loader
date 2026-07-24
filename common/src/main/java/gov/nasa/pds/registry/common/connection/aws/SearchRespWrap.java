@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.lang3.NotImplementedException;
 import org.opensearch.client.json.JsonData;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
@@ -29,12 +27,6 @@ class SearchRespWrap implements Response.Search {
   SearchRespWrap(OpenSearchClient client, SearchResponse<Object> parent) {
     this.client = client;
     this.parent = parent;
-  }
-  @Override
-  public Map<String, Set<String>> altIds() throws UnsupportedOperationException, IOException {
-    HashMap<String, Set<String>> results = new HashMap<String, Set<String>>();
-    if (true) throw new NotImplementedException("Need to fill this out when have a return value");
-    return results;
   }
   @Override
   public Set<String> fields() throws UnsupportedOperationException, IOException {
