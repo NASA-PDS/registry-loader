@@ -5,6 +5,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.List;
 import java.util.Random;
 import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
@@ -256,10 +257,27 @@ public class RestClientWrapper implements RestClient {
     }}.retry(((DBQImpl)request).craftsman.build());
   }
   private long _performDBQRequest(SearchRequest request) throws IOException, ResponseException {
-    SearchResponse<Object> items = this.client.search(request, Object.class);
+    // AOSS does not support native _delete_by_query, so we emulate it with
+    // search-then-delete-by-id. We loop until a page comes back empty because
+    // AOSS eventual consistency means deleted docs can still appear in the next
+    // search immediately after deletion.
+    String index = request.index().isEmpty() ? "?" : request.index().get(0);
     long total = 0;
-    for (Hit<Object> hit : items.hits().hits()) {
-      total += this.performRequest(this.createDelete().setDocId(hit.id()).setIndex(request.index().get(0)));
+    List<Hit<Object>> hits;
+    do {
+      SearchResponse<Object> items = this.client.search(request, Object.class);
+      hits = items.hits().hits();
+      log.debug("delete-by-query on '{}': {} doc(s) in this pass", index, hits.size());
+      for (Hit<Object> hit : hits) {
+        log.debug("  deleting doc id={}", hit.id());
+        total += this.performRequest(this.createDelete().setDocId(hit.id()).setIndex(index));
+      }
+      if (!hits.isEmpty()) {
+        log.info("delete-by-query '{}': deleted {} doc(s) ({} total so far)", index, hits.size(), total);
+      }
+    } while (!hits.isEmpty());
+    if (total > 0) {
+      log.info("delete-by-query complete: {} total doc(s) deleted from '{}'", total, index);
     }
     return total;
   }
