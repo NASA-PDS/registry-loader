@@ -22,7 +22,7 @@ import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.util.CloseUtils;
-import gov.nasa.pds.registry.common.util.LogLevels;
+import gov.nasa.pds.registry.common.util.log.LogLevels;
 
 
 /**
@@ -349,7 +349,7 @@ public class DataLoader
               
               if ((message.contains("[throttled]") || message.contains("[maximum OCU capacity reached]")) && retry < MAX_RETRY) continue;
               
-              log.error("LIDVID = {}, Message = ", sanitizedLidvid, sanitizedMessage);
+              log.error("LIDVID = {}, Message = {}", sanitizedLidvid, sanitizedMessage);
               numErrors++;
               todo.remove(asKey(item));
               log.log(LogLevels.LABEL_FAILURE, sanitizedLidvid);

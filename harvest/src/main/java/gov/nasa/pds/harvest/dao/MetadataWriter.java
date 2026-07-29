@@ -15,7 +15,7 @@ import gov.nasa.pds.harvest.util.PackageIdGenerator;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.meta.Metadata;
-import gov.nasa.pds.registry.common.util.LogLevels;
+import gov.nasa.pds.registry.common.util.log.LogLevels;
 
 
 public class MetadataWriter implements Closeable {
@@ -115,6 +115,7 @@ public class MetadataWriter implements Closeable {
           || (nonRegisteredIds != null && nonRegisteredIds.contains(item.lidvid)
               && !failedIds.contains(item.lidvid))) {
         counter.prodCounters.inc(item.prodClass);
+        log.log(LogLevels.LABEL_SUCCESS, item.lidvid);
       }
     }
 

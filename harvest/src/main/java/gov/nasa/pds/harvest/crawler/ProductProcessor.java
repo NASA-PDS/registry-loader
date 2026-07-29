@@ -12,7 +12,7 @@ import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import gov.nasa.pds.registry.common.util.FieldMapSet;
-import gov.nasa.pds.registry.common.util.LogLevels;
+import gov.nasa.pds.registry.common.util.log.LogLevels;
 import org.w3c.dom.Document;
 import gov.nasa.pds.harvest.cfg.BundleType;
 import gov.nasa.pds.harvest.cfg.ConfigManager;

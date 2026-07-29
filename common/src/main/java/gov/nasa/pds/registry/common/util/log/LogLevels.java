@@ -1,4 +1,4 @@
-package gov.nasa.pds.registry.common.util;
+package gov.nasa.pds.registry.common.util.log;
 
 import org.apache.logging.log4j.Level;
 

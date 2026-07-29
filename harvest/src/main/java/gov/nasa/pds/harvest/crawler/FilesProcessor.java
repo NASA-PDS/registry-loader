@@ -27,7 +27,7 @@ import gov.nasa.pds.registry.common.meta.CollectionMetadataExtractor;
 import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.common.util.FieldMapSet;
-import gov.nasa.pds.registry.common.util.LogLevels;
+import gov.nasa.pds.registry.common.util.log.LogLevels;
 import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
 
 
