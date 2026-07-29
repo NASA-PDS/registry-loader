@@ -20,7 +20,6 @@ import gov.nasa.pds.registry.mgr.cmd.Known;
 import gov.nasa.pds.registry.mgr.cmd.data.DeleteDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.ExportFileCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.SetArchiveStatusCmd;
-import gov.nasa.pds.registry.mgr.cmd.data.UpdateAltIdsCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.UpdateToolVersionCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.DeleteDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ExportDDCmd;
@@ -284,7 +283,6 @@ public class RegistryManagerCli
         commands.put("delete-data", new DeleteDataCmd());
         commands.put("export-file", new ExportFileCmd());
         commands.put("set-archive-status", new SetArchiveStatusCmd());
-        commands.put("update-alt-ids", new UpdateAltIdsCmd());
         commands.put("update-tool-ver", new UpdateToolVersionCmd());
         Known.set(commands.keySet());
     }

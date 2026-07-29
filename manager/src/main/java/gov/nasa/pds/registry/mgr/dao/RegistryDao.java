@@ -20,8 +20,6 @@ public class RegistryDao
     private RestClient client;
     private String indexName;
 
-    private boolean pretty = false;
-
     /**
      * Constructor
      * @param client Elasticsearch client
@@ -33,34 +31,6 @@ public class RegistryDao
         this.indexName = indexName;
     }
 
-    
-    /**
-     * Generate pretty JSONs for debugging
-     * @param b boolean flag
-     */
-    public void setPretty(boolean b)
-    {
-        this.pretty = b;
-    }
-    
-    
-    /**
-     * Get product's alternative IDs by primary key 
-     * @param ids primary keys (usually LIDVIDs)
-     * @return ID map: key = product primary key (usually LIDVID), value = set of alternate IDs 
-     * @throws Exception an exception
-     */
-    public Map<String, Set<String>> getAlternateIds(Collection<String> ids) throws Exception
-    {
-        if(ids == null || ids.isEmpty()) return null;
-                
-        Request.Search req = client.createSearchRequest()
-            .buildAlternativeIds(ids)
-            .setIndex(this.indexName)
-            .setPretty(pretty);
-        return client.performRequest(req).altIds();
-    }
-    
     
     /**
      * Update alternate IDs by primary keys
