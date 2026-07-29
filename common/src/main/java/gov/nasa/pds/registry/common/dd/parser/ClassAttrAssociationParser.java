@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.stream.JsonToken;
-import gov.nasa.pds.registry.common.dd.LddException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -37,6 +38,8 @@ public class ClassAttrAssociationParser extends BaseLddParser
     ////////////////////////////////////////////////////////////////////////
     
     
+    private static final Logger log = LogManager.getLogger(ClassAttrAssociationParser.class);
+
     private Callback cb;
     private int itemCount;
 
@@ -253,12 +256,12 @@ public class ClassAttrAssociationParser extends BaseLddParser
         else
         {
             // isAttribute=true but no attribute ID was found via either key.
-            // This means the LDD JSON uses an unrecognised format; throw rather than silently
-            // skipping the field, which would violate the schema-before-metadata invariant.
-            throw new LddException(
-                "Association in class item #" + itemCount + " has isAttribute=true but no attribute ID "
+            // This means the LDD JSON uses an unrecognised format — fields will be silently
+            // lost. Log a warning so format changes don't go undetected.
+            log.warn("Association in class {}:{} has isAttribute=true but no attribute ID "
                 + "could be resolved (neither 'attributeId' nor 'identifier' found). "
-                + "The LDD JSON may use an unrecognised format.");
+                + "This field will not be indexed. The LDD JSON may use an unrecognised format.",
+                classNs, className);
         }
     }
 
