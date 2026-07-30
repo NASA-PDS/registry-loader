@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 
-import mock.annotation.replace;
+import mock.annotation.Replace;
 
 public final class OpensearchEngine {
   private record MethodTarget(Object instance, Method method) {}
@@ -24,7 +24,7 @@ public final class OpensearchEngine {
       Method[] methods = composite.getClass().getDeclaredMethods();
 
       Arrays.stream(methods)
-            .filter(method -> method.isAnnotationPresent(replace.class))
+            .filter(method -> method.isAnnotationPresent(Replace.class))
             .forEach(method -> {
                 // Ensure private/protected annotated methods can be invoked
                 method.setAccessible(true);
