@@ -110,6 +110,7 @@ Go through this file line-by-line and replace the template values with your own.
 	    <module>common</module>
 	    <module>harvest</module>
 	    <module>manager</module>
+            <module>testing</module>
 	</modules>
   <repositories>
     <repository>
