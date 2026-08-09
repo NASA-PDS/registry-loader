@@ -66,80 +66,30 @@ POSSIBILITY OF SUCH DAMAGE.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencyManagement>
+      <dependencies>
+        <!-- 1. The BOM configures the versions, but downloads no JARs -->
+        <dependency>
+          <groupId>io.javalin</groupId>
+          <artifactId>javalin-bom</artifactId>
+          <version>7.2.2</version>
+          <type>pom</type>
+          <scope>import</scope>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-        <!-- Elasticsearch client-->
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-client</artifactId>
-            <version>9.1.3</version>
-        </dependency>
-        <!-- JSON parser -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.13.2</version>
-        </dependency>
-        <!-- XML to JSON converter -->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20250517</version>
-        </dependency>
-        <!-- Log4j logger -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.25.3</version>
-        </dependency>
-        <!-- String Utils -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.18.0</version>
-        </dependency>
-        <!-- File type detection -->
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>3.2.2</version>
-        </dependency>
-        <!-- three artifacts for complete configuration parsing -->
-        <dependency>
-          <groupId>jakarta.xml.bind</groupId>
-          <artifactId>jakarta.xml.bind-api</artifactId>
-          <version>4.0.2</version>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-impl</artifactId>
-          <version>4.0.5</version>
-        </dependency>
-        <dependency>
-          <groupId>jakarta.activation</groupId>
-          <artifactId>jakarta.activation-api</artifactId>
-          <version>2.1.4</version>
-        </dependency>
-        <!-- four artifacts for opensearch serverless -->
-        <dependency>
-          <groupId>org.apache.httpcomponents.client5</groupId>
-          <artifactId>httpclient5</artifactId>
-          <version>5.5</version>
-        </dependency>
-        <dependency>
-          <groupId>org.opensearch.client</groupId>
-          <artifactId>opensearch-java</artifactId>
-          <version>3.2.0</version>
-        </dependency>
-        <dependency>
-          <groupId>software.amazon.awssdk</groupId>
-          <artifactId>opensearch</artifactId>
-          <version>2.33.9</version>
-        </dependency>
-        <dependency>
-          <groupId>software.amazon.awssdk</groupId>
-          <artifactId>apache-client</artifactId>
-          <version>2.33.9</version>
-        </dependency>
+      <!-- Source: https://mvnrepository.com/artifact/io.javalin/javalin-bom -->
+      <dependency>
+        <groupId>io.javalin</groupId>
+        <artifactId>javalin</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>3.0.0</version>
+      </dependency>
     </dependencies>
 
     <build>
@@ -174,10 +124,6 @@ POSSIBILITY OF SUCH DAMAGE.
         <testResources>
           <testResource>
             <directory>src/test/resources</directory>
-          </testResource>
-          <!-- data-dic-types.cfg lives in harvest; reference it here to avoid duplication -->
-          <testResource>
-            <directory>../harvest/src/main/resources</directory>
           </testResource>
         </testResources>
     </build>
