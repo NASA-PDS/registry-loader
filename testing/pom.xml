@@ -68,7 +68,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
     <dependencyManagement>
       <dependencies>
-        <!-- 1. The BOM configures the versions, but downloads no JARs -->
+        <dependency>
+          <groupId>io.cucumber</groupId>
+          <artifactId>cucumber-bom</artifactId>
+          <version>7.34.6</version> <!-- Use latest version -->
+          <type>pom</type>
+          <scope>import</scope>
+        </dependency>
         <dependency>
           <groupId>io.javalin</groupId>
           <artifactId>javalin-bom</artifactId>
@@ -80,7 +86,21 @@ POSSIBILITY OF SUCH DAMAGE.
     </dependencyManagement>
 
     <dependencies>
-      <!-- Source: https://mvnrepository.com/artifact/io.javalin/javalin-bom -->
+      <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-junit-platform-engine</artifactId>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-suite-api</artifactId>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>io.javalin</groupId>
         <artifactId>javalin</artifactId>

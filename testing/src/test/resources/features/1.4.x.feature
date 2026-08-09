@@ -1,11 +1,11 @@
 Feature: 1.4.x
   Scenario Outline: NASA-PDS/registry-loader#<issueNumber>-<subtest>
-    Given registry-loader issue <issueNumber>, test <subtest>, opensearch mocks <mocks>, test suite <suite>, CLI arguments <args>, expectation <expectation>
-    When test suite <suite> executed
-    Then compared to the expected outcome <expectation>.
+    Given registry-loader issue <issueNumber>, test <subtest>, and opensearch mocks <mocks>
+    When test suite <suite> is executed with CLI arguments <cliargline>
+    Then compare to the expected outcome <expectation>.
     @1.4.x
     Examples:
-      | issueNumber | subtest |       mocks          |      suite      | args |  expectation  |
-      |    139      |    0    | "mocks.osf.Standard" | "suites.Sanity" |  ""  | "expect.Sane" |
+      | issueNumber | subtest |       mocks          |      suite      | cliargline |  expectation  |
+      |    139      |    0    | "mocks.osf.Standard" | "suites.Sanity" |     ""     | "expect.Sane" |
 
-| 139 | 0 | "mocks.osf.Standard" | "suites.Sanity" |  ""  | "expect.Sane" |
+| 139 | 0 | "mocks.osf.Standard,mocks.osf.JUnitish" | "suites.Sanity" |  ""  | "expect.Sane" |

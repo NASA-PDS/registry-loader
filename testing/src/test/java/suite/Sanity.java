@@ -2,6 +2,7 @@ package suite;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 import mock.MockAware;
 import mock.OpensearchSupportedFunctionality;
 import mock.osf.JUnitish;
