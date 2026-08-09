@@ -1,20 +1,19 @@
 package mock.osf;
 
-import java.util.List;
+import java.lang.invoke.MethodHandles;
 import mock.NoOpException;
 import mock.OpensearchSupportedFunctionality;
 
 public abstract class NoOp implements OpensearchSupportedFunctionality {
-  @Override
-  public void fu() {
-    throw new NoOpException("Placeholder");
+  private Response placeholder() {
+    String methodName = new Throwable().getStackTrace()[1].getMethodName();
+    String className = MethodHandles.lookup().lookupClass().getSimpleName();
+    throw new NoOpException("Placeholder: " + className + "." + methodName + "()");
   }
   @Override
-  public int bar(List<String> justSomeArg) {
-    throw new NoOpException("Placeholder");
-  }
+  public Response authorize(Context ctx) { return placeholder(); }
   @Override
-  public Object snafu() {
-    throw new NoOpException("Placeholder");
-  }
+  public Response getRoot(Context ctx) { return placeholder(); }
+  @Override
+  public Response postBulk(Context ctx) { return placeholder(); }
 }
