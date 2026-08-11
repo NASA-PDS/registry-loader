@@ -106,6 +106,10 @@ POSSIBILITY OF SUCH DAMAGE.
         <artifactId>javalin</artifactId>
       </dependency>
       <dependency>
+        <groupId>io.javalin.community.ssl</groupId>
+        <artifactId>javalin-ssl</artifactId>
+      </dependency>
+      <dependency>
         <groupId>jakarta.annotation</groupId>
         <artifactId>jakarta.annotation-api</artifactId>
         <version>3.0.0</version>

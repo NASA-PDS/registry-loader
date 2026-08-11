@@ -1,6 +1,7 @@
 package mock;
 
 import io.javalin.Javalin;
+import io.javalin.community.ssl.SslPlugin;
 import io.javalin.http.Handler;
 import io.javalin.http.HandlerType;
 import java.lang.reflect.InvocationTargetException;
@@ -87,6 +88,12 @@ public final class OpensearchEngine {
    */
   public void start(int port) {
     this.app = Javalin.create(config -> {
+      config.registerPlugin(new SslPlugin(ssl -> {
+        ssl.host = "0.0.0.0";
+        ssl.securePort = port;
+        ssl.pemFromPath("/path/to/my.pem", null);
+      }));
+
       Handler catchAll = ctx -> {
         Context facadeContext =
             new Context(ctx.body(), ctx.headerMap(),
@@ -94,6 +101,7 @@ public final class OpensearchEngine {
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get(0))),
                 ctx.pathParamMap());
 
+        System.out.println(ctx);
         String targetMethodName = determineMethodName(ctx.method().name(), ctx.path());
         sendResponse(ctx, process(targetMethodName, facadeContext));
       };
@@ -143,5 +151,12 @@ public final class OpensearchEngine {
     if (this.app != null) {
       this.app.stop();
     }
+  }
+  
+  public static void main(String argv[]) throws InterruptedException {
+    OpensearchEngine me = new OpensearchEngine();
+    me.start(9200);
+    Thread.sleep(1000*1000);
+    me.stop();
   }
 }

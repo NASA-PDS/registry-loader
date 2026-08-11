@@ -30,6 +30,6 @@ public final class Sanity implements MockAware {
   
   @Test
   public void test_root() {
-    assert true;
+    assert false: "implement me";
   }
 }
