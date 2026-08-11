@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.annotation.Nonnull;
 
 import mock.OpensearchSupportedFunctionality.Context;
@@ -22,6 +24,7 @@ public final class OpensearchEngine {
   private record MethodTarget(Object instance, Method method) {
   }
 
+  private final Logger log = LoggerFactory.getLogger(OpensearchEngine.class);
   private final Map<String, MethodTarget> redirect = new ConcurrentHashMap<>();
   private Javalin app;
 
@@ -46,7 +49,8 @@ public final class OpensearchEngine {
           Method interfaceMethod = interfaceMethods.get(method.getName());
           if (interfaceMethod == null
               || !Arrays.equals(interfaceMethod.getParameterTypes(), method.getParameterTypes())) {
-            continue; // @Replace on something that isn't an interface override — not our concern
+            log.warn("Method {} in class {} is not a valid override of OpensearchSupportedFunctionality", method.getName(), composite.getClass().getName());
+            continue;
           }
           method.setAccessible(true);
           redirect.put(method.getName(), new MethodTarget(composite, method));
@@ -119,10 +123,11 @@ public final class OpensearchEngine {
     try {
       return (Response) target.method().invoke(target.instance(), context);
     } catch (InvocationTargetException e) {
-      Throwable cause = e.getCause();
-      return new Response(500, "{\"error\": \"Mock runtime error: " + cause.getMessage() + "\"}",
+      log.error("Invocation problem processing the testing request", e);
+      return new Response(500, "{\"error\": \"Mock runtime error: " + e.getCause().getMessage() + "\"}",
           "application/json");
     } catch (IllegalAccessException e) {
+      log.error("Access is to testing functioon is wrong", e);
       return new Response(500, "{\"error\": \"Security constraint executing mock method\"}",
           "application/json");
     }

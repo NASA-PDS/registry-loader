@@ -25,7 +25,7 @@ public final class Sanity implements MockAware {
   
   @Test
   public void test_authorize() {
-    assert false;
+    assert false: "implement me";
   }
   
   @Test

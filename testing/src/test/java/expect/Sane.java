@@ -10,21 +10,27 @@ public final class Sane implements MockAware {
   private final List<OpensearchSupportedFunctionality> knownMocks = new ArrayList<OpensearchSupportedFunctionality>();
   @Override
   public void run() {
-    boolean all = true;
     int count = 0;
+    int failed = 0;
+    int passed = 0;
     for (OpensearchSupportedFunctionality osf : this.knownMocks) {
       if (osf instanceof JUnitish) {
         count++;
         for (Boolean b : ((JUnitish) osf).results.values()) {
-          all &= b;
+          if (b) {
+            passed++;
+          } else {
+            failed++;
+          }
         }
       }
     }
     if (count == 0) {
       assert false : "No results found. Cannot meet any expectation without results.";
-    }
-    if (!all) {
-      assert false: "All tests did not meet expectations.";
+    } else {
+      if (failed > 0 || passed == 0) {
+        assert false: passed + " tests passed but " + failed + " tests failed";
+      }
     }
   }
   @Override
