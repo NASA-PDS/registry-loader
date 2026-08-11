@@ -17,6 +17,7 @@ public final class Sanity implements MockAware {
       }
     }
   }
+
   @Override
   public void mocks(List<OpensearchSupportedFunctionality> mocks) {
     this.knownMocks.addAll(mocks);

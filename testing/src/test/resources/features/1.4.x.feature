@@ -6,6 +6,6 @@ Feature: 1.4.x
     @1.4.x
     Examples:
       | issueNumber | subtest |       mocks          |      suite      | cliargline |  expectation  |
-      |    139      |    0    | "mocks.osf.Standard" | "suites.Sanity" |     ""     | "expect.Sane" |
+#     |    139      |    0    | "mock.osf.Standard" | "suite.Sanity" |     ""     | "expect.Sane" |
 
-| 139 | 0 | "mocks.osf.Standard,mocks.osf.JUnitish" | "suites.Sanity" |  ""  | "expect.Sane" |
+| 139 | 0 | "mock.osf.Standard,mock.osf.JUnitish" | "suite.Sanity" |  ""  | "expect.Sane" |
