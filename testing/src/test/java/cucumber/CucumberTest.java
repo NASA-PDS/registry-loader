@@ -9,9 +9,10 @@ import org.junit.platform.suite.api.Suite;
 public class CucumberTest {
   public CucumberTest() {
     /*
-     * this function is here to make cucumber happy
-     * these comments are here to make sonarcube happy
-     * both are useless to humans
+     * intentionally empty:
+     *   this function is here to make cucumber happy
+     *   these comments are here to make sonarqube happy
+     *   both are useless to humans
      */
   }
 }
