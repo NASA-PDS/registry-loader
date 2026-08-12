@@ -16,33 +16,33 @@ import org.apache.logging.log4j.Logger;
  */
 public class CloseUtils
 {
+    private static final Logger log = LogManager.getLogger(CloseUtils.class);
+
     public static void close(Closeable cl)
     {
         if(cl == null) return;
-        
+
         try
         {
             cl.close();
         }
         catch(Exception ex)
         {
-            Logger log = LogManager.getLogger(CloseUtils.class);
             log.warn(ex);
         }
     }
-    
-    
+
+
     public static void close(XMLEventReader cl)
     {
         if(cl == null) return;
-        
+
         try
         {
             cl.close();
         }
         catch(Exception ex)
         {
-            Logger log = LogManager.getLogger(CloseUtils.class);
             log.warn(ex);
         }
     }
@@ -51,14 +51,13 @@ public class CloseUtils
     public static void close(Stream<?> cl)
     {
         if(cl == null) return;
-        
+
         try
         {
             cl.close();
         }
         catch(Exception ex)
         {
-            Logger log = LogManager.getLogger(CloseUtils.class);
             log.warn(ex);
         }
     }

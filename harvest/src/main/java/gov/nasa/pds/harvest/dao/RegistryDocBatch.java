@@ -127,7 +127,7 @@ public class RegistryDocBatch
             log.fatal("The harvested collection has duplicate lidvids. Double check content of these lidvids:");
             first = false;
           }
-          log.fatal("   Found " + entry.getValue() + " of lidvid " + entry.getKey());
+          log.fatal("   Found {} of lidvid {}", entry.getValue(), entry.getKey());
         }
       }
       if (!first) {
@@ -135,7 +135,7 @@ public class RegistryDocBatch
         for (Integer count : history.values()) {
           total += count;
         }
-      log.fatal("   Total number of duplicate lidvids: " + (total - history.size()));
+      log.fatal("   Total number of duplicate lidvids: {}", (total - history.size()));
       }
     }
 }

@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class LddVersions
 {
+    private static final Logger log = LogManager.getLogger(LddVersions.class);
     public static final String DEFAULT_DATE = "1965-01-01T00:00:00.000Z";
     public static final Instant DEFAULT_LAST_DATE = Instant.parse(DEFAULT_DATE);
     
@@ -56,8 +57,7 @@ public class LddVersions
         }
         catch(Exception ex)
         {
-            Logger log = LogManager.getLogger(this.getClass());
-            log.warn("Could not parse date " + str);
+            log.warn("Could not parse date {}", str);
         }
     }
     

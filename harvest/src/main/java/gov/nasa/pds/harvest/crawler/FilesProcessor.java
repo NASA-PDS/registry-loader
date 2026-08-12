@@ -29,6 +29,8 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.common.util.FieldMapSet;
 import gov.nasa.pds.registry.common.util.log.LogLevels;
 import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -47,6 +49,7 @@ import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
  */
 public class FilesProcessor extends BaseProcessor
 {
+    private static final Logger log = LogManager.getLogger(FilesProcessor.class);
     // Bundle and Collection extractors & processors
     private BundleMetadataExtractor bundleExtractor;
     private CollectionMetadataExtractor collectionExtractor;
@@ -188,7 +191,7 @@ public class FilesProcessor extends BaseProcessor
         Metadata meta = basicExtractor.extract(file, doc, this.archive_status);
         meta.setNodeName(ConfigManager.exchangeIndexForNode(RegistryManager.getInstance().getIndexName()));
 
-        log.info("Processing " + file.getAbsolutePath());
+        log.info("Processing {}", file.getAbsolutePath());
 
         String rootElement = doc.getDocumentElement().getNodeName();
 

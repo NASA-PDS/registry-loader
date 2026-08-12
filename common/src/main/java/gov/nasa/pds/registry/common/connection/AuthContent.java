@@ -18,7 +18,7 @@ import gov.nasa.pds.registry.common.util.JavaProps;
 
 public class AuthContent {
   final public static AuthContent DEFAULT = new AuthContent();
-  final private static Logger LOG = LogManager.getLogger(AuthContent.class);
+  private static final Logger log = LogManager.getLogger(AuthContent.class);
   final private String password;
   final private String user;
   private String header = null;
@@ -35,17 +35,16 @@ public class AuthContent {
     try {
       Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(Paths.get(authfile), LinkOption.NOFOLLOW_LINKS);
       if (permissions.contains(PosixFilePermission.GROUP_READ) || permissions.contains(PosixFilePermission.OTHERS_READ)) {
-        LOG.warn("The authorization file '{}' is readable by more than the user.", authfile);
+        log.warn("The authorization file '{}' is readable by more than the user.", authfile);
       }
     } catch (Exception e) {
-      LOG.warn("The authorization file '{}' may be insecure because this platform does not support permission checking", authfile);
+      log.warn("The authorization file '{}' may be insecure because this platform does not support permission checking", authfile);
     }
 
     if (props.getProperty(ClientConstants.AUTH_TRUST_SELF_SIGNED) != null) {
-      LOG.warn("The keyword " + ClientConstants.AUTH_TRUST_SELF_SIGNED 
-          + " is no longer used in the authorizaiton file and is being ignored. Please remove "
-          + ClientConstants.AUTH_TRUST_SELF_SIGNED
-          + " warning will turn into an error in the future");
+      log.warn("The keyword {} is no longer used in the authorizaiton file and is being ignored. Please remove {}"
+          + " warning will turn into an error in the future",
+          ClientConstants.AUTH_TRUST_SELF_SIGNED, ClientConstants.AUTH_TRUST_SELF_SIGNED);
     }
     
     if (user == null || password == null) {

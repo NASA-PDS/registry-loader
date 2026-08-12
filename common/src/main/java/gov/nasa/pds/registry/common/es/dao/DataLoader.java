@@ -45,7 +45,7 @@ public class DataLoader
   // Safe for idempotent LDD loads; leave false for product ingestion where duplicates are errors.
   private boolean ignoreConflicts = false;
 
-    private final Logger log;
+    private static final Logger log = LogManager.getLogger(DataLoader.class);
     private final ConnectionFactory conFactory;
 
 
@@ -59,7 +59,6 @@ public class DataLoader
      */
     public DataLoader(ConnectionFactory conFactory) throws Exception
     {
-        log = LogManager.getLogger(this.getClass());
         this.conFactory = conFactory;
     }
 
@@ -92,7 +91,7 @@ public class DataLoader
      */
     public void loadFile(File file) throws Exception
     {
-        log.info("Loading ES data file: " + file.getAbsolutePath());
+        log.info("Loading ES data file: {}", file.getAbsolutePath());
 
         BufferedReader rd = new BufferedReader(new FileReader(file));
         loadData(rd);
@@ -107,7 +106,7 @@ public class DataLoader
      */
     public void loadZippedFile(File zipFile, String fileName) throws Exception
     {
-        log.info("Loading ES data file: " + zipFile.getAbsolutePath() + ":" + fileName);
+        log.info("Loading ES data file: {}:{}", zipFile.getAbsolutePath(), fileName);
 
         ZipFile zip = new ZipFile(zipFile);
 
@@ -148,7 +147,7 @@ public class DataLoader
             {
                 if(totalRecords % printProgressSize == 0)
                 {
-                    log.info("Loaded " + totalRecords + " document(s)");
+                    log.info("Loaded {} document(s)", totalRecords);
                 }
             }
 

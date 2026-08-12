@@ -12,6 +12,8 @@ import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import gov.nasa.pds.registry.common.util.FieldMapSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import gov.nasa.pds.harvest.cfg.BundleType;
 import gov.nasa.pds.harvest.cfg.ConfigManager;
@@ -41,6 +43,7 @@ import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
  */
 public class CollectionProcessor extends BaseProcessor
 {
+    private static final Logger log = LogManager.getLogger(CollectionProcessor.class);
     private CollectionInventoryProcessor invProc;
     private CollectionInventoryWriter invWriter;
     
@@ -105,7 +108,7 @@ public class CollectionProcessor extends BaseProcessor
         // Skip very large files
         if(file.length() > MAX_XML_FILE_LENGTH)
         {
-            log.warn("File is too big to parse: " + file.getAbsolutePath());
+            log.warn("File is too big to parse: {}", file.getAbsolutePath());
             return;
         }
 
@@ -134,7 +137,7 @@ public class CollectionProcessor extends BaseProcessor
         LidVidCache cache = RefsCache.getInstance().getCollectionRefsCache();
         if(!cache.containsLidVid(meta.lidvid()) && !cache.containsLid(meta.lid())) return;
         
-        log.info("Processing collection " + file.getAbsolutePath());
+        log.info("Processing collection {}", file.getAbsolutePath());
         collectionCount++;
         
         RegistryDao dao = RegistryManager.getInstance().getRegistryDao();
@@ -145,7 +148,7 @@ public class CollectionProcessor extends BaseProcessor
 
         if(collectionAlreadyRegistered && !overwriteMode)
         {
-            log.warn("Collection " + meta.lidvid() + " already registered. Skipping.");
+            log.warn("Collection {} already registered. Skipping.", meta.lidvid());
             
             // Only cache but don't write product references
             processInventoryFiles(file, doc, meta, false);

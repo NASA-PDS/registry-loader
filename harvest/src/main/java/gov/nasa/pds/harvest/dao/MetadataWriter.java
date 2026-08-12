@@ -20,8 +20,8 @@ import gov.nasa.pds.registry.common.util.log.LogLevels;
 
 public class MetadataWriter implements Closeable {
   private final static int ES_DOC_BATCH_SIZE = 50;
+  private static final Logger log = LogManager.getLogger(MetadataWriter.class);
   private final ConnectionFactory conFact;
-  private Logger log;
 
   private RegistryDao registryDao;
   private DataLoader loader;
@@ -42,7 +42,6 @@ public class MetadataWriter implements Closeable {
   public MetadataWriter(ConnectionFactory conFact, RegistryDao dao, Counter counter)
       throws Exception {
     this.conFact = conFact;
-    log = LogManager.getLogger(this.getClass());
     loader = new DataLoader(conFact);
     docBatch = new RegistryDocBatch();
     jobId = PackageIdGenerator.getInstance().getPackageId();
@@ -103,7 +102,7 @@ public class MetadataWriter implements Closeable {
     Set<String> failedIds = new TreeSet<>();
     Set<String> matchedIds = new TreeSet<>();
     totalRecords += loader.loadBatch(data, failedIds, matchedIds);
-    log.info("Wrote " + totalRecords + " product(s)");
+    log.info("Wrote {} product(s)", totalRecords);
 
     // Update failed counter
     counter.failedFileCount += failedIds.size();

@@ -24,7 +24,7 @@ public abstract class DataExporter
     private static final int BATCH_SIZE = 100;
     private static final int PRINT_STATUS_SIZE = 5000;
     
-    protected Logger log;
+    protected static final Logger log = LogManager.getLogger(DataExporter.class);
 
     private String esUrl;
     private String suffix;
@@ -43,8 +43,6 @@ public abstract class DataExporter
         this.esUrl = esUrl;
         this.suffix = suffix;
         this.authConfigFile = authConfigFile;
-
-        log = LogManager.getLogger(this.getClass());
     }
     
     
@@ -78,13 +76,13 @@ public abstract class DataExporter
           numDocs += resp.batch().size();
           searchAfter = ""; // FIXME: needs to be the last ID from the batch()
           if (numDocs % PRINT_STATUS_SIZE == 0) {
-            log.info("Exported " + numDocs + " document(s)");
+            log.info("Exported {} document(s)", numDocs);
           }
         } while (thisBatchSize == BATCH_SIZE);
         if (numDocs == 0) {
           log.info("No documents found");
         } else {
-          log.info("Exported " + numDocs + " document(s)");
+          log.info("Exported {} document(s)", numDocs);
         }
         log.info("Done");
       } catch (ResponseException ex) {

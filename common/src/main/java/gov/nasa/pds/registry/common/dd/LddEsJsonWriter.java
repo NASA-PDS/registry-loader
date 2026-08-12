@@ -18,7 +18,7 @@ import gov.nasa.pds.registry.common.es.dao.dd.DataTypeNotFoundException;
  * @author karpenko
  */
 public class LddEsJsonWriter {
-  private Logger log;
+  private static final Logger log = LogManager.getLogger(LddEsJsonWriter.class);
   private DDNJsonWriter writer;
   private DDRecord ddRec = new DDRecord();
 
@@ -37,7 +37,6 @@ public class LddEsJsonWriter {
    */
   public LddEsJsonWriter(File outFile, Pds2EsDataTypeMap dtMap,
       Map<String, DDAttribute> ddAttrCache, boolean overwrite) {
-    log = LogManager.getLogger(this.getClass());
     writer = new DDNJsonWriter(outFile, overwrite);
     this.dtMap = dtMap;
     this.ddAttrCache = ddAttrCache;
@@ -69,7 +68,7 @@ public class LddEsJsonWriter {
 
     DDAttribute attr = ddAttrCache.get(attrId);
     if (attr == null) {
-      log.warn("Missing attribute " + attrId);
+      log.warn("Missing attribute {}", attrId);
     } else {
       writeRecord(classNs, className, attr);
     }

@@ -27,6 +27,7 @@ import gov.nasa.pds.registry.common.util.log.Log4jConfigurator;
  */
 public class HarvestCli
 {
+    private static final Logger log = LogManager.getLogger(HarvestCli.class);
     private Options options;
     private CommandLine cmdLine;
 
@@ -93,7 +94,6 @@ public class HarvestCli
         catch(Exception ex)
         {
             String msg = ExceptionUtils.getMessage(ex);
-            Logger log = LogManager.getLogger(this.getClass());
             log.error(msg, ex);
             log.debug("for the stack trace", ex);
             return false;

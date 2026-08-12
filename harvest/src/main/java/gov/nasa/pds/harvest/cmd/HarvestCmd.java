@@ -34,7 +34,7 @@ import gov.nasa.pds.registry.common.util.ArchiveStatus;
  */
 public class HarvestCmd implements CliCommand
 {
-    private Logger log;
+    private static final Logger log = LogManager.getLogger(HarvestCmd.class);
     private HarvestConfigurationType cfg;
     
     // Processors
@@ -49,7 +49,6 @@ public class HarvestCmd implements CliCommand
      */
     public HarvestCmd()
     {
-        log = LogManager.getLogger(this.getClass());
     }
 
 
@@ -183,7 +182,7 @@ public class HarvestCmd implements CliCommand
     {
         // Output directory
         String outDir = cmdLine.getOptionValue("o", "/tmp/harvest/out");
-        log.log(LogUtils.LEVEL_SUMMARY, "Output directory: " + outDir);
+        log.log(LogUtils.LEVEL_SUMMARY, "Output directory: {}", outDir);
         File fOutDir = new File(outDir);
         fOutDir.mkdirs();
 
@@ -194,7 +193,7 @@ public class HarvestCmd implements CliCommand
     private HarvestConfigurationType readConfigFile(CommandLine cmdLine) throws Exception
     {
         File cfgFile = new File(cmdLine.getOptionValue("c"));
-        log.log(LogUtils.LEVEL_SUMMARY, "Reading configuration from " + cfgFile.getAbsolutePath());
+        log.log(LogUtils.LEVEL_SUMMARY, "Reading configuration from {}", cfgFile.getAbsolutePath());
         
         HarvestConfigurationType cfg = ConfigManager.read(cfgFile);
 
@@ -221,11 +220,11 @@ public class HarvestCmd implements CliCommand
         File rootDir = new File(path);
         if(!rootDir.exists())
         {
-            log.warn("Invalid path: " + rootDir.getAbsolutePath());
+            log.warn("Invalid path: {}", rootDir.getAbsolutePath());
             return;
         }
         
-        log.info("Processing directory: " + rootDir.getAbsolutePath());
+        log.info("Processing directory: {}", rootDir.getAbsolutePath());
         
         filesProc.processDirectory(rootDir);
     }
@@ -234,7 +233,7 @@ public class HarvestCmd implements CliCommand
     private void processManifest(String path) throws Exception
     {
         File manifestFile = new File(path);
-        log.info("Processing manifest file: " + manifestFile.getAbsolutePath());        
+        log.info("Processing manifest file: {}", manifestFile.getAbsolutePath());
         
         if(!manifestFile.exists())
         {
@@ -250,11 +249,11 @@ public class HarvestCmd implements CliCommand
         File rootDir = new File(bCfg.getDir());
         if(!rootDir.exists()) 
         {
-            log.warn("Invalid bundle directory: " + rootDir.getAbsolutePath());
+            log.warn("Invalid bundle directory: {}", rootDir.getAbsolutePath());
             return;
         }
         
-        log.info("Processing bundle directory " + rootDir.getAbsolutePath());
+        log.info("Processing bundle directory {}", rootDir.getAbsolutePath());
 
         // Clear reference cache
         RefsCache.getInstance().getCollectionRefsCache().clear();
@@ -264,7 +263,7 @@ public class HarvestCmd implements CliCommand
         int count = bundleProc.process(bCfg);
         if(count == 0)
         {
-            log.warn("No bundles found in " + rootDir.getAbsolutePath());
+            log.warn("No bundles found in {}", rootDir.getAbsolutePath());
             return;
         }
         
@@ -272,7 +271,7 @@ public class HarvestCmd implements CliCommand
         count = colProc.process(bCfg);
         if(count == 0)
         {
-            log.warn("No collections found in " + rootDir.getAbsolutePath());
+            log.warn("No collections found in {}", rootDir.getAbsolutePath());
             return;
         }
         
@@ -299,10 +298,10 @@ public class HarvestCmd implements CliCommand
         {
             for(CounterMap.Item item: counter.prodCounters.getCounts())
             {
-                log.log(LogUtils.LEVEL_SUMMARY, "  " + item.name + ": " + item.count);
+                log.log(LogUtils.LEVEL_SUMMARY, "  {}: {}", item.name, item.count);
             }
         }        
-        log.log(LogUtils.LEVEL_SUMMARY, "Package ID: " + PackageIdGenerator.getInstance().getPackageId());
+        log.log(LogUtils.LEVEL_SUMMARY, "Package ID: {}", PackageIdGenerator.getInstance().getPackageId());
     }
 
 }

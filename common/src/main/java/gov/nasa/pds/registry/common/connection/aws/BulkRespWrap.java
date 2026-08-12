@@ -43,11 +43,10 @@ class BulkRespWrap implements Response.Bulk {
       return this.error() ? this.parent.error().reason() : "";
     }
   };
+  private static final Logger log = LogManager.getLogger(BulkRespWrap.class);
   final private ArrayList<Response.Bulk.Item> items = new ArrayList<Response.Bulk.Item>();
   final private BulkResponse parent;
-  final private Logger log;
   BulkRespWrap(BulkResponse parent) {
-    this.log = LogManager.getLogger(this.getClass());
     this.parent = parent;
   }
   @Override

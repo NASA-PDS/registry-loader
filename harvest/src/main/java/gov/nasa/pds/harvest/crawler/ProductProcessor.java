@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 
 import gov.nasa.pds.registry.common.util.FieldMapSet;
 import gov.nasa.pds.registry.common.util.log.LogLevels;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import gov.nasa.pds.harvest.cfg.BundleType;
 import gov.nasa.pds.harvest.cfg.ConfigManager;
@@ -42,6 +44,8 @@ import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
  */
 public class ProductProcessor extends BaseProcessor
 {
+    private static final Logger log = LogManager.getLogger(ProductProcessor.class);
+
     /**
      * Constructor
      * @param config Harvest configuration parameters
@@ -195,12 +199,12 @@ public class ProductProcessor extends BaseProcessor
 
         if(productNotInCache && !overwriteMode)
         {
-            log.info("Skipping product " + file.getAbsolutePath() + " (LIDVID/LID is not in collection inventory or already exists in registry database)");
+            log.info("Skipping product {} (LIDVID/LID is not in collection inventory or already exists in registry database)", file.getAbsolutePath());
             counter.skippedFileCount++;
             return;
         }
         
-        log.info("Processing product " + file.getAbsolutePath());
+        log.info("Processing product {}", file.getAbsolutePath());
 
         // Internal references
         FieldMapSet intRefs = new FieldMapSet();
