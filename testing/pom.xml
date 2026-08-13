@@ -87,6 +87,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
     <dependencies>
       <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.22.1</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-java</artifactId>
         <scope>test</scope>

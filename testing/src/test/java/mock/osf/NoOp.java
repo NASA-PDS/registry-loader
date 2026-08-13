@@ -13,7 +13,5 @@ public abstract class NoOp implements OpensearchSupportedFunctionality {
   @Override
   public Response authorize(Context ctx) { return placeholder(); }
   @Override
-  public Response getRoot(Context ctx) { return placeholder(); }
-  @Override
-  public Response postBulk(Context ctx) { return placeholder(); }
+  public Response putMappingsSettings(Context ctx) { return placeholder(); }
 }
