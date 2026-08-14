@@ -1,11 +1,13 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-07-28)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-08-14)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.3.2...«unknown»)
 
 **Defects:**
 
+- Harvest does not create LDD download temp files on Windows, causing all products in a bundle to fail [\#142](https://github.com/NASA-PDS/registry-loader/issues/142) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- PDS4\_PDS\_1J00.JSON error "Failed to download or load LDD for namespace 'pds'" [\#124](https://github.com/NASA-PDS/registry-loader/issues/124) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
 - LDD\_Info sentinel written for partial load blocks future re-download of missing fields [\#122](https://github.com/NASA-PDS/registry-loader/issues/122) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Harvest cannot find datatypes for pds namespace [\#105](https://github.com/NASA-PDS/registry-loader/issues/105) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 
