@@ -15,7 +15,7 @@ public final class Sane implements MockAware {
     int passed = 0;
     for (OpensearchSupportedFunctionality osf : this.knownMocks) {
       if (osf instanceof JUnitish) {
-        count++;
+        count += ((JUnitish) osf).results.values().size();
         for (Boolean b : ((JUnitish) osf).results.values()) {
           if (b) {
             passed++;
@@ -29,7 +29,7 @@ public final class Sane implements MockAware {
       assert false : "No results found. Cannot meet any expectation without results.";
     } else {
       if (failed > 0 || passed == 0) {
-        assert false: passed + " tests passed but " + failed + " tests failed";
+        assert false: "out of " + count + " tests, " + passed + " tests passed and " + failed + " tests failed";
       }
     }
   }

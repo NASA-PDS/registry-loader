@@ -26,7 +26,7 @@ import mock.annotation.Replace;
 import mock.osf.Standard;
 
 public final class OpensearchEngine {
-  private record MethodTarget(Object instance, Method method) {
+  public record MethodTarget(Object instance, Method method) {
   }
   private final Logger log = LoggerFactory.getLogger(OpensearchEngine.class);
   private final Map<String, MethodTarget> redirect = new ConcurrentHashMap<>();
@@ -64,6 +64,14 @@ public final class OpensearchEngine {
         }
       }
     }
+  }
+  
+  public Map<String, MethodTarget> redirectDeepCopy() {
+    ConcurrentHashMap<String, MethodTarget> dcp = new ConcurrentHashMap<>();
+    for (Map.Entry<String, MethodTarget> item : this.redirect.entrySet()) {
+      dcp.put(item.getKey(), new MethodTarget(item.getValue().instance(), item.getValue().method()));
+    }
+    return dcp;
   }
 
   /**
@@ -116,7 +124,7 @@ public final class OpensearchEngine {
    * Resolves the target interface method by climbing the profile's class hierarchy, respecting your
    * explicit @Replace annotation policies.
    */
-  private Response process(String methodName, Context context) {
+  public Response process(String methodName, Context context) {
     final String registry = "Devregistrystructured";
     log.info("Method name: {}", methodName);
     log.info("Context:");
