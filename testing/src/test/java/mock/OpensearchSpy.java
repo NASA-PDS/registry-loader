@@ -66,8 +66,15 @@ public final class OpensearchSpy {
   // these itself based on the actual bytes being sent — copying stale values across
   // would corrupt the framing. Everything is still captured in the JSON record
   // unfiltered; this list only affects what gets blindly re-set on the wire.
+  //
+  // The h2-specific entries (keep-alive, upgrade, proxy-connection, te) matter even
+  // though the listener now runs HTTP/1.1-only (see start(), ssl.http2 = false):
+  // OpenSearch's HTTP/1.1 upstream commonly sends "Keep-Alive: timeout=5" etc, and
+  // these are meaningless/stale once relayed over a fresh connection, so we drop them
+  // on principle rather than only when strictly required by the protocol in use.
   private static final Set<String> HOP_BY_HOP_HEADERS = Set.of(
-      "host", "content-length", "connection", "transfer-encoding", "expect");
+      "host", "content-length", "connection", "transfer-encoding", "expect",
+      "keep-alive", "upgrade", "proxy-connection", "te");
 
   public OpensearchSpy(URI upstreamBase, Path captureDir) {
     this.upstreamBase = upstreamBase;
@@ -110,6 +117,14 @@ public final class OpensearchSpy {
         ssl.host = "127.0.0.1";
         ssl.insecure = false;
         ssl.securePort = port;
+        // Disable HTTP/2 (SslPlugin defaults this on via ALPN). A raw proxy is exactly
+        // the kind of thing that trips HTTP/2's stricter framing rules -- a header
+        // that's merely sloppy over HTTP/1.1 (e.g. a stray Keep-Alive from the
+        // upstream, a duplicate) can get the whole stream RST_STREAM'd by the SDK's h2
+        // client ("Stream reset (8)" / CANCEL). We don't need h2 for a test double, so
+        // pin HTTP/1.1 to remove that entire bug class rather than chase every header
+        // h2 happens to be strict about.
+        ssl.http2 = false;
         try {
           Process process = new ProcessBuilder("sh", "-c",
               "openssl req -x509 -newkey rsa:2048 -keyout /dev/stdout -out /dev/stdout -sha256 -days 1 -nodes -subj '/CN=localhost' -addext 'subjectAltName = DNS:localhost' 2>/dev/null")
@@ -273,7 +288,7 @@ public final class OpensearchSpy {
     request.put("path", ctx.path());
     request.put("pathAndQuery", pathAndQuery);
     request.put("queryString", ctx.queryString());
-    request.put("endpoint", ctx.endpoint().path);
+    request.put("matchedPath", ctx.endpoint() != null ? ctx.endpoint().path : null);
     request.put("protocol", ctx.protocol());
     request.put("scheme", ctx.scheme());
     request.put("host", ctx.host());
@@ -336,9 +351,9 @@ public final class OpensearchSpy {
   }
 
   public static void main(String[] argv) throws InterruptedException {
-    // Point this at wherever docker-compose exposes OpenSearch, e.g. https://localhost:19200
+    // Point this at wherever docker-compose exposes OpenSearch, e.g. https://localhost:9201
     URI upstream = URI.create(System.getProperty("spy.upstream", "https://localhost:19200"));
-    Path captures = Path.of(System.getProperty("spy.captureDir", "/tmp/captures"));
+    Path captures = Path.of(System.getProperty("spy.captureDir", "target/captures"));
 
     OpensearchSpy spy = new OpensearchSpy(upstream, captures);
     spy.start(9200);
