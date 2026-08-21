@@ -6,6 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class SingleScenerio {
+  public static final String TEST_DATA_DIR =
+      System.getProperty("user.dir") + File.separator + "src/test/resources";
+
+  private static String clean(String arg) {
+    arg = arg.strip();
+    return arg.substring(1,arg.length()-1);
+  }
   public static void main(String[] args) throws NumberFormatException, IOException {
     if (args.length > 2 || args.length == 0) {
       System.out.println ("usage: <issue number> <subtest>");
@@ -14,7 +21,7 @@ public class SingleScenerio {
       return;
     }
 
-    for (File file : Paths.get(TestConstants.TEST_DATA_DIR, "features").toFile().listFiles((dir, name) -> name.endsWith(".feature"))) {
+    for (File file : Paths.get(TEST_DATA_DIR, "features").toFile().listFiles((dir, name) -> name.endsWith(".feature"))) {
       for (String line : Files.readAllLines(file.toPath())) {
         line = line.strip();
         if (line.startsWith("|")) {
@@ -30,16 +37,15 @@ public class SingleScenerio {
             }
             if (args.length == 2 && !args[1].equals(scenerio[2].strip())) continue;
             StepDefs engine = new StepDefs();
-            System.out.println("an_and");
-            engine.an_and(
+            System.out.println("construct");
+            engine.construct(
                 Integer.valueOf(scenerio[1].strip()),
                 args.length == 1 ? null : Integer.valueOf(scenerio[2].strip()),
-                scenerio[3].strip().substring(1, scenerio[3].strip().length()-1));
-            System.out.println("execute_validate");
-            engine.execute_validate (scenerio[4].strip().substring(1,scenerio[4].strip().length()-1));
-            System.out.println ("compare_to_the");
-            engine.compare_to_the(scenerio[5].strip().isBlank() ? "" :
-              scenerio[5].strip().substring(1, scenerio[5].strip().length()-1));
+                clean(scenerio[3]));
+            System.out.println("");
+            engine.execute (clean(scenerio[4]), clean(scenerio[5]));
+            System.out.println ("compare");
+            engine.compare (clean(scenerio[6]));
             System.out.println ("success");
             return;
           }
