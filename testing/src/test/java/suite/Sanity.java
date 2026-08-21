@@ -31,7 +31,7 @@ public final class Sanity extends ArtificialComposite {
   @Test
   public void testAuthorize() {
     HashMap<String,String> headers = new HashMap<String,String>();
-    Context ctx = new Context("body", headers, null, null);
+    Context ctx = new Context("test", "body", headers, null, null);
     headers.put("user-agent", "opensearch-java/3.2.0 (Java/21.0.11)");
     headers.put("accept", "application/json; charset=UTF-8");
     headers.put("authorization", "Basic fakekey");
@@ -41,7 +41,7 @@ public final class Sanity extends ArtificialComposite {
   
   @Test
   public void testMappingSettings() {
-    Context ctx = new Context("body", null, null, null);
+    Context ctx = new Context("test", "body", null, null, null);
     assert this.putMappingsSettings(ctx).statusCode() == 200 : "did not return a success status code";
   }
 }

@@ -4,7 +4,7 @@ import java.lang.invoke.MethodHandles;
 import mock.NoOpException;
 import mock.OpensearchSupportedFunctionality;
 
-public abstract class NoOp implements OpensearchSupportedFunctionality {
+public class NoOp implements OpensearchSupportedFunctionality {
   private Response placeholder() {
     String methodName = new Throwable().getStackTrace()[1].getMethodName();
     String className = MethodHandles.lookup().lookupClass().getSimpleName();
@@ -12,6 +12,8 @@ public abstract class NoOp implements OpensearchSupportedFunctionality {
   }
   @Override
   public Response authorize(Context ctx) { return placeholder(); }
+  @Override
+  public Response postBulkCreate(Context ctx) { return placeholder(); }
   @Override
   public Response putMappingsSettings(Context ctx) { return placeholder(); }
 }

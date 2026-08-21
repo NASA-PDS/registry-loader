@@ -4,6 +4,7 @@ import java.util.Map;
 
 public interface OpensearchSupportedFunctionality {
   public record Context(
+      String index, // the index that the JSON body applies
       String body, // original headers sent to the socket
       Map<String, String> headers, // original headers sent to the socket
       Map<String, String> queryParams, // original query parameters sent to the socket
@@ -25,5 +26,6 @@ public interface OpensearchSupportedFunctionality {
   }
   
   public Response authorize(Context ctx);
+  public Response postBulkCreate(Context ctx);
   public Response putMappingsSettings(Context ctx);
 }

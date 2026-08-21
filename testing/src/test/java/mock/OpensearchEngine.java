@@ -6,15 +6,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.Javalin;
 import io.javalin.community.ssl.SslPlugin;
 import io.javalin.http.Handler;
@@ -28,9 +25,10 @@ import mock.osf.Standard;
 public final class OpensearchEngine {
   public record MethodTarget(Object instance, Method method) {
   }
-  private final Logger log = LoggerFactory.getLogger(OpensearchEngine.class);
+  
+  private final JsonHelper json = new JsonHelper();
+  private final Logger log = LoggerFactory.getLogger(this.getClass());
   private final Map<String, MethodTarget> redirect = new ConcurrentHashMap<>();
-  private final ObjectMapper mapper = new ObjectMapper();
   private Javalin app;
 
   /**
@@ -83,36 +81,11 @@ public final class OpensearchEngine {
   }
 
   /**
-   * Same as decodeTopLevel, but tolerant of bodies that aren't a JSON object at all (not valid
-   * JSON, or a JSON array/scalar instead of an object). Returns empty map in that case instead of
-   * throwing, so callers on a mixed-content-type pipeline can call this unconditionally.
-   */
-  private Map<String, String> decodeTopLevel(String body) {
-    if (body == null || body.isBlank())
-      return Map.of();
-    try {
-      JsonNode root = this.mapper.readTree(body);
-      Map<String, String> result = new LinkedHashMap<>();
-      if (!root.isObject())
-        return Map.of(); // not a JSON object at top level
-      for (Map.Entry<String, JsonNode> e : root.properties()) {
-       result.put(e.getKey(), this.mapper.writeValueAsString(e.getValue()));
-      }
-      return result;
-    } catch (Exception e) {
-      return Map.of(); // not valid JSON at all
-    }
-  }
-
-  /**
    * Converts HTTP paths into safe, matching Java method names. Examples: GET / -> getRoot POST
    * /_bulk -> postBulk POST /my-index/_search -> postMyIndexSearch
    */
   private String determineMethodName(String method, String path) {
     String sanitizedPath = path.replaceAll("[^a-zA-Z0-9/]", "");
-    if (sanitizedPath.equals("/") || path.isEmpty()) {
-      return method.toLowerCase() + "Root";
-    }
     String camelCasePath =
         Arrays.stream(sanitizedPath.split("/")).filter(segment -> !segment.isEmpty())
             .map(segment -> Character.toUpperCase(segment.charAt(0)) + segment.substring(1))
@@ -120,24 +93,25 @@ public final class OpensearchEngine {
     return method.toLowerCase() + camelCasePath;
   }
 
+  private String indexFrom(String path) {
+    return path.split("/")[1];
+  }
+ 
   /**
    * Resolves the target interface method by climbing the profile's class hierarchy, respecting your
    * explicit @Replace annotation policies.
    */
   public Response process(String methodName, Context context) {
-    final String registry = "Devregistrystructured";
     log.info("Method name: {}", methodName);
     log.info("Context:");
+    log.info("   index:   {}", context.index());
     log.info("   body:    {}", context.body());
     log.info("   hearder: {}", context.headers());
     log.info("   query:   {}", context.queryParams());
     log.info("   params:  {}", context.pathParams());
-    if (methodName.endsWith(registry)) {
-      methodName = methodName.substring(0, methodName.length() - registry.length());
-      Map<String,String> endpoint = decodeTopLevel(context.body());
-      for (String name : endpoint.keySet().stream().map(String::toLowerCase).sorted().toList()) {
-        methodName = methodName + Character.toUpperCase(name.charAt(0)) + name.substring(1);
-      }
+    Map<String,String> endpoint = json.decodeTopLevel(context.body());
+    for (String name : endpoint.keySet().stream().map(String::toLowerCase).sorted().toList()) {
+      methodName = methodName + Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
     return subprocess(methodName, context);
   }
@@ -171,12 +145,17 @@ public final class OpensearchEngine {
 
       Handler catchAll = ctx -> {
         Context facadeContext =
-            new Context(ctx.body(), ctx.headerMap(),
+            
+            new Context(
+                indexFrom(ctx.path()),
+                ctx.body(), ctx.headerMap(),
                 ctx.queryParamMap().entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get(0))),
                 ctx.pathParamMap());
-        String targetMethodName = determineMethodName(ctx.method().name(), ctx.path());
+        
+        String targetMethodName = determineMethodName(ctx.method().name(), ctx.path().substring(facadeContext.index().length()+1));
         log.info("request path: {}", ctx.path());
+        // FIXME: need to always check authorize() here???
         sendResponse(ctx, process(targetMethodName, facadeContext));
       };
 
