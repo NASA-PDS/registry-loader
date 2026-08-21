@@ -198,7 +198,7 @@ public final class OpensearchEngine {
     }
   }
 
-  public static void main(String argv[]) throws InterruptedException {
+  public static void main(String[] argv) throws InterruptedException {
     OpensearchEngine me = new OpensearchEngine();
     me.start(9200);
     me.add(new Standard());
