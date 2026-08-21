@@ -330,6 +330,13 @@ public class SchemaUpdater
      */
     public static File createLddTempFile(String prefix) throws LddException
     {
+        String tmpDirPath = System.getProperty("java.io.tmpdir");
+        File tmpDir = new File(tmpDirPath);
+        if(!tmpDir.exists())
+        {
+            tmpDir.mkdirs();
+        }
+
         try
         {
             return Files.createTempFile("LDD-", ".JSON",
@@ -345,7 +352,7 @@ public class SchemaUpdater
             {
                 fallbackEx.addSuppressed(ex);
                 throw new LddException("Failed to create temp file for LDD download for namespace '"
-                    + prefix + "': " + ExceptionUtils.getMessage(fallbackEx), fallbackEx);
+                    + prefix + "' in directory '" + tmpDirPath + "': " + ExceptionUtils.getMessage(fallbackEx), fallbackEx);
             }
         }
     }

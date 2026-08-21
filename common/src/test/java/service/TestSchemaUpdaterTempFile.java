@@ -21,4 +21,26 @@ public class TestSchemaUpdaterTempFile {
             tmp.delete();
         }
     }
+
+    @Test
+    void createLddTempFile_recreatesMissingTmpDir() throws Exception {
+        String originalTmpDir = System.getProperty("java.io.tmpdir");
+        File missingTmpDir = new File(System.getProperty("java.io.tmpdir"),
+            "ldd-tmp-test-" + System.nanoTime());
+        assertFalse(missingTmpDir.exists(), "Precondition: test tmp dir must not already exist");
+
+        System.setProperty("java.io.tmpdir", missingTmpDir.getAbsolutePath());
+        File tmp = null;
+        try {
+            tmp = SchemaUpdater.createLddTempFile("test");
+            assertTrue(missingTmpDir.exists(), "Missing java.io.tmpdir must be created");
+            assertTrue(tmp.exists(), "Temp file must exist");
+        } finally {
+            System.setProperty("java.io.tmpdir", originalTmpDir);
+            if (tmp != null) {
+                tmp.delete();
+            }
+            missingTmpDir.delete();
+        }
+    }
 }
