@@ -13,11 +13,11 @@ import org.apache.logging.log4j.Logger;
 
 import gov.nasa.pds.harvest.cmd.CliCommand;
 import gov.nasa.pds.harvest.cmd.HarvestCmd;
-import gov.nasa.pds.harvest.util.log.Log4jConfigurator;
 import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.ArchiveStatus;
 import gov.nasa.pds.registry.common.util.ExceptionUtils;
 import gov.nasa.pds.registry.common.util.ManifestUtils;
+import gov.nasa.pds.registry.common.util.log.Log4jConfigurator;
 
 
 /**
@@ -27,6 +27,7 @@ import gov.nasa.pds.registry.common.util.ManifestUtils;
  */
 public class HarvestCli
 {
+    private static final Logger log = LogManager.getLogger(HarvestCli.class);
     private Options options;
     private CommandLine cmdLine;
 
@@ -93,7 +94,6 @@ public class HarvestCli
         catch(Exception ex)
         {
             String msg = ExceptionUtils.getMessage(ex);
-            Logger log = LogManager.getLogger(this.getClass());
             log.error(msg, ex);
             log.debug("for the stack trace", ex);
             return false;
@@ -181,9 +181,8 @@ public class HarvestCli
     private static void initLogger(CommandLine cmdLine)
     {
         String verbosity = cmdLine.getOptionValue("v", "INFO");
-        String logFile = cmdLine.getOptionValue("l");
-
-        Log4jConfigurator.configure(verbosity, logFile);
+        String logFile = cmdLine.getOptionValue("l", "/tmp/harvest/harvest.log");
+        Log4jConfigurator.configure("harvest", verbosity, logFile);
     }
 
     

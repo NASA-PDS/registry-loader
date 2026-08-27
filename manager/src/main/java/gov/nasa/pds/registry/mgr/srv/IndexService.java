@@ -15,22 +15,20 @@ import gov.nasa.pds.registry.mgr.dao.IndexSettings;
  */
 public class IndexService
 {
-    private static final String ERR_CFG = 
-            "Could not find default configuration directory. REGISTRY_MANAGER_HOME environment variable is not set."; 
+    private static final String ERR_CFG =
+            "Could not find default configuration directory. REGISTRY_MANAGER_HOME environment variable is not set.";
 
-    private Logger log;
+    private static final Logger log = LogManager.getLogger(IndexService.class);
     private RestClient client;
     private IndexDao indexDao;
-    
-    
+
+
     /**
      * Constructor
      * @param client Elasticsearch client
      */
     public IndexService(RestClient client)
     {
-        log = LogManager.getLogger(this.getClass());
-        
         this.client = client;
         indexDao = new IndexDao(client);
     }
@@ -51,10 +49,10 @@ public class IndexService
         
         try
         {
-            log.info("Creating index: " + indexName);
-            log.info("Schema: " + schemaFile.getAbsolutePath());
-            log.info("Shards: " + shards);
-            log.info("Replicas: " + replicas);
+            log.info("Creating index: {}", indexName);
+            log.info("Schema: {}", schemaFile.getAbsolutePath());
+            log.info("Shards: {}", shards);
+            log.info("Replicas: {}", replicas);
             
            // Execute request
             this.client.create(indexName, RestClient.createCreateIndexRequest(schemaFile, shards, replicas));
@@ -93,8 +91,8 @@ public class IndexService
         }
         else
         {
-            log.warn("Index " + indexName + " doesn't exist. Will use default number of shards (" 
-                    + shards + ") and replicas (" + replicas + ")");
+            log.warn("Index {} doesn't exist. Will use default number of shards ({}) and replicas ({})",
+                    indexName, shards, replicas);
         }
         
         // Create new index
@@ -147,7 +145,7 @@ public class IndexService
     {
         try
         {
-            log.info("Deleting index " + indexName);
+            log.info("Deleting index {}", indexName);
             
             if(!indexDao.indexExists(indexName)) 
             {

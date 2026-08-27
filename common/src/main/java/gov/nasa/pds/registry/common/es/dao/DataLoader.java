@@ -22,6 +22,7 @@ import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.util.CloseUtils;
+import gov.nasa.pds.registry.common.util.log.LogLevels;
 
 
 /**
@@ -44,7 +45,7 @@ public class DataLoader
   // Safe for idempotent LDD loads; leave false for product ingestion where duplicates are errors.
   private boolean ignoreConflicts = false;
 
-    private final Logger log;
+    private static final Logger log = LogManager.getLogger(DataLoader.class);
     private final ConnectionFactory conFactory;
 
 
@@ -58,7 +59,6 @@ public class DataLoader
      */
     public DataLoader(ConnectionFactory conFactory) throws Exception
     {
-        log = LogManager.getLogger(this.getClass());
         this.conFactory = conFactory;
     }
 
@@ -91,7 +91,7 @@ public class DataLoader
      */
     public void loadFile(File file) throws Exception
     {
-        log.info("Loading ES data file: " + file.getAbsolutePath());
+        log.info("Loading ES data file: {}", file.getAbsolutePath());
 
         BufferedReader rd = new BufferedReader(new FileReader(file));
         loadData(rd);
@@ -106,7 +106,7 @@ public class DataLoader
      */
     public void loadZippedFile(File zipFile, String fileName) throws Exception
     {
-        log.info("Loading ES data file: " + zipFile.getAbsolutePath() + ":" + fileName);
+        log.info("Loading ES data file: {}:{}", zipFile.getAbsolutePath(), fileName);
 
         ZipFile zip = new ZipFile(zipFile);
 
@@ -147,7 +147,7 @@ public class DataLoader
             {
                 if(totalRecords % printProgressSize == 0)
                 {
-                    log.info("Loaded " + totalRecords + " document(s)");
+                    log.info("Loaded {} document(s)", totalRecords);
                 }
             }
 
@@ -231,9 +231,9 @@ public class DataLoader
      * @return Number of loaded documents
      * @throws Exception an exception
      */
-    public int loadBatch(List<String> data, Set<String> errorLidvids) throws Exception
+    public int loadBatch(List<String> data, Set<String> errorLidvids, Set<String> matchedIds) throws Exception
     {
-        return loadBatch(data, errorLidvids, defaultRequestRetries);
+        return loadBatch(data, errorLidvids, matchedIds, defaultRequestRetries);
     }
 
     /**
@@ -244,7 +244,7 @@ public class DataLoader
      * @return Number of loaded documents
      * @throws Exception an exception
      */
-    public int loadBatch(List<String> data, Set<String> errorLidvids, int retries) throws Exception
+    public int loadBatch(List<String> data, Set<String> errorLidvids, Set<String> matchedIds, int retries) throws Exception
     {
         if(data == null || data.isEmpty()) return 0;
         if(data.size() % 2 != 0) throw new Exception("Data list size should be an even number.");
@@ -259,7 +259,7 @@ public class DataLoader
             queued += data.get(index).length() + data.get(index+1).length();
             queue.put(data.get(index), data.get(++index));
             if (queued > SIZE_THRESHOLD) {
-              failedCount += emptyQueue(queue, errorLidvids);
+              failedCount += emptyQueue(queue, errorLidvids, matchedIds);
               // Calculate number of successfully saved records
               // NOTE: data list has two lines per record (primary key + data)
               loadedCount += data.size() / 2 - failedCount;
@@ -267,7 +267,7 @@ public class DataLoader
             }
           }
           if (queued > 0) {
-            failedCount += emptyQueue(queue, errorLidvids);
+            failedCount += emptyQueue(queue, errorLidvids, matchedIds);
             // Calculate number of successfully saved records
             // NOTE: data list has two lines per record (primary key + data)
             loadedCount += data.size() / 2 - failedCount;
@@ -281,15 +281,14 @@ public class DataLoader
         catch(IOException ex)
         {
             if (retries > 0) {
-                String msg = ex.getMessage();
-                log.warn("DataLoader.loadBatch() request failed due to \"" + msg + "\" ("+ retries +" retries remaining)");
-                return loadBatch(data, errorLidvids, retries - 1);
+                log.warn("DataLoader.loadBatch() request failed ({} retries remaining) due to", retries, ex);
+                return loadBatch(data, errorLidvids, matchedIds, retries - 1);
             }
             throw ex;
         }
     }
 
-    private int emptyQueue (LinkedHashMap<String,String> todo, Set<String> errorLidvids) throws Exception {
+    private int emptyQueue (LinkedHashMap<String,String> todo, Set<String> errorLidvids, Set<String> matchedIds) throws Exception {
       int failed = 0;
       int retry = 0;
       while (!todo.isEmpty() && retry < MAX_RETRY) {
@@ -298,7 +297,7 @@ public class DataLoader
           bulk.add(item.getKey(), item.getValue());
         }
         Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
-        failed += processErrors (response, errorLidvids, todo, retry);
+        failed += processErrors (response, errorLidvids, matchedIds, todo, retry);
         retry++;
         
         if (!todo.isEmpty()) {
@@ -321,19 +320,21 @@ public class DataLoader
      */
     public int loadBatch(List<String> data) throws Exception
     {
-        return loadBatch(data, null);
+        return loadBatch(data, null, null);
     }
 
     private String asKey(Response.Bulk.Item item) {
       return "{\"" + item.operation()+"\":{\"_id\":\"" + item.id()+ "\"}}";
     }
-    private int processErrors(Response.Bulk resp, Set<String> errorLidvids, LinkedHashMap<String,String> todo, int retry) {
+    private int processErrors(Response.Bulk resp, Set<String> errorLidvids, Set<String> matchedIds, LinkedHashMap<String,String> todo, int retry) {
       int numErrors = 0;
 
       if (resp.errors()) {
         for (Response.Bulk.Item item : resp.items()) {
+          String sanitizedLidvid = item.id().replace('\r', ' ').replace('\n', ' ');  // protect vs log spoofing see code-scanning alert #37
           if (item.error()) {
             if (item.operation().equals("create") && item.status() == 409) {
+              log.log(LogLevels.LABEL_MATCHED, sanitizedLidvid);
               todo.remove(asKey(item));
               if (ignoreConflicts) {
                 log.debug("Document '{}' already exists in '{}', skipping (create 409).",
@@ -343,18 +344,19 @@ public class DataLoader
               }
             } else {
               String message = item.reason();
-              String sanitizedLidvid = item.id().replace('\r', ' ').replace('\n', ' ');  // protect vs log spoofing see code-scanning alert #37
               String sanitizedMessage = message.replace('\r', ' ').replace('\n', ' '); // protect vs log spoofing
               
               if ((message.contains("[throttled]") || message.contains("[maximum OCU capacity reached]")) && retry < MAX_RETRY) continue;
               
-              log.error("LIDVID = " + sanitizedLidvid + ", Message = " + sanitizedMessage);
+              log.error("LIDVID = {}, Message = {}", sanitizedLidvid, sanitizedMessage);
               numErrors++;
               todo.remove(asKey(item));
+              log.log(LogLevels.LABEL_FAILURE, sanitizedLidvid);
               if(errorLidvids != null) errorLidvids.add(item.id());            
             }
           } else {
             todo.remove(asKey(item));
+            log.log(LogLevels.LABEL_SUCCESS, sanitizedLidvid);
           }
         }
       } else {

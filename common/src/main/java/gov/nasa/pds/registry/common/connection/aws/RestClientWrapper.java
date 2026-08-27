@@ -81,9 +81,9 @@ public class RestClientWrapper implements RestClient {
       }
     }
   }
+  private static final Logger log = LogManager.getLogger(RestClientWrapper.class);
   final private boolean isServerless;
   final private ConnectionFactory conFact;
-  final private Logger log;
   final private SdkHttpClient httpClient;
   private OpenSearchClient client;
   private String scope = "aoss";
@@ -91,7 +91,6 @@ public class RestClientWrapper implements RestClient {
     this.conFact = conFact;
     this.httpClient = ApacheHttpClient.builder().socketTimeout(Duration.ofHours(2)).build();
     this.isServerless = isServerless;
-    this.log = LogManager.getLogger(this.getClass());
     this.client = this.buildClient();
   }
   private OpenSearchClient buildClient() {

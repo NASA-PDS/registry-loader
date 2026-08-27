@@ -17,8 +17,9 @@ import gov.nasa.pds.registry.common.es.dao.schema.SchemaDao;
  */
 public class RegistryManager
 {
+    private static final Logger log = LogManager.getLogger(RegistryManager.class);
     private static RegistryManager instance = null;
-    
+
     private RestClient client;
     private SchemaDao schemaDao;
     private DataDictionaryDao dataDictionaryDao;
@@ -36,9 +37,7 @@ public class RegistryManager
         
         ConnectionFactory conFact = EstablishConnectionFactory.from(connURL, authFile);
         client = conFact.createRestClient();
-        
-        Logger log = LogManager.getLogger(this.getClass());
-        log.info("Registry URL: " + connURL);
+        log.info("Registry URL: {}", connURL);
         
         schemaDao = new SchemaDao(client, conFact.getIndexName());
         dataDictionaryDao = new DataDictionaryDao(client, conFact.getIndexName());

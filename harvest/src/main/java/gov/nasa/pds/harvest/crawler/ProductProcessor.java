@@ -12,6 +12,9 @@ import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import gov.nasa.pds.registry.common.util.FieldMapSet;
+import gov.nasa.pds.registry.common.util.log.LogLevels;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import gov.nasa.pds.harvest.cfg.BundleType;
 import gov.nasa.pds.harvest.cfg.ConfigManager;
@@ -41,6 +44,8 @@ import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
  */
 public class ProductProcessor extends BaseProcessor
 {
+    private static final Logger log = LogManager.getLogger(ProductProcessor.class);
+
     /**
      * Constructor
      * @param config Harvest configuration parameters
@@ -134,8 +139,8 @@ public class ProductProcessor extends BaseProcessor
             // Skip very large files
             if(file.length() > MAX_XML_FILE_LENGTH)
             {
-                log.warn("File is too big to parse: " + file.getAbsolutePath());
-                counter.skippedFileCount++;
+                log.log(LogLevels.LABEL_IGNORED,"File is too big to parse: {}", file.getAbsolutePath());
+                counter.ignoredFileCount++;
                 return;
             }
 
@@ -143,8 +148,8 @@ public class ProductProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.warn(ex.getMessage());
-            counter.failedFileCount++;
+            log.log(LogLevels.LABEL_IGNORED, "File {} is ignored because: ", file.getAbsoluteFile(), ex);
+            counter.ignoredFileCount++;
             return;
         }        
         
@@ -165,8 +170,8 @@ public class ProductProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.error(ex.getMessage());
-            counter.failedFileCount++;
+            log.log(LogLevels.LABEL_IGNORED, "Ignoring file {} because: ", file.getAbsolutePath(), ex);
+            counter.ignoredFileCount++;
         }        
     }
     
@@ -194,12 +199,12 @@ public class ProductProcessor extends BaseProcessor
 
         if(productNotInCache && !overwriteMode)
         {
-            log.info("Skipping product " + file.getAbsolutePath() + " (LIDVID/LID is not in collection inventory or already exists in registry database)");
+            log.info("Skipping product {} (LIDVID/LID is not in collection inventory or already exists in registry database)", file.getAbsolutePath());
             counter.skippedFileCount++;
             return;
         }
         
-        log.info("Processing product " + file.getAbsolutePath());
+        log.info("Processing product {}", file.getAbsolutePath());
 
         // Internal references
         FieldMapSet intRefs = new FieldMapSet();
