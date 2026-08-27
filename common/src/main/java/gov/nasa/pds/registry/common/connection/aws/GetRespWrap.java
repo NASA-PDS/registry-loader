@@ -12,10 +12,9 @@ import gov.nasa.pds.registry.common.es.dao.dd.DataTypeNotFoundException;
 import gov.nasa.pds.registry.common.util.Tuple;
 
 class GetRespWrap implements Response.Get {
+  private static final Logger log = LogManager.getLogger(GetRespWrap.class);
   final private GetResponse<Object> parent;
-  final protected Logger log;
   GetRespWrap(GetResponse<Object> parent) {
-    this.log = LogManager.getLogger(this.getClass());
     this.parent = parent;
   }
   @Override

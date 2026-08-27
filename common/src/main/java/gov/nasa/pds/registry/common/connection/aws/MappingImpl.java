@@ -3,8 +3,6 @@ package gov.nasa.pds.registry.common.connection.aws;
 
 import java.util.Collection;
 import java.util.HashMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.opensearch.client.opensearch._types.mapping.Property;
 import org.opensearch.client.opensearch.indices.GetMappingRequest;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
@@ -14,10 +12,6 @@ import gov.nasa.pds.registry.common.Request.Mapping;
 import gov.nasa.pds.registry.common.util.Tuple;
 
 class MappingImpl implements Mapping {
-
-  static private Logger logger = LogManager.getLogger(MappingImpl.class);
-
-
   boolean isGet = true;
   final GetMappingRequest.Builder craftsman_get = new GetMappingRequest.Builder();
   final PutMappingRequest.Builder craftsman_set = new PutMappingRequest.Builder();

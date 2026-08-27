@@ -1,15 +1,29 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-08-14)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-08-27)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.3.2...«unknown»)
 
+**Requirements:**
+
+- As a registry operator, I want per-product outcome logging \(SUCCESS / FAILED / SKIPPED\) so I can determine what happened to any specific product by LIDVID [\#126](https://github.com/NASA-PDS/registry-loader/issues/126)
+
 **Defects:**
 
+- `Unexpected error (should not have made it here) while getting index sbnumd-registry` [\#144](https://github.com/NASA-PDS/registry-loader/issues/144) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
 - Harvest does not create LDD download temp files on Windows, causing all products in a bundle to fail [\#142](https://github.com/NASA-PDS/registry-loader/issues/142) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- Replace System.out.println with proper logger calls in production code [\#129](https://github.com/NASA-PDS/registry-loader/issues/129)
+- Fix exception logging to always include stack traces [\#127](https://github.com/NASA-PDS/registry-loader/issues/127)
 - PDS4\_PDS\_1J00.JSON error "Failed to download or load LDD for namespace 'pds'" [\#124](https://github.com/NASA-PDS/registry-loader/issues/124) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
 - LDD\_Info sentinel written for partial load blocks future re-download of missing fields [\#122](https://github.com/NASA-PDS/registry-loader/issues/122) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Harvest cannot find datatypes for pds namespace [\#105](https://github.com/NASA-PDS/registry-loader/issues/105) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+
+**Other closed issues:**
+
+- Align slf4j-nop version across harvest and manager modules [\#132](https://github.com/NASA-PDS/registry-loader/issues/132)
+- Convert string-concatenation log calls to parameterized form [\#131](https://github.com/NASA-PDS/registry-loader/issues/131)
+- Standardize logger field declarations across all classes [\#130](https://github.com/NASA-PDS/registry-loader/issues/130)
+- Consolidate Log4jConfigurator into common module and resolve DEBUG vs ALL divergence [\#128](https://github.com/NASA-PDS/registry-loader/issues/128)
 
 ## [v1.3.2](https://github.com/NASA-PDS/registry-loader/tree/v1.3.2) (2026-07-15)
 

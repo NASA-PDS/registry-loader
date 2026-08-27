@@ -23,15 +23,14 @@ import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
  */
 public class XPathCacheLoader
 {
-    private Logger LOG;
+    private static final Logger log = LogManager.getLogger(XPathCacheLoader.class);
     private XPathFactory xpf;
-    
+
     /**
      * Constructor
      */
     public XPathCacheLoader()
     {
-        LOG = LogManager.getLogger(getClass());
         xpf = XPathFactory.newInstance();
     }
     
@@ -46,7 +45,7 @@ public class XPathCacheLoader
         for(XpathMapType xpm: maps.getXpathMap())
         {
             File file = new File(maps.getBaseDir(), xpm.getFilePath()); 
-            LOG.info("Loading xpath-to-field-name map from " + file.getAbsolutePath());
+            log.info("Loading xpath-to-field-name map from {}", file.getAbsolutePath());
 
             if(!file.exists())
             {

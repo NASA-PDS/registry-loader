@@ -20,7 +20,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  */
 public class CsvLddLoader
 {
-    private Logger log;
+    private static final Logger log = LogManager.getLogger(CsvLddLoader.class);
     private DataLoader loader;
 
     
@@ -33,7 +33,6 @@ public class CsvLddLoader
      */
     public CsvLddLoader(String esUrl, String indexName, String authFilePath) throws Exception
     {
-        log = LogManager.getLogger(this.getClass());
         loader = new DataLoader(EstablishConnectionFactory.from(esUrl, authFilePath).setIndexName(indexName + "-dd"));
     }
     
@@ -57,7 +56,7 @@ public class CsvLddLoader
             if(header == null) return;
             validateCsvHeader(header);
             
-            log.info("Creating temprary ES NJSON " + tempDataFile.getAbsolutePath());
+            log.info("Creating temporary ES NJSON {}", tempDataFile.getAbsolutePath());
             writer = new DDNJsonWriter(tempDataFile, true);
             
             int line = 1;

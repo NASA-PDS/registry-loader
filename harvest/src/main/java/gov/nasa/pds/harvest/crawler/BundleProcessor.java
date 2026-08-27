@@ -11,6 +11,8 @@ import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import gov.nasa.pds.registry.common.util.FieldMapSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 
 import gov.nasa.pds.harvest.dao.RegistryManager;
@@ -40,6 +42,7 @@ import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
  */
 public class BundleProcessor extends BaseProcessor
 {
+    private static final Logger log = LogManager.getLogger(BundleProcessor.class);
     private BundleMetadataExtractor bundleExtractor;
     
     private int bundleCount;
@@ -107,7 +110,7 @@ public class BundleProcessor extends BaseProcessor
         // Skip very large files
         if(file.length() > MAX_XML_FILE_LENGTH)
         {
-            log.warn("File is too big to parse: " + file.getAbsolutePath());
+            log.warn("File is too big to parse: {}", file.getAbsolutePath());
             return;
         }
 
@@ -128,7 +131,7 @@ public class BundleProcessor extends BaseProcessor
         
         if(!bundleCfg.getVersions().equalsIgnoreCase("all") && !bundleCfg.getVersions().contains(meta.vid())) return;
 
-        log.info("Processing bundle " + file.getAbsolutePath());
+        log.info("Processing bundle {}", file.getAbsolutePath());
         bundleCount++;
         
         RegistryDao dao = RegistryManager.getInstance().getRegistryDao(); 
@@ -139,7 +142,7 @@ public class BundleProcessor extends BaseProcessor
 
         if(bundleAlreadyRegistered && !overwriteMode)
         {
-            log.warn("Bundle " + meta.lidvid() + " already registered. Skipping.");
+            log.warn("Bundle {} already registered. Skipping.", meta.lidvid());
             addCollectionRefs(meta, doc);
             counter.skippedFileCount++;
             return;
