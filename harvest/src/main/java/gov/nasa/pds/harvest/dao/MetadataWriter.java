@@ -15,14 +15,13 @@ import gov.nasa.pds.harvest.util.PackageIdGenerator;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.es.dao.DataLoader;
 import gov.nasa.pds.registry.common.meta.Metadata;
+import gov.nasa.pds.registry.common.util.log.LogLevels;
 
 
 public class MetadataWriter implements Closeable {
-  private final static String WARN_SKIP_PRE = "Skipping registered product ";
-  private final static String WARN_SKIP_POST = " (LIDVID/LID already exists in registry database)";
   private final static int ES_DOC_BATCH_SIZE = 50;
+  private static final Logger log = LogManager.getLogger(MetadataWriter.class);
   private final ConnectionFactory conFact;
-  private Logger log;
 
   private RegistryDao registryDao;
   private DataLoader loader;
@@ -43,7 +42,6 @@ public class MetadataWriter implements Closeable {
   public MetadataWriter(ConnectionFactory conFact, RegistryDao dao, Counter counter)
       throws Exception {
     this.conFact = conFact;
-    log = LogManager.getLogger(this.getClass());
     loader = new DataLoader(conFact);
     docBatch = new RegistryDocBatch();
     jobId = PackageIdGenerator.getInstance().getPackageId();
@@ -76,7 +74,7 @@ public class MetadataWriter implements Closeable {
       nonRegisteredIds = registryDao.getNonExistingIds(batchLidVids);
       if (nonRegisteredIds == null || nonRegisteredIds.isEmpty()) {
         for (String lidvid : batchLidVids) {
-          log.warn(WARN_SKIP_PRE + lidvid + WARN_SKIP_POST);
+          log.log(LogLevels.LABEL_SKIPPED, lidvid);
           counter.skippedFileCount++;
         }
         docBatch.clear();
@@ -94,7 +92,7 @@ public class MetadataWriter implements Closeable {
         if (nonRegisteredIds.contains(item.lidvid)) {
           addItem(data, item);
         } else {
-          log.warn(WARN_SKIP_PRE + item.lidvid + WARN_SKIP_POST);
+          log.log(LogLevels.LABEL_SKIPPED, item.lidvid);
           counter.skippedFileCount++;
         }
       }
@@ -102,11 +100,13 @@ public class MetadataWriter implements Closeable {
 
     // Load batch
     Set<String> failedIds = new TreeSet<>();
-    totalRecords += loader.loadBatch(data, failedIds);
-    log.info("Wrote " + totalRecords + " product(s)");
+    Set<String> matchedIds = new TreeSet<>();
+    totalRecords += loader.loadBatch(data, failedIds, matchedIds);
+    log.info("Wrote {} product(s)", totalRecords);
 
     // Update failed counter
     counter.failedFileCount += failedIds.size();
+    counter.matchedFileCount += matchedIds.size();
 
     // Update product counters
     for (RegistryDocBatch.NJsonItem item : docBatch.getItems()) {
@@ -114,6 +114,7 @@ public class MetadataWriter implements Closeable {
           || (nonRegisteredIds != null && nonRegisteredIds.contains(item.lidvid)
               && !failedIds.contains(item.lidvid))) {
         counter.prodCounters.inc(item.prodClass);
+        log.log(LogLevels.LABEL_SUCCESS, item.lidvid);
       }
     }
 

@@ -25,9 +25,10 @@ import gov.nasa.pds.registry.mgr.dd.CsvLddLoader;
  */
 public class LoadDDCmd implements CliCommand
 {
+  private static final Logger log = LogManager.getLogger(LoadDDCmd.class);
   private String url;
   private String indexName;
-  private String authFile ;
+  private String authFile;
     /**
      * Constructor
      */
@@ -114,13 +115,11 @@ public class LoadDDCmd implements CliCommand
      */
     private void loadLdd(String path, String namespace) throws Exception
     {
-        Logger log = LogManager.getLogger(this.getClass());
-        
-        log.info("Data dictionary: " + path);
+        log.info("Data dictionary: {}", path);
         
         if(namespace != null)
         {
-            log.info("Namespace: " + namespace);
+            log.info("Namespace: {}", namespace);
         }
 
         // Init LDD loader
@@ -141,8 +140,7 @@ public class LoadDDCmd implements CliCommand
      */
     private void loadDataDump(String path) throws Exception
     {
-        Logger log = LogManager.getLogger(this.getClass());
-        log.info("Data dump: " + path);
+        log.info("Data dump: {}", path);
         
         DataLoader loader = new DataLoader(EstablishConnectionFactory.from(this.url, this.authFile).setIndexName(this.indexName + "-dd"));
         loader.loadFile(new File(path));
@@ -156,8 +154,7 @@ public class LoadDDCmd implements CliCommand
      */
     private void loadCsv(String path) throws Exception
     {
-        Logger log = LogManager.getLogger(this.getClass());
-        log.info("CSV file: " + path);
+        log.info("CSV file: {}", path);
         
         CsvLddLoader loader = new CsvLddLoader(this.url, this.indexName, this.authFile);
         File lddFile = new File(path);

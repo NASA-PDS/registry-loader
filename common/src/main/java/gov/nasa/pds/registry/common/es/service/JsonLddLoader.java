@@ -30,7 +30,7 @@ import gov.nasa.pds.registry.common.es.dao.dd.LddVersions;
  * @author karpenko
  */
 public class JsonLddLoader {
-  private Logger log;
+  private static final Logger log = LogManager.getLogger(JsonLddLoader.class);
 
   private Pds2EsDataTypeMap dtMap;
   private DataLoader loader;
@@ -46,7 +46,6 @@ public class JsonLddLoader {
    * @throws Exception an exception
    */
   public JsonLddLoader(DataDictionaryDao dao, ConnectionFactory conFact) throws Exception {
-    log = LogManager.getLogger(this.getClass());
     dtMap = new Pds2EsDataTypeMap();
 
     loader = new DataLoader(conFact.clone().setIndexName(conFact.getIndexName() + "-dd"));
@@ -147,7 +146,7 @@ public class JsonLddLoader {
       throws Exception {
     // Create and load temporary data file into Elasticsearch
     File tempEsDataFile = File.createTempFile("es-", ".json");
-    log.debug("Creating temporary ES data file " + tempEsDataFile.getAbsolutePath());
+    log.debug("Creating temporary ES data file {}", tempEsDataFile.getAbsolutePath());
 
     try {
       String firstFieldId = createEsDataFile(lddFile, lddFileName, namespace, tempEsDataFile, lastDate);
@@ -293,7 +292,7 @@ public class JsonLddLoader {
       Instant lddDate = LddUtils.lddDateToIsoInstant(strLddDate);
       return lddDate.isAfter(lastDate);
     } catch (Exception ex) {
-      log.warn("Could not parse LDD date " + strLddDate);
+      log.warn("Could not parse LDD date {}", strLddDate);
       return false;
     }
   }

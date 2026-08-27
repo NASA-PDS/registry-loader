@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Level;
  * @author karpenko
  *
  */
-public class LogUtils
-{
-    public static final Level LEVEL_SUMMARY = Level.forName("SUMMARY", 150);
+public class LogUtils {
+  public static final Level LEVEL_SUMMARY = Level.forName("SUMMARY", 150);
 }

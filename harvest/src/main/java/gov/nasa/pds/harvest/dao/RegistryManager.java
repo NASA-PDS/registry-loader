@@ -49,14 +49,15 @@ public class RegistryManager
      * @param cfg Registry (Elasticsearch) configuration parameters.
      * @throws Exception Generic exception
      */
+    private static final Logger log = LogManager.getLogger(RegistryManager.class);
+
     private RegistryManager(ConnectionFactory conFact, boolean overwriteFlag, boolean forceLoad) throws Exception
     {
         this.conFact = conFact;
         this.overwriteFlag = overwriteFlag;
         this.forceLoad = forceLoad;
         this.counter = new Counter();
-        Logger log = LogManager.getLogger(this.getClass());
-        log.log(LogUtils.LEVEL_SUMMARY, "Connection: " + conFact);
+        log.log(LogUtils.LEVEL_SUMMARY, "Connection: {}", conFact);
         client = conFact.createRestClient();
         registryDao = new RegistryDao(client, conFact.getIndexName());
         schemaDao = new SchemaDao(client, conFact.getIndexName());

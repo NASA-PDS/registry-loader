@@ -20,16 +20,15 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  */
 public class LatestLidsResponseParser
 {
-    private Logger log;
+    private static final Logger log = LogManager.getLogger(LatestLidsResponseParser.class);
     private List<String> lidvids;
-    
+
 
     /**
      * Constructor
      */
     public LatestLidsResponseParser()
     {
-        log = LogManager.getLogger(this.getClass());
         lidvids = new ArrayList<String>();
     }
 
@@ -162,7 +161,7 @@ public class LatestLidsResponseParser
         // If there is no product with a given LID, there will be no bucket for that LID. 
         if(lid != null && lidvid == null)
         {
-            log.warn("Could not find any products with LID " + lid);
+            log.warn("Could not find any products with LID {}", lid);
         }
         
         return lidvid;

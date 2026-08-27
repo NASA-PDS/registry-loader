@@ -27,7 +27,10 @@ import gov.nasa.pds.registry.common.meta.CollectionMetadataExtractor;
 import gov.nasa.pds.registry.common.meta.Metadata;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.common.util.FieldMapSet;
+import gov.nasa.pds.registry.common.util.log.LogLevels;
 import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -46,6 +49,7 @@ import gov.nasa.pds.registry.common.util.xml.XmlDomUtils;
  */
 public class FilesProcessor extends BaseProcessor
 {
+    private static final Logger log = LogManager.getLogger(FilesProcessor.class);
     // Bundle and Collection extractors & processors
     private BundleMetadataExtractor bundleExtractor;
     private CollectionMetadataExtractor collectionExtractor;
@@ -141,8 +145,8 @@ public class FilesProcessor extends BaseProcessor
             // Skip very large files
             if(file.length() > MAX_XML_FILE_LENGTH)
             {
-                log.warn("File is too big to parse: " + file.getAbsolutePath());
-                counter.skippedFileCount++;
+                log.log(LogLevels.LABEL_IGNORED, "File is too big to parse: {}", file.getAbsolutePath());
+                counter.ignoredFileCount++;
                 return;
             }
 
@@ -150,8 +154,8 @@ public class FilesProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.error(ex.getMessage());
-            counter.failedFileCount++;
+            log.log(LogLevels.LABEL_IGNORED, "File {} unreadable because ", file.getAbsolutePath(), ex);
+            counter.ignoredFileCount++;
             return;
         }        
         
@@ -169,8 +173,8 @@ public class FilesProcessor extends BaseProcessor
         }
         catch(Exception ex)
         {
-            log.error(ex.getMessage());
-            counter.failedFileCount++;
+            log.log(LogLevels.LABEL_IGNORED, "Could not process file {} because: ", file.getAbsoluteFile(), ex);
+            counter.ignoredFileCount++;
         }        
     }
 
@@ -187,7 +191,7 @@ public class FilesProcessor extends BaseProcessor
         Metadata meta = basicExtractor.extract(file, doc, this.archive_status);
         meta.setNodeName(ConfigManager.exchangeIndexForNode(RegistryManager.getInstance().getIndexName()));
 
-        log.info("Processing " + file.getAbsolutePath());
+        log.info("Processing {}", file.getAbsolutePath());
 
         String rootElement = doc.getDocumentElement().getNodeName();
 

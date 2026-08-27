@@ -10,6 +10,8 @@ import gov.nasa.pds.harvest.util.CounterMap;
 public class Counter
 {
     public CounterMap prodCounters;
+    public int ignoredFileCount;
+    public int matchedFileCount;
     public int skippedFileCount;
     public int failedFileCount;
     

@@ -19,7 +19,7 @@ import gov.nasa.pds.registry.common.es.dao.ProductDao;
  */
 public class ProductService
 {
-    private Logger log;
+    private static final Logger log = LogManager.getLogger(ProductService.class);
     private ProductDao dao;
 
     /**
@@ -27,7 +27,6 @@ public class ProductService
      */
     public ProductService(ProductDao dao)
     {
-        log = LogManager.getLogger(this.getClass());
         this.dao = dao;
     }
     
@@ -43,13 +42,13 @@ public class ProductService
      */
     public void updateArchiveStatus(String lidvid, String status) throws Exception
     {
-        log.info("Setting product status and its references if bundle or collection. LIDVID = " + lidvid + ", status = " + status);
+        log.info("Setting product status and its references if bundle or collection. LIDVID = {}, status = {}", lidvid, status);
         int total = 1;
 
         String pClass = dao.getProductClass(lidvid);
         if(pClass == null) 
         {
-            log.warn("Unknown LIDVID: " + lidvid);
+            log.warn("Unknown LIDVID: {}", lidvid);
             return;
         }
         
@@ -76,7 +75,7 @@ public class ProductService
 
             total += updateCollections(lidvids, status);
         }
-        log.info("Updated a total of " + total + " products.");
+        log.info("Updated a total of {} products.", total);
     }
     
     
@@ -100,11 +99,11 @@ public class ProductService
     private int updateCollectionInventory(String lidvid, String status) throws Exception
     {
         int pages = dao.getRefDocCount(lidvid, 'P'), total = 0;
-        log.debug("Pages: " + pages);
+        log.debug("Pages: {}", pages);
         
         if(pages == 0)
         {
-            log.warn("Collection " + lidvid + " doesn't have primary products.");
+            log.warn("Collection {} doesn't have primary products.", lidvid);
             return 0;
         }
 
@@ -112,7 +111,7 @@ public class ProductService
         for(int i = 1; i <= pages; i++)
         {
             List<String> ids = dao.getRefs(lidvid, 'P', i);
-            log.debug("Primary refs: " + ids);
+            log.debug("Primary refs: {}", ids);
             
             dao.updateArchiveStatus(ids, status);
             total += ids.size();

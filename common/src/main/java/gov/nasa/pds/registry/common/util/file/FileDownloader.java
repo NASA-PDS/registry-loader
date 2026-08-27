@@ -39,21 +39,20 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
 public class FileDownloader
 {
   final private static ArrayList<String> ignore = new ArrayList<String>();
-    private Logger log;
+    private static final Logger log = LogManager.getLogger(FileDownloader.class);
     private int numRetries = 3;
-    
+
     private CloseableHttpClient httpClient;
-    
+
 
     /**
      * Constructor
-     * @param sslTrustAll Enable or disable SSL certificate and host validation 
+     * @param sslTrustAll Enable or disable SSL certificate and host validation
      * to support self-signed certificates.
      * @throws Exception
      */
     public FileDownloader(boolean sslTrustAll) throws Exception
     {
-        log = LogManager.getLogger(this.getClass());
         httpClient = createHttpClient(sslTrustAll);
     }
 
@@ -78,7 +77,7 @@ public class FileDownloader
             }
             catch(Exception ex)
             {
-                log.info("Failed to download " + fromUrl + ": " + ex.getMessage());
+                log.info("Failed to download {}: {}", fromUrl, ex.getMessage());
                 if(count < numRetries)
                 {
                     log.info("Will retry in 5 seconds");
@@ -107,7 +106,7 @@ public class FileDownloader
         FileOutputStream os = null;
         CloseableHttpResponse resp = null;
         
-        log.debug("Downloading " + fromUrl + " to " + toFile.getAbsolutePath());
+        log.debug("Downloading {} to {}", fromUrl, toFile.getAbsolutePath());
         
         try
         {
