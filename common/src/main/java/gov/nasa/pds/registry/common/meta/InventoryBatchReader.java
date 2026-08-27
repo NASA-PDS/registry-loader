@@ -19,7 +19,7 @@ import gov.nasa.pds.registry.common.util.doc.RefType;
  */
 public class InventoryBatchReader implements Closeable
 {
-    private Logger log;
+    private static final Logger log = LogManager.getLogger(InventoryBatchReader.class);
     private BufferedReader rd;
     private RefType readRefType;
 
@@ -30,7 +30,6 @@ public class InventoryBatchReader implements Closeable
      */
     public InventoryBatchReader(Reader reader, RefType refType)
     {
-        log = LogManager.getLogger(this.getClass());
         rd = new BufferedReader(reader);
         this.readRefType = refType;
     }
@@ -67,7 +66,7 @@ public class InventoryBatchReader implements Closeable
             String[] tokens = line.split(",");
             if(tokens.length != 2)
             {
-                log.warn("Invalid collection inventory record: " + line);
+                log.warn("Invalid collection inventory record: {}", line);
                 continue;
             }
                         

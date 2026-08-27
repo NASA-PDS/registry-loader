@@ -27,15 +27,14 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  */
 public class Pds2EsDataTypeMap
 {
-    private Logger log;
+    private static final Logger log = LogManager.getLogger(Pds2EsDataTypeMap.class);
     private Map<String, String> map;
-    
+
     /**
      * Constructor
      */
     public Pds2EsDataTypeMap()
     {
-        log = LogManager.getLogger(this.getClass());
         map = new HashMap<>();
     }
 
@@ -51,8 +50,7 @@ public class Pds2EsDataTypeMap
         if(esType != null) return esType;
         
         esType = guessEsDataType(pdsType);
-        log.warn("No PDS to Elasticsearch data type mapping for '" + pdsType 
-                + "'. Will use '" + esType + "'");
+        log.warn("No PDS to Elasticsearch data type mapping for '{}'. Will use '{}'", pdsType, esType);
 
         map.put(pdsType, esType);
         return esType;
@@ -90,7 +88,7 @@ public class Pds2EsDataTypeMap
     {
         if(file == null) return;
         
-        log.info("Loading PDS to ES data type mapping from " + file.getAbsolutePath());
+        log.info("Loading PDS to ES data type mapping from {}", file.getAbsolutePath());
         
         BufferedReader rd = null;
         
@@ -139,14 +137,5 @@ public class Pds2EsDataTypeMap
         {
             CloseUtils.close(rd);
         }
-    }
-    
-    
-    /**
-     * Print all mappings
-     */
-    public void debug()
-    {
-        map.forEach((key, val) -> { System.out.println(key + "  -->  " + val); } );
     }
 }

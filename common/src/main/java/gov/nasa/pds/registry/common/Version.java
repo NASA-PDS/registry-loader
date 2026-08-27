@@ -38,12 +38,11 @@ public class Version {
           ));
     }
   }
-  private final Logger log;
+  private static final Logger log = LogManager.getLogger(Version.class);
   public final String version;
   protected Version() {
     Properties prop = new Properties();
     String v = "1000000.100000.100000";
-    this.log = LogManager.getLogger(this.getClass());
     try (InputStream input = Version.class.getClassLoader().getResourceAsStream(this.getName() + ".version")) {
         if (input != null) {
           prop.load(input);

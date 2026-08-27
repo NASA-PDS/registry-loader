@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import gov.nasa.pds.registry.common.Request;
-import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
 import gov.nasa.pds.registry.common.util.Tuple;
 

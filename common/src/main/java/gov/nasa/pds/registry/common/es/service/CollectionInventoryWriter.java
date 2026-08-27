@@ -29,8 +29,7 @@ import gov.nasa.pds.registry.common.util.doc.RefType;
  */
 public class CollectionInventoryWriter
 {
-    protected Logger log;
-    
+    private static final Logger log = LogManager.getLogger(CollectionInventoryWriter.class);
     private int REF_BATCH_SIZE = 500;
     private int ES_DOC_BATCH_SIZE = 10;
     
@@ -45,7 +44,6 @@ public class CollectionInventoryWriter
      */
     public CollectionInventoryWriter(ConnectionFactory conFact) throws Exception
     {
-        log = LogManager.getLogger(this.getClass());
         loader = new DataLoader(conFact.clone().setIndexName(conFact.getIndexName()+"-refs"));
     }
     
@@ -66,7 +64,7 @@ public class CollectionInventoryWriter
         int count = writeRefs(collectionLidVid, inventoryFile, jobId, RefType.PRIMARY);
         count += writeRefs(collectionLidVid, inventoryFile, jobId, RefType.SECONDARY);
         
-        log.info("Wrote " + count + " collection inventory document(s)");
+        log.info("Wrote {} collection inventory document(s)", count);
     }
     
     

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -161,7 +160,7 @@ public class SchemaUpdater
             if(!newFields.isEmpty())
             {
                 schemaDao.updateSchema(newFields);
-                log.debug("Updated " + newFields.size() + " fields in OpenSearch mapping for index " + this.index);
+                log.debug("Updated {} fields in OpenSearch mapping for index {}", newFields.size(), this.index);
             }
         }
     }
@@ -172,7 +171,7 @@ public class SchemaUpdater
         if(uri == null || uri.isEmpty()) return;
         if(prefix == null || prefix.isEmpty()) return;
 
-        log.info("Updating '" + prefix  + "' LDD. Schema location: " + uri);
+        log.info("Updating '{}' LDD. Schema location: {}", prefix, uri);
 
         String jsonUrl = applyDomainRedirect(getJsonUrl(uri));
 
@@ -263,7 +262,7 @@ public class SchemaUpdater
                 throw primaryEx;
             }
 
-            log.warn("Failed to download LDD from " + jsonUrl + "; trying pds.nasa.gov mirror: " + fallbackUrl);
+            log.warn("Failed to download LDD from {}; trying pds.nasa.gov mirror: {}", jsonUrl, fallbackUrl);
             try
             {
                 boolean downloaded = fileDownloader.download(fallbackUrl, dest);
@@ -271,7 +270,7 @@ public class SchemaUpdater
                 {
                     String originalHost = new URL(jsonUrl).getHost();
                     domainRedirects.put(originalHost, LddUrlUtils.PDS_NASA_GOV);
-                    log.info("Caching domain redirect: " + originalHost + " -> " + LddUrlUtils.PDS_NASA_GOV);
+                    log.info("Caching domain redirect: {} -> {}", originalHost, LddUrlUtils.PDS_NASA_GOV);
                 }
                 return downloaded;
             }
@@ -281,7 +280,7 @@ public class SchemaUpdater
             }
             catch(Exception fallbackEx)
             {
-                log.debug("pds.nasa.gov mirror also failed: " + fallbackEx.getMessage());
+                log.debug("pds.nasa.gov mirror also failed: {}", fallbackEx.getMessage());
                 throw primaryEx;
             }
         }
@@ -369,7 +368,7 @@ public class SchemaUpdater
                 String redirected = LddUrlUtils.toPdsNasaGovUrl(url);
                 if(redirected != null)
                 {
-                    log.debug("Redirecting " + url + " to " + redirected + " (cached domain redirect)");
+                    log.debug("Redirecting {} to {} (cached domain redirect)", url, redirected);
                     return redirected;
                 }
             }

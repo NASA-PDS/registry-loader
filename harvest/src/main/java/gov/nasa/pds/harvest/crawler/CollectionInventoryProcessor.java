@@ -28,8 +28,7 @@ import gov.nasa.pds.registry.common.util.doc.RefType;
  */
 public class CollectionInventoryProcessor
 {
-    protected Logger log;
-    
+    private static final Logger log = LogManager.getLogger(CollectionInventoryProcessor.class);
     private int ELASTIC_BATCH_SIZE = 50;
     
     ProdRefsBatch batch = new ProdRefsBatch();
@@ -41,7 +40,6 @@ public class CollectionInventoryProcessor
      */
     public CollectionInventoryProcessor(boolean primaryOnly)
     {
-        log = LogManager.getLogger(this.getClass());
     }
     
     

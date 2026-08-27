@@ -45,7 +45,6 @@ public interface Response {
     public Set<String> fieldNames();
   }
   public interface Search {
-    public Map<String,Set<String>> altIds() throws UnsupportedOperationException, IOException;
     public List<Object> batch() throws UnsupportedOperationException, IOException;
     public List<String> bucketValues();
     public List<Map<String,Object>> documents();

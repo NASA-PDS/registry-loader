@@ -26,8 +26,8 @@ public class BaseProcessor
     // Skip files bigger than 10MB
     protected static final long MAX_XML_FILE_LENGTH = 10_000_000;
 
-    protected Logger log;
-    
+    private static final Logger log = LogManager.getLogger(BaseProcessor.class);
+
     protected HarvestConfigurationType config;
     protected DocumentBuilderFactory dbf;
 
@@ -51,8 +51,6 @@ public class BaseProcessor
         this.archive_status = archive_status;
         this.config = config;
 
-        log = LogManager.getLogger(this.getClass());
-        
         dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
 

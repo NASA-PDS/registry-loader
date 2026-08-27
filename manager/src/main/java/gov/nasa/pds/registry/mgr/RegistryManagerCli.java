@@ -14,12 +14,12 @@ import org.apache.commons.cli.ParseException;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
 import gov.nasa.pds.registry.common.util.ExceptionUtils;
 import gov.nasa.pds.registry.common.util.ManifestUtils;
+import gov.nasa.pds.registry.common.util.log.Log4jConfigurator;
 import gov.nasa.pds.registry.mgr.cmd.CliCommand;
 import gov.nasa.pds.registry.mgr.cmd.Known;
 import gov.nasa.pds.registry.mgr.cmd.data.DeleteDataCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.ExportFileCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.SetArchiveStatusCmd;
-import gov.nasa.pds.registry.mgr.cmd.data.UpdateAltIdsCmd;
 import gov.nasa.pds.registry.mgr.cmd.data.UpdateToolVersionCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.DeleteDDCmd;
 import gov.nasa.pds.registry.mgr.cmd.dd.ExportDDCmd;
@@ -30,7 +30,6 @@ import gov.nasa.pds.registry.mgr.cmd.reg.CreateRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.DeleteRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.FetchRegistryCmd;
 import gov.nasa.pds.registry.mgr.cmd.reg.KnownRegistryCmd;
-import gov.nasa.pds.registry.mgr.util.log.Log4jConfigurator;
 
 
 /**
@@ -170,9 +169,8 @@ public class RegistryManagerCli
     private static void initLogger(CommandLine cmdLine)
     {
         String verbosity = cmdLine.getOptionValue("v", "INFO");
-        String logFile = cmdLine.getOptionValue("l");
-
-        Log4jConfigurator.configure(verbosity, logFile);
+        String logFile = cmdLine.getOptionValue("l", "/tmp/harvest/registry-manager.log");
+        Log4jConfigurator.configure("manager", verbosity, logFile);
     }
     
 
@@ -285,7 +283,6 @@ public class RegistryManagerCli
         commands.put("delete-data", new DeleteDataCmd());
         commands.put("export-file", new ExportFileCmd());
         commands.put("set-archive-status", new SetArchiveStatusCmd());
-        commands.put("update-alt-ids", new UpdateAltIdsCmd());
         commands.put("update-tool-ver", new UpdateToolVersionCmd());
         Known.set(commands.keySet());
     }
