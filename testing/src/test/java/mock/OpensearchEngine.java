@@ -106,7 +106,7 @@ public final class OpensearchEngine {
     log.info("Context:");
     log.info("   index:   {}", context.index());
     log.info("   body:    {}", context.body());
-    log.info("   hearder: {}", context.headers());
+    log.info("   header:  {}", context.headers());
     log.info("   query:   {}", context.queryParams());
     log.info("   params:  {}", context.pathParams());
     Map<String,String> endpoint = json.decodeTopLevel(context.body());
@@ -135,6 +135,7 @@ public final class OpensearchEngine {
           Process process = new ProcessBuilder("sh", "-c",
               "openssl req -x509 -newkey rsa:2048 -keyout /dev/stdout -out /dev/stdout -sha256 -days 1 -nodes -subj '/CN=localhost' -addext 'subjectAltName = DNS:localhost' 2>/dev/null")
                   .start();
+          process.waitFor();  // ignoring exceptions and bad waits as this is a test harness and developer can deal with it.
           String openSslOutput =
               new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
           ssl.pemFromString(openSslOutput, openSslOutput);
@@ -156,7 +157,11 @@ public final class OpensearchEngine {
         String targetMethodName = determineMethodName(ctx.method().name(), ctx.path().substring(facadeContext.index().length()+1));
         log.info("request path: {}", ctx.path());
         // FIXME: need to always check authorize() here???
-        sendResponse(ctx, process(targetMethodName, facadeContext));
+        Response aResponse = subprocess("authorize", facadeContext);
+        if (200 <= aResponse.statusCode() && aResponse.statusCode() < 300) {
+          aResponse = process(targetMethodName, facadeContext);
+        }
+        sendResponse(ctx, aResponse);
       };
 
       for (HandlerType method : new HandlerType[] {HandlerType.GET, HandlerType.POST,
