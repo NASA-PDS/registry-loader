@@ -9,7 +9,7 @@ This is a Maven monorepo containing the PDS (Planetary Data System) Registry Loa
 **Key characteristics:**
 - Maven multi-module Java project (modules: `common`, `harvest`, `manager`)
 - Parent version: 1.3.0-SNAPSHOT
-- Depends on `registry-common` library for shared OpenSearch/Elasticsearch abstractions
+- **Hard fork / merge of three upstream repos:** The source code in this monorepo was merged from [`registry-common`](https://github.com/NASA-PDS/registry-common), [`harvest`](https://github.com/NASA-PDS/harvest), and [`registry-manager`](https://github.com/NASA-PDS/registry-manager). There is **no active dependency on those upstream repos** — they are separate projects. Bug fixes or changes made in those upstream repos must be **manually ported** into this codebase. Always check upstream PRs/issues when triaging bugs here.
 
 ## Modules
 

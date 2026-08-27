@@ -78,6 +78,24 @@ public class RestClientWrapper implements RestClient {
             throw ose;
           }
         }
+        catch (IOException ioe) {
+          retries++;
+          if (retries < retry_limit) {
+            log.warn("Transient I/O error communicating with OpenSearch ({}). Rebuilding connection and retrying ({}/{})...",
+                ioe, retries, retry_limit);
+            try { conFact.reconnect(); }
+            catch (InterruptedException ie) { throw new RuntimeException("How did this happen??", ie); }
+            client = buildClient();
+            try {
+              Thread.sleep(Math.min(retries, 30) * 1000L);
+            } catch (InterruptedException ie) {
+              Thread.currentThread().interrupt();
+            }
+          } else {
+            log.error("Tried {} times to recover from I/O errors with OpenSearch but cannot.", retry_limit, ioe);
+            throw ioe;
+          }
+        }
       }
     }
   }
