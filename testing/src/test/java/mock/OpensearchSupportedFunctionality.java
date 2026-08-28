@@ -27,6 +27,7 @@ public interface OpensearchSupportedFunctionality {
   
   public Response authorize(Context ctx);
   public Response postBulkCreate(Context ctx);
+  public Response postBulkIndex(Context ctx);
   public Response postSearch(Context ctx);
   public Response postSearchVersions(Context ctx);
   public Response putMappingsSettings(Context ctx);

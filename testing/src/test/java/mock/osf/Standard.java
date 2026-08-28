@@ -9,6 +9,7 @@ import mock.JsonHelper.BulkCreateResponse;
 import mock.JsonHelper.BulkCreateResponseItem;
 import mock.JsonHelper.BulkCreateResponseItemResult;
 import mock.JsonHelper.BulkCreateShards;
+import mock.JsonHelper.BulkIndexRequest;
 import mock.JsonHelper.SearchHit;
 import mock.JsonHelper.SearchHits;
 import mock.JsonHelper.SearchShards;
@@ -42,6 +43,24 @@ public class Standard extends NoOp {
           new BulkCreateResponseItemResult(
               request.create()._index(),
               request.create()._id(),
+              1, "created",
+              new BulkCreateShards(1, 1, 0),
+              seq, 1, 201)));
+      requestsText.next(); // throw away the body of the message
+    }
+    return Response.json(json.encode(new BulkCreateResponse(11, false, items)));
+  }
+  @Override @Replace
+  public Response postBulkIndex (Context ctx) {
+    int seq = 0;
+    Iterator<String> requestsText = List.of(ctx.body().split("\\R")).iterator();
+    List<BulkCreateResponseItem> items = new LinkedList<>();
+    while (requestsText.hasNext()) {
+      BulkIndexRequest request = json.decode(requestsText.next(), BulkIndexRequest.class);
+      items.add (new BulkCreateResponseItem(
+          new BulkCreateResponseItemResult(
+              request.index()._index(),
+              request.index()._id(),
               1, "created",
               new BulkCreateShards(1, 1, 0),
               seq, 1, 201)));

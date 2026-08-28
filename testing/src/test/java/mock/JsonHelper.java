@@ -16,6 +16,7 @@ public class JsonHelper {
   public record BulkCreateResponseItem(BulkCreateResponseItemResult create) {};
   public record BulkCreateResponseItemResult(String _index, String _id, int _version, String result, BulkCreateShards _shards, int _seq_no, int _primary_term, int status) {};
   public record BulkCreateShards(int total, int successful, int failed) {};
+  public record BulkIndexRequest (BulkCreateRequestLine1 index) {};
   public record SearchHit(String _index, String _id, float _score, SearchVersionsSource _source) {};
   public record SearchHits(SearchTotal total, List<SearchHit> hits) {};
   public record SearchTotal(int value, String relation) {};

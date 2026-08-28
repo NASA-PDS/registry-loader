@@ -65,4 +65,13 @@ class ArtificialComposite implements OpensearchSupportedFunctionality, MockAware
           .orElse("unknown"),
         ctx);
   }
+
+  @Override
+  public Response postBulkIndex(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
 }

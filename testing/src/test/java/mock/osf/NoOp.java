@@ -20,4 +20,6 @@ public class NoOp implements OpensearchSupportedFunctionality {
   public Response postSearch(Context ctx) { return placeholder(); }
   @Override
   public Response postSearchVersions(Context ctx) { return placeholder(); }
+  @Override
+  public Response postBulkIndex(Context ctx) { return placeholder(); }
 }
