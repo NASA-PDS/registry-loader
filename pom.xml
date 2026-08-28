@@ -1,116 +1,120 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-Note to template users: update the copyright in this file (and all others) as needed.
+    Note to template users: update the copyright in this file (and all others) as needed.
 
-Copyright © 2021, California Institute of Technology ("Caltech").
-U.S. Government sponsorship acknowledged.
+    Copyright © 2021, California Institute of Technology ("Caltech").
+    U.S. Government sponsorship acknowledged.
 
-All rights reserved.
+    All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
 
-• Redistributions of source code must retain the above copyright notice,
-  this list of conditions and the following disclaimer.
-• Redistributions must reproduce the above copyright notice, this list of
-  conditions and the following disclaimer in the documentation and/or other
-  materials provided with the distribution.
-• Neither the name of Caltech nor its operating division, the Jet Propulsion
-  Laboratory, nor the names of its contributors may be used to endorse or
-  promote products derived from this software without specific prior written
-  permission.
+    • Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+    • Redistributions must reproduce the above copyright notice, this list of
+    conditions and the following disclaimer in the documentation and/or other
+    materials provided with the distribution.
+    • Neither the name of Caltech nor its operating division, the Jet Propulsion
+    Laboratory, nor the names of its contributors may be used to endorse or
+    promote products derived from this software without specific prior written
+    permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
--->
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
+  -->
 
 
 <!--
-👉 This is the TEMPLATE project object model or `pom.xml` file.
+    👉 This is the TEMPLATE project object model or `pom.xml` file.
 
-Go through this file line-by-line and replace the template values with your own.
--->
+    Go through this file line-by-line and replace the template values with your own.
+  -->
 
 <project xmlns='http://maven.apache.org/POM/4.0.0'
          xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
          xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'>
 
-    <!-- POM-specific metadata -->
-    <modelVersion>4.0.0</modelVersion>
+  <!-- POM-specific metadata -->
+  <modelVersion>4.0.0</modelVersion>
 
-    <!--
-    Speaking of the parent POM, here we say what it is: every PDS Maven project inherits from this parent.
-    Maven (and other compatible build tools) resolve this automatically, but you can find the source of this
-    parent at https://github.com/NASA-PDS/pdsen-maven-parent
+  <!--
+      Speaking of the parent POM, here we say what it is: every PDS Maven project inherits from this parent.
+      Maven (and other compatible build tools) resolve this automatically, but you can find the source of this
+      parent at https://github.com/NASA-PDS/pdsen-maven-parent
     -->
-    <parent>
-       <groupId>gov.nasa.pds</groupId>
-       <artifactId>parent</artifactId>
-       <version>1.20.0</version>
-   </parent>
-  
-    <!-- My project metadata here -->
-    <properties>
-        <!-- Obviously put in your own project name instead of `myproject` -->
-        <project-name>registry-loader</project-name>
-		
-        <!-- You'll want a Unicode-type encoding here in almost every case -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <!--
-    Maven "coordinates" that identify this package uniquely in the entire universe; the group identifies an 
-    organizational unit (by reverse domain name) that produced the artifact:
-    -->
+  <parent>
     <groupId>gov.nasa.pds</groupId>
-    <!--
-    The next part of the Maven coorindate is the name of the artifact, its "artifact ID". Note we cannot use
-    any expression here, as tempting as it would be to use ${project-name} here:
+    <artifactId>parent</artifactId>
+    <version>1.20.0</version>
+  </parent>
+  
+  <!-- My project metadata here -->
+  <properties>
+    <!-- all submodules are now the same version of java -->
+    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <!-- Obviously put in your own project name instead of `myproject` -->
+    <project-name>registry-loader</project-name>    
+    <!-- You'll want a Unicode-type encoding here in almost every case -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <!--
+      Maven "coordinates" that identify this package uniquely in the entire universe; the group identifies an 
+      organizational unit (by reverse domain name) that produced the artifact:
     -->
-    <artifactId>registry-loader</artifactId>
-    <!-- The third part of the Maven coorindate is the version identifier of the artifact: -->
-    <version>1.4.0-SNAPSHOT</version>
-    <!-- The final part is the kind: here we make a `jar`, but there's `war`, `ejb`, `ear`, `maven-plugin`, etc.: -->
-    <packaging>pom</packaging>
-
-    <name>${project.groupId}:${project-name}</name>
-    <description>
-        Registry loader tools, from creation of the registry, to loading new products in it.
-    </description>
-    <!-- Check the calendar -->
-    <inceptionYear>2021</inceptionYear>
-
-    <!--
-    👉 Note: in the elements below, we cannot use `${project-name}` as apparently property expansion does
-    not occur here despite the documentation at https://maven.apache.org/pom.html#Properties says.
-
-    So be sure to replace all five `myproject`s below with your actual project name!
+  <groupId>gov.nasa.pds</groupId>
+  <!--
+      The next part of the Maven coorindate is the name of the artifact, its "artifact ID". Note we cannot use
+      any expression here, as tempting as it would be to use ${project-name} here:
     -->
+  <artifactId>registry-loader</artifactId>
+  <!-- The third part of the Maven coorindate is the version identifier of the artifact: -->
+  <version>1.4.0-SNAPSHOT</version>
+  <!-- The final part is the kind: here we make a `jar`, but there's `war`, `ejb`, `ear`, `maven-plugin`, etc.: -->
+  <packaging>pom</packaging>
+
+  <name>${project.groupId}:${project-name}</name>
+  <description>
+    Registry loader tools, from creation of the registry, to loading new products in it.
+  </description>
+  <!-- Check the calendar -->
+  <inceptionYear>2021</inceptionYear>
+
+  <!--
+      👉 Note: in the elements below, we cannot use `${project-name}` as apparently property expansion does
+      not occur here despite the documentation at https://maven.apache.org/pom.html#Properties says.
+
+      So be sure to replace all five `myproject`s below with your actual project name!
+    -->
+  <url>https://nasa-pds.github.io/registry-loader</url>
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/NASA-PDS/registry-loader/issues</url>
+  </issueManagement>
+  <scm>
+    <connection>scm:git:https://github.com/NASA-PDS/registry-loader.git</connection>
+    <developerConnection>scm:git:ssh://github.com/NASA-PDS/registry-loader.git</developerConnection>
     <url>https://nasa-pds.github.io/registry-loader</url>
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/NASA-PDS/registry-loader/issues</url>
-    </issueManagement>
-    <scm>
-        <connection>scm:git:https://github.com/NASA-PDS/registry-loader.git</connection>
-        <developerConnection>scm:git:ssh://github.com/NASA-PDS/registry-loader.git</developerConnection>
-        <url>https://nasa-pds.github.io/registry-loader</url>
-        <tag>main</tag>
-    </scm>
-     <modules >
-	    <module>common</module>
-	    <module>harvest</module>
-	    <module>manager</module>
-	</modules>
+    <tag>main</tag>
+  </scm>
+  <modules >
+    <module>common</module>
+    <module>harvest</module>
+    <module>manager</module>
+    <module>testing</module>
+  </modules>
   <repositories>
     <repository>
       <id>OSGeo</id>
@@ -118,47 +122,47 @@ Go through this file line-by-line and replace the template values with your own.
       <url>	https://repo.osgeo.org/repository/release/</url>
     </repository>
   </repositories>
-    <!-- Put the packages your project depends on here -->
-    <dependencies>
-        <!-- If you do any kind of testing—and you should—use Junit, which is the gold standard for Java -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!--
+  <!-- Put the packages your project depends on here -->
+  <dependencies>
+    <!-- If you do any kind of testing—and you should—use Junit, which is the gold standard for Java -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!--
         Here's an example dependency; you can find dependencies at https://search.maven.org. This isn't
         actually used by this template, but is shown full-fleshed out because chances are your project
         will need at least one if not many dependencies.
-        -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-numbers-primes</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
-            <optional>false</optional>
-        </dependency>
-	    <!-- Silence SLF4J messages (NASA-PDS/registry-mgr:117) -->
-		<dependency>
-    		<groupId>org.slf4j</groupId>
-    		<artifactId>slf4j-nop</artifactId>
-    		<version>2.0.18</version>
-		</dependency>
-    </dependencies>
-    <dependencyManagement>
-  <dependencies>
+      -->
     <dependency>
-      <groupId>org.junit</groupId>
-      <artifactId>junit-bom</artifactId>
-     <version>5.13.4</version>
-      <type>pom</type>
-      <scope>import</scope>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-numbers-primes</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+      <scope>compile</scope>
+      <optional>false</optional>
+    </dependency>
+    <!-- Silence SLF4J messages (NASA-PDS/registry-mgr:117) -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>2.0.18</version>
     </dependency>
   </dependencies>
-</dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.13.4</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <build>
-        <plugins>
+    <plugins>
       <plugin>
         <!-- See https://central.sonatype.org/publish/publish-portal-maven/ for more details -->
         <groupId>org.sonatype.central</groupId>
@@ -171,191 +175,191 @@ Go through this file line-by-line and replace the template values with your own.
           <waitUntil>published</waitUntil>
         </configuration>
       </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-site-plugin</artifactId>
-            <version>4.0.0-M13</version>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.1</version>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-release-plugin</artifactId>
-            <version>3.1.1</version>
-            <configuration>
-                <tagNameFormat>v@{project.version}</tagNameFormat>
-            </configuration>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <version>3.0.0-M1</version>
-            <executions>
-                <execution>
-                    <id>default-install</id>
-                    <phase>install</phase>
-                    <goals>
-                        <goal>install</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-	    <plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-surefire-plugin</artifactId>
-	      <version>3.2.5</version> 
-	      <configuration>
-	        <useModulePath>false</useModulePath>
-	      </configuration>
-	    </plugin>
-        <plugin>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <version>3.0.0-M3</version>
-        </plugin>
-        </plugins>
-    </build>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>4.0.0-M13</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>3.0.0-M1</version>
+        <executions>
+          <execution>
+            <id>default-install</id>
+            <phase>install</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-surefire-plugin</artifactId>
+	<version>3.5.2</version> <!-- later 3.5.x versions contain known bug preventing scenerio counting and reporting -->
+	<configuration>
+	  <useModulePath>false</useModulePath>
+	</configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.0.0-M3</version>
+      </plugin>
+    </plugins>
+  </build>
 
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-					      <plugin>
-				        <!-- See https://central.sonatype.org/publish/publish-portal-maven/ for more details -->
-				        <groupId>org.sonatype.central</groupId>
-				        <artifactId>central-publishing-maven-plugin</artifactId>
-				        <version>0.9.0</version>
-				        <extensions>true</extensions>
-				        <configuration>
-				          <publishingServerId>central</publishingServerId>
-				          <autoPublish>true</autoPublish>
-				          <waitUntil>published</waitUntil>
-				          <waitMaxTime>5400</waitMaxTime>
-						  <pollTimeoutSeconds>7200</pollTimeoutSeconds>
-				        </configuration>
-				      </plugin>
-            <!-- Add maven source for maven central deployment -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-source-plugin</artifactId>
-              <version>3.3.1</version>
-              <executions>
-                <execution>
-                  <id>make-source-jar</id>
-                  <phase>prepare-package</phase>
-                  <goals>
-                    <goal>jar-no-fork</goal>
-                    <goal>test-jar-no-fork</goal>
-                  </goals>
-                  <configuration>
-                    <excludeResources>true</excludeResources>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.3.0</version>
-                        <configuration>
-                            <source>1.8</source>
-                            <failOnError>false</failOnError>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <configuration>
-                                    <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
-                                    </gpgArguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-    <distributionManagement/>
-
-    <reporting>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.1.2</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>dependencies</report>
-                            <report>issue-management</report>
-                            <report>licenses</report>
-                            <report>mailing-lists</report>
-                            <report>team</report>
-                            <report>summary</report>
-                            <report>scm</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changes-plugin</artifactId>
-                <version>2.12.1</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>changes-report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.3.0</version>
+	  <plugin>
+	    <!-- See https://central.sonatype.org/publish/publish-portal-maven/ for more details -->
+	    <groupId>org.sonatype.central</groupId>
+	    <artifactId>central-publishing-maven-plugin</artifactId>
+	    <version>0.9.0</version>
+	    <extensions>true</extensions>
+	    <configuration>
+	      <publishingServerId>central</publishingServerId>
+	      <autoPublish>true</autoPublish>
+	      <waitUntil>published</waitUntil>
+	      <waitMaxTime>5400</waitMaxTime>
+	      <pollTimeoutSeconds>7200</pollTimeoutSeconds>
+	    </configuration>
+	  </plugin>
+          <!-- Add maven source for maven central deployment -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.3.1</version>
+            <executions>
+              <execution>
+                <id>make-source-jar</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                  <goal>test-jar-no-fork</goal>
+                </goals>
                 <configuration>
-                    <source>1.8</source>
-                    <failOnError>false</failOnError>
+                  <excludeResources>true</excludeResources>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-linkcheck-plugin</artifactId>
-                <version>1.2</version>
-            </plugin>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.3.0</version>
+            <configuration>
+              <source>1.8</source>
+              <failOnError>false</failOnError>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.0.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </reporting>
-        <licenses>
-        <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
+      </build>
+    </profile>
+  </profiles>
+  <distributionManagement/>
 
-    <organization>
-        <name>Planetary Data System</name>
-        <url>https://pds.nasa.gov/</url>
-    </organization>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>3.1.2</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependencies</report>
+              <report>issue-management</report>
+              <report>licenses</report>
+              <report>mailing-lists</report>
+              <report>team</report>
+              <report>summary</report>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.12.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <source>1.8</source>
+          <failOnError>false</failOnError>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-linkcheck-plugin</artifactId>
+        <version>1.2</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <organization>
+    <name>Planetary Data System</name>
+    <url>https://pds.nasa.gov/</url>
+  </organization>
 </project>
