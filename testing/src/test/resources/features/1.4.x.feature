@@ -9,3 +9,4 @@ Feature: 1.4.x
 #     |    139      |    0    | "mock.osf.Standard" | "suite.Sanity" |     ""     | "expect.Sane" |
 
 | 139 | 0 | "mock.osf.Standard,mock.osf.JUnitish" | "suite.Sanity" |  ""  | "expect.Sane" |
+| 140 | 0 | "mock.osf.Standard"  | "suite.Harvest" | "--overwrite -c /home/niessner/Projects/PDS/registry-ref-data/custom-datasets/naif3.mt.xml" | "expect.CheckHarvestLog" |

@@ -8,7 +8,17 @@ import mock.JsonHelper.BulkCreateRequest;
 import mock.JsonHelper.BulkCreateResponse;
 import mock.JsonHelper.BulkCreateResponseItem;
 import mock.JsonHelper.BulkCreateResponseItemResult;
-import mock.JsonHelper.Shards;
+import mock.JsonHelper.BulkCreateShards;
+import mock.JsonHelper.SearchHit;
+import mock.JsonHelper.SearchHits;
+import mock.JsonHelper.SearchShards;
+import mock.JsonHelper.SearchTotal;
+import mock.JsonHelper.SearchVersionsRequest;
+import mock.JsonHelper.SearchVersionsResponse;
+import mock.JsonHelper.SearchVersionsSource;
+import mock.JsonHelper.SearchVersionsTool;
+import mock.JsonHelper.SearchVersionsVersion;
+import mock.OpensearchEngine;
 import mock.annotation.Replace;
 
 public class Standard extends NoOp {
@@ -33,11 +43,40 @@ public class Standard extends NoOp {
               request.create()._index(),
               request.create()._id(),
               1, "created",
-              new Shards(1, 1, 0),
+              new BulkCreateShards(1, 1, 0),
               seq, 1, 201)));
       requestsText.next(); // throw away the body of the message
     }
     return Response.json(json.encode(new BulkCreateResponse(11, false, items)));
+  }
+  @Override @Replace
+  public Response postSearch(Context ctx) {
+    List<String> keys = List.of("tool.name", "tool.version.major", "tool.version.minor", "tool.version.patch");
+    if (keys.stream().allMatch(ctx.body()::contains)) {
+      return OpensearchEngine.instance().process("postSearchVersions", ctx);
+    }
+    return super.postSearch(ctx);
+  }
+  @Override @Replace
+  public Response postSearchVersions(Context ctx) {
+    LinkedList<SearchHit> hits = new LinkedList<SearchHit>();
+    SearchVersionsRequest  request = json.decode(ctx.body(), SearchVersionsRequest.class);
+    String index = "dev-registry-structured-versions";
+    for (String toolName : request.query().ids().values()) {
+      hits.add(new SearchHit(
+          index,
+          toolName,
+          1.0f,
+          new SearchVersionsSource(new SearchVersionsTool(toolName, new SearchVersionsVersion(0,0,0)))));
+    }
+    return Response.json(json.encode(
+        new SearchVersionsResponse(
+            11,
+            false,
+            new SearchShards(hits.size(), hits.size(), 0, 0), 
+            new SearchHits(
+                new SearchTotal(hits.size(), "eq"),
+                hits))));
   }
   @Override @Replace
   public Response putMappingsSettings (Context ctx) {

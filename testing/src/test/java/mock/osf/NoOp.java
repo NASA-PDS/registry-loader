@@ -16,4 +16,8 @@ public class NoOp implements OpensearchSupportedFunctionality {
   public Response postBulkCreate(Context ctx) { return placeholder(); }
   @Override
   public Response putMappingsSettings(Context ctx) { return placeholder(); }
+  @Override
+  public Response postSearch(Context ctx) { return placeholder(); }
+  @Override
+  public Response postSearchVersions(Context ctx) { return placeholder(); }
 }

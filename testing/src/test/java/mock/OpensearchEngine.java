@@ -31,6 +31,18 @@ public final class OpensearchEngine {
   private final Map<String, MethodTarget> redirect = new ConcurrentHashMap<>();
   private Javalin app;
 
+  // make it a signleton
+  private OpensearchEngine() {}
+  private static final Object lock = new Object();
+  private static OpensearchEngine self = null;
+  public static OpensearchEngine instance() {
+    synchronized (OpensearchEngine.lock) {
+      if (OpensearchEngine.self == null) {
+        OpensearchEngine.self = new OpensearchEngine();
+      }
+    }
+    return OpensearchEngine.self;
+  }
   /**
    * Scans the composite for @mock.annotation.replace methods and updates the redirect map.
    */
@@ -94,7 +106,11 @@ public final class OpensearchEngine {
   }
 
   private String indexFrom(String path) {
-    return path.split("/")[1];
+    String idx = path.split("/")[1];
+    if (idx.startsWith("dev-registry")) {
+      return idx;
+    }
+    return "";
   }
  
   /**
@@ -109,9 +125,11 @@ public final class OpensearchEngine {
     log.info("   header:  {}", context.headers());
     log.info("   query:   {}", context.queryParams());
     log.info("   params:  {}", context.pathParams());
-    Map<String,String> endpoint = json.decodeTopLevel(context.body());
-    for (String name : endpoint.keySet().stream().map(String::toLowerCase).sorted().toList()) {
-      methodName = methodName + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    if (!context.index().isBlank()) {
+      Map<String,String> endpoint = json.decodeTopLevel(context.body());
+      for (String name : endpoint.keySet().stream().map(String::toLowerCase).sorted().toList()) {
+        methodName = methodName + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+      }
     }
     return subprocess(methodName, context);
   }
@@ -204,7 +222,7 @@ public final class OpensearchEngine {
   }
 
   public static void main(String[] argv) throws InterruptedException {
-    OpensearchEngine me = new OpensearchEngine();
+    OpensearchEngine me = OpensearchEngine.instance();
     me.start(9200);
     me.add(new Standard());
     Thread.sleep(1000 * 1000);

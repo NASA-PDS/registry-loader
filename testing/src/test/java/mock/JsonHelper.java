@@ -14,8 +14,20 @@ public class JsonHelper {
   public record BulkCreateRequestLine1(String _id, String _index) {};
   public record BulkCreateResponse(int took, boolean errors, List<BulkCreateResponseItem> items) {};
   public record BulkCreateResponseItem(BulkCreateResponseItemResult create) {};
-  public record BulkCreateResponseItemResult(String _index, String _id, int _version, String result, Shards _shards, int _seq_no, int _primary_term, int status) {};
-  public record Shards(int total, int successful, int failed) {};
+  public record BulkCreateResponseItemResult(String _index, String _id, int _version, String result, BulkCreateShards _shards, int _seq_no, int _primary_term, int status) {};
+  public record BulkCreateShards(int total, int successful, int failed) {};
+  public record SearchHit(String _index, String _id, float _score, SearchVersionsSource _source) {};
+  public record SearchHits(SearchTotal total, List<SearchHit> hits) {};
+  public record SearchTotal(int value, String relation) {};
+  public record SearchVersionsRequest(SearchVersionsRequestSource _source, SearchVersionsRequestQuery query, int size) {};
+  public record SearchVersionsRequestQuery(SearchVersionsRequestQueryIds ids) {};
+  public record SearchVersionsRequestQueryIds(List<String> values) {};
+  public record SearchVersionsRequestSource(List<String> includes) {};
+  public record SearchVersionsResponse(int took, boolean timed_out, SearchShards _shards, SearchHits hits) {};
+  public record SearchVersionsSource(SearchVersionsTool tool) {};
+  public record SearchVersionsTool(String name, SearchVersionsVersion version) {};
+  public record SearchVersionsVersion(int major, int minor, int patch) {};
+  public record SearchShards(int total, int successful, int skipped, int failed) {};
 
   private final Logger log = LoggerFactory.getLogger(this.getClass());
   private final ObjectMapper mapper = new ObjectMapper();

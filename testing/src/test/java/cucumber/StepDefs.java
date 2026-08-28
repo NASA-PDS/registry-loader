@@ -14,7 +14,7 @@ import suite.CliAware;
 
 public class StepDefs {
   private final ArrayList<OpensearchSupportedFunctionality> mocks = new ArrayList<OpensearchSupportedFunctionality>();
-  private static final OpensearchEngine motor = new OpensearchEngine();
+  private static final OpensearchEngine motor = OpensearchEngine.instance();
 
   @AfterAll
   public static void stop() {
