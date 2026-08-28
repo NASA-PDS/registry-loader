@@ -60,9 +60,12 @@
   
   <!-- My project metadata here -->
   <properties>
+    <!-- all submodules are now the same version of java -->
+    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <!-- Obviously put in your own project name instead of `myproject` -->
-    <project-name>registry-loader</project-name>
-    
+    <project-name>registry-loader</project-name>    
     <!-- You'll want a Unicode-type encoding here in almost every case -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
