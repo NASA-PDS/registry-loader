@@ -17,6 +17,11 @@ public class JsonHelper {
   public record BulkCreateResponseItemResult(String _index, String _id, int _version, String result, BulkCreateShards _shards, int _seq_no, int _primary_term, int status) {};
   public record BulkCreateShards(int total, int successful, int failed) {};
   public record BulkIndexRequest (BulkCreateRequestLine1 index) {};
+  public record DDEntry(String attr_name, String attr_ns, String class_name, String class_ns, String data_type, String date, String description, String es_data_type, String es_field_name, String im_version) {};
+  public record MgetIds(List<String> ids) {};
+  public record MgetIdsResponse(List<MgetIdsResponseDoc> docs) {};
+  public record MgetIdsResponseDoc(String _id, String _index, Integer _primary_term, Integer _seq_no, Integer _version, boolean found, MgetIdsResponseDocSource _source) {};
+  public record MgetIdsResponseDocSource(String es_data_type) {}
   public record SearchHit(String _index, String _id, float _score, SearchVersionsSource _source) {};
   public record SearchHits(SearchTotal total, List<SearchHit> hits) {};
   public record SearchTotal(int value, String relation) {};

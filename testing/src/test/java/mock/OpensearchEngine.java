@@ -118,6 +118,13 @@ public final class OpensearchEngine {
    * explicit @Replace annotation policies.
    */
   public Response process(String methodName, Context context) {
+    log.info("Raw method name: {}", methodName);
+    if (!context.index().isBlank()) {
+      Map<String,String> endpoint = json.decodeTopLevel(context.body());
+      for (String name : endpoint.keySet().stream().map(String::toLowerCase).sorted().toList()) {
+        methodName = methodName + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+      }
+    }
     log.info("Method name: {}", methodName);
     log.info("Context:");
     log.info("   index:   {}", context.index());
@@ -125,12 +132,6 @@ public final class OpensearchEngine {
     log.info("   header:  {}", context.headers());
     log.info("   query:   {}", context.queryParams());
     log.info("   params:  {}", context.pathParams());
-    if (!context.index().isBlank()) {
-      Map<String,String> endpoint = json.decodeTopLevel(context.body());
-      for (String name : endpoint.keySet().stream().map(String::toLowerCase).sorted().toList()) {
-        methodName = methodName + Character.toUpperCase(name.charAt(0)) + name.substring(1);
-      }
-    }
     return subprocess(methodName, context);
   }
 

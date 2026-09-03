@@ -74,4 +74,50 @@ class ArtificialComposite implements OpensearchSupportedFunctionality, MockAware
           .orElse("unknown"),
         ctx);
   }
+
+  @Override
+  public Response head(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response getMapping(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response postSearch_sourceQuerySize(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response postMgetIds(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response putMappingProperties(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
 }
