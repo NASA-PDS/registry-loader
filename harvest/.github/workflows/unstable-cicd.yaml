@@ -72,7 +72,7 @@ jobs:
                 name: 🤠 Roundup
                 uses: NASA-PDS/roundup-action@stable
                 with:
-                    packages: openjdk17-jdk
+                    packages: openjdk21-jdk
                     assembly: unstable
                 env:
                     central_portal_username: ${{secrets.CENTRAL_REPOSITORY_USERNAME}}
