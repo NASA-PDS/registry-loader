@@ -211,23 +211,67 @@ public class SchemaUpdater
             boolean downloaded = downloadWithFallback(jsonUrl, lddFile, prefix);
             if(downloaded)
             {
-                lddLoader.load(lddFile, schemaFileName, prefix);
+                final int LDD_LOAD_RETRIES = 3;
+                Exception lastLoadException = null;
+                for(int attempt = 0; attempt <= LDD_LOAD_RETRIES; attempt++)
+                {
+                    if(attempt > 0)
+                    {
+                        long delaySecs = 10L * attempt; // 10s, 20s, 30s
+                        log.warn("LDD indexing for namespace '{}' failed; retrying in {} seconds (attempt {}/{}).",
+                            prefix, delaySecs, attempt, LDD_LOAD_RETRIES);
+                        Thread.sleep(delaySecs * 1000L); // InterruptedException propagates to outer catch
+                    }
+                    try
+                    {
+                        lddLoader.load(lddFile, schemaFileName, prefix);
+                        if(attempt > 0)
+                        {
+                            log.info("LDD indexing for namespace '{}' succeeded on retry {}.", prefix, attempt);
+                        }
+                        lastLoadException = null;
+                        break;
+                    }
+                    catch(InterruptedException ie)
+                    {
+                        throw ie;
+                    }
+                    catch(Exception ex)
+                    {
+                        lastLoadException = ex;
+                    }
+                }
+                if(lastLoadException != null)
+                {
+                    throw lastLoadException;
+                }
             }
         }
         catch(InterruptedException ex)
         {
             Thread.currentThread().interrupt();
-            if (lddInfo.isEmpty()) {
-              log.error("Interrupted while downloading or loading LDD for namespace '{}' from {} and no previously loaded version exists.",
-                  prefix, jsonUrl);
+            if(lddInfo.isEmpty())
+            {
+                log.error("Interrupted while downloading or loading LDD for namespace '{}' from {} and no previously loaded version exists.",
+                    prefix, jsonUrl);
             }
             handleDownloadFailure(prefix, lddInfo);
         }
         catch(Exception ex)
         {
-            if (lddInfo.isEmpty()) {
-              log.error("Failed to download or load LDD for namespace '{}' from {}: {}",
-                  prefix, jsonUrl, ExceptionUtils.getMessage(ex));
+            // Distinguish download failure from indexing failure: if the temp file has content
+            // the download completed and the error is in the bulk-write to -dd.
+            boolean downloadedBeforeFailure = lddFile.length() > 0;
+            String failurePhase = downloadedBeforeFailure ? "index" : "download or load";
+            if(lddInfo.isEmpty())
+            {
+                log.error("Failed to {} LDD for namespace '{}' from {}: {}",
+                    failurePhase, prefix, jsonUrl, ExceptionUtils.getMessage(ex));
+            }
+            else
+            {
+                log.warn("Failed to {} LDD '{}' for namespace '{}': {}",
+                    failurePhase, schemaFileName, prefix, ExceptionUtils.getMessage(ex));
             }
             handleDownloadFailure(prefix, lddInfo);
         }
