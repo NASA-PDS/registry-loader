@@ -9,7 +9,7 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features") // Points to src/test/resources/features
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example") // Points to your step definition package
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "cucumber") // Points to your step definition package
 public class RunTest {
   // intentionally left blank but surefire has to find this file
 }
