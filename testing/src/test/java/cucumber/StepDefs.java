@@ -28,7 +28,7 @@ public class StepDefs {
 
   @BeforeAll
   public static void start() {
-    StepDefs.motor.start(19022);
+    StepDefs.motor.start(9200);
   }
 
   @Given("registry-loader issue {int}, test {int}, and opensearch mocks {string}")
