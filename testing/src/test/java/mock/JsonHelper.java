@@ -22,6 +22,10 @@ public class JsonHelper {
   public record MgetIdsResponse(List<MgetIdsResponseDoc> docs) {};
   public record MgetIdsResponseDoc(String _id, String _index, Integer _primary_term, Integer _seq_no, Integer _version, boolean found, MgetIdsResponseDocSource _source) {};
   public record MgetIdsResponseDocSource(String es_data_type) {}
+  public record SearchDdHit(String _index, String _id, float _score, SearchDdSource _source) {};
+  public record SearchDdHits(SearchTotal total, List<SearchDdHit> hits) {};
+  public record SearchDdResponse(int took, boolean timed_out, SearchShards _shards, SearchDdHits hits) {};
+  public record SearchDdSource(String es_field_name) {};
   public record SearchHit(String _index, String _id, float _score, SearchVersionsSource _source) {};
   public record SearchHits(SearchTotal total, List<SearchHit> hits) {};
   public record SearchTotal(int value, String relation) {};

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import jakarta.annotation.Nonnull;
 import mock.JsonHelper;
 import mock.JsonHelper.BulkCreateRequest;
 import mock.JsonHelper.BulkCreateResponse;
@@ -16,6 +17,10 @@ import mock.JsonHelper.MgetIds;
 import mock.JsonHelper.MgetIdsResponse;
 import mock.JsonHelper.MgetIdsResponseDoc;
 import mock.JsonHelper.MgetIdsResponseDocSource;
+import mock.JsonHelper.SearchDdHit;
+import mock.JsonHelper.SearchDdHits;
+import mock.JsonHelper.SearchDdResponse;
+import mock.JsonHelper.SearchDdSource;
 import mock.JsonHelper.SearchHit;
 import mock.JsonHelper.SearchHits;
 import mock.JsonHelper.SearchShards;
@@ -25,8 +30,6 @@ import mock.JsonHelper.SearchVersionsResponse;
 import mock.JsonHelper.SearchVersionsSource;
 import mock.JsonHelper.SearchVersionsTool;
 import mock.JsonHelper.SearchVersionsVersion;
-import mock.OpensearchSupportedFunctionality.Context;
-import mock.OpensearchSupportedFunctionality.Response;
 import mock.OpensearchEngine;
 import mock.annotation.Replace;
 
@@ -83,24 +86,6 @@ public class Standard extends NoOp {
     }
     return this.postBulkIndex(ctx, handler);
   }
-  private Response postBulkIndex (Context ctx, BulkDataHandler handle) {
-    int seq = 0;
-    Iterator<String> requestsText = List.of(ctx.body().split("\\R")).iterator();
-    List<BulkCreateResponseItem> items = new LinkedList<>();
-    while (requestsText.hasNext()) {
-      BulkIndexRequest request = json.decode(requestsText.next(), BulkIndexRequest.class);
-      items.add (new BulkCreateResponseItem(
-          new BulkCreateResponseItemResult(
-              ctx.index() == null || ctx.index().isBlank() ? request.index()._index() : ctx.index(),
-              request.index()._id(),
-              1, "created",
-              new BulkCreateShards(1, 1, 0),
-              seq, 1, 201)));
-      handle.document(request.index()._id(), requestsText.next());
-    }
-    return Response.json(json.encode(new BulkCreateResponse(11, false, items)));
-  }
-  int i = 1;
   @Override @Replace
   public Response postMgetIds(Context ctx) {
     if ("dev-registry-structured-dd".equals(ctx.index())) {
@@ -138,12 +123,10 @@ public class Standard extends NoOp {
         return Response.json("{\"took\":21,\"timed_out\":false,\"_shards\":{\"total\":1,\"successful\":1,\"skipped\":0,\"failed\":0},\"hits\":{\"total\":{\"value\":1,\"relation\":\"eq\"},\"max_score\":13.27233,\"hits\":[{\"_index\":\"dev-registry-structured-dd\",\"_id\":\"registry:LDD_Info.pds:PDS4_PDS_1500.JSON\",\"_score\":13.27233,\"_source\":{\"date\":\"2015-09-26T08:38:56Z\",\"attr_name\":\"PDS4_PDS_1500.JSON\"}}]}}");
       }
       if (ctx.body().contains("{\"includes\":[\"es_field_name\"]},\"query\":{\"bool\":{\"must\":[{\"match\":{\"es_data_type\":{\"query\":\"boolean\"}}}]}}")) {
-        for (DDEntry entry : dd.values()) {
-          if ("boolean".equals(entry.es_data_type())) {
-            
-          }
-        }
-        return ;
+        return this.ddFieldNameSearch("boolean");
+      }
+      if (ctx.body().contains("{\"includes\":[\"es_field_name\"]},\"query\":{\"bool\":{\"must\":[{\"match\":{\"es_data_type\":{\"query\":\"date\"}}}]}}")) {
+        return this.ddFieldNameSearch("date");
       }
     }
     return super.postSearch(ctx);
@@ -179,5 +162,34 @@ public class Standard extends NoOp {
   @Override @Replace
   public Response putMappingsSettings (Context ctx) {
     return Response.json("{\"acknowledged\":true,\"shards_acknowledged\":true,\"index\":\"" + ctx.index() + "\"}");
+  }
+  private Response ddFieldNameSearch(@Nonnull String type) {
+    LinkedList<String> match = new LinkedList<String>();
+    for (DDEntry entry : dd.values()) {
+      if (type.equals(entry.es_data_type())) {
+        match.add(entry.es_field_name());
+      }
+    }
+    return Response.json(json.encode(new SearchDdResponse(
+        13, false, new SearchShards(1,1,0,0), new SearchDdHits(
+            new SearchTotal(match.size(), "eq"),
+            match.stream().map(value -> new SearchDdHit("dev-registry-structured-dd", value, 4.7f, new SearchDdSource(value))).toList()))));    
+  }
+  private Response postBulkIndex (Context ctx, BulkDataHandler handle) {
+    int seq = 0;
+    Iterator<String> requestsText = List.of(ctx.body().split("\\R")).iterator();
+    List<BulkCreateResponseItem> items = new LinkedList<>();
+    while (requestsText.hasNext()) {
+      BulkIndexRequest request = json.decode(requestsText.next(), BulkIndexRequest.class);
+      items.add (new BulkCreateResponseItem(
+          new BulkCreateResponseItemResult(
+              ctx.index() == null || ctx.index().isBlank() ? request.index()._index() : ctx.index(),
+              request.index()._id(),
+              1, "created",
+              new BulkCreateShards(1, 1, 0),
+              seq, 1, 201)));
+      handle.document(request.index()._id(), requestsText.next());
+    }
+    return Response.json(json.encode(new BulkCreateResponse(11, false, items)));
   }
 }
