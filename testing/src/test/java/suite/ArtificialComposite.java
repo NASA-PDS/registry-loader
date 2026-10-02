@@ -7,7 +7,7 @@ import mock.OpensearchEngine;
 import mock.OpensearchSupportedFunctionality;
 
 class ArtificialComposite implements OpensearchSupportedFunctionality, MockAware {
-  private final OpensearchEngine redirect = new OpensearchEngine();
+  private final OpensearchEngine redirect = OpensearchEngine.instance();
 
   @Override
   public final Response authorize(Context ctx) {
@@ -47,4 +47,77 @@ class ArtificialComposite implements OpensearchSupportedFunctionality, MockAware
   public void run() {
     throw new NoOpException("This should be overriden by suites");
   }
+
+  @Override
+  public Response postSearch(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+   }
+
+  @Override
+  public Response postSearchVersions(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response postBulkIndex(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response head(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response getMapping(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response postSearch_sourceQuerySize(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response postMgetIds(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
+  public Response putMappingProperties(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
 }
