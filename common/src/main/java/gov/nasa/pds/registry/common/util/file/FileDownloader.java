@@ -11,16 +11,10 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -140,24 +134,14 @@ public class FileDownloader
             TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
             SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
-            
-            RegistryBuilder<ConnectionSocketFactory> sfRegistryBld = RegistryBuilder.<ConnectionSocketFactory>create();
-            sfRegistryBld.register("https", sslsf);
-            sfRegistryBld.register("http", new PlainConnectionSocketFactory());
-            Registry<ConnectionSocketFactory> sfRegistry = sfRegistryBld.build();
 
-            BasicHttpClientConnectionManager connectionManager = new BasicHttpClientConnectionManager(sfRegistry);
-            
-            HttpClientBuilder clientBld = HttpClients
-                .custom()
+            return HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
                 .setDefaultRequestConfig(RequestConfig.custom()
                     .setCookieSpec(CookieSpecs.STANDARD)
-                    .build());
-            clientBld.setSSLSocketFactory(sslsf);
-            clientBld.setConnectionManager(connectionManager);
-            
-            CloseableHttpClient httpClient = clientBld.build();
-            return httpClient;
+                    .setRedirectsEnabled(true)
+                    .build())
+                .build();
         }
         else
         {
