@@ -22,7 +22,7 @@ public class Version {
     public final boolean greaterThanOrEqualTo (Semantic minimum) {
       boolean result = this.major > minimum.major;
       if (!result && this.major == minimum.major) {
-        result = this.major > minimum.minor;
+        result = this.minor > minimum.minor;
         if (!result && this.minor == minimum.minor) {
           result = this.patch >= minimum.patch;
         }
