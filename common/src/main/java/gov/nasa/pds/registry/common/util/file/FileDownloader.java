@@ -3,7 +3,8 @@ package gov.nasa.pds.registry.common.util.file;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.net.ssl.SSLContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -32,7 +33,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  */
 public class FileDownloader
 {
-  final private static ArrayList<String> ignore = new ArrayList<String>();
+  private static final Set<String> failed = ConcurrentHashMap.newKeySet();
     private static final Logger log = LogManager.getLogger(FileDownloader.class);
     private int numRetries = 3;
 
@@ -59,15 +60,19 @@ public class FileDownloader
      */
     public boolean download(String fromUrl, File toFile) throws Exception
     {
+        if(failed.contains(fromUrl))
+        {
+            throw new Exception("Could not download " + fromUrl + " and will not try again in this running instance.");
+        }
+
         int count = 0;
-        
-        while(!ignore.contains(fromUrl))
+        while(true)
         {
             try
             {
                 count++;
                 downloadOnce(fromUrl, toFile);
-                ignore.add(fromUrl);
+                return true;
             }
             catch(Exception ex)
             {
@@ -79,12 +84,11 @@ public class FileDownloader
                 }
                 else
                 {
-                  ignore.add(fromUrl);
-                  throw new Exception("Could not download " + fromUrl + " and will not try again in this running instance.");
+                    failed.add(fromUrl);
+                    throw new Exception("Could not download " + fromUrl + " and will not try again in this running instance.");
                 }
             }
         }
-        return ignore.contains(fromUrl);
     }
     
     
