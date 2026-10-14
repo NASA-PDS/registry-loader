@@ -1,0 +1,21 @@
+{
+    "settings":
+    {
+        "index.mapping.total_fields.limit": "3000",
+        "index.max_result_window":"1000000000",
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+    },
+
+    "mappings":
+    {
+        "dynamic": false,
+        "dynamic_templates":
+        [
+            {
+                "strings":{"match_mapping_type":"string",
+                           "mapping":{"type":"keyword"}}
+            }
+        ]
+    }
+}
