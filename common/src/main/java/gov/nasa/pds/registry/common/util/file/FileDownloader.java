@@ -3,7 +3,8 @@ package gov.nasa.pds.registry.common.util.file;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.net.ssl.SSLContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -11,16 +12,10 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +33,7 @@ import gov.nasa.pds.registry.common.util.CloseUtils;
  */
 public class FileDownloader
 {
-  final private static ArrayList<String> ignore = new ArrayList<String>();
+  private static final Set<String> failed = ConcurrentHashMap.newKeySet();
     private static final Logger log = LogManager.getLogger(FileDownloader.class);
     private int numRetries = 3;
 
@@ -65,15 +60,19 @@ public class FileDownloader
      */
     public boolean download(String fromUrl, File toFile) throws Exception
     {
+        if(failed.contains(fromUrl))
+        {
+            throw new Exception("Could not download " + fromUrl + " and will not try again in this running instance.");
+        }
+
         int count = 0;
-        
-        while(!ignore.contains(fromUrl))
+        while(true)
         {
             try
             {
                 count++;
                 downloadOnce(fromUrl, toFile);
-                ignore.add(fromUrl);
+                return true;
             }
             catch(Exception ex)
             {
@@ -85,12 +84,11 @@ public class FileDownloader
                 }
                 else
                 {
-                  ignore.add(fromUrl);
-                  throw new Exception("Could not download " + fromUrl + " and will not try again in this running instance.");
+                    failed.add(fromUrl);
+                    throw new Exception("Could not download " + fromUrl + " and will not try again in this running instance.");
                 }
             }
         }
-        return ignore.contains(fromUrl);
     }
     
     
@@ -140,24 +138,14 @@ public class FileDownloader
             TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
             SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
-            
-            RegistryBuilder<ConnectionSocketFactory> sfRegistryBld = RegistryBuilder.<ConnectionSocketFactory>create();
-            sfRegistryBld.register("https", sslsf);
-            sfRegistryBld.register("http", new PlainConnectionSocketFactory());
-            Registry<ConnectionSocketFactory> sfRegistry = sfRegistryBld.build();
 
-            BasicHttpClientConnectionManager connectionManager = new BasicHttpClientConnectionManager(sfRegistry);
-            
-            HttpClientBuilder clientBld = HttpClients
-                .custom()
+            return HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
                 .setDefaultRequestConfig(RequestConfig.custom()
                     .setCookieSpec(CookieSpecs.STANDARD)
-                    .build());
-            clientBld.setSSLSocketFactory(sslsf);
-            clientBld.setConnectionManager(connectionManager);
-            
-            CloseableHttpClient httpClient = clientBld.build();
-            return httpClient;
+                    .setRedirectsEnabled(true)
+                    .build())
+                .build();
         }
         else
         {
