@@ -1,6 +1,7 @@
 package gov.nasa.pds.registry.common.es.dao.dd;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,8 +9,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.RestClient;
+import gov.nasa.pds.registry.common.dd.DDRecord;
+import gov.nasa.pds.registry.common.dd.LddException;
+import gov.nasa.pds.registry.common.dd.LddUtils;
 import gov.nasa.pds.registry.common.util.Tuple;
 
 
@@ -144,6 +151,55 @@ public class DataDictionaryDao
           }
         }
         return result;
+    }
+
+
+    /**
+     * Write the LDD_Info sentinel document directly via a single-item bulk request.
+     * Call this only after all field documents for the LDD have been successfully ingested,
+     * so that a bulk failure on field documents can never leave an orphaned sentinel.
+     * @param namespace LDD namespace, e.g., "pds", "geom", etc.
+     * @param lddFileName LDD file name to store in the sentinel
+     * @param imVersion information model version, or null
+     * @param lddVersion LDD version, or null
+     * @param rawDate raw LDD date string, or null
+     * @throws LddException if the date cannot be parsed or the sentinel cannot be written
+     */
+    public void saveLddInfo(String namespace, String lddFileName, String imVersion,
+        String lddVersion, String rawDate) throws LddException {
+      DDRecord rec = new DDRecord();
+      rec.classNs = "registry";
+      rec.className = "LDD_Info";
+      rec.attrNs = namespace;
+      rec.attrName = lddFileName;
+
+      String docId = rec.esFieldNameFromComponents();
+      Gson gson = new Gson();
+
+      JsonObject actionBody = new JsonObject();
+      actionBody.addProperty("_id", docId);
+      JsonObject action = new JsonObject();
+      action.add("index", actionBody);
+
+      try {
+        JsonObject doc = new JsonObject();
+        doc.addProperty("es_field_name", docId);
+        doc.addProperty("class_ns", rec.classNs);
+        doc.addProperty("class_name", rec.className);
+        doc.addProperty("attr_ns", rec.attrNs);
+        doc.addProperty("attr_name", rec.attrName);
+        if (imVersion != null) doc.addProperty("im_version", imVersion);
+        if (lddVersion != null) doc.addProperty("ldd_version", lddVersion);
+        if (rawDate != null) doc.addProperty("date", LddUtils.lddDateToIsoInstantString(rawDate));
+
+        Request.Bulk bulk = client.createBulkRequest()
+            .setRefresh(Request.Bulk.Refresh.WaitFor)
+            .setIndex(indexName + "-dd");
+        bulk.add(gson.toJson(action), gson.toJson(doc));
+        client.performRequest(bulk);
+      } catch (IOException | ParseException e) {
+        throw new LddException("Failed to write LDD_Info sentinel " + docId + " for namespace " + namespace, e);
+      }
     }
 
 }
