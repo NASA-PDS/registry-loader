@@ -20,6 +20,12 @@ public class StepDefs {
   private final ArrayList<OpensearchSupportedFunctionality> mocks = new ArrayList<OpensearchSupportedFunctionality>();
   private static final OpensearchEngine motor = OpensearchEngine.instance();
 
+  static {
+    // Run this exactly once per JVM lifecycle
+    System.setOut(new ProxyStream(System.out));
+    System.setErr(new ProxyStream(System.err));
+  }
+  
   @AfterAll
   public static void stop() {
     StepDefs.motor.stop();
