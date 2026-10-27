@@ -18,54 +18,69 @@ final class GuardedOutputTee {
     private final OutputStream a;
     private final OutputStream b;
     private final Object lock;
+
     Tee(OutputStream a, OutputStream b, Object lock) {
-        this.a = a;
-        this.b = b;
-        this.lock = lock;
+      this.a = a;
+      this.b = b;
+      this.lock = lock;
     }
+
     @Override
     public void write(int x) throws IOException {
-      synchronized (lock) { a.write(x); b.write(x); }
+      synchronized (lock) {
+        a.write(x);
+        b.write(x);
+      }
     }
+
     @Override
     public void write(byte[] buf, int off, int len) throws IOException {
-      synchronized (lock) { a.write(buf, off, len); b.write(buf, off, len); }
+      synchronized (lock) {
+        a.write(buf, off, len);
+        b.write(buf, off, len);
+      }
     }
+
     @Override
     public void flush() throws IOException {
-      synchronized (lock) { a.flush(); b.flush(); }
+      synchronized (lock) {
+        a.flush();
+        b.flush();
+      }
     }
   }
 
   private static final AtomicBoolean ACTIVE = new AtomicBoolean();
   private static final Logger log = LoggerFactory.getLogger(GuardedOutputTee.class);
+
   private GuardedOutputTee() {}
 
   static void run(Path logFile, CliAware.Operation op) {
-      if (!ACTIVE.compareAndSet(false, true)) {
-          throw new IllegalStateException("teeOutputForOperation is not reentrant/parallel-safe. Do not parellelize cucumber.");
+    if (!ACTIVE.compareAndSet(false, true)) {
+      throw new IllegalStateException(
+          "teeOutputForOperation is not reentrant/parallel-safe. Do not parellelize cucumber.");
+    }
+    PrintStream origOut = System.out, origErr = System.err;
+    try {
+      Files.createDirectories(logFile.toAbsolutePath().getParent());
+      try (OutputStream file = Files.newOutputStream(logFile, CREATE, TRUNCATE_EXISTING, WRITE)) {
+        var lock = new Object();
+        System.setOut(new PrintStream(new Tee(origOut, file, lock), true, UTF_8));
+        System.setErr(new PrintStream(new Tee(origErr, file, lock), true, UTF_8));
+        try {
+          op.run();
+        } finally {
+          System.out.flush();
+          System.err.flush();
+        }
       }
-      PrintStream origOut = System.out, origErr = System.err;
-      try {
-          Files.createDirectories(logFile.toAbsolutePath().getParent());
-          try (OutputStream file = Files.newOutputStream(logFile, CREATE, TRUNCATE_EXISTING, WRITE)) {
-              var lock = new Object();
-              System.setOut(new PrintStream(new Tee(origOut, file, lock), true, UTF_8));
-              System.setErr(new PrintStream(new Tee(origErr, file, lock), true, UTF_8));
-              try {
-                  op.run();
-              } finally {
-                  System.out.flush();
-                  System.err.flush();
-              }
-          }
-      } catch (IOException e) {
-        log.error("Cannot tee the output to {}. Now in an illegal state to proceed,", logFile, e);
-        throw new IllegalStateException("cannot enter the 'tee' state");
-      } finally {
-          System.setOut(origOut);
-          System.setErr(origErr);
-          ACTIVE.set(false);
-      }
+    } catch (IOException e) {
+      log.error("Cannot tee the output to {}. Now in an illegal state to proceed,", logFile, e);
+      throw new IllegalStateException("cannot enter the 'tee' state");
+    } finally {
+      System.setOut(origOut);
+      System.setErr(origErr);
+      ACTIVE.set(false);
+    }
   }
 }

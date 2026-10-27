@@ -143,6 +143,12 @@
       <scope>compile</scope>
       <optional>false</optional>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>1.15.0</version>
+      <scope>compile</scope>
+    </dependency>
     <!-- Silence SLF4J messages (NASA-PDS/registry-mgr:117) -->
     <dependency>
       <groupId>org.slf4j</groupId>

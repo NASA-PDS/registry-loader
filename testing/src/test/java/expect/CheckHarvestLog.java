@@ -13,44 +13,41 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CheckHarvestLog implements LogAware,Runnable {
+public class CheckHarvestLog implements LogAware, Runnable {
   private final Logger log = LoggerFactory.getLogger(this.getClass());
-  private final Map<String, Long> expected = Map.of(
-      "Label Failure", 0L,
-      "Label Ignored", 0L,
-      "Label Matched", 0L,
-      "Label Skipped", 0L,
-      "Label Success", 21L
-  );
+  private final Map<String, Long> expected = Map.of("Label Failure", 0L, "Label Ignored", 0L,
+      "Label Matched", 0L, "Label Skipped", 0L, "Label Success", 21L);
   private final Pattern summary = Pattern.compile("SUMMARY (.+?): (-?\\d+)");
 
   private Path logpath = null;
 
   @Override
   public void run() {
+    System.out.println("    ***********   logpath: " + logpath.toString());
     assert logpath != null : "Cannot check log if it does not exist.";
     Map<String, Long> found = new HashMap<>();
     try (Stream<String> lines = Files.lines(this.logpath)) {
-        lines.map(summary::matcher)
-             .filter(Matcher::find)
-             .forEach(m -> found.put(m.group(1), Long.parseLong(m.group(2)))); // last one wins
+      lines.map(summary::matcher).filter(Matcher::find)
+          .forEach(m -> found.put(m.group(1), Long.parseLong(m.group(2)))); // last one wins
     } catch (IOException e) {
       log.error("Error reading log file {}", this.logpath, e);
       assert false : "Cannot read the harvest log file";
     }
     List<String> errors = new ArrayList<>();
     expected.forEach((label, expected) -> {
-        Long actual = found.get(label);
-        if (actual == null) {
-            errors.add(label + ": expected " + expected + " but entry not found");
-        } else if (!actual.equals(expected)) {
-            errors.add(label + ": expected " + expected + " does not equal found " + actual);
-        }
+      Long actual = found.get(label);
+      if (actual == null) {
+        errors.add(label + ": expected " + expected + " but entry not found");
+      } else if (!actual.equals(expected)) {
+        errors.add(label + ": expected " + expected + " does not equal found " + actual);
+      }
     });
     if (!errors.isEmpty()) {
-        throw new AssertionError(String.join(System.lineSeparator(), errors));
+      errors.add(0, "");
+      throw new AssertionError(String.join(System.lineSeparator(), errors));
     }
   }
+
   @Override
   public void logpath(Path path) {
     this.logpath = path.resolve("harvest.log");

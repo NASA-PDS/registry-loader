@@ -2,6 +2,7 @@ package cucumber;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import org.apache.commons.text.StringSubstitutor;
 import expect.LogAware;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
@@ -46,6 +47,9 @@ public class StepDefs {
   @When("test suite {string} is executed with CLI arguments {string}")
   public void execute(String suite, String cliargline) {
     Runnable task = this.classForName(suite);
+    if (cliargline != null && !cliargline.isBlank()) {
+      cliargline = new StringSubstitutor(System.getenv()).replace(cliargline);
+    }
     if (task instanceof CliAware) {
       ((CliAware)task).arguments(cliargline);
       ((CliAware)task).logpath(Path.of("target","test", this.issueNumber + "-" + this.count));

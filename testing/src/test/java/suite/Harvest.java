@@ -3,6 +3,9 @@ package suite;
 import java.nio.file.Path;
 import org.apache.commons.exec.CommandLine;
 import gov.nasa.pds.harvest.HarvestMain;
+import gov.nasa.pds.harvest.dao.RegistryDocBatch;
+import gov.nasa.pds.harvest.util.out.WriterManager;
+import gov.nasa.pds.registry.common.util.file.FileDownloader;
 import mock.OpensearchSupportedFunctionality;
 
 public class Harvest extends ArtificialComposite implements CliAware, OpensearchSupportedFunctionality {
@@ -14,11 +17,18 @@ public class Harvest extends ArtificialComposite implements CliAware, Opensearch
     if (this.args != null && !this.args.isBlank()) {
       args = CommandLine.parse(this.args).getArguments();
     }
-    if (this.logpath != null) {
+    try {
       final String[] fargs = args;
-      CliAware.teeOutputForOperation(logpath, ()->HarvestMain.main(fargs));
-    } else {
-      HarvestMain.main(args);
+      if (this.logpath != null) {
+        CliAware.teeOutputForOperation(logpath, ()->HarvestMain.main(fargs));
+        System.out.println("    ***********   logpath: " + logpath.toString());
+      } else {
+        HarvestMain.main(fargs);
+      }
+    } finally {
+      FileDownloader.clearIgnore();
+      RegistryDocBatch.clearHistory();
+      WriterManager.destroy(true);
     }
   }
   @Override

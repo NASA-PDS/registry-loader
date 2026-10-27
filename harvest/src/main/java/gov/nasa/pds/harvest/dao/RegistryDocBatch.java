@@ -138,4 +138,8 @@ public class RegistryDocBatch
       log.fatal("   Total number of duplicate lidvids: {}", (total - history.size()));
       }
     }
+    static public void clearHistory() {
+      RegistryDocBatch.alreadyLearned.clear();
+      RegistryDocBatch.history.clear();
+    }
 }
