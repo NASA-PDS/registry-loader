@@ -67,7 +67,7 @@ jobs:
                     TARGET_DIR="$RUNNER_TEMP/$DEPENDENT_REPO"
                     CURRENT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
                     echo "Current branch is $CURRENT_BRANCH"
-                    git clone https://github.com:${DEPENDENT_REPO}.git "$TARGET_DIR"
+                    git clone https://github.com/${DEPENDENT_REPO}.git "$TARGET_DIR"
                     cd "$TARGET_DIR"
                     if git ls-remote --heads origin "$CURRENT_BRANCH" | grep -q "$CURRENT_BRANCH"
                     then
