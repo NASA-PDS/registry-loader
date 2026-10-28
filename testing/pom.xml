@@ -41,7 +41,7 @@
   </parent>
 
   <groupId>gov.nasa.pds.registry-loader</groupId>
-  <artifactId>registry-loader-testing</artifactId>
+  <artifactId>testing</artifactId>
   <packaging>jar</packaging>
   
   <name>PDS Registry Loader Testing</name>
@@ -128,6 +128,16 @@
     <dependency>
       <groupId>gov.nasa.pds.registry-loader</groupId>
       <artifactId>harvest</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.nasa.pds.registry-loader</groupId>
+      <artifactId>registry-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.nasa.pds.registry-loader</groupId>
+      <artifactId>registry-manager</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
