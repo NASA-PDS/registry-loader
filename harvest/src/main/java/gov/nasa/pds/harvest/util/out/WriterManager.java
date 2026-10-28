@@ -41,7 +41,7 @@ public class WriterManager {
    */
   public static void init(File outDir) throws Exception {
     if (instance != null)
-      throw new Exception("WriterManager is already initialized.");
+      throw new IllegalStateException("WriterManager is already initialized.");
     instance = new WriterManager(outDir);
   }
 
@@ -79,9 +79,9 @@ public class WriterManager {
    * @return the singleton instance.
    * @throws Exception an exception.
    */
-  public static WriterManager getInstance() throws Exception {
+  public static WriterManager getInstance() throws IllegalStateException {
     if (instance == null)
-      throw new Exception("WriterManager is not initialized.");
+      throw new IllegalStateException("WriterManager is not initialized.");
 
     return instance;
   }
