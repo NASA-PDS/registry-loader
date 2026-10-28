@@ -153,6 +153,6 @@ public class FileDownloader
         }
     }
     public static void clearIgnore() {
-      FileDownloader.ignore.clear();
+      FileDownloader.failed.clear();
     }
 }
