@@ -113,7 +113,6 @@
     <module>common</module>
     <module>harvest</module>
     <module>manager</module>
-    <module>testing</module>
   </modules>
   <repositories>
     <repository>
@@ -305,6 +304,13 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>run-tests</id>
+      <modules>
+        <!-- This adds the module back into the reactor only when active -->
+        <module>testing</module> 
+      </modules>
     </profile>
   </profiles>
   <distributionManagement/>
