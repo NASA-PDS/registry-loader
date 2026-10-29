@@ -23,7 +23,6 @@ public class CheckHarvestLog implements LogAware, Runnable {
 
   @Override
   public void run() {
-    System.out.println("    ***********   logpath: " + logpath.toString());
     assert logpath != null : "Cannot check log if it does not exist.";
     Map<String, Long> found = new HashMap<>();
     try (Stream<String> lines = Files.lines(this.logpath)) {
