@@ -21,7 +21,6 @@ public class Harvest extends ArtificialComposite implements CliAware, Opensearch
       final String[] fargs = args;
       if (this.logpath != null) {
         CliAware.teeOutputForOperation(logpath, ()->HarvestMain.main(fargs));
-        System.out.println("    ***********   logpath: " + logpath.toString());
       } else {
         HarvestMain.main(fargs);
       }
