@@ -82,7 +82,7 @@ jobs:
                     echo "REGISTRY_REF_DATA=$TARGET_DIR" >> $GITHUB_ENV
             -
                 name: 🩺 Test Software
-                run: mvn --quiet install test
+                run: mvn --quiet install test -Pfull-test
             -
                 name: 📦 Package construction
                 run: mvn --quiet package
