@@ -12,6 +12,7 @@ import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import gov.nasa.pds.registry.common.util.FieldMapSet;
+import org.apache.commons.text.StringSubstitutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -90,7 +91,7 @@ public class CollectionProcessor extends BaseProcessor
     public int process(BundleType bCfg) throws Exception {
         collectionCount = 0;
 
-        File bundleDir = new File(bCfg.getDir());
+        File bundleDir = new File(new StringSubstitutor(System.getenv()).replace(bCfg.getDir()));
 
         try (Stream<Path> stream = Files.find(bundleDir.toPath(), 2, new CollectionMatcher(), FileVisitOption.FOLLOW_LINKS)) {
             Iterator<Path> it = stream.iterator();

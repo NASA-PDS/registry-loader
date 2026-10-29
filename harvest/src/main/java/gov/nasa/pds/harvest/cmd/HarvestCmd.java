@@ -4,6 +4,7 @@ import java.io.File;
 import java.security.ProviderException;
 import java.util.Arrays;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.text.StringSubstitutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import gov.nasa.pds.harvest.Version;
@@ -119,7 +120,7 @@ public class HarvestCmd implements CliCommand
     {
         for(String path: cfg.getLoad().getDirectories().getPath())
         {
-            processDirectory(path);
+            processDirectory(new StringSubstitutor(System.getenv()).replace(path));
         }
     }
     
@@ -132,7 +133,7 @@ public class HarvestCmd implements CliCommand
     {
         for(String path: cfg.getLoad().getFiles().getManifest())
         {
-            processManifest(path);
+            processManifest(new StringSubstitutor(System.getenv()).replace(path));
         }
     }   
     
@@ -251,7 +252,7 @@ public class HarvestCmd implements CliCommand
     
     private void processBundle(BundleType bCfg) throws Exception
     {
-        File rootDir = new File(bCfg.getDir());
+        File rootDir = new File(new StringSubstitutor(System.getenv()).replace(bCfg.getDir()));
         if(!rootDir.exists()) 
         {
             log.warn("Invalid bundle directory: {}", rootDir.getAbsolutePath());

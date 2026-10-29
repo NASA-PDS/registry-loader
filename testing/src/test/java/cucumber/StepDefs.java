@@ -1,6 +1,9 @@
 package cucumber;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
+import org.apache.commons.text.StringSubstitutor;
+import expect.LogAware;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
@@ -13,9 +16,16 @@ import mock.OpensearchSupportedFunctionality;
 import suite.CliAware;
 
 public class StepDefs {
+  private int count, issueNumber;
   private final ArrayList<OpensearchSupportedFunctionality> mocks = new ArrayList<OpensearchSupportedFunctionality>();
-  private static final OpensearchEngine motor = new OpensearchEngine();
+  private static final OpensearchEngine motor = OpensearchEngine.instance();
 
+  static {
+    // Run this exactly once per JVM lifecycle
+    System.setOut(new ProxyStream(System.out));
+    System.setErr(new ProxyStream(System.err));
+  }
+  
   @AfterAll
   public static void stop() {
     StepDefs.motor.stop();
@@ -28,11 +38,13 @@ public class StepDefs {
 
   @BeforeAll
   public static void start() {
-    StepDefs.motor.start(19022);
+    StepDefs.motor.start(9200);
   }
 
   @Given("registry-loader issue {int}, test {int}, and opensearch mocks {string}")
   public void construct(Integer issueNumber, Integer count, String mocks) {
+    this.count = count;
+    this.issueNumber = issueNumber;
     for (String mock : mocks.split(",")) {
       this.mocks.add(classForName(mock));
     }
@@ -41,8 +53,12 @@ public class StepDefs {
   @When("test suite {string} is executed with CLI arguments {string}")
   public void execute(String suite, String cliargline) {
     Runnable task = this.classForName(suite);
+    if (cliargline != null && !cliargline.isBlank()) {
+      cliargline = new StringSubstitutor(System.getenv()).replace(cliargline);
+    }
     if (task instanceof CliAware) {
       ((CliAware)task).arguments(cliargline);
+      ((CliAware)task).logpath(Path.of("target","test", this.issueNumber + "-" + this.count));
     } else if (cliargline != null && !cliargline.isBlank()) {
       throw new IllegalStateException("An argument line was given to the suite " + suite + " that is not suite.CliAware");
     }
@@ -51,7 +67,11 @@ public class StepDefs {
 
   @Then("compare to the expected outcome {string}.")
   public void compare(String expectation) {
-    this.<Runnable>classForName(expectation).run();
+    Runnable expert = this.<Runnable>classForName(expectation);
+    if (expert instanceof LogAware) {
+      ((LogAware)expert).logpath(Path.of("target","test", this.issueNumber + "-" + this.count));
+    }
+    expert.run();
   }
 
   @SuppressWarnings("unchecked")

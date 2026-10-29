@@ -1,0 +1,90 @@
+# 🏃‍♀️ Continuous Integration and Delivery: Branch Testing
+# ======================================================
+
+---
+
+name: 🔁 Branch integration testing
+
+
+# Driving Event
+# -------------
+#
+# What event starts this workflow: a push to any branch other than main
+
+on:
+    push:
+        branches:
+            -   '**'
+            -   '!main'
+
+    workflow_dispatch:
+
+# What to Do
+# ----------
+#
+
+jobs:
+    branch-testing:
+        name: 🪵 Branch Testing
+        runs-on: ubuntu-latest
+        if: github.actor != 'pdsen-ci'
+
+        strategy:
+            matrix:
+                java-version: [21, 25]
+
+        steps:
+            -
+                name: 💳 Checkout
+                uses: actions/checkout@v7
+                with:
+                    lfs: true
+                    fetch-depth: 0
+                    token: ${{secrets.ADMIN_GITHUB_TOKEN}}
+            -
+                name: 💵 Maven Cache
+                uses: actions/cache@v6
+                with:
+                    path: ~/.m2/repository
+                    # The "key" used to indicate a set of cached files is the operating system runner
+                    # plus "mvn" for Maven-specific builds, plus a hash of the `pom.xml` files, which
+                    # should uniquely identify the dependent jars; plus "pds" because we pds-prefix
+                    # everything with "pds" in PDS—even when the context is obvious! 😅
+                    key: pds-${{runner.os}}-mvn-${{hashFiles('**/pom.xml')}}
+                    # To restore a set of files, we only need to match a prefix of the saved key.
+                    restore-keys: pds-${{runner.os}}-mvn-
+            -
+                name: ☕️ Set up OpenJDK
+                uses: actions/setup-java@v5
+                with:
+                    distribution: 'adopt'
+                    java-version: ${{matrix.java-version}}
+            -
+                name: Clone registry-ref-def and Setup ENV
+                env:
+                    DEPENDENT_REPO: "NASA-PDS/registry-ref-data"
+                run: |
+                    TARGET_DIR="$RUNNER_TEMP/$DEPENDENT_REPO"
+                    CURRENT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+                    echo "Current branch is $CURRENT_BRANCH"
+                    git clone https://github.com/${DEPENDENT_REPO}.git "$TARGET_DIR"
+                    cd "$TARGET_DIR"
+                    if git ls-remote --heads origin "$CURRENT_BRANCH" | grep -q "$CURRENT_BRANCH"
+                    then
+                      echo "Matching branch found. Switching to $CURRENT_BRANCH..."
+                      git checkout "$CURRENT_BRANCH"
+                    else
+                      echo "Matching branch not found. Defaulting to main..."
+                      git checkout main
+                    fi
+                    cd -
+                    echo "HARVEST_HOME=${GITHUB_WORKSPACE}/harvest/src/main/resources" >> $GITHUB_ENV
+                    echo "REGISTRY_REF_DATA=$TARGET_DIR" >> $GITHUB_ENV
+            -
+                name: 🩺 Test Software
+                run: mvn --quiet install test -Pfull-test
+            -
+                name: 📦 Package construction
+                run: mvn --quiet package
+
+# -*- mode: yaml; indent: 4; fill-column: 120; coding: utf-8 -*-
