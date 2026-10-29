@@ -15,7 +15,7 @@ public class Harvest extends ArtificialComposite implements CliAware, Opensearch
   public void run() {
     String[] args = {};
     if (this.args != null && !this.args.isBlank()) {
-      args = CommandLine.parse(this.args).getArguments();
+      args = CommandLine.parse("harvest " + this.args).getArguments();
     }
     try {
       final String[] fargs = args;
