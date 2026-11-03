@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import gov.nasa.pds.registry.common.util.FieldMapSet;
 import gov.nasa.pds.registry.common.util.log.LogLevels;
+import org.apache.commons.text.StringSubstitutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -112,7 +113,7 @@ public class ProductProcessor extends BaseProcessor
 
         FileMatcher matcher = new FileMatcher(bCfg);
 
-        File bundleDir = new File(bCfg.getDir());
+        File bundleDir = new File(new StringSubstitutor(System.getenv()).replace(bCfg.getDir()));
 
         try (Stream<Path> stream = Files.find(bundleDir.toPath(), 20, matcher, FileVisitOption.FOLLOW_LINKS)){ 
             Iterator<Path> it = stream.iterator();

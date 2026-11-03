@@ -11,6 +11,7 @@ import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import gov.nasa.pds.registry.common.util.FieldMapSet;
+import org.apache.commons.text.StringSubstitutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -87,7 +88,7 @@ public class BundleProcessor extends BaseProcessor
         bundleCount = 0;
         this.bundleCfg = bCfg;
 
-        File bundleDir = new File(bCfg.getDir());
+        File bundleDir = new File(new StringSubstitutor(System.getenv()).replace(bCfg.getDir()));
 
         try (Stream<Path> stream = Files.find(bundleDir.toPath(), 1, new BundleMatcher(), FileVisitOption.FOLLOW_LINKS)) {
             Iterator<Path> it = stream.iterator();

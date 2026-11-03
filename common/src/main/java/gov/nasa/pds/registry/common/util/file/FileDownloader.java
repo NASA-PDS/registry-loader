@@ -152,5 +152,7 @@ public class FileDownloader
             return HttpClients.createDefault();
         }
     }
-
+    public static void clearIgnore() {
+      FileDownloader.failed.clear();
+    }
 }
