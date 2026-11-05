@@ -37,6 +37,7 @@ public class SetArchiveStatusCmd implements CliCommand {
     @Override
     public void run(CommandLine cmdLine) throws Exception
     {
+      int iteration = 1;
         if(cmdLine.hasOption("help"))
         {
             printHelp();
@@ -66,7 +67,6 @@ public class SetArchiveStatusCmd implements CliCommand {
               HashSet<String> total = new HashSet<String>();
               List<String> lidvids;
               do {
-                if (!total.isEmpty()) Thread.sleep(1000); // account for lack of refresh on serverless
                 lidvids = client.performRequest(client.createSearchRequest()
                     .setIndex(conFact.getIndexName())
                     .buildTermQueryWithoutTermQuery("_package_id", pid, Metadata.FLD_ARCHIVE_STATUS, status)
@@ -75,8 +75,15 @@ public class SetArchiveStatusCmd implements CliCommand {
                 total.addAll(lidvids);
                 srv.updateArchiveStatus (lidvids, status);
                 if (!lidvids.isEmpty() && total.size() == sizeBefore) {
-                  throw new RegistryUpdateException("set-archive-status failed: " + lidvids.size()
-                      + " document(s) could not be updated. Check server logs for errors (e.g. throttling).");
+                  if (iteration >= 10) {
+                    throw new RegistryUpdateException("set-archive-status failed: " + lidvids.size()
+                    + " document(s) could not be updated. Check server logs for errors (e.g. throttling).");
+                  } else {
+                    iteration++;
+                    Thread.sleep(1000); // account for lack of refresh on serverless
+                  }
+                } else {
+                  iteration = 1;
                 }
               } while (lidvids.size() > 0);
               log.info("updated {} documents associated with package ID {}", total.size(), pid);
