@@ -24,7 +24,7 @@ public final class Backoff {
   public Backoff(long baseMillis, long maxMillis, double jitter) {
     if (baseMillis <= 0) throw new IllegalArgumentException("baseMillis should be > 0");
     if (maxMillis < baseMillis) throw new IllegalArgumentException("maxMillis should be >= baseMillis");
-    if (jitter < 0.0 || jitter > 1.0) throw new IllegalArgumentException("jitter should be in [0, 1]");
+    if (!Double.isFinite(jitter) || jitter < 0.0 || jitter > 1.0) throw new IllegalArgumentException("jitter should be in [0, 1]");
     this.baseMillis = baseMillis;
     this.maxMillis = maxMillis;
     this.jitter = jitter;
