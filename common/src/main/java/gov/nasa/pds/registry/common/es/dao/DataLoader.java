@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -18,9 +18,15 @@ import java.util.zip.ZipFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.Request;
 import gov.nasa.pds.registry.common.Response;
+import gov.nasa.pds.registry.common.util.Backoff;
 import gov.nasa.pds.registry.common.util.CloseUtils;
 import gov.nasa.pds.registry.common.util.log.LogLevels;
 
@@ -44,6 +50,9 @@ public class DataLoader
   // When true, 409 Conflict on "create" is treated as success (document already exists).
   // Safe for idempotent LDD loads; leave false for product ingestion where duplicates are errors.
   private boolean ignoreConflicts = false;
+  // Delay between retries of transient failures (OCU capacity, throttling, I/O errors):
+  // 10s, 20s, 40s, ... capped at 5 minutes, with up to 25% random jitter.
+  private Backoff retryBackoff = new Backoff(10_000L, 300_000L, 0.25);
 
     private static final Logger log = LogManager.getLogger(DataLoader.class);
     private final ConnectionFactory conFactory;
@@ -70,6 +79,16 @@ public class DataLoader
    */
   public void setIgnoreConflicts(boolean ignoreConflicts) {
     this.ignoreConflicts = ignoreConflicts;
+  }
+
+
+  /**
+   * Set the delay policy used between retries of transient failures such as
+   * "maximum OCU capacity reached", throttling and I/O errors.
+   */
+  public void setRetryBackoff(Backoff retryBackoff) {
+    if (retryBackoff == null) throw new IllegalArgumentException("Retry backoff should not be null");
+    this.retryBackoff = retryBackoff;
   }
 
 
@@ -281,7 +300,10 @@ public class DataLoader
         catch(IOException ex)
         {
             if (retries > 0) {
-                log.warn("DataLoader.loadBatch() request failed ({} retries remaining) due to", retries, ex);
+                long delay = retryBackoff.delayMillis(Math.max(0, defaultRequestRetries - retries));
+                log.warn("DataLoader.loadBatch() request failed ({} retries remaining), retrying in {} ms due to",
+                    retries, delay, ex);
+                if (!Backoff.pause(delay)) throw ex;
                 return loadBatch(data, errorLidvids, matchedIds, retries - 1);
             }
             throw ex;
@@ -299,17 +321,47 @@ public class DataLoader
         Response.Bulk response = this.conFactory.createRestClient().performRequest(bulk);
         failed += processErrors (response, errorLidvids, matchedIds, todo, retry);
         retry++;
-        
-        if (!todo.isEmpty()) {
-          try {
-            Random random = new Random();
-            Thread.sleep((300 + random.nextInt(150))*1000L); // 5 to 7.5 minutes
-          } catch (InterruptedException e) {
-            // Tried to wait but nothing to be done if cannot
-          }
+
+        if (!todo.isEmpty() && retry < MAX_RETRY) {
+          long delay = retryBackoff.delayMillis(retry - 1);
+          log.warn("{} document(s) rejected by a transient error, retrying in {} ms (attempt {}/{})",
+              todo.size(), delay, retry, MAX_RETRY);
+          if (!Backoff.pause(delay)) break;
         }
       }
+      // Anything still queued never succeeded: record it as failed rather than dropping it silently.
+      if (!todo.isEmpty()) failed += failRemaining(todo, errorLidvids, retry);
       return failed;
+    }
+
+    private int failRemaining(LinkedHashMap<String,String> todo, Set<String> errorLidvids, int attempts) {
+      int numErrors = 0;
+      for (String key : todo.keySet()) {
+        String id = idFromKey(key);
+        String sanitizedLidvid = id.replace('\r', ' ').replace('\n', ' '); // protect vs log spoofing
+        log.error("LIDVID = {}, Message = gave up after {} attempt(s), transient error persisted",
+            sanitizedLidvid, attempts);
+        log.log(LogLevels.LABEL_FAILURE, sanitizedLidvid);
+        if (errorLidvids != null) errorLidvids.add(id);
+        numErrors++;
+      }
+      todo.clear();
+      return numErrors;
+    }
+
+    // Inverse of asKey(): '{"create":{"_id":"<id>"}}' -> '<id>'
+    private String idFromKey(String key) {
+      try {
+        JsonObject action = JsonParser.parseString(key).getAsJsonObject().entrySet().iterator().next().getValue().getAsJsonObject();
+        JsonElement id = action.get("_id");
+        return id == null ? key : id.getAsString();
+      } catch (JsonParseException | IllegalStateException | NoSuchElementException e) {
+        return key;
+      }
+    }
+
+    private static boolean isTransient(String message) {
+      return message != null && (message.contains("[throttled]") || message.contains("[maximum OCU capacity reached]"));
     }
 
     /**
@@ -346,7 +398,7 @@ public class DataLoader
               String message = item.reason();
               String sanitizedMessage = message.replace('\r', ' ').replace('\n', ' '); // protect vs log spoofing
               
-              if ((message.contains("[throttled]") || message.contains("[maximum OCU capacity reached]")) && retry < MAX_RETRY) continue;
+              if (isTransient(message) && retry < MAX_RETRY) continue; // stays in todo; retried with backoff by emptyQueue
               
               log.error("LIDVID = {}, Message = {}", sanitizedLidvid, sanitizedMessage);
               numErrors++;
