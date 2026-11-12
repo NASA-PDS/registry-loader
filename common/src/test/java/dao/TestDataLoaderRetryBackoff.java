@@ -193,6 +193,23 @@ public class TestDataLoaderRetryBackoff {
   }
 
   @Test
+  void multiQueueLoad_countsOnlyEachQueuesOwnSuccesses() throws Exception {
+    // The first record alone exceeds the 30 MB queue threshold, so it is flushed as its own queue
+    // and the second record is flushed as a second queue.
+    String huge = "x".repeat(31 * 1024 * 1024 + 1);
+    FakeCluster cluster = new FakeCluster(
+        bulk(true, item("urn:test:one::1.0", true, 400, "mapper_parsing_exception")),
+        bulk(false));
+    Set<String> errors = new HashSet<>();
+
+    int loaded = loader(cluster).loadBatch(Arrays.asList(KEY1, huge, KEY2, "{}"), errors, null);
+
+    assertEquals(1, loaded, "only the second queue's document was written");
+    assertEquals(new HashSet<>(Arrays.asList("urn:test:one::1.0")), errors);
+    assertEquals(2, cluster.calls, "one bulk request per queue");
+  }
+
+  @Test
   void ioError_isRetriedWithBackoff_thenSucceeds() throws Exception {
     FakeCluster cluster = new FakeCluster(
         new IOException("Read timed out"),

@@ -270,26 +270,23 @@ public class DataLoader
 
         try
         {
-          int failedCount = 0;
           int loadedCount = 0;
           int queued = 0;
+          int queuedRecords = 0; // records in the current queue (data has two lines per record)
           LinkedHashMap<String,String> queue = new LinkedHashMap<String,String>();
           for (int index = 0 ; index < data.size() ; index++) {
             queued += data.get(index).length() + data.get(index+1).length();
             queue.put(data.get(index), data.get(++index));
+            queuedRecords++;
             if (queued > SIZE_THRESHOLD) {
-              failedCount += emptyQueue(queue, errorLidvids, matchedIds);
-              // Calculate number of successfully saved records
-              // NOTE: data list has two lines per record (primary key + data)
-              loadedCount += data.size() / 2 - failedCount;
+              // Only this queue's records count: its size minus its own failures
+              loadedCount += queuedRecords - emptyQueue(queue, errorLidvids, matchedIds);
               queued = 0;
+              queuedRecords = 0;
             }
           }
           if (queued > 0) {
-            failedCount += emptyQueue(queue, errorLidvids, matchedIds);
-            // Calculate number of successfully saved records
-            // NOTE: data list has two lines per record (primary key + data)
-            loadedCount += data.size() / 2 - failedCount;
+            loadedCount += queuedRecords - emptyQueue(queue, errorLidvids, matchedIds);
           }
           return loadedCount;
         }
