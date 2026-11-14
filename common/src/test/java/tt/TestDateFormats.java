@@ -1,5 +1,6 @@
 package tt;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,6 +33,7 @@ assertNull(testPdsDate(null));
     });
 
     assertNotNull(testPdsDate("2016-09-08Z"));
+    assertEquals("2012-05-21T00:00:00Z", testPdsDate("2012-05-21Z"));
     assertNotNull(testPdsDate("2013-03-02"));
     assertNotNull(testPdsDate("2013-12"));
     assertNotNull(testPdsDate("2013"));
