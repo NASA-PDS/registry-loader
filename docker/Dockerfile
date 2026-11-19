@@ -1,4 +1,4 @@
-# Copyright 2021, California Institute of Technology ("Caltech").
+# Copyright 2026, California Institute of Technology ("Caltech").
 # U.S. Government sponsorship acknowledged.
 #
 # All rights reserved.
@@ -28,7 +28,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-FROM eclipse-temurin:25-jdk-jammy AS base
+# Build-time only -- fetches/unpacks the release tarballs, doesn't ship.
+FROM eclipse-temurin:25-jdk-jammy AS downloader
 
 ARG harvest_package_path=https://github.com/NASA-PDS/harvest/releases/download/v5.1.3/harvest-5.1.3-bin.tar.gz
 ARG reg_manager_package_path=https://github.com/NASA-PDS/registry-mgr/releases/download/v6.1.3/registry-manager-6.1.3-bin.tar.gz
@@ -45,12 +46,19 @@ RUN curl -L "$reg_manager_package_path" -o /app/registry-manager.tar.gz && tar -
 #RUN tar -xzf /app/harvest.tar.gz -C /app && rm /app/harvest.tar.gz
 #RUN tar -xzf /app/registry-manager.tar.gz -C /app && rm /app/registry-manager.tar.gz
 
-
 RUN ln -s /app/harvest-* /app/harvest
-ENV PATH="$PATH:/app/harvest/bin"
-
 RUN ln -s /app/registry-manager-* /app/registry-manager
-ENV PATH="$PATH:/app/registry-manager/bin"
+
+# Alpine + JRE: harvest/registry-manager only need a JRE to run their
+# pre-built jars, and don't need Ubuntu Jammy's OS packages. bash/curl
+# installed since entrypoint.sh needs both (bash to run it, curl for
+# RUN_TESTS=true's test-data download).
+FROM eclipse-temurin:25-jre-alpine AS base
+
+RUN apk add --no-cache bash curl
+
+COPY --from=downloader /app /app
+ENV PATH="$PATH:/app/harvest/bin:/app/registry-manager/bin"
 
 
 FROM base AS lite
