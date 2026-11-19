@@ -55,7 +55,7 @@ RUN ln -s /app/registry-manager-* /app/registry-manager
 # RUN_TESTS=true's test-data download).
 FROM eclipse-temurin:25-jre-alpine AS base
 
-RUN apk add --no-cache bash curl
+RUN apk update && apk upgrade --no-cache && apk add --no-cache bash curl
 
 COPY --from=downloader /app /app
 ENV PATH="$PATH:/app/harvest/bin:/app/registry-manager/bin"
