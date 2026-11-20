@@ -103,6 +103,15 @@ class ArtificialComposite implements OpensearchSupportedFunctionality, MockAware
   }
 
   @Override
+  public Response postSearch_sourceQuerySizeTrack_total_hits(Context ctx) {
+    return this.redirect.process(
+        StackWalker.getInstance()
+          .walk(stream -> stream.findFirst().map(StackWalker.StackFrame::getMethodName))
+          .orElse("unknown"),
+        ctx);
+  }
+
+  @Override
   public Response postMgetIds(Context ctx) {
     return this.redirect.process(
         StackWalker.getInstance()

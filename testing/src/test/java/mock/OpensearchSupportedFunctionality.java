@@ -36,6 +36,7 @@ public interface OpensearchSupportedFunctionality {
   public Response postMgetIds(Context ctx);
   public Response postSearch(Context ctx);
   public Response postSearch_sourceQuerySize(Context ctx);
+  public Response postSearch_sourceQuerySizeTrack_total_hits(Context ctx);
   public Response postSearchVersions(Context ctx);
   public Response putMappingProperties(Context ctx);
   public Response putMappingsSettings(Context ctx);

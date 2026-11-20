@@ -131,6 +131,11 @@ public class Standard extends NoOp {
     }
     return super.postSearch(ctx);
   }
+  /** The data dictionary field-list query also asks for track_total_hits (registry-loader#179). */
+  @Override @Replace
+  public Response postSearch_sourceQuerySizeTrack_total_hits(Context ctx) {
+    return this.postSearch_sourceQuerySize(ctx);
+  }
   @Override @Replace
   public Response postSearchVersions(Context ctx) {
     LinkedList<SearchHit> hits = new LinkedList<SearchHit>();
