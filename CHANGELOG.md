@@ -11,6 +11,7 @@
 
 **Defects:**
 
+- Harvest does not normalize some PDS4 date fields, causing OpenSearch date parse failures \(e.g. 2012-05-21Z\) [\#179](https://github.com/NASA-PDS/registry-loader/issues/179) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Changing archive status with a package ID reports "could not be updated" after a successful update [\#169](https://github.com/NASA-PDS/registry-loader/issues/169) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
 - PDS4\_PDS\_1K00 is not found [\#160](https://github.com/NASA-PDS/registry-loader/issues/160) [[s.low](https://github.com/NASA-PDS/registry-loader/labels/s.low)]
 - which LDD was used for lucy.leisa::1.0 [\#158](https://github.com/NASA-PDS/registry-loader/issues/158) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
