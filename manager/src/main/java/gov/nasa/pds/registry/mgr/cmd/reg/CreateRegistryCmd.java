@@ -57,6 +57,10 @@ public class CreateRegistryCmd implements CliCommand
 
           // Collection inventory (product references)
           srv.createIndex("elastic/refs.json", indexName + "-refs", shards, replicas);
+
+
+          // Deferred updates (ancestry updates queued for registry-sweepers to merge)
+          srv.createIndex("elastic/deferred-updates.json", indexName + "-deferred-updates", shards, replicas);
             
           // Tool version index
           srv.createIndex("elastic/versions.json", indexName + "-versions", shards, replicas);
