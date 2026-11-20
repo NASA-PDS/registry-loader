@@ -6,7 +6,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.List;
-import java.util.Random;
 import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
@@ -42,8 +41,18 @@ import software.amazon.awssdk.regions.Region;
 import gov.nasa.pds.registry.common.Response;
 import gov.nasa.pds.registry.common.ResponseException;
 import gov.nasa.pds.registry.common.RestClient;
+import gov.nasa.pds.registry.common.util.Backoff;
 
 public class RestClientWrapper implements RestClient {
+  // 10s, 20s, 40s, ... capped at 5 minutes, for throttling / service-unavailable responses
+  private static final Backoff THROTTLE_BACKOFF = new Backoff(10_000L, 300_000L, 0.25);
+  // 1s, 2s, 4s, ... capped at 30 seconds, for I/O errors such as read timeouts
+  private static final Backoff IO_BACKOFF = new Backoff(1_000L, 30_000L, 0.25);
+
+  private static boolean isTransientStatus(int status) {
+    return status == 429 || status == 502 || status == 503 || status == 504;
+  }
+
   private abstract class Retryable <R,T> {
     abstract public R perform (T arg) throws IOException, ResponseException;
     public R retry (T arg) throws IOException, ResponseException {
@@ -61,18 +70,16 @@ public class RestClientWrapper implements RestClient {
               log.error ("Tried {} to re-establish connection but cannot.", retry_limit);
               throw ose;
             }
-          } else if (ose.response().status() == 429) {
-            Random random = new Random();
-            int secondsDelay = 10 * (2^retries) - 10 + (random.nextInt(5));
-            if (secondsDelay > 300) secondsDelay = 300 + (random.nextInt(150));
-            try {
-              Thread.sleep(secondsDelay*1000); // seconds to milliseconds
-            } catch (InterruptedException e) {
-              // Tried to wait but nothing to be done if cannot
+          } else if (isTransientStatus(ose.response().status())) {
+            retries++;
+            if (retries >= retry_limit) {
+              log.error("Tried {} times to get past HTTP {} from OpenSearch but cannot.", retry_limit, ose.response().status());
+              throw ose;
             }
-            finally {
-              retries++;
-            }
+            long delay = THROTTLE_BACKOFF.delayMillis(retries - 1);
+            log.warn("OpenSearch returned HTTP {}. Retrying in {} ms ({}/{})...",
+                ose.response().status(), delay, retries, retry_limit);
+            if (!Backoff.pause(delay)) throw ose;
           } else {
             LogManager.getLogger(this.getClass()).error("OSE message: {} <status code = {}>", ose.getMessage(), ose.status());
             throw ose;
@@ -86,11 +93,7 @@ public class RestClientWrapper implements RestClient {
             try { conFact.reconnect(); }
             catch (InterruptedException ie) { throw new RuntimeException("How did this happen??", ie); }
             client = buildClient();
-            try {
-              Thread.sleep(Math.min(retries, 30) * 1000L);
-            } catch (InterruptedException ie) {
-              Thread.currentThread().interrupt();
-            }
+            if (!IO_BACKOFF.sleep(retries - 1)) throw ioe;
           } else {
             log.error("Tried {} times to recover from I/O errors with OpenSearch but cannot.", retry_limit, ioe);
             throw ioe;
