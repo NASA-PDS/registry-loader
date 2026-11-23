@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
+import org.apache.commons.text.StringSubstitutor;
 import org.glassfish.jaxb.runtime.v2.JAXBContextFactory;
 import gov.nasa.pds.registry.common.ConnectionFactory;
 import gov.nasa.pds.registry.common.EstablishConnectionFactory;
@@ -78,7 +79,7 @@ public class ConfigManager {
   }
 
   static public ConnectionFactory exchangeRegistry(RegistryType xml) throws Exception {
-    return EstablishConnectionFactory.from(xml.getValue(), xml.getAuth());
+    return EstablishConnectionFactory.from(xml.getValue(), new StringSubstitutor(System.getenv()).replace(xml.getAuth()));
   }
 
   static public HarvestConfigurationType read(File file) throws JAXBException {

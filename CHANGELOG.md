@@ -1,15 +1,24 @@
 # Changelog
 
-## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-08-27)
+## [«unknown»](https://github.com/NASA-PDS/registry-loader/tree/«unknown») (2026-11-20)
 
 [Full Changelog](https://github.com/NASA-PDS/registry-loader/compare/v1.3.2...«unknown»)
 
 **Requirements:**
 
+- As a registry user/operator, I want harvest to be robust to incomplete LDD load [\#157](https://github.com/NASA-PDS/registry-loader/issues/157) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
 - As a registry operator, I want per-product outcome logging \(SUCCESS / FAILED / SKIPPED\) so I can determine what happened to any specific product by LIDVID [\#126](https://github.com/NASA-PDS/registry-loader/issues/126)
 
 **Defects:**
 
+- Harvest does not normalize some PDS4 date fields, causing OpenSearch date parse failures \(e.g. 2012-05-21Z\) [\#179](https://github.com/NASA-PDS/registry-loader/issues/179) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- Changing archive status with a package ID reports "could not be updated" after a successful update [\#169](https://github.com/NASA-PDS/registry-loader/issues/169) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
+- PDS4\_PDS\_1K00 is not found [\#160](https://github.com/NASA-PDS/registry-loader/issues/160) [[s.low](https://github.com/NASA-PDS/registry-loader/labels/s.low)]
+- which LDD was used for lucy.leisa::1.0 [\#158](https://github.com/NASA-PDS/registry-loader/issues/158) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
+- LDD Error when labels are loaded at PPI [\#154](https://github.com/NASA-PDS/registry-loader/issues/154) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- Harvest does not authenticate ATM user successfully with new gateway using Cognito credentials [\#153](https://github.com/NASA-PDS/registry-loader/issues/153) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
+- Harvest does not fail when files fail to process [\#151](https://github.com/NASA-PDS/registry-loader/issues/151)
+- Harvest summary log per-product-type counts do not match actual success counts [\#147](https://github.com/NASA-PDS/registry-loader/issues/147) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
 - `Unexpected error (should not have made it here) while getting index sbnumd-registry` [\#144](https://github.com/NASA-PDS/registry-loader/issues/144) [[s.medium](https://github.com/NASA-PDS/registry-loader/labels/s.medium)]
 - Harvest does not create LDD download temp files on Windows, causing all products in a bundle to fail [\#142](https://github.com/NASA-PDS/registry-loader/issues/142) [[s.high](https://github.com/NASA-PDS/registry-loader/labels/s.high)]
 - Replace System.out.println with proper logger calls in production code [\#129](https://github.com/NASA-PDS/registry-loader/issues/129)
@@ -20,6 +29,9 @@
 
 **Other closed issues:**
 
+- Upgrade to Java 21, Java 17 is EOL [\#148](https://github.com/NASA-PDS/registry-loader/issues/148)
+- Build Cucumber + HTTP mock test harness for registry-loader with initial test coverage [\#140](https://github.com/NASA-PDS/registry-loader/issues/140)
+- Evaluate and select HTTP mock and Cucumber BDD framework for registry-loader integration tests [\#139](https://github.com/NASA-PDS/registry-loader/issues/139)
 - Align slf4j-nop version across harvest and manager modules [\#132](https://github.com/NASA-PDS/registry-loader/issues/132)
 - Convert string-concatenation log calls to parameterized form [\#131](https://github.com/NASA-PDS/registry-loader/issues/131)
 - Standardize logger field declarations across all classes [\#130](https://github.com/NASA-PDS/registry-loader/issues/130)

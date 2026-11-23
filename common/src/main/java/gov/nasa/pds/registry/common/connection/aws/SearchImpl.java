@@ -22,9 +22,12 @@ import org.opensearch.client.opensearch._types.query_dsl.TermsQueryField;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.opensearch.core.search.SourceConfig;
 import org.opensearch.client.opensearch.core.search.SourceFilter;
+import org.opensearch.client.opensearch.core.search.TrackHits;
 import gov.nasa.pds.registry.common.Request.Search;
 
 class SearchImpl implements Search {
+  /** Largest page the cluster allows (default index.max_result_window). */
+  static final int MAX_LIST_FIELDS_SIZE = 10000;
   final SearchRequest.Builder craftsman = new SearchRequest.Builder();
   private void buildIds (Collection<String> lids, boolean alt) {
     SourceConfig.Builder journeyman = new SourceConfig.Builder();
@@ -73,7 +76,8 @@ class SearchImpl implements Search {
   @Override
   public Search buildListFields(String dataType) {
     this.craftsman.query(new Query.Builder().bool(new BoolQuery.Builder().must(this.matchQuery("es_data_type", dataType).build()).build()).build());
-    this.craftsman.size(1000); // have no idea why hardcoded but it is (.es.JsonHelper:217
+    this.craftsman.size(MAX_LIST_FIELDS_SIZE);
+    this.craftsman.trackTotalHits(new TrackHits.Builder().enabled(true).build());
     this.craftsman.source(new SourceConfig.Builder().filter(new SourceFilter.Builder().includes("es_field_name").build()).build());
     return this;
   }
